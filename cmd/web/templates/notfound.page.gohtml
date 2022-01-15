@@ -1,0 +1,27 @@
+{{ template "base" .}}
+
+{{ define "title" }}
+Not Found
+{{ end }}
+
+{{ define "content" }}
+<div id="layoutError_content">
+    <main>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="text-center mt-4">
+                        <h1 class="display-1">404</h1>
+                        <p class="lead">Not Found</p>
+                        <p class="lead">This requested URL was not found on this server</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{{ end }}
+
+{{ define "js" }}
+
+{{ end }}

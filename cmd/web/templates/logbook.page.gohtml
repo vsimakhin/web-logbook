@@ -1,0 +1,83 @@
+{{ template "base" .}}
+
+{{ define "title" }}
+Logbook
+{{ end }}
+
+{{ define "content" }}
+    {{$flightRecords := index .Data "flightRecords"}}
+
+        <table id="logbook" class="table table-sm table-striped table-bordered">
+            <thead>
+                <tr class="align-top text-center">
+                    <th rowspan=2>Date</th>
+                    <th colspan=2>Departure</th>
+                    <th colspan=2>Arrival</th>
+                    <th colspan=2>Aircraft</th>
+                    <th colspan=2>Single Pilot<br>Time</th>
+                    <th rowspan=2>MCC</th>
+                    <th rowspan=2>Total<br>Time</th>
+                    <th rowspan=2>PIC Name</th>
+                    <th colspan=2>Landings</th>
+                    <th colspan=2>Operational<br>Condition Time</th>
+                    <th colspan=4>Pilot Function Time</th>
+                    <th colspan=2>FSTD Session</th>
+                    <th rowspan=2>Remarks</th>
+                </tr>
+                <tr class="text-center">
+                    <th>Place</th>
+                    <th>Date</th>
+                    <th>Place</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th class="text-nowrap">Reg</th>
+                    <th>SE</th>
+                    <th>ME</th>
+                    <th>Day</th>
+                    <th>Night</th>
+                    <th>Night</th>
+                    <th>IFR</th>
+                    <th>PIC</th>
+                    <th>COP</th>
+                    <th>Dual</th>
+                    <th>Instr</th>
+                    <th>Type</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $flightRecords}}
+            <tr class="text-center">
+                <td><a href="/logbook/{{.UUID}}" class="link-primary">{{.Date}}</a></td>
+                <td>{{.Departure.Place}}</td>
+                <td>{{.Departure.Time}}</td>
+                <td>{{.Arrival.Place}}</td>
+                <td>{{.Arrival.Time}}</td>
+                <td>{{.Aircraft.Model}}</td>
+                <td>{{.Aircraft.Reg}}</td>
+                <td>{{.Time.SE}}</td>
+                <td>{{if .Time.MCC}}{{else}}{{.Time.ME}}{{end}}</td>
+                <td>{{.Time.MCC}}</td>
+                <td>{{.Time.Total}}</td>
+                <td class="text-start">{{.PIC}}</td>
+                <td>{{formatLandings .Landings.Day}}</td>
+                <td>{{formatLandings .Landings.Night}}</td>
+                <td>{{.Time.Night}}</td>
+                <td>{{.Time.IFR}}</td>
+                <td>{{.Time.PIC}}</td>
+                <td>{{.Time.CoPilot}}</td>
+                <td>{{.Time.Dual}}</td>
+                <td>{{.Time.Instructor}}</td>
+                <td>{{.SIM.Type}}</td>
+                <td>{{.SIM.Time}}</td>
+                <td class="text-start">{{formatRemarks .Remarks}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+
+{{ end }}
+
+{{ define "js" }}
+
+{{ end }}
