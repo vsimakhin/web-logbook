@@ -26,10 +26,13 @@ var functions = template.FuncMap{
 	"formatLandings": formatLandings,
 }
 
+//go:embed templates
+var templateFS embed.FS
+
 // formatRemarks cuts the remark field if it's too long
 func formatRemarks(remarks string) string {
-	if len(remarks) > 15 {
-		return fmt.Sprintf("%.12s...", remarks)
+	if len(remarks) > 13 {
+		return fmt.Sprintf("%.10s...", remarks)
 	} else {
 		return remarks
 	}
@@ -42,9 +45,6 @@ func formatLandings(landing int) string {
 		return fmt.Sprintf("%d", landing)
 	}
 }
-
-//go:embed templates
-var templateFS embed.FS
 
 func (app *application) addDefaultData(td *templateData, req *http.Request) *templateData {
 	td.API = fmt.Sprintf("http://localhost:%d", app.config.port)

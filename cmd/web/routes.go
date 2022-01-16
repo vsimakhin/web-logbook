@@ -16,6 +16,8 @@ func (app *application) routes() http.Handler {
 	server.Post("/logbook/save", app.HandlerFlightRecordSave)
 	server.Post("/logbook/delete", app.HandlerFlightRecordDelete)
 
+	server.Get("/logbook/data", app.HandlerFlightRecordsData)
+
 	server.Handle("/static/*", app.HandlerStatic())
 	server.HandleFunc("/favicon.ico", app.HandlerFavicon)
 	server.NotFound(app.HandlerNotFound)
