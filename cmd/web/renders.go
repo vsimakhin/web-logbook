@@ -47,6 +47,7 @@ func formatLandings(landing int) string {
 var templateFS embed.FS
 
 func (app *application) addDefaultData(td *templateData, req *http.Request) *templateData {
+	td.API = fmt.Sprintf("http://localhost:%d", app.config.port)
 
 	return td
 }

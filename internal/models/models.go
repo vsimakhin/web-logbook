@@ -23,6 +23,13 @@ func NewModels(db *sql.DB) Models {
 	}
 }
 
+// jsonResponse is a type for post data handlers response
+type JSONResponse struct {
+	OK          bool   `json:"ok"`
+	Message     string `json:"message,omitempty"`
+	RedirectURL string `json:"redirect_url,omitempty"`
+}
+
 // FlightRecord is a type for logbook flight records
 type FlightRecord struct {
 	UUID      string `json:"uuid"`
@@ -93,6 +100,84 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
 	return fr, nil
 }
 
+// UpdateFlightRecord updates the flight records in the logbook table
+func (m *DBModel) UpdateFlightRecord(fr FlightRecord) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := m.DB.ExecContext(ctx, `
+		UPDATE logbook
+		SET
+			date = ?, departure_place = ?, departure_time = ?,
+			arrival_place = ?, arrival_time = ?, aircraft_model = ?, reg_name = ?,
+			se_time = ?, me_time = ?, mcc_time = ?, total_time = ?, day_landings = ?, night_landings = ?,
+			night_time = ?, ifr_time = ?, pic_time = ?, co_pilot_time = ?, dual_time = ?, instructor_time = ?,
+			sim_type = ?, sim_time = ?, pic_name = ?, remarks = ?
+		WHERE uuid = ?`,
+		fr.Date, fr.Departure.Place, fr.Departure.Time,
+		fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg,
+		fr.Time.SE, fr.Time.ME, fr.Time.MCC, fr.Time.Total, fr.Landings.Day, fr.Landings.Night,
+		fr.Time.Night, fr.Time.IFR, fr.Time.PIC, fr.Time.CoPilot, fr.Time.Dual, fr.Time.Instructor,
+		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks, fr.UUID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// InsertFlightRecord add a new flight record to the logbook table
+func (m *DBModel) InsertFlightRecord(fr FlightRecord) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := m.DB.ExecContext(ctx, `
+		INSERT INTO logbook
+			(uuid, date, departure_place, departure_time,
+			arrival_place, arrival_time, aircraft_model, reg_name,
+			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
+			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
+			sim_type, sim_time, pic_name, remarks)
+		VALUES (?, ?, ?, ?,
+			?, ?, ?, ?,
+			?, ?, ?, ?, ?, ?,
+			?, ?, ?, ?, ?, ?,
+			?, ?, ?, ?)`,
+		fr.UUID, fr.Date, fr.Departure.Place, fr.Departure.Time,
+		fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg,
+		fr.Time.SE, fr.Time.ME, fr.Time.MCC, fr.Time.Total, fr.Landings.Day, fr.Landings.Night,
+		fr.Time.Night, fr.Time.IFR, fr.Time.PIC, fr.Time.CoPilot, fr.Time.Dual, fr.Time.Instructor,
+		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteFlightRecord deletes a flight record by UUID
+func (m *DBModel) DeleteFlightRecord(uuid string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := m.DB.ExecContext(ctx, `
+		DELETE FROM logbook
+		WHERE
+			uuid = ?`, uuid,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetFlightRecords returns the flight records in the logbook table
 func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -108,7 +193,7 @@ func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks
 		FROM logbook_view
-		ORDER BY m_date`)
+		ORDER BY m_date desc`)
 
 	if err != nil {
 		return flightRecords, err
@@ -129,4 +214,68 @@ func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 	}
 
 	return flightRecords, nil
+}
+
+// GetAircraftRegs returns all already recorded aircraft registrations
+func (m *DBModel) GetAircraftRegs() ([]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var reg string
+	var allRegs []string
+
+	rows, err := m.DB.QueryContext(ctx, `
+		SELECT
+			reg_name
+		FROM logbook_view
+		GROUP BY reg_name
+		ORDER BY reg_name`)
+
+	if err != nil {
+		return allRegs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&reg)
+
+		if err != nil {
+			return allRegs, err
+		}
+		allRegs = append(allRegs, reg)
+	}
+
+	return allRegs, nil
+}
+
+// GetAircraftModels returns all already recorded aircraft models
+func (m *DBModel) GetAircraftModels() ([]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var aircraftModel string
+	var allModels []string
+
+	rows, err := m.DB.QueryContext(ctx, `
+		SELECT
+			aircraft_model
+		FROM logbook_view
+		GROUP BY aircraft_model
+		ORDER BY aircraft_model`)
+
+	if err != nil {
+		return allModels, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&aircraftModel)
+
+		if err != nil {
+			return allModels, err
+		}
+		allModels = append(allModels, aircraftModel)
+	}
+
+	return allModels, nil
 }
