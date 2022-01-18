@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/vsimakhin/web-logbook/internal/models"
+	"github.com/vsimakhin/web-logbook/internal/pdfexport"
 )
 
 //go:embed static
@@ -226,4 +227,38 @@ func (app *application) HandlerNotAllowed(w http.ResponseWriter, r *http.Request
 	if err := app.renderTemplate(w, r, "notallowed", nil); err != nil {
 		app.errorLog.Println(err)
 	}
+}
+
+// HandlerAirportByID returns airport record by ID (ICAO or IATA)
+func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "id")
+
+	airport, err := app.db.GetAirportByID(uuid)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	out, err := json.Marshal(airport)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
+}
+
+func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
+	flightRecords, err := app.db.GetFlightRecords()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	pdfexport.Export(flightRecords, w)
 }

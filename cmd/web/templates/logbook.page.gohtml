@@ -48,20 +48,26 @@ Logbook
         </tbody>
     </table>
 
-    <a id="new-flight-record" href="/logbook/new" class="btn btn-primary float-right" onclick="">Add New Flight Record</a>
+    <a id="new-flight-record" href="/logbook/new" class="btn btn-primary" onclick="">Add New Flight Record</a>
+    <a id="export" href="#" class="btn btn-success float-right" onclick="ExportPDF()">Export to PDF</a>
+
 
 {{ end }}
 
 {{ define "js" }}
 <script>
-$(document).ready( function () {
-    $('#logbook').DataTable({
-        "ordering": false,
-        "info":     false,
-        "ajax": '/logbook/data',
-        "lengthMenu": [[15, 50, -1], [15, 50, "All"]]
+    $(document).ready( function () {
+        $('#logbook').DataTable({
+            "ordering": false,
+            "info":     false,
+            "ajax": '/logbook/data',
+            "lengthMenu": [[15, 50, -1], [15, 50, "All"]]
+        } );
+
     } );
 
-} );
+    function ExportPDF() {
+        window.open("{{.API}}/logbook/export", "_blank");
+    }
 </script>
 {{ end }}

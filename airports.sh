@@ -1,0 +1,2 @@
+# converting airports.json to csv file
+cat airports.json | jq -r '.[] | (.icao) + "," + (.iata) + "," + (.name) + "," + (.city) + "," + (.country) + "," + (.elevation|tostring) + "," + (.lat|tostring) + "," + (.lon|tostring) '

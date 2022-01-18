@@ -71,6 +71,19 @@ type FlightRecord struct {
 	Remarks string `json:"remarks"`
 }
 
+// Airpot is a structure for airport record
+type Airport struct {
+	ICAO      string  `json:"icao"`
+	IATA      string  `json:"iata"`
+	Name      string  `json:"name"`
+	City      string  `json:"city"`
+	Country   string  `json:"country"`
+	Elevation int     `json:"elevation"`
+	Lat       float32 `json:"lat"`
+	Lon       float32 `json:"lon"`
+}
+
+// GetFlightRecordByID returns flight record by UUID
 func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -278,4 +291,28 @@ func (m *DBModel) GetAircraftModels() ([]string, error) {
 	}
 
 	return allModels, nil
+}
+
+// GetAirportByID return airport record by ID (ICAO or IATA)
+func (m *DBModel) GetAirportByID(id string) (Airport, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var airport Airport
+
+	row := m.DB.QueryRowContext(ctx, `
+		SELECT
+			icao, iata, name, city,
+			country, elevation, lat, lon
+		FROM airports
+		WHERE icao = ? or iata = ?`, id, id)
+
+	err := row.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
+		&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
+
+	if err != nil {
+		return airport, err
+	}
+
+	return airport, nil
 }
