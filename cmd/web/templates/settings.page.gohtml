@@ -1,0 +1,94 @@
+{{ template "base" .}}
+
+{{ define "title" }}
+Settings
+{{ end }}
+
+{{ define "content" }}
+    {{$settings := index .Data "settings"}}
+
+    <form action="/settings" method="post" name="settings" id="settings"
+        class="d-block" autocomplete="off" novalidate="">
+
+        <label for="owner_name" class="form-label"><strong>Owner Name</strong><br>
+            This name is printed in the logbook footer</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
+                required="true" autocomplete="owner_name" placeholder="Owner Name">
+        </div>
+        <br>
+
+        <label for="signature_text" class="form-label"><strong>Signature Text</strong><br>
+            This signature is printed in the logbook footer under signature</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
+                required="true" autocomplete="signature_text" placeholder="Signature text">
+        </div>
+        <br>
+
+        <label for="date" class="form-label"><strong>Page breaks</strong><br>
+            In case you need to divide your logbook to several ones, just use page breaks in format <i>page_number1, page_number2</i><br>
+            and it will start a new page count at <i>page_number1</i> and <i>page_number2</i>. Field can be empty in case you need just one logbook</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="page_breaks" name="page_breaks" value="{{$settings.PageBreaks}}"
+                required="true" autocomplete="page_breaks" placeholder="Page breaks">
+        </div>
+        <br>
+
+        <strong>Airport database </strong><div id="airports"></div> airports
+        <br>
+
+        <div class="alert-danger text-center d-none" id="info" role="alert"></div>
+        <hr>
+        <button class="btn btn-primary" type="button" onclick="Save()" id="save">Save</button>
+        <button class="btn btn-primary" type="button" onclick="UpdateAirportsDB()" id="update">Update Airport DB</button>
+
+    </form>
+{{ end }}
+
+{{ define "js" }}
+<script>
+    let infoMsg = document.getElementById("info");
+
+    function showErrorMessage(msg) {
+        infoMsg.classList.add("alert-danger");
+        infoMsg.classList.remove("alert-success");
+        infoMsg.classList.remove("d-none");
+        infoMsg.innerText = msg;
+    }
+
+    function showInfoMessage(msg) {
+        infoMsg.classList.remove("alert-danger");
+        infoMsg.classList.add("alert-success");
+        infoMsg.classList.remove("d-none");
+        infoMsg.innerText = msg;
+    }
+
+    function Save() {
+        let payload = {
+            owner_name: document.getElementById("owner_name").value,
+            signature_text: document.getElementById("signature_text").value,
+            page_breaks: document.getElementById("page_breaks").value
+        }
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        }
+
+        fetch("{{.API}}/settings", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    showInfoMessage(data.message);
+                } else {
+                    showErrorMessage(data.message);
+                }
+            });
+    }
+</script>
+{{ end }}

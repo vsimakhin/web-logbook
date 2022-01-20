@@ -25,8 +25,8 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
         <div class="mb-3 row">
             <div class="col-md-1">
                 <label for="departure_place" class="form-label text-nowrap">Departure Place</label>
-                <input type="text" class="form-control" id="departure_place" name="departure_place" value="{{$fr.Departure.Place}}"
-                    required="" autocomplete="departure_place">
+                <input type="text" class="form-control text-transform: uppercase" id="departure_place" name="departure_place" value="{{$fr.Departure.Place}}"
+                    required="" autocomplete="departure_place" onkeyup="this.value = this.value.toUpperCase();">
             </div>
 
             <div class="col-md-1">
@@ -38,7 +38,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="arrival_place" class="form-label text-nowrap">Arrival Place</label>
                 <input type="text" class="form-control" id="arrival_place" name="arrival_place" value="{{$fr.Arrival.Place}}"
-                    required="" autocomplete="arrival_place">
+                    required="" autocomplete="arrival_place" onkeyup="this.value = this.value.toUpperCase();">
             </div>
 
             <div class="col-md-1">
@@ -99,55 +99,64 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="se_time" class="form-label text-nowrap">Single Engine</label>
                 <input type="text" class="form-control" id="se_time" name="se_time" value="{{$fr.Time.SE}}"
-                    required="" autocomplete="se_time" placeholder="HH:MM">
+                    required="" autocomplete="se_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="me_time" class="form-label text-nowrap">Multi Engine</label>
                 <input type="text" class="form-control" id="me_time" name="me_time" value="{{$fr.Time.ME}}"
-                    required="" autocomplete="me_time" placeholder="HH:MM">
+                    required="" autocomplete="me_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="mcc_time" class="form-label text-nowrap">MCC Time</label>
                 <input type="text" class="form-control" id="mcc_time" name="mcc_time" value="{{$fr.Time.MCC}}"
-                    required="" autocomplete="mcc_time" placeholder="HH:MM">
+                    required="" autocomplete="mcc_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="night_time" class="form-label text-nowrap">Night Time</label>
                 <input type="text" class="form-control" id="night_time" name="night_time" value="{{$fr.Time.Night}}"
-                    required="" autocomplete="night_time" placeholder="HH:MM">
+                    required="" autocomplete="night_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="ifr_time" class="form-label text-nowrap">IFR Time</label>
                 <input type="text" class="form-control" id="ifr_time" name="ifr_time" value="{{$fr.Time.IFR}}"
-                    required="" autocomplete="ifr_time" placeholder="HH:MM">
+                    required="" autocomplete="ifr_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="pic_time" class="form-label text-nowrap">PIC Time</label>
                 <input type="text" class="form-control" id="pic_time" name="pic_time" value="{{$fr.Time.PIC}}"
-                    required="" autocomplete="pic_time" placeholder="HH:MM">
+                    required="" autocomplete="pic_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="sic_time" class="form-label text-nowrap">CoPilot Time</label>
                 <input type="text" class="form-control" id="sic_time" name="sic_time" value="{{$fr.Time.CoPilot}}"
-                    required="" autocomplete="sic_time" placeholder="HH:MM">
+                    required="" autocomplete="sic_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="dual_time" class="form-label text-nowrap">Dual Time</label>
                 <input type="text" class="form-control" id="dual_time" name="dual_time" value="{{$fr.Time.Dual}}"
-                    required="" autocomplete="dual_time" placeholder="HH:MM">
+                    required="" autocomplete="dual_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="instr_time" class="form-label text-nowrap">Instructor Time</label>
                 <input type="text" class="form-control" id="instr_time" name="instr_time" value="{{$fr.Time.Instructor}}"
-                    required="" autocomplete="instr_time" placeholder="HH:MM">
+                    required="" autocomplete="instr_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
         </div>
         <div class="mb-3 row">
@@ -160,7 +169,8 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="sim_time" class="form-label text-nowrap">Simulator Time</label>
                 <input type="text" class="form-control" id="sim_time" name="sim_time" value="{{$fr.SIM.Time}}"
-                    required="" autocomplete="sim_time" placeholder="HH:MM">
+                    required="" autocomplete="sim_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Double Click will copy value from Total Time">
             </div>
         </div>
         <div class="mb-3 row">
@@ -178,11 +188,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
         </div>
         <hr>
 
-        {{/* <a id="save" href="javascript:void(0)" class="btn btn-primary" onclick="validate()">Save</a> */}}
-        <button class="btn btn-primary" type="button" onclick="validate()" id="save">
-            <span class="spinner-grow spinner-grow-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
-            Save
-        </button>
+        <button class="btn btn-primary" type="button" onclick="validate()" id="save">Save</button>
         <div class="float-end">
             <a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>
         </div>
@@ -212,10 +218,14 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 
 {{ define "js" }}
 <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     let infoMsg = document.getElementById("info");
 
     function validate() {
-        showSpinner();
 
         let isValid = true;
         let errorMessage = "";
@@ -288,8 +298,6 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 
         if (!isValid) {
             showErrorMessage(errorMessage);
-            hideSpinner();
-
             return;
         }
 
@@ -366,15 +374,13 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             .then(function(data) {
                 if (data.ok) {
                     showInfoMessage(data.message);
-                    if (data.redirect_url !== "") {
+                    if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
                     showErrorMessage(data.message);
                 }
             })
-
-        hideSpinner();
     }
 
     function DeleteFlightRecord() {
@@ -396,7 +402,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             .then(function(data) {
                 if (data.ok) {
                     showInfoMessage(data.message);
-                    if (data.redirect_url !== "") {
+                    if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
@@ -436,16 +442,6 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
         }
 
         return true
-    }
-
-    function showSpinner() {
-        let spinner = document.getElementById("spinner");
-        spinner.classList.remove("d-none");
-    }
-
-    function hideSpinner() {
-        let spinner = document.getElementById("spinner");
-        spinner.classList.add("d-none");
     }
 
     function CalculateTotalTime(start, end) {

@@ -36,8 +36,6 @@ SELECT uuid, date, substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m
  night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_type, sim_time, pic_name, remarks
 FROM logbook;
 
-
-
 /* airports table */
 CREATE TABLE IF NOT EXISTS airports (
     icao TEXT PRIMARY_KEY,
@@ -52,3 +50,11 @@ CREATE TABLE IF NOT EXISTS airports (
 
 CREATE UNIQUE INDEX IF NOT EXISTS airports_icao
 ON airports(icao);
+
+/* settings table */
+CREATE TABLE IF NOT EXISTS settings (
+    id INTEGER PRIMARY_KEY,
+    owner_name TEXT,
+    signature_text TEXT,
+    page_breaks TEXT
+);

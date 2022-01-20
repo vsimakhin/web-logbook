@@ -26,6 +26,13 @@ func (app *application) routes() http.Handler {
 	// airports
 	server.Get("/airport/{id}", app.HandlerAirportByID)
 
+	// settings
+	server.Get("/settings", app.HandlerSettings)
+	server.Post("/settings", app.HandlerSettingsSave)
+
+	// stats
+
+	// other stuff
 	server.Handle("/static/*", app.HandlerStatic())
 	server.HandleFunc("/favicon.ico", app.HandlerFavicon)
 	server.NotFound(app.HandlerNotFound)

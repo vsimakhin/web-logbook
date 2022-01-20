@@ -43,8 +43,7 @@
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        {{ block "user" . }}{{ end }}
+                        <div class="text-muted">&copy; <a href="https://github.com/vsimakhin/web-logbook">Web Logbook</a></div>
                     </div>
                 </nav>
             </div>
@@ -52,20 +51,12 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h3 class="mt-2">{{ block "title" . }}{{ end }}</h3>
-                        {{/* <div class="card mb-2"> */}}
-                            {{/* <div class="card-body"> */}}
+                            <div class="card-body">
                               {{ block "content" . }}{{ end }}
-                            {{/* </div> */}}
-                        {{/* </div> */}}
+                            </div>
                     </div>
                 </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-end small">
-                            <div class="text-muted">Copyright &copy; <a href="https://github.com/vsimakhin/web-logbook">Web Logbook</a></div>
-                        </div>
-                    </div>
-                </footer>
+
             </div>
         </div>
         <script src="/static/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

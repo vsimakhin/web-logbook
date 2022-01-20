@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -251,6 +252,7 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 	w.Write(out)
 }
 
+// HandlerExportLogbook executes the pdf export and returns pdf file
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {
@@ -259,6 +261,68 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/pdf")
-	pdfexport.Export(flightRecords, w)
+	var logbook pdfexport.Logbook
+	logbook.OwnerName = settings.OwnerName
+	logbook.Signature = settings.SignatureText
+	logbook.PageBreaks = strings.Split(settings.PageBreaks, ",")
+
+	logbook.Export(flightRecords, w)
+}
+
+func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["settings"] = settings
+
+	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}); err != nil {
+		app.errorLog.Println(err)
+	}
+
+}
+
+func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Request) {
+	var settings models.Settings
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.errorLog.Panicln(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.UpdateSettings(settings)
+	if err != nil {
+		app.errorLog.Println(err)
+		response.OK = false
+		response.Message = err.Error()
+	} else {
+		response.OK = true
+		response.Message = "Settings have been updated"
+	}
+
+	out, err := json.Marshal(response)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
+
 }
