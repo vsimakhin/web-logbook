@@ -4,6 +4,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -252,6 +253,95 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 	w.Write(out)
 }
 
+func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Request) {
+	var airportsDB map[string]interface{}
+	var airports []models.Airport
+	var response models.JSONResponse
+
+	resp, err := http.Get("https://github.com/vsimakhin/Airports/raw/master/airports.json")
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(body, &airportsDB)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range airportsDB {
+		airportItem := item.(map[string]interface{})
+
+		var airport models.Airport
+
+		if value, ok := airportItem["icao"].(string); ok {
+			airport.ICAO = value
+		}
+
+		if value, ok := airportItem["iata"].(string); ok {
+			airport.IATA = value
+		}
+
+		if value, ok := airportItem["name"].(string); ok {
+			airport.Name = value
+		}
+
+		if value, ok := airportItem["city"].(string); ok {
+			airport.City = value
+		}
+
+		if value, ok := airportItem["country"].(string); ok {
+			airport.Country = value
+		}
+
+		if value, ok := airportItem["elevation"].(float64); ok {
+			airport.Elevation = int(value)
+		}
+
+		if value, ok := airportItem["lat"].(float64); ok {
+			airport.Lat = value
+		}
+
+		if value, ok := airportItem["lon"].(float64); ok {
+			airport.Lon = value
+		}
+
+		airports = append(airports, airport)
+	}
+
+	records, err := app.db.UpdateAirportDB(airports)
+	if err != nil {
+		app.errorLog.Println(err)
+		response.OK = false
+		response.Message = err.Error()
+	} else {
+		response.OK = true
+		response.Message = fmt.Sprintf("%d", records)
+	}
+
+	out, err := json.Marshal(response)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
+
+}
+
 // HandlerExportLogbook executes the pdf export and returns pdf file
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
 	flightRecords, err := app.db.GetFlightRecords()
@@ -285,8 +375,16 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	records, err := app.db.GetAirportCount()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	data := make(map[string]interface{})
 	data["settings"] = settings
+	data["records"] = records
 
 	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)

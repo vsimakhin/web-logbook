@@ -25,6 +25,7 @@ func (app *application) routes() http.Handler {
 
 	// airports
 	server.Get("/airport/{id}", app.HandlerAirportByID)
+	server.Get("/airport/update", app.HandlerAirportUpdate)
 
 	// settings
 	server.Get("/settings", app.HandlerSettings)

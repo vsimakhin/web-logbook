@@ -26,8 +26,7 @@ CREATE TABLE IF NOT EXISTS logbook (
     remarks TEXT
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS logbook_uuid
-ON logbook(uuid);
+CREATE UNIQUE INDEX IF NOT EXISTS logbook_uuid ON logbook(uuid);
 
 CREATE VIEW IF NOT EXISTS logbook_view
 AS
@@ -48,8 +47,7 @@ CREATE TABLE IF NOT EXISTS airports (
     lon REAL
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS airports_icao
-ON airports(icao);
+CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);
 
 /* settings table */
 CREATE TABLE IF NOT EXISTS settings (
@@ -58,3 +56,5 @@ CREATE TABLE IF NOT EXISTS settings (
     signature_text TEXT,
     page_breaks TEXT
 );
+
+VACUUM;
