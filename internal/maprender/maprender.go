@@ -17,6 +17,9 @@ type MapRender struct {
 	FilterNoRoutes bool   `json:"filter_noroutes"`
 	AirportsDB     map[string]models.Airport
 
+	Width  int
+	Height int
+
 	Img image.Image
 }
 
@@ -47,7 +50,7 @@ func (mr *MapRender) Render() error {
 	}
 
 	ctx := sm.NewContext()
-	ctx.SetSize(1280, 1024)
+	ctx.SetSize(mr.Width, mr.Height)
 
 	// generate routes lines
 	for route := range routeLines {

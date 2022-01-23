@@ -12,226 +12,233 @@ Stats
     {{$totalsByYear := index .Data "totalsByYear"}}
     {{$totalsByAircraft := index .Data "totalsByAircraft"}}
 
-    <div class="row">
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-table me-1"></i>Totals</div>
-                <div class="card-body">
-                <table id="totals" class="table table-sm table-striped table-bordered nowrap">
-                        <thead>
-                            <tr class="align-top text-center">
-                                <th></th>
-                                <th>30 days</th>
-                                <th>90 days</th>
-                                <th>This year</th>
-                                <th>Totals</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td>{{$totals30.Time.Total}}</td>
-                                <td>{{$totals90.Time.Total}}</td>
-                                <td>{{$totalsY.Time.Total}}</td>
-                                <td>{{$totals.Time.Total}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Single Engine</strong></td>
-                                <td>{{$totals30.Time.SE}}</td>
-                                <td>{{$totals90.Time.SE}}</td>
-                                <td>{{$totalsY.Time.SE}}</td>
-                                <td>{{$totals.Time.SE}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Multi Engine</strong></td>
-                                <td>{{$totals30.Time.ME}}</td>
-                                <td>{{$totals90.Time.ME}}</td>
-                                <td>{{$totalsY.Time.ME}}</td>
-                                <td>{{$totals.Time.ME}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>MCC</strong></td>
-                                <td>{{$totals30.Time.MCC}}</td>
-                                <td>{{$totals90.Time.MCC}}</td>
-                                <td>{{$totalsY.Time.MCC}}</td>
-                                <td>{{$totals.Time.MCC}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Night</strong></td>
-                                <td>{{$totals30.Time.Night}}</td>
-                                <td>{{$totals90.Time.Night}}</td>
-                                <td>{{$totalsY.Time.Night}}</td>
-                                <td>{{$totals.Time.Night}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>IFR</strong></td>
-                                <td>{{$totals30.Time.IFR}}</td>
-                                <td>{{$totals90.Time.IFR}}</td>
-                                <td>{{$totalsY.Time.IFR}}</td>
-                                <td>{{$totals.Time.IFR}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>PIC</strong></td>
-                                <td>{{$totals30.Time.PIC}}</td>
-                                <td>{{$totals90.Time.PIC}}</td>
-                                <td>{{$totalsY.Time.PIC}}</td>
-                                <td>{{$totals.Time.PIC}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Co Pilot</strong></td>
-                                <td>{{$totals30.Time.CoPilot}}</td>
-                                <td>{{$totals90.Time.CoPilot}}</td>
-                                <td>{{$totalsY.Time.CoPilot}}</td>
-                                <td>{{$totals.Time.CoPilot}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Dual</strong></td>
-                                <td>{{$totals30.Time.Dual}}</td>
-                                <td>{{$totals90.Time.Dual}}</td>
-                                <td>{{$totalsY.Time.Dual}}</td>
-                                <td>{{$totals.Time.Dual}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Instructor</strong></td>
-                                <td>{{$totals30.Time.Instructor}}</td>
-                                <td>{{$totals90.Time.Instructor}}</td>
-                                <td>{{$totalsY.Time.Instructor}}</td>
-                                <td>{{$totals.Time.Instructor}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Simulator</strong></td>
-                                <td>{{$totals30.SIM.Time}}</td>
-                                <td>{{$totals90.SIM.Time}}</td>
-                                <td>{{$totalsY.SIM.Time}}</td>
-                                <td>{{$totals.SIM.Time}}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Landings</strong></td>
-                                <td>{{$totals30.Landings.Day}}/{{$totals30.Landings.Night}}</td>
-                                <td>{{$totals90.Landings.Day}}/{{$totals90.Landings.Night}}</td>
-                                <td>{{$totalsY.Landings.Day}}/{{$totalsY.Landings.Night}}</td>
-                                <td>{{$totals.Landings.Day}}/{{$totals.Landings.Night}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-totals-tab" data-bs-toggle="tab" data-bs-target="#nav-totals" type="button" role="tab" aria-controls="nav-totals" aria-selected="true">Totals</button>
+            <button class="nav-link" id="nav-totals-by-year-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-year" type="button" role="tab" aria-controls="nav-totals-by-year" aria-selected="false">Totals by Year</button>
+            <button class="nav-link" id="nav-totals-by-type-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-type" type="button" role="tab" aria-controls="nav-totals-by-type" aria-selected="false">Totals by Aircraft Type</button>
+            <button class="nav-link" id="nav-totals-by-type-tab" data-bs-toggle="tab" data-bs-target="#nav-routes" type="button" role="tab" aria-controls="nav-routes" aria-selected="false">Routes</button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-totals" role="tabpanel" aria-labelledby="nav-totals-tab">
+            <br>
 
-            <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-table me-1"></i>Totals by Year</div>
-                <div class="card-body">
-                    <table id="totals_by_year" class="table table-sm table-striped table-bordered nowrap">
-                        <thead>
-                            <tr class="align-top text-center">
-                                <th>Year</th>
-                                <th>SE</th>
-                                <th>ME</th>
-                                <th>MCC</th>
-                                <th>Night</th>
-                                <th>IFR</th>
-                                <th>PIC</th>
-                                <th>CoP</th>
-                                <th>Dual</th>
-                                <th>Instr</th>
-                                <th>Sim</th>
-                                <th>Landings</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{range $key, $value := $totalsByYear}}
-                            <tr>
-                                <td>{{$key}}</td>
-                                <td>{{$value.Time.SE}}</td>
-                                <td>{{$value.Time.ME}}</td>
-                                <td>{{$value.Time.MCC}}</td>
-                                <td>{{$value.Time.Night}}</td>
-                                <td>{{$value.Time.IFR}}</td>
-                                <td>{{$value.Time.PIC}}</td>
-                                <td>{{$value.Time.CoPilot}}</td>
-                                <td>{{$value.Time.Dual}}</td>
-                                <td>{{$value.Time.Instructor}}</td>
-                                <td>{{$value.SIM.Time}}</td>
-                                <td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>
-                                <td><strong>{{$value.Time.Total}}</strong></td>
-                            </tr>
-                            {{end}}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-table me-1"></i>Totals by Aircraft Type</div>
-                <div class="card-body">
-                    <table id="totals_by_year" class="table table-sm table-striped table-bordered nowrap">
-                        <thead>
-                            <tr class="align-top text-center">
-                                <th>Aircraft</th>
-                                <th>SE</th>
-                                <th>ME</th>
-                                <th>MCC</th>
-                                <th>Night</th>
-                                <th>IFR</th>
-                                <th>PIC</th>
-                                <th>CoP</th>
-                                <th>Dual</th>
-                                <th>Instr</th>
-                                <th>Sim</th>
-                                <th>Landings</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{range $key, $value := $totalsByAircraft}}
-                            <tr>
-                                <td>{{$key}}</td>
-                                <td>{{$value.Time.SE}}</td>
-                                <td>{{$value.Time.ME}}</td>
-                                <td>{{$value.Time.MCC}}</td>
-                                <td>{{$value.Time.Night}}</td>
-                                <td>{{$value.Time.IFR}}</td>
-                                <td>{{$value.Time.PIC}}</td>
-                                <td>{{$value.Time.CoPilot}}</td>
-                                <td>{{$value.Time.Dual}}</td>
-                                <td>{{$value.Time.Instructor}}</td>
-                                <td>{{$value.SIM.Time}}</td>
-                                <td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>
-                                <td><strong>{{if eq $key "SIM"}}{{$value.SIM.Time}}{{else}}{{$value.Time.Total}}{{end}}</strong></td>
-                            </tr>
-                            {{end}}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <table id="totals" class="table table-sm table-striped table-bordered nowrap">
+                <thead>
+                    <tr class="align-top text-center">
+                        <th></th>
+                        <th>30 days</th>
+                        <th>90 days</th>
+                        <th>This year</th>
+                        <th>Totals</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td>{{$totals30.Time.Total}}</td>
+                        <td>{{$totals90.Time.Total}}</td>
+                        <td>{{$totalsY.Time.Total}}</td>
+                        <td>{{$totals.Time.Total}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Single Engine</strong></td>
+                        <td>{{$totals30.Time.SE}}</td>
+                        <td>{{$totals90.Time.SE}}</td>
+                        <td>{{$totalsY.Time.SE}}</td>
+                        <td>{{$totals.Time.SE}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi Engine</strong></td>
+                        <td>{{$totals30.Time.ME}}</td>
+                        <td>{{$totals90.Time.ME}}</td>
+                        <td>{{$totalsY.Time.ME}}</td>
+                        <td>{{$totals.Time.ME}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MCC</strong></td>
+                        <td>{{$totals30.Time.MCC}}</td>
+                        <td>{{$totals90.Time.MCC}}</td>
+                        <td>{{$totalsY.Time.MCC}}</td>
+                        <td>{{$totals.Time.MCC}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Night</strong></td>
+                        <td>{{$totals30.Time.Night}}</td>
+                        <td>{{$totals90.Time.Night}}</td>
+                        <td>{{$totalsY.Time.Night}}</td>
+                        <td>{{$totals.Time.Night}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IFR</strong></td>
+                        <td>{{$totals30.Time.IFR}}</td>
+                        <td>{{$totals90.Time.IFR}}</td>
+                        <td>{{$totalsY.Time.IFR}}</td>
+                        <td>{{$totals.Time.IFR}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PIC</strong></td>
+                        <td>{{$totals30.Time.PIC}}</td>
+                        <td>{{$totals90.Time.PIC}}</td>
+                        <td>{{$totalsY.Time.PIC}}</td>
+                        <td>{{$totals.Time.PIC}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Co Pilot</strong></td>
+                        <td>{{$totals30.Time.CoPilot}}</td>
+                        <td>{{$totals90.Time.CoPilot}}</td>
+                        <td>{{$totalsY.Time.CoPilot}}</td>
+                        <td>{{$totals.Time.CoPilot}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dual</strong></td>
+                        <td>{{$totals30.Time.Dual}}</td>
+                        <td>{{$totals90.Time.Dual}}</td>
+                        <td>{{$totalsY.Time.Dual}}</td>
+                        <td>{{$totals.Time.Dual}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Instructor</strong></td>
+                        <td>{{$totals30.Time.Instructor}}</td>
+                        <td>{{$totals90.Time.Instructor}}</td>
+                        <td>{{$totalsY.Time.Instructor}}</td>
+                        <td>{{$totals.Time.Instructor}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Simulator</strong></td>
+                        <td>{{$totals30.SIM.Time}}</td>
+                        <td>{{$totals90.SIM.Time}}</td>
+                        <td>{{$totalsY.SIM.Time}}</td>
+                        <td>{{$totals.SIM.Time}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Landings</strong></td>
+                        <td>{{$totals30.Landings.Day}}/{{$totals30.Landings.Night}}</td>
+                        <td>{{$totals90.Landings.Day}}/{{$totals90.Landings.Night}}</td>
+                        <td>{{$totalsY.Landings.Day}}/{{$totalsY.Landings.Night}}</td>
+                        <td>{{$totals.Landings.Day}}/{{$totals.Landings.Night}}</td>
+                    </tr>
+                </tbody>
+            </table>
 
         </div>
 
-         <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-map me-1"></i>Routes</div>
-                <div class="card-body">
+        <div class="tab-pane fade" id="nav-totals-by-year" role="tabpanel" aria-labelledby="nav-totals-by-year">
 
-                    <form action="#" method="post" name="filters" id="filters" class="d-block" autocomplete="off">
-                        <div class="row">
-                            <div class="col-auto">
-                                <input type="text" class="form-control" id="filter_date" name="filter_date" value="" placeholder="Date Filter">
-                            </div>
-                            <div class="col-auto">
-                                <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
-                                <label class="form-check-label" for="filter_noroutes">No Routes</label>
-                            </div>
-                            <div class="col-auto float-right">
-                                <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
-                            </div>
-                        </div>
-                    </form>
-                    <br>
+            <br>
+            <table id="totals_by_year" class="table table-sm table-striped table-bordered nowrap">
+                <thead>
+                    <tr class="align-top text-center">
+                        <th>Year</th>
+                        <th>SE</th>
+                        <th>ME</th>
+                        <th>MCC</th>
+                        <th>Night</th>
+                        <th>IFR</th>
+                        <th>PIC</th>
+                        <th>CoP</th>
+                        <th>Dual</th>
+                        <th>Instr</th>
+                        <th>Sim</th>
+                        <th>Landings</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $key, $value := $totalsByYear}}
+                    <tr>
+                        <td><strong>{{$key}}</strong></td>
+                        <td>{{$value.Time.SE}}</td>
+                        <td>{{$value.Time.ME}}</td>
+                        <td>{{$value.Time.MCC}}</td>
+                        <td>{{$value.Time.Night}}</td>
+                        <td>{{$value.Time.IFR}}</td>
+                        <td>{{$value.Time.PIC}}</td>
+                        <td>{{$value.Time.CoPilot}}</td>
+                        <td>{{$value.Time.Dual}}</td>
+                        <td>{{$value.Time.Instructor}}</td>
+                        <td>{{$value.SIM.Time}}</td>
+                        <td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>
+                        <td><strong>{{$value.Time.Total}}</strong></td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
 
-                    <img src="/stats/map" class="img-fluid" id="map">
-                    <br>
+        </div>
+
+        <div class="tab-pane fade" id="nav-totals-by-type" role="tabpanel" aria-labelledby="nav-totals-by-type">
+
+            <br>
+            <table id="totals_by_year" class="table table-sm table-striped table-bordered nowrap">
+                <thead>
+                    <tr class="align-top text-center">
+                        <th>Aircraft</th>
+                        <th>SE</th>
+                        <th>ME</th>
+                        <th>MCC</th>
+                        <th>Night</th>
+                        <th>IFR</th>
+                        <th>PIC</th>
+                        <th>CoP</th>
+                        <th>Dual</th>
+                        <th>Instr</th>
+                        <th>Sim</th>
+                        <th>Landings</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $key, $value := $totalsByAircraft}}
+                    <tr>
+                        <td><strong>{{$key}}</strong></td>
+                        <td>{{$value.Time.SE}}</td>
+                        <td>{{$value.Time.ME}}</td>
+                        <td>{{$value.Time.MCC}}</td>
+                        <td>{{$value.Time.Night}}</td>
+                        <td>{{$value.Time.IFR}}</td>
+                        <td>{{$value.Time.PIC}}</td>
+                        <td>{{$value.Time.CoPilot}}</td>
+                        <td>{{$value.Time.Dual}}</td>
+                        <td>{{$value.Time.Instructor}}</td>
+                        <td>{{$value.SIM.Time}}</td>
+                        <td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>
+                        <td><strong>{{if eq $key "SIM"}}{{$value.SIM.Time}}{{else}}{{$value.Time.Total}}{{end}}</strong></td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="tab-pane fade" id="nav-routes" role="tabpanel" aria-labelledby="nav-routes">
+
+            <br>
+
+            <div class="row">
+            <div class="col-sm-2">
+            <form name="filters" id="filters" class="d-block" autocomplete="off">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="filter_date" name="filter_date" value="" placeholder="Date Filter">
+                </div>
+                <div class="mb-3">
+                    <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
+                    <label class="form-check-label" for="filter_noroutes">No Routes</label>
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
+                </div>
+            </form>
 
             </div>
+            <div class="col">
+
+            <img src="/stats/map" class="img-fluid" id="map">
+
+            </div>
+            </div>
+
         </div>
     </div>
 
@@ -239,6 +246,16 @@ Stats
 
 {{ define "js" }}
 <script>
+    var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+    triggerTabList.forEach(function (triggerEl) {
+    var tabTrigger = new bootstrap.Tab(triggerEl)
+
+    triggerEl.addEventListener('click', function (event) {
+        event.preventDefault()
+        tabTrigger.show()
+    })
+    })
+
     function Refresh() {
         let filter_date = document.getElementById("filter_date").value;
         let filter_noroutes = document.getElementById("filter_noroutes").checked;

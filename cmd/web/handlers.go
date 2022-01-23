@@ -606,6 +606,8 @@ func (app *application) HandlerStatsMap(w http.ResponseWriter, r *http.Request) 
 		FilterDate:     filterDate,
 		FilterNoRoutes: filterNoRoutes,
 		AirportsDB:     airports,
+		Width:          1280,
+		Height:         720,
 	}
 
 	err = render.Render()
