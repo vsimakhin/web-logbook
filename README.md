@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 1. Run `./web-logbook`
 1. Once you finished, use `Ctrl+C` or just close the terminal window
 
+# Supported operating systems
+
+Since it's written in golang it can run on any system if you compile the sources. For now in the `Release` page there are 2 binaries for linux amd64 and windows.
+
 # Interface
 
 ## Logbook
