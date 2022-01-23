@@ -29,6 +29,39 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 	return airport, nil
 }
 
+func (m *DBModel) GetAirports() (map[string]Airport, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	airports := make(map[string]Airport)
+	var airport Airport
+
+	rows, err := m.DB.QueryContext(ctx, `
+		SELECT
+			icao, iata, name, city,
+			country, elevation, lat, lon
+		FROM airports;`)
+
+	if err != nil {
+		return airports, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
+			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
+
+		if err != nil {
+			return airports, err
+		}
+
+		airports[airport.ICAO] = airport
+		airports[airport.IATA] = airport
+	}
+
+	return airports, nil
+}
+
 func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	var err error
 

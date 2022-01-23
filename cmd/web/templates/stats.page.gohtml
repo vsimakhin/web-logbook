@@ -14,7 +14,7 @@ Stats
     <div class="row">
         <div class="col-xl-6">
             <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-table me-1"></i>Totals by Year</div>
+                <div class="card-header"><i class="fas fa-table me-1"></i>Totals</div>
                 <div class="card-body">
                 <table id="totals" class="table table-sm table-striped table-bordered nowrap">
                         <thead>
@@ -115,10 +115,9 @@ Stats
                     </table>
                 </div>
             </div>
-        </div>
-         <div class="col-xl-6">
+
             <div class="card mb-4">
-                <div class="card-header"><i class="fas fa-table me-1"></i>Totals</div>
+                <div class="card-header"><i class="fas fa-table me-1"></i>Totals by Year</div>
                 <div class="card-body">
                     <table id="totals_by_year" class="table table-sm table-striped table-bordered nowrap">
                         <thead>
@@ -161,12 +160,48 @@ Stats
                 </div>
             </div>
         </div>
+
+         <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-map me-1"></i>Routes</div>
+                <div class="card-body">
+
+                    <form action="#" method="post" name="filters" id="filters" class="d-block" autocomplete="off">
+                        <div class="row">
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="filter_date" name="filter_date" value="" placeholder="Date Filter">
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
+                                <label class="form-check-label" for="filter_noroutes">No Routes</label>
+                            </div>
+                            <div class="col-auto float-right">
+                                <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
+                            </div>
+                        </div>
+                    </form>
+                    <br>
+
+                    <img src="/stats/map" class="img-fluid" id="map">
+                    <br>
+
+            </div>
+        </div>
     </div>
 
 {{ end }}
 
 {{ define "js" }}
 <script>
+    function Refresh() {
+        let filter_date = document.getElementById("filter_date").value;
+        let filter_noroutes = document.getElementById("filter_noroutes").checked;
+        let img = document.getElementById("map")
 
+        url = "/stats/map?filter_date=" + encodeURIComponent(filter_date) + "&filter_noroutes=" + encodeURIComponent(filter_noroutes);
+
+        map.src = url;
+        console.log(url);
+    }
 </script>
 {{ end }}

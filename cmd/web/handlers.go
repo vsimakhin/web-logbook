@@ -4,13 +4,16 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"image/png"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/vsimakhin/web-logbook/internal/maprender"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/pdfexport"
 )
@@ -472,4 +475,39 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "stats", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
+}
+
+func (app *application) HandlerStatsMap(w http.ResponseWriter, r *http.Request) {
+	filterDate := r.URL.Query().Get("filter_date")
+	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
+
+	flightRecords, err := app.db.GetFlightRecords()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	airports, err := app.db.GetAirports()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	render := maprender.MapRender{
+		FlightRecords:  flightRecords,
+		FilterDate:     filterDate,
+		FilterNoRoutes: filterNoRoutes,
+		AirportsDB:     airports,
+	}
+
+	err = render.Render()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	png.Encode(w, render.Img)
 }
