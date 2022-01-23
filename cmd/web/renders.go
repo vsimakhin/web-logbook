@@ -9,16 +9,8 @@ import (
 )
 
 type templateData struct {
-	StringMap map[string]string
-	IntMap    map[string]int
-	FloatMap  map[string]float32
-	Data      map[string]interface{}
-	CRFToken  string
-	Flash     string
-	Warning   string
-	Error     string
-	IsAuth    int
-	API       string
+	Data map[string]interface{}
+	API  string
 }
 
 var functions = template.FuncMap{

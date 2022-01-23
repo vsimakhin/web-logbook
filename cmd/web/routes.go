@@ -32,6 +32,7 @@ func (app *application) routes() http.Handler {
 	server.Post("/settings", app.HandlerSettingsSave)
 
 	// stats
+	server.Get("/stats", app.HandlerStats)
 
 	// other stuff
 	server.Handle("/static/*", app.HandlerStatic())

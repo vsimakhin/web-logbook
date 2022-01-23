@@ -4,8 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"io"
-	"strings"
-	"time"
 
 	"github.com/jung-kurt/gofpdf"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -40,60 +38,6 @@ type Logbook struct {
 	totalPage     models.FlightRecord
 	totalPrevious models.FlightRecord
 	totalTime     models.FlightRecord
-}
-
-// atod converts formatted string to time.Duration
-func atod(value string) time.Duration {
-	strTime := value
-
-	if strTime == "" {
-		strTime = "0:0"
-	}
-
-	strTime = fmt.Sprintf("%sm", strings.ReplaceAll(strTime, ":", "h"))
-
-	duration, err := time.ParseDuration(strTime)
-	if err != nil {
-		fmt.Printf("Error parsing time %s", strTime)
-		duration, _ = time.ParseDuration("0h0m")
-	}
-
-	return duration
-}
-
-// dtoa converts time.Duration to formatted string
-func dtoa(value time.Duration) string {
-
-	d := value.Round(time.Minute)
-	h := d / time.Hour
-	d -= h * time.Hour
-	m := d / time.Minute
-
-	if h == 0 && m == 0 {
-		return "0:00"
-	} else {
-		return fmt.Sprintf("%01d:%02d", h, m)
-	}
-}
-
-// calculateTotals calculates totals for page footer
-func calculateTotals(totals models.FlightRecord, record models.FlightRecord) models.FlightRecord {
-
-	totals.Time.SE = dtoa(atod(totals.Time.SE) + atod(record.Time.SE))
-	totals.Time.ME = dtoa(atod(totals.Time.ME) + atod(record.Time.ME))
-	totals.Time.MCC = dtoa(atod(totals.Time.MCC) + atod(record.Time.MCC))
-	totals.Time.Night = dtoa(atod(totals.Time.Night) + atod(record.Time.Night))
-	totals.Time.IFR = dtoa(atod(totals.Time.IFR) + atod(record.Time.IFR))
-	totals.Time.PIC = dtoa(atod(totals.Time.PIC) + atod(record.Time.PIC))
-	totals.Time.CoPilot = dtoa(atod(totals.Time.CoPilot) + atod(record.Time.CoPilot))
-	totals.Time.Dual = dtoa(atod(totals.Time.Dual) + atod(record.Time.Dual))
-	totals.Time.Instructor = dtoa(atod(totals.Time.Instructor) + atod(record.Time.Instructor))
-	totals.Time.Total = dtoa(atod(totals.Time.Total) + atod(record.Time.Total))
-	totals.SIM.Time = dtoa(atod(totals.SIM.Time) + atod(record.SIM.Time))
-	totals.Landings.Day += record.Landings.Day
-	totals.Landings.Night += record.Landings.Night
-
-	return totals
 }
 
 // printLogbookHeader prints header
@@ -292,8 +236,8 @@ func (l *Logbook) Export(flightRecords []models.FlightRecord, w io.Writer) {
 
 		record := flightRecords[item]
 
-		l.totalPage = calculateTotals(l.totalPage, record)
-		l.totalTime = calculateTotals(l.totalTime, record)
+		l.totalPage = models.CalculateTotals(l.totalPage, record)
+		l.totalTime = models.CalculateTotals(l.totalTime, record)
 
 		l.printLogbookBody(record, fill)
 
