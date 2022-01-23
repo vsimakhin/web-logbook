@@ -8,6 +8,14 @@ Once you start the app it automatically creates a sqlite local db and start list
 
 You also can easily export all flight records into EASA style pdf format, print it, sign and use as a usual paper logbook.
 
+# Usage
+
+1. Download the latest release from https://github.com/vsimakhin/web-logbook/releases
+1. Extract archive to some folder (let's say it will be a `/some/path/folder-name`)
+1. Open a terminal and navigate to this folder
+1. Run `./web-logbook`
+1. Once you finished, use `Ctrl+C` or just close the terminal window
+
 # Interface
 
 ## Logbook
