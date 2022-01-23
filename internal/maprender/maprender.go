@@ -20,6 +20,7 @@ type MapRender struct {
 	Img image.Image
 }
 
+// Render renders map with airport and routes markers
 func (mr *MapRender) Render() error {
 	airportMarkers := make(map[string]struct{})
 	routeLines := make(map[string]struct{})

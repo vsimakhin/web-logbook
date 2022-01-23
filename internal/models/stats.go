@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// GetTotals calculates totals
 func (m *DBModel) GetTotals(days int) (FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -59,6 +60,7 @@ func (m *DBModel) GetTotals(days int) (FlightRecord, error) {
 
 }
 
+// GetTotalsByYear calculates totals by year
 func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -95,9 +97,54 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 		}
 
 		totals[fr.MDate] = CalculateTotals(totals[fr.MDate], fr)
-
 	}
 
 	return totals, nil
+}
 
+// GetTotalsByAircraftType calculates totals by aircraft type
+func (m *DBModel) GetTotalsByAircraftType() (map[string]FlightRecord, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var fr, emptyone FlightRecord
+	totals := make(map[string]FlightRecord)
+
+	rows, err := m.DB.QueryContext(ctx, `
+		SELECT
+			aircraft_model, se_time, me_time, mcc_time, total_time,
+			day_landings, night_landings,
+			night_time, ifr_time, pic_time, co_pilot_time,
+			dual_time, instructor_time, sim_time
+		FROM logbook_view
+		ORDER BY m_date;`)
+
+	if err != nil {
+		return totals, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+			&fr.Landings.Day, &fr.Landings.Night,
+			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
+			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time)
+
+		if err != nil {
+			return totals, err
+		}
+
+		if fr.Aircraft.Model == "" {
+			// looks like it's a simulator record
+			fr.Aircraft.Model = "SIM"
+		}
+
+		if _, ok := totals[fr.Aircraft.Model]; !ok {
+			totals[fr.Aircraft.Model] = emptyone
+		}
+
+		totals[fr.Aircraft.Model] = CalculateTotals(totals[fr.Aircraft.Model], fr)
+	}
+
+	return totals, nil
 }

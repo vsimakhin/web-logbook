@@ -45,12 +45,18 @@ func (app *application) serve() error {
 func main() {
 	var cfg config
 	var err error
+	var isPrintVersion bool
 
 	flag.IntVar(&cfg.port, "port", 4000, "Server port")
-	flag.StringVar(&cfg.env, "env", "dev", "Environment {dev|prod}")
+	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "SQLite file name")
-
+	flag.BoolVar(&isPrintVersion, "version", false, "Prints current version")
 	flag.Parse()
+
+	if isPrintVersion {
+		fmt.Printf("Web-logbook Version %s\n", version)
+		os.Exit(0)
+	}
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)

@@ -10,6 +10,7 @@ Stats
     {{$totals90 := index .Data "totals90"}}
     {{$totalsY := index .Data "totalsY"}}
     {{$totalsByYear := index .Data "totalsByYear"}}
+    {{$totalsByAircraft := index .Data "totalsByAircraft"}}
 
     <div class="row">
         <div class="col-xl-6">
@@ -159,6 +160,51 @@ Stats
                     </table>
                 </div>
             </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-table me-1"></i>Totals by Aircraft Type</div>
+                <div class="card-body">
+                    <table id="totals_by_year" class="table table-sm table-striped table-bordered nowrap">
+                        <thead>
+                            <tr class="align-top text-center">
+                                <th>Aircraft</th>
+                                <th>SE</th>
+                                <th>ME</th>
+                                <th>MCC</th>
+                                <th>Night</th>
+                                <th>IFR</th>
+                                <th>PIC</th>
+                                <th>CoP</th>
+                                <th>Dual</th>
+                                <th>Instr</th>
+                                <th>Sim</th>
+                                <th>Landings</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range $key, $value := $totalsByAircraft}}
+                            <tr>
+                                <td>{{$key}}</td>
+                                <td>{{$value.Time.SE}}</td>
+                                <td>{{$value.Time.ME}}</td>
+                                <td>{{$value.Time.MCC}}</td>
+                                <td>{{$value.Time.Night}}</td>
+                                <td>{{$value.Time.IFR}}</td>
+                                <td>{{$value.Time.PIC}}</td>
+                                <td>{{$value.Time.CoPilot}}</td>
+                                <td>{{$value.Time.Dual}}</td>
+                                <td>{{$value.Time.Instructor}}</td>
+                                <td>{{$value.SIM.Time}}</td>
+                                <td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>
+                                <td><strong>{{if eq $key "SIM"}}{{$value.SIM.Time}}{{else}}{{$value.Time.Total}}{{end}}</strong></td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
          <div class="col-xl-6">

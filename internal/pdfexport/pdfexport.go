@@ -142,7 +142,6 @@ func (l *Logbook) printLogbookFooter() {
 	printTotal("TOTAL THIS PAGE", l.totalPage)
 	printTotal("TOTAL FROM PREVIOUS PAGES", l.totalPrevious)
 	printTotal("TOTAL TIME", l.totalTime)
-
 }
 
 func formatLandings(landing int) string {
@@ -209,11 +208,10 @@ func (l *Logbook) loadFonts() {
 
 	fontBoldBytes, _ := content.ReadFile("font/LiberationSansNarrow-Bold.ttf")
 	l.pdf.AddUTF8FontFromBytes("LiberationSansNarrow-Bold", "", fontBoldBytes)
-
 }
 
 // Export creates pdf with logbook in EASA format
-func (l *Logbook) Export(flightRecords []models.FlightRecord, w io.Writer) {
+func (l *Logbook) Export(flightRecords []models.FlightRecord, w io.Writer) error {
 
 	// start forming the pdf file
 	l.pdf = gofpdf.New("L", "mm", "A4", "")
@@ -286,5 +284,7 @@ func (l *Logbook) Export(flightRecords []models.FlightRecord, w io.Writer) {
 	l.pdf.SetY(l.pdf.GetY() - 1)
 	l.pdf.CellFormat(0, 10, fmt.Sprintf("page %d", pageCounter), "", 0, "L", false, 0, "")
 
-	l.pdf.Output(w)
+	err := l.pdf.Output(w)
+
+	return err
 }

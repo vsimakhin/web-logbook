@@ -29,6 +29,7 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 	return airport, nil
 }
 
+// GetAirports generates Airports DB for rendering maps
 func (m *DBModel) GetAirports() (map[string]Airport, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -62,6 +63,7 @@ func (m *DBModel) GetAirports() (map[string]Airport, error) {
 	return airports, nil
 }
 
+// UpdateAirportDB updates airports table
 func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	var err error
 
@@ -70,6 +72,7 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 
 	records := 0
 
+	// drop index since we completely recreate all records in the table
 	_, err = m.DB.ExecContext(ctx, `DROP INDEX airports_icao;`)
 	if err != nil {
 		return records, err
@@ -80,6 +83,7 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 		return records, err
 	}
 
+	// let's make it in transaction
 	_, err = m.DB.ExecContext(ctx, `BEGIN TRANSACTION;`)
 	if err != nil {
 		return records, err
@@ -102,11 +106,13 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 		}
 	}
 
+	// end transaction
 	_, err = m.DB.ExecContext(ctx, `COMMIT;`)
 	if err != nil {
 		return records, err
 	}
 
+	// finally new fresh index
 	_, err = m.DB.ExecContext(ctx, `CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);`)
 	if err != nil {
 		return records, err
@@ -120,6 +126,7 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	return records, err
 }
 
+// GetAirportCount returns amount of records in the airports table
 func (m *DBModel) GetAirportCount() (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

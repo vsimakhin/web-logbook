@@ -65,6 +65,7 @@ type Airport struct {
 	Lon       float64 `json:"lon"`
 }
 
+// Settings is a type for settings
 type Settings struct {
 	ID            int    `json:"id"`
 	OwnerName     string `json:"owner_name"`
