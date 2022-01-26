@@ -233,6 +233,9 @@ func (l *Logbook) Export(flightRecords []models.FlightRecord, w io.Writer) error
 		rowCounter += 1
 
 		record := flightRecords[item]
+		if record.Time.MCC != "" {
+			record.Time.ME = ""
+		}
 
 		l.totalPage = models.CalculateTotals(l.totalPage, record)
 		l.totalTime = models.CalculateTotals(l.totalTime, record)
