@@ -184,7 +184,7 @@ func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks
 		FROM logbook_view
-		ORDER BY m_date desc`)
+		ORDER BY m_date desc, departure_time desc`)
 
 	if err != nil {
 		return flightRecords, err
