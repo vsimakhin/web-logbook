@@ -36,8 +36,8 @@ build_all: clean
 			GOOS=$$OS \
 			GOARCH=$$ARCH \
 			go build \
-			-o=$(BIN)/$(BINARY_NAME)-$$OS-$$ARCH/web-logbook ./cmd/web; \
-			[ $$OS = "windows" ] && (cd $(BIN); zip -r $(BINARY_NAME)-$$OS-$$ARCH.zip $(BINARY_NAME)-$$OS-$$ARCH; cd ../) \
+			-o=$(BIN)/$(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) ./cmd/web; \
+			[ $$OS = "windows" ] && (cd $(BIN); mv $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME).exe; zip -r $(BINARY_NAME)-$$OS-$$ARCH.zip $(BINARY_NAME)-$$OS-$$ARCH; cd ../) \
 				|| (cd $(BIN); tar czf $(BINARY_NAME)-$$OS-$$ARCH.tar.gz $(BINARY_NAME)-$$OS-$$ARCH; cd ../) ;\
 		done ; \
 	done
