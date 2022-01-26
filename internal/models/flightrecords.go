@@ -184,7 +184,7 @@ func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks
 		FROM logbook_view
-		ORDER BY m_date desc`)
+		ORDER BY m_date desc, departure_time desc`)
 
 	if err != nil {
 		return flightRecords, err
@@ -216,11 +216,13 @@ func (m *DBModel) GetAircraftRegs() ([]string, error) {
 	var allRegs []string
 
 	rows, err := m.DB.QueryContext(ctx, `
-		SELECT
-			reg_name
-		FROM logbook_view
+		SELECT reg_name
+		FROM
+			(SELECT reg_name
+			FROM logbook_view
+			ORDER BY m_date DESC LIMIT 300)
 		GROUP BY reg_name
-		ORDER BY reg_name`)
+		ORDER BY reg_name;`)
 
 	if err != nil {
 		return allRegs, err
@@ -248,11 +250,13 @@ func (m *DBModel) GetAircraftModels() ([]string, error) {
 	var allModels []string
 
 	rows, err := m.DB.QueryContext(ctx, `
-		SELECT
-			aircraft_model
-		FROM logbook_view
+		SELECT aircraft_model
+		FROM
+			(SELECT aircraft_model
+			FROM logbook_view
+			ORDER BY m_date DESC LIMIT 300)
 		GROUP BY aircraft_model
-		ORDER BY aircraft_model`)
+		ORDER BY aircraft_model;`)
 
 	if err != nil {
 		return allModels, err
