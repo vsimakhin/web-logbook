@@ -1,8 +1,8 @@
 # Web-logbook
 
-This is EASA style logbook local web app written in golang.
+This is a simple EASA style logbook local web app written in golang.
 
-You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the releases.
+You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
 
 Once you start the app it automatically creates a sqlite local db and start listening on a port 4000 by default. So you can open it in your standard web-browser on http://localhost:4000
 
@@ -11,10 +11,17 @@ You also can easily export all flight records into EASA style pdf format, print 
 # Usage
 
 1. Download the latest release from https://github.com/vsimakhin/web-logbook/releases
-1. Extract archive to some folder (let's say it will be a `/some/path/folder-name`)
-1. Open a terminal and navigate to this folder
-1. Run `./web-logbook`
-1. Once you finished, use `Ctrl+C` or just close the terminal window
+1. Extract archive to some folder/directory
+1. Run: 
+  * Windows:
+    * Double click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (need to solve it later), but just run it.
+  * Linux:
+    * Open a terminal and navigate to the directory
+    * Run `./web-logbook`
+  * MacOS:
+    * *I still didn't test it for the MacOS, so the binaries will be added later*
+4. Open your browser and type http://localhost:4000
+5. Once you finished, use `Ctrl+C` or just close the terminal window
 
 # Supported operating systems
 
@@ -44,4 +51,12 @@ Since it's written in golang it can run on any system if you compile the sources
 
 
 ![Map](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats-map.png)
+
+# Used libraries
+
+* Bootstrap https://getbootstrap.com/
+* Datatables https://datatables.net/
+* Openlayers https://openlayers.org/
+* Golang gofpdf https://github.com/jung-kurt/gofpdf
+* Golang chi web-server https://github.com/go-chi/chi
 
