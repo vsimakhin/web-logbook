@@ -4,6 +4,10 @@
 Logbook
 {{ end }}
 
+{{ define "css" }}
+    <link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>
+{{ end }}
+
 {{ define "content" }}
     <table id="logbook" class="table table-sm table-striped table-bordered nowrap table-fixed">
         <thead>
@@ -55,6 +59,7 @@ Logbook
 {{ end }}
 
 {{ define "js" }}
+<script type="text/javascript" src="/static/js/datatables.min.js"></script>
 <script>
     $(document).ready( function () {
         $('#logbook').DataTable({

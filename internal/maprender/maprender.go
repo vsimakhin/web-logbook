@@ -2,14 +2,19 @@ package maprender
 
 import (
 	"fmt"
-	"image"
-	"image/color"
 	"strings"
 
-	sm "github.com/flopp/go-staticmaps"
-	"github.com/golang/geo/s2"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
+
+type Line struct {
+	Point1 []float64 `json:"point1"`
+	Point2 []float64 `json:"point2"`
+}
+
+type Marker struct {
+	Point []float64 `json:"point"`
+}
 
 type MapRender struct {
 	FlightRecords  []models.FlightRecord
@@ -17,17 +22,14 @@ type MapRender struct {
 	FilterNoRoutes bool   `json:"filter_noroutes"`
 	AirportsDB     map[string]models.Airport
 
-	Width  int
-	Height int
-
-	Img image.Image
+	Lines   []Line
+	Markers []Marker
 }
 
 // Render renders map with airport and routes markers
-func (mr *MapRender) Render() error {
+func (mr *MapRender) Render() {
 	airportMarkers := make(map[string]struct{})
 	routeLines := make(map[string]struct{})
-	var err error
 
 	// parsing
 	for _, fr := range mr.FlightRecords {
@@ -49,9 +51,6 @@ func (mr *MapRender) Render() error {
 		}
 	}
 
-	ctx := sm.NewContext()
-	ctx.SetSize(mr.Width, mr.Height)
-
 	// generate routes lines
 	for route := range routeLines {
 		places := strings.Split(route, "-")
@@ -59,15 +58,7 @@ func (mr *MapRender) Render() error {
 		if airport1, ok := mr.AirportsDB[places[0]]; ok {
 			if airport2, ok := mr.AirportsDB[places[1]]; ok {
 
-				ctx.AddObject(
-					sm.NewPath(
-						[]s2.LatLng{
-							s2.LatLngFromDegrees(airport1.Lat, airport1.Lon),
-							s2.LatLngFromDegrees(airport2.Lat, airport2.Lon),
-						},
-						color.Black,
-						0.5),
-				)
+				mr.Lines = append(mr.Lines, Line{Point1: []float64{airport1.Lon, airport1.Lat}, Point2: []float64{airport2.Lon, airport2.Lat}})
 			}
 		}
 	}
@@ -75,20 +66,7 @@ func (mr *MapRender) Render() error {
 	// generate airports markers
 	for place := range airportMarkers {
 		if airport, ok := mr.AirportsDB[place]; ok {
-			ctx.AddObject(
-				sm.NewMarker(
-					s2.LatLngFromDegrees(airport.Lat, airport.Lon),
-					color.RGBA{0xff, 0, 0, 0xff},
-					16.0,
-				),
-			)
+			mr.Markers = append(mr.Markers, Marker{[]float64{airport.Lon, airport.Lat}})
 		}
 	}
-
-	mr.Img, err = ctx.Render()
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -1,0 +1,181 @@
+{{ template "base" .}}
+
+{{ define "title" }}
+Maps
+{{ end }}
+
+{{ define "css" }}
+    <link rel="stylesheet" href="/static/css/ol.css">
+    <style>
+    .ol-map {
+        height: 800px;
+        width: 100%;
+    }
+    </style>
+{{ end }}
+
+{{ define "content" }}
+            <br>
+
+            <div class="row">
+            <div class="col-sm-2">
+            <form name="filters" id="filters" class="d-block" autocomplete="off">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="filter_date" name="filter_date" value="" placeholder="Date Filter">
+                </div>
+                <div class="mb-3">
+                    <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
+                    <label class="form-check-label" for="filter_noroutes">No Routes</label>
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
+                </div>
+            </form>
+
+            </div>
+            <div class="col">
+
+            <div id="map" class="ol-map"></div>
+
+            </div>
+            </div>
+
+{{ end }}
+
+{{ define "js" }}
+{{$lines := index .Data "lines"}}
+{{$markers := index .Data "markers"}}
+
+<script src="/static/js/ol.js"></script>
+
+<script>
+    function loadJSON(url) {
+        var json = null;
+        $.ajax({
+            'async': false,
+            'global': false,
+            'url': url,
+            'dataType': "json",
+            'success': function (data) {
+                json = data;
+            }
+        });
+        if (json) {
+            return json;
+        } else {
+            return [];
+        };
+    };
+
+    function loadMap(parameters) {
+        document.getElementById("map").innerText = "";
+
+        var lines = loadJSON("/map/lines"+parameters);
+
+        /* generate a map */
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([14.2588996887, 50.3246994019]),
+                zoom: 5
+            })
+        });
+
+        /* generate line points */
+        var points = [];
+        for (var x = 0; x < lines.length; x++) {
+            points.push([lines[x]["point1"], lines[x]["point2"]]);
+        }
+
+        /* drawing routes... */
+        var vectorLine = new ol.source.Vector({});
+
+        for (var x = 0; x < points.length; x++) {
+            for (var i = 0; i < points[x].length; i++) {
+                points[x][i] = ol.proj.transform(points[x][i], 'EPSG:4326', 'EPSG:3857');
+            }
+
+            var featureLine = new ol.Feature({
+                geometry: new ol.geom.LineString(points[x])
+            });
+
+            vectorLine.addFeature(featureLine);
+        }
+
+        var vectorLineLayer = new ol.layer.Vector({
+            source: vectorLine,
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({ color: '#555555', weight: 0.4 }),
+                stroke: new ol.style.Stroke({ color: '#555555', width: 1 })
+            })
+        });
+
+        /* drawing markers */
+        var markers = loadJSON("/map/markers"+parameters);
+
+        var points = [];
+        for (var x = 0; x < markers.length; x++) {
+            points.push(markers[x]["point"]);
+        }
+
+        var vectorMarker = new ol.source.Vector({});
+        var iconStyle = new ol.style.Style({
+            image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+                src: "/static/favicon.ico"
+            }))
+        })
+
+
+        for (var x = 0; x < points.length; x++) {
+            var featureMarker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(points[x])),
+                desc: "/static/favicon.ico"
+            });
+
+            featureMarker.setStyle(iconStyle);
+            vectorMarker.addFeature(featureMarker);
+        }
+
+
+        var vectorMarkerLayer = new ol.layer.Vector({
+            source: vectorMarker,
+        });
+
+
+        map.addLayer(vectorLineLayer);
+        map.addLayer(vectorMarkerLayer);
+
+        map.renderSync();
+    }
+
+    loadMap("");
+</script>
+
+<script>
+    var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+    triggerTabList.forEach(function (triggerEl) {
+    var tabTrigger = new bootstrap.Tab(triggerEl)
+
+    triggerEl.addEventListener('click', function (event) {
+        event.preventDefault()
+        tabTrigger.show()
+    })
+    })
+</script>
+
+<script>
+    function Refresh() {
+        let filter_date = document.getElementById("filter_date").value;
+        let filter_noroutes = document.getElementById("filter_noroutes").checked;
+
+        parameters = "?filter_date=" + encodeURIComponent(filter_date) + "&filter_noroutes=" + encodeURIComponent(filter_noroutes);
+
+        loadMap(parameters)
+    }
+</script>
+{{ end }}
