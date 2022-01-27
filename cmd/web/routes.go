@@ -33,7 +33,11 @@ func (app *application) routes() http.Handler {
 
 	// stats
 	server.Get("/stats", app.HandlerStats)
-	server.Get("/stats/map", app.HandlerStatsMap)
+
+	// map
+	server.Get("/map", app.HandlerMap)
+	server.Get("/map/lines", app.HandlerMapLines)
+	server.Get("/map/markers", app.HandlerMapMarkers)
 
 	// other stuff
 	server.Handle("/static/*", app.HandlerStatic())
