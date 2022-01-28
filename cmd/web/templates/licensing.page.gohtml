@@ -1,0 +1,69 @@
+{{ template "base" .}}
+
+{{ define "title" }}
+Licensing & Certification
+{{ end }}
+
+{{ define "css" }}
+    <link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>
+{{ end }}
+
+{{ define "content" }}
+    <table id="logbook" class="table table-sm table-bordered nowrap table-fixed">
+        <thead>
+            <tr class="align-top text-center">
+                <th>Category</th>
+                <th>Name</th>
+                <th>Number</th>
+                <th>Issued</th>
+                <th>Valid from</th>
+                <th>Valid until</th>
+                <th>Expire</th>
+                <th>Document</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <a id="new-license" href="/licensing/new" class="btn btn-primary" onclick="">Add New License</a>
+{{ end }}
+
+{{ define "js" }}
+<script type="text/javascript" src="/static/js/datatables.min.js"></script>
+<script>
+    $(document).ready( function () {
+        var groupColumn = 0;
+        var table = $('#logbook').DataTable({
+            "columnDefs": [
+                { "visible": false, "targets": groupColumn }
+            ],
+            "ordering": false,
+            "info":     false,
+            "ajax": '/licensing/data',
+            "lengthMenu": [[15, 50, -1], [15, 50, "All"]],
+            "drawCallback": function ( settings ) {
+                var api = this.api();
+                var rows = api.rows( {page:'current'} ).nodes();
+                var last=null;
+
+                api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+                    if ( last !== group ) {
+                        $(rows).eq( i ).before(
+                            '<tr class="group"><td colspan="8" class="table-secondary">'+group+'</td></tr>'
+                        );
+
+                        last = group;
+                    }
+                } );
+            },
+            "rowCallback": function(row, data, index){
+                if(data[6] === 'Expired!'){
+                    $("td:nth-child(6)", row).addClass("text-danger");
+                }
+            }
+        } );
+
+    } );
+</script>
+{{ end }}

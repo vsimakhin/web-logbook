@@ -190,7 +190,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 
         <button class="btn btn-primary" type="button" onclick="validate()" id="save">Save</button>
         <div class="float-end">
-            <a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>
+            {{if $fr.UUID}}<a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>{{end}}
         </div>
 
     </form>

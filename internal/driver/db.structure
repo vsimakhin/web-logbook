@@ -57,4 +57,17 @@ CREATE TABLE IF NOT EXISTS settings (
     page_breaks TEXT
 );
 
+/* licengins */
+CREATE TABLE IF NOT EXISTS licensing (
+    uuid TEXT PRIMARY_KEY,
+    category TEXT,
+    name TEXT,
+    number TEXT,
+    issued TEXT,
+    valid_from TEXT,
+    valid_until TEXT,
+    document_name TEXT,
+    document BLOB
+);
+
 VACUUM;

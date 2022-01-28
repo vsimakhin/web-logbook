@@ -72,3 +72,16 @@ type Settings struct {
 	SignatureText string `json:"signature_text"`
 	PageBreaks    string `json:"page_breaks"`
 }
+
+// License is a type for licesing
+type License struct {
+	UUID         string `json:"uuid"`
+	Category     string `json:"category"`
+	Name         string `json:"name"`
+	Number       string `json:"number"`
+	Issued       string `json:"issued"`
+	ValidFrom    string `json:"valid_from"`
+	ValidUntil   string `json:"valid_until"`
+	DocumentName string `json:"document_name"`
+	Document     []byte
+}
