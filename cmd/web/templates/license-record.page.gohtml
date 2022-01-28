@@ -1,0 +1,241 @@
+{{ template "base" .}}
+
+{{ define "title" }}
+    {{$lic := index .Data "license"}}
+
+License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
+{{ end }}
+
+{{ define "content" }}
+    {{$lic := index .Data "license"}}
+    {{$categories := index .Data "categories"}}
+
+    <form action="/licensing/{{$lic.UUID}}" method="post" name="licensing" id="licensing"
+        class="d-block" autocomplete="off" novalidate="" enctype="multipart/form-data">
+
+        <div class="mb-3 row">
+            <div class="col-md-2">
+                <label for="category" class="form-label">Category</label>
+                <input class="form-control" id="category" name="category" value="{{$lic.Category}}"
+                    required="true" autocomplete="category" list="category_options">
+                <datalist id="category_options">
+                {{ range $categories}}
+                <option value="{{.}}">
+                {{ end}}
+                </datalist>
+            </div>
+            <div class="col-md-2">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{$lic.Name}}"
+                    required="true" autocomplete="date" placeholder="Document name">
+            </div>
+            <div class="col-md-2">
+                <label for="number" class="form-label">Number</label>
+                <input type="text" class="form-control" id="number" name="number" value="{{$lic.Number}}"
+                    required="" autocomplete="number" placeholder="Number">
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-md-2">
+                <label for="issued" class="form-label">Issued</label>
+                <input type="text" class="form-control" id="issued" name="issued" value="{{$lic.Issued}}"
+                    required="" autocomplete="issued" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="col-md-2">
+                <label for="valid_from" class="form-label">Valid From</label>
+                <input type="text" class="form-control" id="valid_from" name="valid_from" value="{{$lic.ValidFrom}}"
+                    required="" autocomplete="valid_from" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="col-md-2">
+                <label for="valid_until" class="form-label">Valid Until</label>
+                <input type="text" class="form-control" id="valid_until" name="valid_until" value="{{$lic.ValidUntil}}"
+                    required="" autocomplete="valid_until" placeholder="DD/MM/YYYY">
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-md-4">
+                <label for="document" class="form-label">Document</label>
+                <input type="file" class="form-control" id="document" name="document">
+            </div>
+            {{if $lic.DocumentName}}
+            <div class="col-md-2">
+                <label for="download" class="form-label">Download</label>
+                <div id="download"><a href='/licensing/download/{{$lic.UUID}}' target="_blank" class='link-primary'>{{$lic.DocumentName}}</a></div>
+            </div>
+            {{end}}
+        </div>
+
+        <input type="hidden" name="uuid" id="uuid" value="{{if $lic.UUID}}{{$lic.UUID}}{{end}}">
+        <div class="mb-3 row">
+            <div class="col">
+                <div class="alert-danger text-center d-none" id="info" role="alert"></div>
+            </div>
+        </div>
+        <hr>
+
+        <button class="btn btn-primary" type="button" onclick="validate()" id="save">Save</button>
+        <div class="float-end">
+            {{if $lic.UUID}}<a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>{{end}}
+        </div>
+
+    </form>
+
+    <!-- Modal -->
+    <div class="modal fade" id="delete-record" tabindex="-1" aria-labelledby="delete-record" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="delete">Delete Record?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete the record?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" onclick="Deletelicense()">Delete</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+{{ end }}
+
+{{ define "js" }}
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    let infoMsg = document.getElementById("info");
+
+    function validate() {
+
+        let isValid = true;
+        let errorMessage = "";
+
+        // validate category field
+        let category = document.getElementById("category");
+        if (!category.value) {
+            category.classList.add("is-invalid");
+            isValid = false
+            errorMessage = errorMessage + "Category cannot be empty\r\n";
+        } else {
+            category.classList.add("is-valid");
+        }
+
+        // validate name field
+        let name = document.getElementById("name");
+        if (!name.value) {
+            name.classList.add("is-invalid");
+            isValid = false
+            errorMessage = errorMessage + "Name cannot be empty\r\n";
+        } else {
+            name.classList.add("is-valid");
+        }
+
+        // valiudate departure and arrival time if they are not empty
+        if (!validateDate(document.getElementById("issued"))) {
+            isValid = false;
+            errorMessage = errorMessage + "Issued Date should be in DD/MM/YYYY format or empty\r\n";
+        }
+        if (!validateDate(document.getElementById("valid_from"))) {
+            isValid = false;
+            errorMessage = errorMessage + "Valid From should be in DD/MM/YYYY format or empty\r\n";
+        }
+        if (!validateDate(document.getElementById("valid_until"))) {
+            isValid = false;
+            errorMessage = errorMessage + "Valid Until should be in DD/MM/YYYY format or empty\r\n";
+        }
+
+        if (!isValid) {
+            showErrorMessage(errorMessage);
+            return;
+        }
+
+        showInfoMessage("OK!");
+
+        Savelicense();
+    }
+
+    function showErrorMessage(msg) {
+        infoMsg.classList.add("alert-danger");
+        infoMsg.classList.remove("alert-success");
+        infoMsg.classList.remove("d-none");
+        infoMsg.innerText = msg;
+    }
+
+    function showInfoMessage(msg) {
+        infoMsg.classList.remove("alert-danger");
+        infoMsg.classList.add("alert-success");
+        infoMsg.classList.remove("d-none");
+        infoMsg.innerText = msg;
+    }
+
+    function Savelicense() {
+        let payload = new FormData(licensing);
+
+        const requestOptions = {
+            method: 'post',
+            body: payload,
+        }
+
+        fetch("{{.API}}/licensing/save", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    showInfoMessage(data.message);
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    showErrorMessage(data.message);
+                }
+            })
+    }
+
+    function Deletelicense() {
+        let payload = {
+            uuid: document.getElementById("uuid").value
+        }
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        }
+
+        fetch("{{.API}}/licensing/delete", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    showInfoMessage(data.message);
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    showErrorMessage(data.message);
+                }
+            })
+    }
+
+    function validateDate(field) {
+        if (field.value !== "") {
+            if (!/^(0?[1-9]|[12][0-9]|3[01])[- /.]((0?[1-9]|1[012])[- /.](19|20)?[0-9]{2})*$/.test(field.value)) {
+                field.classList.add("is-invalid")
+                return false
+            } else {
+                field.classList.add("is-valid")
+            }
+        }
+
+        return true
+    }
+</script>
+{{ end }}

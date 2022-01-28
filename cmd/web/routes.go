@@ -39,6 +39,16 @@ func (app *application) routes() http.Handler {
 	server.Get("/map/lines", app.HandlerMapLines)
 	server.Get("/map/markers", app.HandlerMapMarkers)
 
+	// documents
+	server.Get("/licensing", app.HandlerLicensing)
+	server.Get("/licensing/data", app.HandlerLicensingRecordsData)
+	server.Get("/licensing/{uuid}", app.HandlerLicensingRecordByID)
+	server.Get("/licensing/new", app.HandlerLicensingRecordNew)
+	server.Get("/licensing/download/{uuid}", app.HandlerLicensingDownload)
+
+	server.Post("/licensing/save", app.HandlerLicensingRecordSave)
+	server.Post("/licensing/delete", app.HandlerLicensingRecordDelete)
+
 	// other stuff
 	server.Handle("/static/*", app.HandlerStatic())
 	server.HandleFunc("/favicon.ico", app.HandlerFavicon)
