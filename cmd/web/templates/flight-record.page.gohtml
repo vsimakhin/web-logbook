@@ -464,7 +464,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 hours = hours + 24;
             }
 
-            totalTime = (hours <= 9 ? "0" : "") + hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+            totalTime = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
             document.getElementById("total_time").value = totalTime
         }
     }
