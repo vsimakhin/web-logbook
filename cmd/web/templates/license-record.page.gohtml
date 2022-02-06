@@ -27,12 +27,12 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             <div class="col-md-2">
                 <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control" id="name" name="name" value="{{$lic.Name}}"
-                    required="true" autocomplete="date" placeholder="Document name">
+                    required="true" autocomplete="off" placeholder="Document name">
             </div>
             <div class="col-md-2">
                 <label for="number" class="form-label">Number</label>
                 <input type="text" class="form-control" id="number" name="number" value="{{$lic.Number}}"
-                    required="" autocomplete="number" placeholder="Number">
+                    required="" autocomplete="off" placeholder="Number">
             </div>
         </div>
 
@@ -40,17 +40,17 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             <div class="col-md-2">
                 <label for="issued" class="form-label">Issued</label>
                 <input type="text" class="form-control" id="issued" name="issued" value="{{$lic.Issued}}"
-                    required="" autocomplete="issued" placeholder="DD/MM/YYYY">
+                    required="" autocomplete="off" placeholder="DD/MM/YYYY">
             </div>
             <div class="col-md-2">
                 <label for="valid_from" class="form-label">Valid From</label>
                 <input type="text" class="form-control" id="valid_from" name="valid_from" value="{{$lic.ValidFrom}}"
-                    required="" autocomplete="valid_from" placeholder="DD/MM/YYYY">
+                    required="" autocomplete="off" placeholder="DD/MM/YYYY">
             </div>
             <div class="col-md-2">
                 <label for="valid_until" class="form-label">Valid Until</label>
                 <input type="text" class="form-control" id="valid_until" name="valid_until" value="{{$lic.ValidUntil}}"
-                    required="" autocomplete="valid_until" placeholder="DD/MM/YYYY">
+                    required="" autocomplete="off" placeholder="DD/MM/YYYY">
             </div>
         </div>
 

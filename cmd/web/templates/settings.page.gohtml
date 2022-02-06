@@ -15,7 +15,7 @@ Settings
             This name is printed in the logbook footer</label>
         <div class="col-md-3">
             <input type="text" class="form-control" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
-                required="true" autocomplete="owner_name" placeholder="Owner Name">
+                required="true" autocomplete="off" placeholder="Owner Name">
         </div>
         <br>
 
@@ -23,7 +23,7 @@ Settings
             This signature is printed in the logbook footer under signature</label>
         <div class="col-md-3">
             <input type="text" class="form-control" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
-                required="true" autocomplete="signature_text" placeholder="Signature text">
+                required="true" autocomplete="off" placeholder="Signature text">
         </div>
         <br>
 
@@ -32,7 +32,7 @@ Settings
             and it will start a new page count at <i>page_number1</i> and <i>page_number2</i>. Field can be empty in case you need just one logbook</label>
         <div class="col-md-3">
             <input type="text" class="form-control" id="page_breaks" name="page_breaks" value="{{$settings.PageBreaks}}"
-                required="true" autocomplete="page_breaks" placeholder="Page breaks">
+                required="true" autocomplete="off" placeholder="Page breaks">
         </div>
         <br>
 
@@ -41,7 +41,7 @@ Settings
             Click </i>Update Airport DB</i> to get the latest list of airports</label>
         <div class="col-md-3">
             <input type="text" class="form-control" id="airports" name="airports" value="{{$records}} airports"
-                required="false" autocomplete="airports" readonly>
+                required="false" readonly>
         </div>
         <br>
 
