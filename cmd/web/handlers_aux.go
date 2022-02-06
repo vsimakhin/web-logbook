@@ -18,12 +18,16 @@ func (app *application) HandlerFavicon(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) HandlerNotFound(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+
 	if err := app.renderTemplate(w, r, "notfound", nil); err != nil {
 		app.errorLog.Println(err)
 	}
 }
 
 func (app *application) HandlerNotAllowed(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusMethodNotAllowed)
+
 	if err := app.renderTemplate(w, r, "notallowed", nil); err != nil {
 		app.errorLog.Println(err)
 	}

@@ -215,14 +215,10 @@ func (m *DBModel) GetAircraftRegs() ([]string, error) {
 	var reg string
 	var allRegs []string
 
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT reg_name
-		FROM
-			(SELECT reg_name
-			FROM logbook_view
-			ORDER BY m_date DESC LIMIT 300)
-		GROUP BY reg_name
-		ORDER BY reg_name;`)
+	query := "SELECT reg_name " +
+		"FROM (SELECT reg_name FROM logbook_view ORDER BY m_date DESC LIMIT 300) " +
+		"GROUP BY reg_name	ORDER BY reg_name"
+	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
 		return allRegs, err
@@ -249,14 +245,10 @@ func (m *DBModel) GetAircraftModels() ([]string, error) {
 	var aircraftModel string
 	var allModels []string
 
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT aircraft_model
-		FROM
-			(SELECT aircraft_model
-			FROM logbook_view
-			ORDER BY m_date DESC LIMIT 300)
-		GROUP BY aircraft_model
-		ORDER BY aircraft_model;`)
+	query := "SELECT aircraft_model " +
+		"FROM (SELECT aircraft_model FROM logbook_view ORDER BY m_date DESC LIMIT 300) " +
+		"GROUP BY aircraft_model ORDER BY aircraft_model"
+	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
 		return allModels, err

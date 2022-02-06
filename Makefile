@@ -15,8 +15,12 @@ clean:
 	@go clean
 	@echo "Cleaned!"
 
+## tests
+test:
+	@go test -v ./...
+
 ## build: builds the binaty
-build: clean
+build: clean test
 	@echo "Building..."
 	@go build -o dist/web-logbook ./cmd/web
 	@echo "Web-logbook built!"
