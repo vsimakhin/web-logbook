@@ -32,7 +32,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="departure_time" class="form-label text-nowrap">Departure Time</label>
                 <input type="text" class="form-control" id="departure_time" name="departure_time" value="{{$fr.Departure.Time}}"
-                    required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTotalTime()">
+                    required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTimes()">
             </div>
 
             <div class="col-md-1">
@@ -44,7 +44,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="arrival_time" class="form-label text-nowrap">Arrival Time</label>
                 <input type="text" class="form-control" id="arrival_time" name="arrival_time" value="{{$fr.Arrival.Time}}"
-                    required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTotalTime()">
+                    required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTimes()">
             </div>
         </div>
         <div class="mb-3 row">
@@ -444,7 +444,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
         return true
     }
 
-    function CalculateTotalTime(start, end) {
+    function CalculateTimes() {
         let departure_time = document.getElementById("departure_time").value;
         let arrival_time = document.getElementById("arrival_time").value;
 
@@ -452,21 +452,67 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             start = [departure_time.substring(0, 2), departure_time.substring(2)];
             end = [arrival_time.substring(0, 2), arrival_time.substring(2)];
 
-            var startDate = new Date(0, 0, 0, start[0], start[1], 0);
-            var endDate = new Date(0, 0, 0, end[0], end[1], 0);
-            var diff = endDate.getTime() - startDate.getTime();
-            var hours = Math.floor(diff / 1000 / 60 / 60);
-            diff -= hours * 1000 * 60 * 60;
-            var minutes = Math.floor(diff / 1000 / 60);
+            document.getElementById("total_time").value = CalculateTotalTime(start, end);
 
-
-            if (hours < 0) {
-                hours = hours + 24;
-            }
-
-            totalTime = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
-            document.getElementById("total_time").value = totalTime
+            CalculateNightTime();
         }
+    }
+
+    function CalculateTotalTime(start, end) {
+        var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+        var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+        var diff = endDate.getTime() - startDate.getTime();
+        var hours = Math.floor(diff / 1000 / 60 / 60);
+        diff -= hours * 1000 * 60 * 60;
+        var minutes = Math.floor(diff / 1000 / 60);
+
+
+        if (hours < 0) {
+            hours = hours + 24;
+        }
+
+        totalTime = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+        return totalTime;
+    }
+
+    function CalculateNightTime() {
+        let payload = {
+            date: document.getElementById("date").value,
+            departure: {
+                place: document.getElementById("departure_place").value,
+                time: document.getElementById("departure_time").value
+            },
+            arrival: {
+                place: document.getElementById("arrival_place").value,
+                time: document.getElementById("arrival_time").value
+            }
+        };
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        }
+
+        fetch("{{.API}}/logbook/night", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    night_time = parseInt(data.message)
+                    if (night_time > 0) {
+                        var hours = Math.floor(night_time / 60);
+                        var minutes = night_time - (hours * 60);
+
+                        time = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+                        document.getElementById("night_time").value = time;
+                    } else {
+                        document.getElementById("night_time").value = "";
+                    }
+                }
+            })
     }
 
 </script>

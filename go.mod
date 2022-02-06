@@ -6,11 +6,13 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/google/uuid v1.3.0
 	github.com/jung-kurt/gofpdf v1.16.2
+	github.com/vsimakhin/go-nighttime v1.0.0
 	modernc.org/sqlite v1.14.3
 )
 
 require (
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
+	github.com/kelvins/sunrisesunset v0.0.0-20210220141756-39fa1bd816d5 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	golang.org/x/mod v0.5.1 // indirect

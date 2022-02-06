@@ -20,6 +20,8 @@ func (app *application) routes() http.Handler {
 	server.Post("/logbook/save", app.HandlerFlightRecordSave)
 	server.Post("/logbook/delete", app.HandlerFlightRecordDelete)
 
+	server.Post("/logbook/night", app.HandlerNightTime)
+
 	// export
 	server.Get("/logbook/export", app.HandlerExportLogbook)
 

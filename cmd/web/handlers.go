@@ -16,6 +16,8 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/maprender"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/pdfexport"
+
+	nighttime "github.com/vsimakhin/go-nighttime"
 )
 
 //go:embed static
@@ -1015,6 +1017,75 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 			}
 		}
 	}
+
+	out, err := json.Marshal(response)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(out)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// HandlerNightTime is a handler for calculating night time
+func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request) {
+	if app.config.env == "dev" {
+		app.infoLog.Println("/logbook/nighttime")
+	}
+
+	var fr models.FlightRecord
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&fr)
+	if err != nil {
+		app.errorLog.Panicln(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	departure_place, err := app.db.GetAirportByID(fr.Departure.Place)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	departure_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	arrival_place, err := app.db.GetAirportByID(fr.Arrival.Place)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	arrival_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	route := nighttime.Route{
+		Departure: nighttime.Place{
+			Lat:  departure_place.Lat,
+			Lon:  departure_place.Lon,
+			Time: departure_time,
+		},
+		Arrival: nighttime.Place{
+			Lat:  arrival_place.Lat,
+			Lon:  arrival_place.Lon,
+			Time: arrival_time,
+		},
+	}
+
+	response.OK = true
+	response.Message = fmt.Sprintf("%d", int(route.NightTime().Minutes()))
 
 	out, err := json.Marshal(response)
 	if err != nil {
