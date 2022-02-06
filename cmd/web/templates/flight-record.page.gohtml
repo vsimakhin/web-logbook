@@ -18,7 +18,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-2">
                 <label for="date" class="form-label">Date</label>
                 <input type="text" class="form-control" id="date" name="date" value="{{$fr.Date}}"
-                    required="true" autocomplete="date" placeholder="DD/MM/YYYY">
+                    required="true" autocomplete="off" placeholder="DD/MM/YYYY">
             </div>
         </div>
 
@@ -32,7 +32,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="departure_time" class="form-label text-nowrap">Departure Time</label>
                 <input type="text" class="form-control" id="departure_time" name="departure_time" value="{{$fr.Departure.Time}}"
-                    required="" autocomplete="departure_time" placeholder="HHMM" onchange="CalculateTotalTime()">
+                    required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTotalTime()">
             </div>
 
             <div class="col-md-1">
@@ -44,7 +44,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="arrival_time" class="form-label text-nowrap">Arrival Time</label>
                 <input type="text" class="form-control" id="arrival_time" name="arrival_time" value="{{$fr.Arrival.Time}}"
-                    required="" autocomplete="arrival_time" placeholder="HHMM" onchange="CalculateTotalTime()">
+                    required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTotalTime()">
             </div>
         </div>
         <div class="mb-3 row">
@@ -80,82 +80,82 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="landings_day" class="form-label text-nowrap">Day Langinds</label>
                 <input type="text" class="form-control" id="landings_day" name="landings_day" value="{{formatLandings $fr.Landings.Day}}"
-                    required="" autocomplete="landings_day">
+                    required="" autocomplete="off">
             </div>
 
             <div class="col-md-1">
                 <label for="landings_night" class="form-label text-nowrap">Night Landings</label>
                 <input type="text" class="form-control" id="landings_night" name="landings_night" value="{{formatLandings $fr.Landings.Night}}"
-                    required="" autocomplete="landings_night">
+                    required="" autocomplete="off">
             </div>
         </div>
         <div class="mb-3 row">
             <div class="col-md-1">
                 <label for="total_time" class="form-label text-nowrap">Total Time</label>
                 <input type="text" class="form-control" id="total_time" name="total_time" value="{{$fr.Time.Total}}"
-                    required="" autocomplete="total_time" placeholder="HH:MM">
+                    required="" autocomplete="off" placeholder="HH:MM">
             </div>
 
             <div class="col-md-1">
                 <label for="se_time" class="form-label text-nowrap">Single Engine</label>
                 <input type="text" class="form-control" id="se_time" name="se_time" value="{{$fr.Time.SE}}"
-                    required="" autocomplete="se_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="me_time" class="form-label text-nowrap">Multi Engine</label>
                 <input type="text" class="form-control" id="me_time" name="me_time" value="{{$fr.Time.ME}}"
-                    required="" autocomplete="me_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="mcc_time" class="form-label text-nowrap">MCC Time</label>
                 <input type="text" class="form-control" id="mcc_time" name="mcc_time" value="{{$fr.Time.MCC}}"
-                    required="" autocomplete="mcc_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="night_time" class="form-label text-nowrap">Night Time</label>
                 <input type="text" class="form-control" id="night_time" name="night_time" value="{{$fr.Time.Night}}"
-                    required="" autocomplete="night_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="ifr_time" class="form-label text-nowrap">IFR Time</label>
                 <input type="text" class="form-control" id="ifr_time" name="ifr_time" value="{{$fr.Time.IFR}}"
-                    required="" autocomplete="ifr_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="pic_time" class="form-label text-nowrap">PIC Time</label>
                 <input type="text" class="form-control" id="pic_time" name="pic_time" value="{{$fr.Time.PIC}}"
-                    required="" autocomplete="pic_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="sic_time" class="form-label text-nowrap">CoPilot Time</label>
                 <input type="text" class="form-control" id="sic_time" name="sic_time" value="{{$fr.Time.CoPilot}}"
-                    required="" autocomplete="sic_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="dual_time" class="form-label text-nowrap">Dual Time</label>
                 <input type="text" class="form-control" id="dual_time" name="dual_time" value="{{$fr.Time.Dual}}"
-                    required="" autocomplete="dual_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
 
             <div class="col-md-1">
                 <label for="instr_time" class="form-label text-nowrap">Instructor Time</label>
                 <input type="text" class="form-control" id="instr_time" name="instr_time" value="{{$fr.Time.Instructor}}"
-                    required="" autocomplete="instr_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
         </div>
@@ -169,7 +169,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-1">
                 <label for="sim_time" class="form-label text-nowrap">Simulator Time</label>
                 <input type="text" class="form-control" id="sim_time" name="sim_time" value="{{$fr.SIM.Time}}"
-                    required="" autocomplete="sim_time" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
+                    required="" autocomplete="off" placeholder="HH:MM" ondblclick="this.value=document.getElementById('total_time').value;"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will copy value from Total Time">
             </div>
         </div>
@@ -177,7 +177,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             <div class="col-md-6">
                 <label for="remarks" class="form-label">Remarks</label>
                 <input type="text" class="form-control" id="remarks" name="remarks" value="{{$fr.Remarks}}"
-                    required="" autocomplete="remarks">
+                    required="" autocomplete="off">
             </div>
         </div>
         <input type="hidden" name="uuid" id="uuid" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
