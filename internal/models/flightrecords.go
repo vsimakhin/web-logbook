@@ -68,15 +68,13 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
 
 	var fr FlightRecord
 
-	row := m.DB.QueryRowContext(ctx, `
-		SELECT
-			uuid, date, m_date, departure_place, departure_time,
-			arrival_place, arrival_time, aircraft_model, reg_name,
-			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
-			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
-			sim_type, sim_time, pic_name, remarks
-		FROM logbook_view
-		WHERE uuid = ?`, uuid)
+	query := "SELECT uuid, date, m_date, departure_place, departure_time, " +
+		"arrival_place, arrival_time, aircraft_model, reg_name, " +
+		"se_time, me_time, mcc_time, total_time, day_landings, night_landings, " +
+		"night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, " +
+		"sim_type, sim_time, pic_name, remarks " +
+		"FROM logbook_view WHERE uuid = ?"
+	row := m.DB.QueryRowContext(ctx, query, uuid)
 
 	err := row.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
 		&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
@@ -96,15 +94,14 @@ func (m *DBModel) UpdateFlightRecord(fr FlightRecord) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, `
-		UPDATE logbook
-		SET
-			date = ?, departure_place = ?, departure_time = ?,
-			arrival_place = ?, arrival_time = ?, aircraft_model = ?, reg_name = ?,
-			se_time = ?, me_time = ?, mcc_time = ?, total_time = ?, day_landings = ?, night_landings = ?,
-			night_time = ?, ifr_time = ?, pic_time = ?, co_pilot_time = ?, dual_time = ?, instructor_time = ?,
-			sim_type = ?, sim_time = ?, pic_name = ?, remarks = ?
-		WHERE uuid = ?`,
+	query := "UPDATE logbook SET " +
+		"date = ?, departure_place = ?, departure_time = ?, " +
+		"arrival_place = ?, arrival_time = ?, aircraft_model = ?, reg_name = ?, " +
+		"se_time = ?, me_time = ?, mcc_time = ?, total_time = ?, day_landings = ?, night_landings = ?, " +
+		"night_time = ?, ifr_time = ?, pic_time = ?, co_pilot_time = ?, dual_time = ?, instructor_time = ?, " +
+		"sim_type = ?, sim_time = ?, pic_name = ?, remarks = ? " +
+		"WHERE uuid = ?"
+	_, err := m.DB.ExecContext(ctx, query,
 		fr.Date, fr.Departure.Place, fr.Departure.Time,
 		fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg,
 		fr.Time.SE, fr.Time.ME, fr.Time.MCC, fr.Time.Total, fr.Landings.Day, fr.Landings.Night,
@@ -124,18 +121,18 @@ func (m *DBModel) InsertFlightRecord(fr FlightRecord) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, `
-		INSERT INTO logbook
-			(uuid, date, departure_place, departure_time,
-			arrival_place, arrival_time, aircraft_model, reg_name,
-			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
-			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
-			sim_type, sim_time, pic_name, remarks)
-		VALUES (?, ?, ?, ?,
-			?, ?, ?, ?,
-			?, ?, ?, ?, ?, ?,
-			?, ?, ?, ?, ?, ?,
-			?, ?, ?, ?)`,
+	query := "INSERT INTO logbook " +
+		"(uuid, date, departure_place, departure_time, " +
+		"arrival_place, arrival_time, aircraft_model, reg_name, " +
+		"se_time, me_time, mcc_time, total_time, day_landings, night_landings, " +
+		"night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, " +
+		"sim_type, sim_time, pic_name, remarks) " +
+		"VALUES (?, ?, ?, ?, " +
+		"?, ?, ?, ?, " +
+		"?, ?, ?, ?, ?, ?, " +
+		"?, ?, ?, ?, ?, ?, " +
+		"?, ?, ?, ?)"
+	_, err := m.DB.ExecContext(ctx, query,
 		fr.UUID, fr.Date, fr.Departure.Place, fr.Departure.Time,
 		fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg,
 		fr.Time.SE, fr.Time.ME, fr.Time.MCC, fr.Time.Total, fr.Landings.Day, fr.Landings.Night,
@@ -155,11 +152,7 @@ func (m *DBModel) DeleteFlightRecord(uuid string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, `
-		DELETE FROM logbook
-		WHERE
-			uuid = ?`, uuid,
-	)
+	_, err := m.DB.ExecContext(ctx, "DELETE FROM logbook WHERE uuid = ?", uuid)
 
 	if err != nil {
 		return err
