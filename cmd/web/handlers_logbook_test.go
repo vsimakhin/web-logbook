@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHandlerLogbookFound(t *testing.T) {
+func TestHandlerLogbook(t *testing.T) {
 
 	app := initTestApp()
 	srv := httptest.NewServer(app.routes())
