@@ -105,6 +105,20 @@ func InitMock(mock sqlmock.Sqlmock) {
 				),
 		)
 
+	// mock GetSettings
+	mock.ExpectQuery("SELECT (.+) FROM settings WHERE id=1").WithArgs().
+		WillReturnRows(
+			mock.NewRows([]string{
+				"id", "owner_name", "signature_text", "page_breaks",
+			}).
+				AddRow(1, "Owner Name", "I certify that the entries in this log are true.", ""),
+		)
+
+	// mock UpdateSettings
+	mock.ExpectExec("UPDATE settings SET").
+		WithArgs("Owner Name", "I certify that the entries in this log are true.", "").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
 	// any order of the queries
 	mock.MatchExpectationsInOrder(false)
 }
