@@ -15,6 +15,10 @@ clean:
 	@go clean
 	@echo "Cleaned!"
 
+## tests
+test:
+	@go test -v ./...
+
 ## build: builds the binaty
 build: clean
 	@echo "Building..."
@@ -26,7 +30,7 @@ start: build
 	@echo "Starting the app..."
 	@env ./dist/web-logbook -port=${PORT} -env="${ENV}"
 
-build_all: clean
+build_all: test clean
 	@echo "Building everything..."
 	@for OS in $(XC_OS); do \
 		for ARCH in $(XC_ARCH); do \

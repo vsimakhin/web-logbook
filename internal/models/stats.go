@@ -15,14 +15,11 @@ func (m *DBModel) GetTotals(days int) (FlightRecord, error) {
 	var totals FlightRecord
 	var condition string
 
-	sqlQuery := `
-		SELECT
-			se_time, me_time, mcc_time, total_time,
-			day_landings, night_landings,
-			night_time, ifr_time, pic_time, co_pilot_time,
-			dual_time, instructor_time, sim_time
-	   	FROM logbook_view
-	`
+	sqlQuery := "SELECT se_time, me_time, mcc_time, total_time, " +
+		"day_landings, night_landings, " +
+		"night_time, ifr_time, pic_time, co_pilot_time, " +
+		"dual_time, instructor_time, sim_time " +
+		"FROM logbook_view"
 
 	if days == AllTotals {
 		// all totals

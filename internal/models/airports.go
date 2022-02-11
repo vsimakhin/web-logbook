@@ -12,12 +12,9 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 
 	var airport Airport
 
-	row := m.DB.QueryRowContext(ctx, `
-		SELECT
-			icao, iata, name, city,
-			country, elevation, lat, lon
-		FROM airports
-		WHERE icao = ? or iata = ?`, id, id)
+	query := "SELECT icao, iata, name, city, country, elevation, lat, lon " +
+		"FROM airports WHERE icao = ? or iata = ?"
+	row := m.DB.QueryRowContext(ctx, query, id, id)
 
 	err := row.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
 		&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
@@ -37,11 +34,8 @@ func (m *DBModel) GetAirports() (map[string]Airport, error) {
 	airports := make(map[string]Airport)
 	var airport Airport
 
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT
-			icao, iata, name, city,
-			country, elevation, lat, lon
-		FROM airports;`)
+	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports"
+	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
 		return airports, err
@@ -73,30 +67,27 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	records := 0
 
 	// drop index since we completely recreate all records in the table
-	_, err = m.DB.ExecContext(ctx, `DROP INDEX airports_icao;`)
+	_, err = m.DB.ExecContext(ctx, "DROP INDEX airports_icao;")
 	if err != nil {
 		return records, err
 	}
 
-	_, err = m.DB.ExecContext(ctx, `DELETE FROM airports;`)
+	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports;")
 	if err != nil {
 		return records, err
 	}
 
 	// let's make it in transaction
-	_, err = m.DB.ExecContext(ctx, `BEGIN TRANSACTION;`)
+	_, err = m.DB.ExecContext(ctx, "BEGIN TRANSACTION;")
 	if err != nil {
 		return records, err
 	}
 
 	for _, airport := range airports {
 
-		_, err = m.DB.ExecContext(ctx, `
-		INSERT INTO airports
-			(icao, iata, name, city,
-			country, elevation, lat, lon)
-		VALUES (?, ?, ?, ?,
-			?, ?, ?, ?)`,
+		query := "INSERT INTO airports (icao, iata, name, city, country, elevation, lat, lon) " +
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+		_, err = m.DB.ExecContext(ctx, query,
 			airport.ICAO, airport.IATA, airport.Name, airport.City,
 			airport.Country, airport.Elevation, airport.Lat, airport.Lon,
 		)
@@ -107,13 +98,13 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	}
 
 	// end transaction
-	_, err = m.DB.ExecContext(ctx, `COMMIT;`)
+	_, err = m.DB.ExecContext(ctx, "COMMIT;")
 	if err != nil {
 		return records, err
 	}
 
 	// finally new fresh index
-	_, err = m.DB.ExecContext(ctx, `CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);`)
+	_, err = m.DB.ExecContext(ctx, "CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);")
 	if err != nil {
 		return records, err
 	}
@@ -133,7 +124,7 @@ func (m *DBModel) GetAirportCount() (int, error) {
 
 	records := 0
 
-	row := m.DB.QueryRowContext(ctx, `SELECT COUNT(*) FROM airports;`)
+	row := m.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM airports")
 
 	err := row.Scan(&records)
 
