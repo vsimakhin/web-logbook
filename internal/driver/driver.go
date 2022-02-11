@@ -44,18 +44,30 @@ func validateDB(db *sql.DB) error {
 		return err
 	}
 
+	// check settings table it's not empty
+	err = checkSettingsTable(db)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkSettingsTable(db *sql.DB) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	// check settings table
 	var rowsCount int
 	row := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM settings;")
 
-	err = row.Scan(&rowsCount)
+	err := row.Scan(&rowsCount)
 	if err != nil {
 		return err
 	}
 
 	if rowsCount == 0 {
-		_, err = db.ExecContext(ctx, `
-			INSERT INTO settings (id, owner_name, signature_text, page_breaks)
+		_, err = db.ExecContext(ctx, `INSERT INTO settings (id, owner_name, signature_text, page_breaks)
 			VALUES (1, "Owner Name", "I certify that the entries in this log are true.", "")`)
 
 		if err != nil {

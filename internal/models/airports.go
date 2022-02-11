@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"strings"
 	"time"
 )
 
@@ -11,6 +12,8 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 	defer cancel()
 
 	var airport Airport
+
+	id = strings.Trim(id, " ")
 
 	query := "SELECT icao, iata, name, city, country, elevation, lat, lon " +
 		"FROM airports WHERE icao = ? or iata = ?"

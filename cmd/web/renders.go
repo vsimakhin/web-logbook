@@ -16,6 +16,7 @@ type templateData struct {
 var functions = template.FuncMap{
 	"formatRemarks":  formatRemarks,
 	"formatLandings": formatLandings,
+	"formatNumber":   formatNumber,
 }
 
 //go:embed templates
@@ -36,6 +37,22 @@ func formatLandings(landing int) string {
 	} else {
 		return fmt.Sprintf("%d", landing)
 	}
+}
+
+func formatNumber(n int) string {
+	s := fmt.Sprintf("%d", n)
+
+	if n >= 1000 {
+		s = s[:len(s)-3] + " " + s[len(s)-3:]
+	}
+	if n >= 1000000 {
+		s = s[:len(s)-7] + " " + s[len(s)-7:]
+	}
+	if n >= 1000000000 {
+		s = s[:len(s)-11] + " " + s[len(s)-11:]
+	}
+
+	return s
 }
 
 func (app *application) addDefaultData(td *templateData, req *http.Request) *templateData {

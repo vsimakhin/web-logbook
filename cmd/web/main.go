@@ -12,7 +12,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "1.2.0"
+const version = "1.3.0"
 
 type config struct {
 	port int
@@ -77,6 +77,8 @@ func main() {
 		version:       version,
 		db:            models.DBModel{DB: conn},
 	}
+
+	go app.db.CreateDistanceCache()
 
 	err = app.serve()
 	if err != nil {

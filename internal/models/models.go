@@ -126,12 +126,12 @@ func InitMock(mock sqlmock.Sqlmock) {
 				"se_time", "me_time", "mcc_time", "total_time",
 				"day_landings", "night_landings",
 				"night_time", "ifr_time", "pic_time", "co_pilot_time",
-				"dual_time", "instructor_time", "sim_time",
+				"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
 			}).AddRow(
 				"2:00", "2:00", "2:00", "2:00",
 				1, 2,
 				"2:00", "2:00", "2:00", "2:00",
-				"2:00", "2:00", "2:00",
+				"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
 			),
 		)
 

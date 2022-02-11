@@ -151,21 +151,12 @@ Maps
         map.addLayer(vectorMarkerLayer);
 
         map.renderSync();
+
+        var extent = vectorLineLayer.getSource().getExtent();
+        map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
     }
 
     loadMap("");
-</script>
-
-<script>
-    var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
-    triggerTabList.forEach(function (triggerEl) {
-    var tabTrigger = new bootstrap.Tab(triggerEl)
-
-    triggerEl.addEventListener('click', function (event) {
-        event.preventDefault()
-        tabTrigger.show()
-    })
-    })
 </script>
 
 <script>
