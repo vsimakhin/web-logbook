@@ -3,6 +3,7 @@ package models
 const Last30Days = 30
 const Last90Days = 90
 const ThisYear = 999
+const ThisMonth = 888
 const AllTotals = 0
 
 // jsonResponse is a type for post data handlers response
@@ -51,6 +52,8 @@ type FlightRecord struct {
 	} `json:"sim"`
 	PIC     string `json:"pic_name"`
 	Remarks string `json:"remarks"`
+
+	Distance int
 }
 
 // Airpot is a structure for airport record

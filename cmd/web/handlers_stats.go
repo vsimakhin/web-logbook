@@ -42,6 +42,13 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	totalsMonth, err := app.db.GetTotals(models.ThisMonth)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	totalsByYear, err := app.db.GetTotalsByYear()
 	if err != nil {
 		app.errorLog.Println(err)
@@ -60,6 +67,7 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 	data["totals30"] = totals30
 	data["totals90"] = totals90
 	data["totalsY"] = totalsYear
+	data["totalsM"] = totalsMonth
 	data["totalsByYear"] = totalsByYear
 	data["totalsByAircraft"] = totalsByAircraft
 

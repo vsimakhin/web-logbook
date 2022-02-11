@@ -58,6 +58,8 @@ func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
 	totals.Landings.Day += record.Landings.Day
 	totals.Landings.Night += record.Landings.Night
 
+	totals.Distance += record.Distance
+
 	return totals
 }
 
