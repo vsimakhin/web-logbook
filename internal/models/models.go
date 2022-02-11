@@ -119,6 +119,32 @@ func InitMock(mock sqlmock.Sqlmock) {
 		WithArgs("Owner Name", "I certify that the entries in this log are true.", "").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
+	// mock GetTotals
+	mock.ExpectQuery("SELECT (.+) FROM logbook_view WHERE").WithArgs().
+		WillReturnRows(
+			mock.NewRows([]string{
+				"se_time", "me_time", "mcc_time", "total_time",
+				"day_landings", "night_landings",
+				"night_time", "ifr_time", "pic_time", "co_pilot_time",
+				"dual_time", "instructor_time", "sim_time",
+			}).AddRow(
+				"2:00", "2:00", "2:00", "2:00",
+				1, 2,
+				"2:00", "2:00", "2:00", "2:00",
+				"2:00", "2:00", "2:00",
+			),
+		)
+
+	// mock GetAirportByID
+	mock.ExpectQuery("SELECT (.+) FROM airports WHERE").WithArgs("XXXX", "XXXX").
+		WillReturnRows(
+			mock.NewRows([]string{
+				"icao", "iata", "name", "city", "country", "elevation", "lat", "lon",
+			}).AddRow(
+				"XXXX", "XXX", "Airport", "City", "Country", 100, 55.5, 44.4,
+			),
+		)
+
 	// any order of the queries
 	mock.MatchExpectationsInOrder(false)
 }
