@@ -10,24 +10,6 @@
         }
     }
 
-    function loadJSON(url) {
-        var json = null;
-        $.ajax({
-            'async': false,
-            'global': false,
-            'url': url,
-            'dataType': "json",
-            'success': function (data) {
-                json = data;
-            }
-        });
-        if (json) {
-            return json;
-        } else {
-            return [];
-        };
-    };
-
     function midpoint(lat1, lon1, lat2, lon2) {
 
         lat1= deg2rad(lat1);
@@ -149,9 +131,7 @@
         document.getElementById("some_stats").innerText = "Distance: " + Math.floor(dist) + " km / " + Math.floor(dist/1.852) + " nm";
     }
 
-    window.onload = function() {
-        DeppArrChange();
-    };
+
 </script>
 
 {{end}}

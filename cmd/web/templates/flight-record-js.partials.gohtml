@@ -5,8 +5,6 @@
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    let infoMsg = document.getElementById("info");
-
     function validate() {
 
         let isValid = true;
@@ -86,20 +84,6 @@
         showInfoMessage("OK!");
 
         SaveFlightRecord();
-    }
-
-    function showErrorMessage(msg) {
-        infoMsg.classList.add("alert-danger");
-        infoMsg.classList.remove("alert-success");
-        infoMsg.classList.remove("d-none");
-        infoMsg.innerText = msg;
-    }
-
-    function showInfoMessage(msg) {
-        infoMsg.classList.remove("alert-danger");
-        infoMsg.classList.add("alert-success");
-        infoMsg.classList.remove("d-none");
-        infoMsg.innerText = msg;
     }
 
     function SaveFlightRecord() {
@@ -296,5 +280,87 @@
                 }
             })
     }
+
+    function DeleteAttachment(id) {
+        let payload = {
+            uuid: id
+        }
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        }
+
+        fetch("{{.API}}/logbook/attachments/delete", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    LoadAttachments();
+                } else {
+                    showErrorMessage(data.message);
+                }
+            })
+    };
+
+    function LoadAttachments() {
+        var uuid = document.getElementById("uuid").value
+        var tbody = document.getElementById("attachments_table");
+        var rows = "";
+
+        data = loadJSON("/logbook/"+uuid+"/attachments");
+
+        if (data.length) {
+            tbody.innerHTML = "";
+            for (var x = 0; x < data.length; x++) {
+                rows = rows +
+                    `<tr>
+                        <td><a href="/logbook/attachments/download/${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
+                        <td id="ask_${data[x]["uuid"]}"><button type="button" class="btn-close" onclick="AskForDelete('${data[x]["uuid"]}')"></button></td>
+                    </tr>`;
+            }
+            tbody.innerHTML = rows;
+            document.getElementById("attach_button").innerHTML = 'Attachments <span class="badge bg-secondary">' + data.length + '</span>';
+        } else {
+            tbody.innerHTML = "";
+            document.getElementById("attach_button").innerHTML = "Attachments";
+        }
+    };
+
+    function UploadAttachment() {
+        var doc = document.getElementById("document").value
+
+        if (doc === "") {
+            return;
+        }
+
+        let payload = new FormData(flight_record_attachment_form);
+
+        const requestOptions = {
+            method: 'post',
+            body: payload,
+        }
+
+        fetch("{{.API}}/logbook/attachments/upload", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    showInfoMessage(data.message);
+                    LoadAttachments();
+                } else {
+                    showErrorMessage(data.message);
+                }
+            })
+
+        document.getElementById("flight_record_attachment_form").reset();
+    };
+
+    function AskForDelete(uuid) {
+        var tdbody = document.getElementById("ask_"+uuid);
+        tdbody.innerHTML = `<button type="button" class="btn btn-danger" onclick="DeleteAttachment('${uuid}')">Confirm</button>`;
+    };
 </script>
 {{end}}

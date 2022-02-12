@@ -88,3 +88,11 @@ type License struct {
 	DocumentName string `json:"document_name"`
 	Document     []byte
 }
+
+// Attachment is a type for attachments
+type Attachment struct {
+	UUID         string `json:"uuid"`
+	RecordID     string `json:"record_id"`
+	DocumentName string `json:"document_name"`
+	Document     []byte
+}

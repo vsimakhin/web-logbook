@@ -239,18 +239,20 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
         <hr>
 
         <button class="btn btn-primary" type="button" onclick="validate()" id="save">Save</button>
+        {{if $fr.UUID}}<a id="attach_button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#attachments">Attachments</a>{{end}}
+
         <div class="float-end">
             {{if $fr.UUID}}<a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>{{end}}
         </div>
 
     </form>
 
-    <!-- Modal -->
+    <!-- Modal Delete -->
     <div class="modal fade" id="delete-record" tabindex="-1" aria-labelledby="delete-record" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Delete Flight Record?</h5>
+            <h5 class="modal-title" id="deleteModalLabel">Delete Flight Record?</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
         </div>
         <div class="modal-body">
@@ -264,11 +266,49 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
     </div>
     </div>
 
+    <!-- Modal Attachments -->
+    <div class="modal fade" id="attachments" tabindex="-1" aria-labelledby="attachments" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Attachments</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-borderless">
+                <tbody id="attachments_table">
+                    <tr>
+                        <td>Attachment</td>
+                        <td id="ask_for_delete_attachment"><button type="button" class="btn-close" onclick="DeleteAttachment('id')"></button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <form class="row" method="post" name="flight_record_attachment_form" id="flight_record_attachment_form"
+                autocomplete="off" novalidate="" enctype="multipart/form-data">
+                <div class="col-auto"><input type="file" class="form-control" id="document" name="document"></div>
+                <div class="col-auto"><button class="btn btn-primary float-right" type="button" onclick="UploadAttachment()" id="upload">Upload</button></div>
+                <input type="hidden" name="record_id" id="record_id" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="btn_attachment_close" type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="LoadAttachments()">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
 {{ end }}
 
 {{ define "js" }}
+{{$fr := index .Data "flightRecord"}}
 
+{{ block "common-js" . }}{{ end }}
 {{ block "flight-record-js" . }}{{ end }}
 {{ block "flight-record-map" . }}{{ end }}
 
+<script>
+    window.onload = function() {
+        DeppArrChange();
+        {{if $fr.UUID}}LoadAttachments(){{end}}
+    };
+</script>
 {{ end }}

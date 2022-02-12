@@ -20,6 +20,11 @@ func (app *application) routes() *chi.Mux {
 
 	server.Post("/logbook/night", app.HandlerNightTime)
 
+	server.Get("/logbook/{uuid}/attachments", app.HandlerGetAttachments)
+	server.Post("/logbook/attachments/upload", app.HandlerUploadAttachment)
+	server.Post("/logbook/attachments/delete", app.HandlerDeleteAttachment)
+	server.Get("/logbook/attachments/download/{uuid}", app.HandlerAttachmentDownload)
+
 	// export
 	server.Get("/logbook/export", app.HandlerExportLogbook)
 
