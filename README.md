@@ -31,6 +31,7 @@ Since it's written in golang it can run on any system if you compile the sources
 
 Currently there are implemented several modules in the logbook app:
 * Logbook itself
+* Attachments for the flight records
 * Export to EASA PDF format
 * Settings
 * Map
@@ -48,6 +49,9 @@ Currently there are implemented several modules in the logbook app:
 ## Flight record
 
 ![Flight record](https://github.com/vsimakhin/web-logbook-assets/raw/main/flight-record-example.png)
+
+### Attachments
+![Flight record attachments](https://github.com/vsimakhin/web-logbook-assets/raw/main/flight-record-example-attachments.png)
 
 ## Settings
 
