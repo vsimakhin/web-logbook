@@ -42,7 +42,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 	data["aircraftRegs"] = aircraftRegs
 	data["aircraftModels"] = aircraftModels
 
-	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}); err != nil {
+	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}, "common-js", "flight-record-js", "flight-record-map"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -72,7 +72,7 @@ func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Re
 	data["aircraftRegs"] = aircraftRegs
 	data["aircraftModels"] = aircraftModels
 
-	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}); err != nil {
+	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}, "common-js", "flight-record-js", "flight-record-map"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -106,6 +106,11 @@ func (app *application) HandlerFlightRecordDelete(w http.ResponseWriter, r *http
 		if app.config.env == "dev" {
 			app.infoLog.Printf("flight records %s deleted\n", flightRecord.UUID)
 		}
+	}
+
+	err = app.db.DeleteAttachmentsForFlightRecord(flightRecord.UUID)
+	if err != nil {
+		app.errorLog.Println(err)
 	}
 
 	out, err := json.Marshal(response)

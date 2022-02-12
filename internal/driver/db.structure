@@ -70,4 +70,12 @@ CREATE TABLE IF NOT EXISTS licensing (
     document BLOB
 );
 
+/* attachments */
+CREATE TABLE IF NOT EXISTS attachments (
+    uuid TEXT PRIMARY_KEY,
+    record_id TEXT,
+    document_name TEXT,
+    document BLOB
+);
+
 VACUUM;
