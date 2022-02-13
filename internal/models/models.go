@@ -23,6 +23,12 @@ func NewModels(db *sql.DB) Models {
 	}
 }
 
+// cache for calculated distance
+var dcache = make(map[string]int)
+
+// cache for airports
+var acache = make(map[string]Airport)
+
 // InitMock is a common sqlmock init function
 // which is used by tests in package models and main
 func InitMock(mock sqlmock.Sqlmock) {
