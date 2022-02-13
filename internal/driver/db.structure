@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS airports (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);
+CREATE INDEX IF NOT EXISTS airports_iata ON airports(iata);
 
 /* settings table */
 CREATE TABLE IF NOT EXISTS settings (

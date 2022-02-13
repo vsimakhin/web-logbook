@@ -2,12 +2,18 @@ package models
 
 import (
 	"context"
+	"regexp"
 	"strings"
 	"time"
 )
 
 // GetAirportByID return airport record by ID (ICAO or IATA)
 func (m *DBModel) GetAirportByID(id string) (Airport, error) {
+	// check airport id in cache first
+	if value, ok := acache[id]; ok {
+		return value, nil
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -25,6 +31,9 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 	if err != nil {
 		return airport, err
 	}
+
+	// add to cache
+	acache[id] = airport
 
 	return airport, nil
 }
@@ -74,6 +83,10 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	if err != nil {
 		return records, err
 	}
+	_, err = m.DB.ExecContext(ctx, "DROP INDEX airports_iata;")
+	if err != nil {
+		return records, err
+	}
 
 	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports;")
 	if err != nil {
@@ -81,33 +94,39 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	}
 
 	// let's make it in transaction
-	_, err = m.DB.ExecContext(ctx, "BEGIN TRANSACTION;")
+	tx, err := m.DB.Begin()
 	if err != nil {
 		return records, err
 	}
 
+	isAlpha := regexp.MustCompile(`^[A-Z]+$`).MatchString
 	for _, airport := range airports {
+		if isAlpha(airport.ICAO) { // check for valid ICAO codes only
+			query := "INSERT INTO airports (icao, iata, name, city, country, elevation, lat, lon) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+			_, err := tx.ExecContext(ctx, query,
+				airport.ICAO, airport.IATA, airport.Name, airport.City,
+				airport.Country, airport.Elevation, airport.Lat, airport.Lon,
+			)
 
-		query := "INSERT INTO airports (icao, iata, name, city, country, elevation, lat, lon) " +
-			"VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-		_, err = m.DB.ExecContext(ctx, query,
-			airport.ICAO, airport.IATA, airport.Name, airport.City,
-			airport.Country, airport.Elevation, airport.Lat, airport.Lon,
-		)
-
-		if err != nil {
-			return records, err
+			if err != nil {
+				return records, err
+			}
 		}
 	}
 
-	// end transaction
-	_, err = m.DB.ExecContext(ctx, "COMMIT;")
+	// commit transaction
+	err = tx.Commit()
 	if err != nil {
 		return records, err
 	}
 
 	// finally new fresh index
 	_, err = m.DB.ExecContext(ctx, "CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);")
+	if err != nil {
+		return records, err
+	}
+	_, err = m.DB.ExecContext(ctx, "CREATE INDEX IF NOT EXISTS airports_iata ON airports(iata);")
 	if err != nil {
 		return records, err
 	}

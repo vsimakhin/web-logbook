@@ -28,8 +28,6 @@ func dist(lat1, lon1, lat2, lon2 float64) float64 {
 	return 2 * r * math.Asin(math.Sqrt(h)) / 1000 / 1.852 // nautical miles
 }
 
-var cache = make(map[string]int)
-
 // distance calculates distance between 2 airports
 func (m *DBModel) distance(departure, arrival string) int {
 	if departure == arrival {
@@ -43,23 +41,23 @@ func (m *DBModel) distance(departure, arrival string) int {
 		distID = arrival + departure
 	}
 
-	if value, ok := cache[distID]; ok {
+	if value, ok := dcache[distID]; ok {
 		return value
 	} else {
 		dep, err := m.GetAirportByID(departure)
 		if err != nil {
-			cache[distID] = 0
+			dcache[distID] = 0
 			return 0
 		}
 
 		arr, err := m.GetAirportByID(arrival)
 		if err != nil {
-			cache[distID] = 0
+			dcache[distID] = 0
 			return 0
 		}
 
 		d := int(dist(dep.Lat, dep.Lon, arr.Lat, arr.Lon))
-		cache[distID] = d
+		dcache[distID] = d
 		return d
 	}
 }
