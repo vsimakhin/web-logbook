@@ -68,6 +68,8 @@ Currently there are implemented several modules in the logbook app:
 
 ![Licensing](https://github.com/vsimakhin/web-logbook-assets/raw/main/licensing.png)
 
+![Licensing record](https://github.com/vsimakhin/web-logbook-assets/raw/main/licensing-record.png)
+
 # New features/Issues
 
 In case you'd like to add some other features for the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix at a reasonable time but at least I can take a look.
