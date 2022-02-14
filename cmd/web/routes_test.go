@@ -38,6 +38,7 @@ func TestRoutes(t *testing.T) {
 		"/licensing/download/{uuid}",
 		"/licensing/save",
 		"/licensing/delete",
+		"/licensing/attachment/delete",
 		"/static/*",
 		"/favicon.ico",
 	}

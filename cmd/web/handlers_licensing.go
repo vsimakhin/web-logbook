@@ -43,6 +43,10 @@ func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *ht
 		return
 	}
 
+	icon := `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+	<path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+	<path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+	</svg>`
 	for _, item := range licenses {
 		expire := ""
 		if item.ValidUntil != "" {
@@ -61,9 +65,15 @@ func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *ht
 			}
 		}
 
+		link := ""
+		if item.DocumentName != "" {
+			link = fmt.Sprintf("<a href='/licensing/download/%s' target='_blank' class='link-primary'>%s</a>", item.UUID, icon)
+		} else {
+			link = ""
+		}
+
 		tableRow := []string{item.Category, fmt.Sprintf("<a href='/licensing/%s' class='link-primary'>%s</a>", item.UUID, item.Name),
-			item.Number, item.Issued, item.ValidFrom, item.ValidUntil, expire,
-			fmt.Sprintf("<a href='/licensing/download/%s' target='_blank' class='link-primary'>%s</a>", item.UUID, item.DocumentName)}
+			item.Number, item.Issued, item.ValidFrom, item.ValidUntil, expire, link}
 
 		tableData.Data = append(tableData.Data, tableRow)
 	}
@@ -112,7 +122,7 @@ func (app *application) HandlerLicensingRecordByID(w http.ResponseWriter, r *htt
 	data["license"] = license
 	data["categories"] = categories
 
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}); err != nil {
+	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "common-js", "license-record-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -157,7 +167,7 @@ func (app *application) HandlerLicensingRecordNew(w http.ResponseWriter, r *http
 	data["license"] = license
 	data["categories"] = categories
 
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}); err != nil {
+	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "common-js", "license-record-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -187,6 +197,52 @@ func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *h
 		response.OK = true
 		response.Message = "License Record deleted"
 		response.RedirectURL = "/licensing"
+
+		if app.config.env == "dev" {
+			app.infoLog.Printf("license record %s deleted\n", license.UUID)
+		}
+	}
+
+	out, err := json.Marshal(response)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(out)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, r *http.Request) {
+	if app.config.env == "dev" {
+		app.infoLog.Println("/licensing/deleteattachment")
+	}
+
+	var license models.License
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&license)
+	if err != nil {
+		app.errorLog.Panicln(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.DeleteLicenseAttachment(license.UUID)
+	if err != nil {
+		app.errorLog.Println(err)
+		response.OK = false
+		response.Message = err.Error()
+	} else {
+		response.OK = true
+		response.Message = "Attachment removed"
+		response.RedirectURL = fmt.Sprintf("/licensing/%s", license.UUID)
 
 		if app.config.env == "dev" {
 			app.infoLog.Printf("license record %s deleted\n", license.UUID)
@@ -290,6 +346,7 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		} else {
 			response.OK = true
 			response.Message = "License Record has been updated"
+			response.RedirectURL = fmt.Sprintf("/licensing/%s", license.UUID)
 
 			if app.config.env == "dev" {
 				app.infoLog.Printf("license records %s updated\n", license.UUID)

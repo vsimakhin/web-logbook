@@ -53,6 +53,7 @@ func (app *application) routes() *chi.Mux {
 
 	server.Post("/licensing/save", app.HandlerLicensingRecordSave)
 	server.Post("/licensing/delete", app.HandlerLicensingRecordDelete)
+	server.Post("/licensing/attachment/delete", app.HandlerLicensingDeleteAttachment)
 
 	// other stuff
 	server.Handle("/static/*", app.HandlerStatic())
