@@ -4,6 +4,17 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+const APILicensingSave = "/licensing/save"
+const APILicensingDelete = "/licensing/delete"
+const APILicensingAttachmentDelete = "/licensing/attachment/delete"
+const APISettings = "/settings"
+const APIAirportUpdate = "/airport/update"
+const APILogbookSave = "/logbook/save"
+const APILogbookDelete = "/logbook/delete"
+const APILogbookNight = "/logbook/night"
+const APILogbookAttachmentsDelete = "/logbook/attachments/delete"
+const APILogbookAttachmentsUpload = "/logbook/attachments/upload"
+
 func (app *application) routes() *chi.Mux {
 	server := chi.NewRouter()
 
@@ -15,14 +26,14 @@ func (app *application) routes() *chi.Mux {
 	server.Get("/logbook/{uuid}", app.HandlerFlightRecordByID)
 	server.Get("/logbook/new", app.HandlerFlightRecordNew)
 
-	server.Post("/logbook/save", app.HandlerFlightRecordSave)
-	server.Post("/logbook/delete", app.HandlerFlightRecordDelete)
+	server.Post(APILogbookSave, app.HandlerFlightRecordSave)
+	server.Post(APILogbookDelete, app.HandlerFlightRecordDelete)
 
-	server.Post("/logbook/night", app.HandlerNightTime)
+	server.Post(APILogbookNight, app.HandlerNightTime)
 
 	server.Get("/logbook/{uuid}/attachments", app.HandlerGetAttachments)
-	server.Post("/logbook/attachments/upload", app.HandlerUploadAttachment)
-	server.Post("/logbook/attachments/delete", app.HandlerDeleteAttachment)
+	server.Post(APILogbookAttachmentsUpload, app.HandlerUploadAttachment)
+	server.Post(APILogbookAttachmentsDelete, app.HandlerDeleteAttachment)
 	server.Get("/logbook/attachments/download/{uuid}", app.HandlerAttachmentDownload)
 
 	// export
@@ -30,11 +41,11 @@ func (app *application) routes() *chi.Mux {
 
 	// airports
 	server.Get("/airport/{id}", app.HandlerAirportByID)
-	server.Get("/airport/update", app.HandlerAirportUpdate)
+	server.Get(APIAirportUpdate, app.HandlerAirportUpdate)
 
 	// settings
-	server.Get("/settings", app.HandlerSettings)
-	server.Post("/settings", app.HandlerSettingsSave)
+	server.Get(APISettings, app.HandlerSettings)
+	server.Post(APISettings, app.HandlerSettingsSave)
 
 	// stats
 	server.Get("/stats", app.HandlerStats)
@@ -51,8 +62,9 @@ func (app *application) routes() *chi.Mux {
 	server.Get("/licensing/new", app.HandlerLicensingRecordNew)
 	server.Get("/licensing/download/{uuid}", app.HandlerLicensingDownload)
 
-	server.Post("/licensing/save", app.HandlerLicensingRecordSave)
-	server.Post("/licensing/delete", app.HandlerLicensingRecordDelete)
+	server.Post(APILicensingSave, app.HandlerLicensingRecordSave)
+	server.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)
+	server.Post(APILicensingAttachmentDelete, app.HandlerLicensingDeleteAttachment)
 
 	// other stuff
 	server.Handle("/static/*", app.HandlerStatic())

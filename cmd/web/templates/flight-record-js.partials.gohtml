@@ -135,7 +135,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{.API}}/logbook/save", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LogbookSave"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -163,7 +163,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{.API}}/logbook/delete", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LogbookDelete"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -263,7 +263,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{.API}}/logbook/night", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LogbookNight"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -295,7 +295,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{.API}}/logbook/attachments/delete", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LogbookAttachmentsDelete"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -344,7 +344,7 @@
             body: payload,
         }
 
-        fetch("{{.API}}/logbook/attachments/upload", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LogbookAttachmentsUpload"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {

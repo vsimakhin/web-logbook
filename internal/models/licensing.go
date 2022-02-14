@@ -13,12 +13,10 @@ func (m *DBModel) GetLicenses() ([]License, error) {
 	var lic License
 	var licenses []License
 
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT
-			uuid, category, name, number, issued,
-			valid_from, valid_until, document_name, document
-		FROM licensing
-		ORDER BY category, name`)
+	query := "SELECT uuid, category, name, number, issued, " +
+		"valid_from, valid_until, document_name " +
+		"FROM licensing ORDER BY category, name"
+	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
 		return licenses, err
@@ -27,7 +25,7 @@ func (m *DBModel) GetLicenses() ([]License, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
-			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.Document)
+			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName)
 
 		if err != nil {
 			return licenses, err
@@ -45,12 +43,10 @@ func (m *DBModel) GetLicenseRecordByID(uuid string) (License, error) {
 
 	var lic License
 
-	row := m.DB.QueryRowContext(ctx, `
-		SELECT
-			uuid, category, name, number, issued,
-			valid_from, valid_until, document_name, document
-		FROM licensing
-		WHERE uuid = ?`, uuid)
+	query := "SELECT uuid, category, name, number, issued, " +
+		"valid_from, valid_until, document_name, document " +
+		"FROM licensing WHERE uuid = ?"
+	row := m.DB.QueryRowContext(ctx, query, uuid)
 
 	err := row.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
 		&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.Document)
@@ -70,11 +66,8 @@ func (m *DBModel) GetLicensesCategory() ([]string, error) {
 	var category string
 	var categories []string
 
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT category
-		FROM licensing
-		GROUP BY category
-		ORDER BY category;`)
+	query := "SELECT category FROM licensing GROUP BY category ORDER BY category"
+	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
 		return categories, err
@@ -101,25 +94,23 @@ func (m *DBModel) UpdateLicenseRecord(lic License) error {
 	var err error
 
 	if lic.DocumentName != "" {
-		_, err = m.DB.ExecContext(ctx, `
-		UPDATE licensing
-		SET
-			category = ?, name = ?, number = ?,
-			issued = ?, valid_from = ?, valid_until = ?,
-			document_name = ?, document = ?
-		WHERE uuid = ?`,
+		query := "UPDATE licensing SET " +
+			"category = ?, name = ?, number = ?, " +
+			"issued = ?, valid_from = ?, valid_until = ?, " +
+			"document_name = ?, document = ? " +
+			"WHERE uuid = ?"
+		_, err = m.DB.ExecContext(ctx, query,
 			lic.Category, lic.Name, lic.Number,
 			lic.Issued, lic.ValidFrom, lic.ValidUntil,
 			lic.DocumentName, lic.Document,
 			lic.UUID,
 		)
 	} else {
-		_, err = m.DB.ExecContext(ctx, `
-		UPDATE licensing
-		SET
-			category = ?, name = ?, number = ?,
-			issued = ?, valid_from = ?, valid_until = ?
-		WHERE uuid = ?`,
+		query := "UPDATE licensing SET " +
+			"category = ?, name = ?, number = ?, " +
+			"issued = ?, valid_from = ?, valid_until = ? " +
+			"WHERE uuid = ?"
+		_, err = m.DB.ExecContext(ctx, query,
 			lic.Category, lic.Name, lic.Number,
 			lic.Issued, lic.ValidFrom, lic.ValidUntil,
 			lic.UUID,
@@ -138,14 +129,10 @@ func (m *DBModel) InsertLicenseRecord(lic License) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, `
-		INSERT INTO licensing
-			(uuid, category, name, number,
-			issued, valid_from, valid_until,
-			document_name, document)
-		VALUES (?, ?, ?, ?,
-			?, ?, ?,
-			?, ?)`,
+	query := "INSERT INTO licensing " +
+		"(uuid, category, name, number, issued, valid_from, valid_until, document_name, document) " +
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	_, err := m.DB.ExecContext(ctx, query,
 		lic.UUID, lic.Category, lic.Name, lic.Number,
 		lic.Issued, lic.ValidFrom, lic.ValidUntil,
 		lic.DocumentName, lic.Document,
@@ -163,11 +150,24 @@ func (m *DBModel) DeleteLicenseRecord(uuid string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, `
-		DELETE FROM licensing
-		WHERE
-			uuid = ?`, uuid,
-	)
+	_, err := m.DB.ExecContext(ctx, "DELETE FROM licensing WHERE uuid = ?", uuid)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteLicenseAttachment drops license attachment
+func (m *DBModel) DeleteLicenseAttachment(uuid string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var err error
+
+	query := `UPDATE licensing SET	document_name = "", document = null WHERE uuid = ?`
+	_, err = m.DB.ExecContext(ctx, query, uuid)
 
 	if err != nil {
 		return err
