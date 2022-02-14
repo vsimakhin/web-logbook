@@ -9,7 +9,7 @@ import (
 
 type templateData struct {
 	Data map[string]interface{}
-	API  string
+	API  map[string]string
 }
 
 var functions = template.FuncMap{
@@ -54,8 +54,20 @@ func formatNumber(n int) string {
 	return s
 }
 
+// addDefaultData adds default values/consts to all templates
 func (app *application) addDefaultData(td *templateData, req *http.Request) *templateData {
-	td.API = fmt.Sprintf("http://localhost:%d", app.config.port)
+	td.API = make(map[string]string)
+	td.API["URL"] = fmt.Sprintf("http://localhost:%d", app.config.port)
+	td.API["LicensingSave"] = APILicensingSave
+	td.API["LicensingDelete"] = APILicensingDelete
+	td.API["LicensingAttachmentDelete"] = APILicensingAttachmentDelete
+	td.API["Settings"] = APISettings
+	td.API["AirportUpdate"] = APIAirportUpdate
+	td.API["LogbookSave"] = APILogbookSave
+	td.API["LogbookDelete"] = APILogbookDelete
+	td.API["LogbookNight"] = APILogbookNight
+	td.API["LogbookAttachmentsDelete"] = APILogbookAttachmentsDelete
+	td.API["LogbookAttachmentsUpload"] = APILogbookAttachmentsUpload
 
 	return td
 }

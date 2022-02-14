@@ -87,7 +87,7 @@ Settings
             body: JSON.stringify(payload),
         }
 
-        fetch("{{.API}}/settings", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "Settings"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -109,7 +109,7 @@ Settings
             }
         }
 
-        fetch("{{.API}}/airport/update", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "AirportUpdate"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {

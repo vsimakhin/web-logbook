@@ -63,7 +63,7 @@
             body: payload,
         }
 
-        fetch("{{.API}}/licensing/save", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LicensingSave"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -91,7 +91,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{.API}}/licensing/delete", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LicensingDelete"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -119,7 +119,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{.API}}/licensing/attachment/delete", requestOptions)
+        fetch("{{index .API "URL"}}{{index .API "LicensingAttachmentDelete"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
