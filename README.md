@@ -31,12 +31,19 @@ Since it's written in golang it can run on any system if you compile the sources
 
 Currently there are implemented several modules in the logbook app:
 * Logbook itself
-* Attachments for the flight records
-* Export to EASA PDF format
+  * Attachments for the flight records
+  * Map drawing and distance calculation for the flight record
+  * Export to EASA PDF format
 * Settings
 * Map
+  * Filters for routes and airports 
 * Licensing & Certification
+  * Document attachments and preview
+  * Expiration time tracking  
 * Statistics
+  * Totals
+  * By Year
+  * By Aircraft 
 
 ## Logbook
 
