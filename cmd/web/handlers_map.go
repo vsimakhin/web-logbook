@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/vsimakhin/web-logbook/internal/maprender"
 )
@@ -11,17 +12,29 @@ import (
 // HandlerStatsMap is a handler for Map page
 func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/map")
+		app.infoLog.Println(APIMap)
 	}
 
 	data := make(map[string]interface{})
+	data["current_date"] = time.Now().Format("2006")
+
+	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}, "common-js", "map-js"); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
+// HandlerMapData returs lines and markers for the map page
+func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
+	if app.config.env == "dev" {
+		app.infoLog.Println(APIMapData)
+	}
 
 	// get filter parameters
 	filterDate := r.URL.Query().Get("filter_date")
 	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
 
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/map?%s\n", r.URL.Query().Encode())
+		app.infoLog.Printf("%s?%s\n", APIMapData, r.URL.Query().Encode())
 	}
 
 	flightRecords, err := app.db.GetFlightRecords()
@@ -44,105 +57,13 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 		FilterNoRoutes: filterNoRoutes,
 		AirportsDB:     airports,
 	}
-
 	render.Render()
+
+	data := make(map[string]interface{})
 	data["lines"] = render.Lines
 	data["markers"] = render.Markers
 
-	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
-// HandlerMapLines returns routes array with coordinates
-func (app *application) HandlerMapLines(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println("/map/lines")
-	}
-
-	// get filter parameters
-	filterDate := r.URL.Query().Get("filter_date")
-	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
-
-	if app.config.env == "dev" {
-		app.infoLog.Printf("/map/lines?%s\n", r.URL.Query().Encode())
-	}
-
-	flightRecords, err := app.db.GetFlightRecords()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	airports, err := app.db.GetAirports()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	render := maprender.MapRender{
-		FlightRecords:  flightRecords,
-		FilterDate:     filterDate,
-		FilterNoRoutes: filterNoRoutes,
-		AirportsDB:     airports,
-	}
-	render.Render()
-
-	out, err := json.Marshal(render.Lines)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-// HandlerMapMarkers returns airports coordinates
-func (app *application) HandlerMapMarkers(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println("/map/markers")
-	}
-
-	// get filter parameters
-	filterDate := r.URL.Query().Get("filter_date")
-	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
-
-	if app.config.env == "dev" {
-		app.infoLog.Printf("/map/markers?%s\n", r.URL.Query().Encode())
-	}
-
-	flightRecords, err := app.db.GetFlightRecords()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	airports, err := app.db.GetAirports()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	render := maprender.MapRender{
-		FlightRecords:  flightRecords,
-		FilterDate:     filterDate,
-		FilterNoRoutes: filterNoRoutes,
-		AirportsDB:     airports,
-	}
-	render.Render()
-
-	out, err := json.Marshal(render.Markers)
+	out, err := json.Marshal(data)
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

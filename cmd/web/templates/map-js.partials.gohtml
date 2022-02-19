@@ -1,0 +1,112 @@
+{{define "map-js"}}
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    function loadMap(parameters) {
+        document.getElementById("map").innerText = "";
+
+        var data = loadJSON("{{index .API "URL"}}{{index .API "MapData"}}"+parameters);
+
+        var lines = data["lines"];
+        var markers = data["markers"];
+
+        /* generate a map */
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([14.2588996887, 50.3246994019]),
+                zoom: 5
+            })
+        });
+
+        /* generate line points */
+        var points = [];
+        if (lines) { // lines can be empty if filter no-routes is true
+            for (var x = 0; x < lines.length; x++) {
+                points.push([lines[x]["point1"], lines[x]["point2"]]);
+            }
+
+
+            /* drawing routes... */
+            var vectorLine = new ol.source.Vector({});
+
+            for (var x = 0; x < points.length; x++) {
+                for (var i = 0; i < points[x].length; i++) {
+                    points[x][i] = ol.proj.transform(points[x][i], 'EPSG:4326', 'EPSG:3857');
+                }
+
+                var featureLine = new ol.Feature({
+                    geometry: new ol.geom.LineString(points[x])
+                });
+
+                vectorLine.addFeature(featureLine);
+            }
+
+            var vectorLineLayer = new ol.layer.Vector({
+                source: vectorLine,
+                style: new ol.style.Style({
+                    fill: new ol.style.Fill({ color: '#888888', weight: 0.4 }),
+                    stroke: new ol.style.Stroke({ color: '#888888', width: 1 })
+                })
+            });
+
+            map.addLayer(vectorLineLayer);
+
+        }
+
+        /* drawing markers */
+        var points = [];
+        for (var x = 0; x < markers.length; x++) {
+            points.push(markers[x]["point"]);
+        }
+
+        var vectorMarker = new ol.source.Vector({});
+        var iconStyle = new ol.style.Style({
+            image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+                src: "/static/favicon.ico"
+            }))
+        })
+
+
+        for (var x = 0; x < points.length; x++) {
+            var featureMarker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(points[x])),
+                desc: "/static/favicon.ico"
+            });
+
+            featureMarker.setStyle(iconStyle);
+            vectorMarker.addFeature(featureMarker);
+        }
+
+
+        var vectorMarkerLayer = new ol.layer.Vector({
+            source: vectorMarker,
+        });
+
+
+        map.addLayer(vectorMarkerLayer);
+
+        map.renderSync();
+
+        var extent = vectorMarkerLayer.getSource().getExtent();
+        map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
+    }
+
+    function Refresh() {
+        let filter_date = document.getElementById("filter_date").value;
+        let filter_noroutes = document.getElementById("filter_noroutes").checked;
+
+        parameters = "?filter_date=" + encodeURIComponent(filter_date) + "&filter_noroutes=" + encodeURIComponent(filter_noroutes);
+
+        loadMap(parameters)
+    }
+</script>
+{{end}}

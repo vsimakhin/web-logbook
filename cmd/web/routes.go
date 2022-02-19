@@ -14,6 +14,8 @@ const APILogbookDelete = "/logbook/delete"
 const APILogbookNight = "/logbook/night"
 const APILogbookAttachmentsDelete = "/logbook/attachments/delete"
 const APILogbookAttachmentsUpload = "/logbook/attachments/upload"
+const APIMap = "/map"
+const APIMapData = "/map/data"
 
 func (app *application) routes() *chi.Mux {
 	server := chi.NewRouter()
@@ -51,9 +53,8 @@ func (app *application) routes() *chi.Mux {
 	server.Get("/stats", app.HandlerStats)
 
 	// map
-	server.Get("/map", app.HandlerMap)
-	server.Get("/map/lines", app.HandlerMapLines)
-	server.Get("/map/markers", app.HandlerMapMarkers)
+	server.Get(APIMap, app.HandlerMap)
+	server.Get(APIMapData, app.HandlerMapData)
 
 	// documents
 	server.Get("/licensing", app.HandlerLicensing)
