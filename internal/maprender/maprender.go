@@ -14,6 +14,7 @@ type Line struct {
 
 type Marker struct {
 	Point []float64 `json:"point"`
+	Name  string    `json:"name"`
 }
 
 type MapRender struct {
@@ -66,7 +67,7 @@ func (mr *MapRender) Render() {
 	// generate airports markers
 	for place := range airportMarkers {
 		if airport, ok := mr.AirportsDB[place]; ok {
-			mr.Markers = append(mr.Markers, Marker{[]float64{airport.Lon, airport.Lat}})
+			mr.Markers = append(mr.Markers, Marker{[]float64{airport.Lon, airport.Lat}, place})
 		}
 	}
 }

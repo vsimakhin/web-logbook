@@ -1,0 +1,123 @@
+{{define "map-js"}}
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    function loadMap(parameters) {
+        document.getElementById("map").innerText = "";
+
+        var data = loadJSON("{{index .API "URL"}}{{index .API "MapData"}}"+parameters);
+
+        var lines = data["lines"];
+        var markers = data["markers"];
+
+        /* generate a map */
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([14.2588996887, 50.3246994019]),
+                zoom: 5
+            })
+        });
+
+        var some_stats = "";
+
+        /* generate line points */
+        var points = [];
+        if (lines) { // lines can be empty if filter no-routes is true
+            for (var x = 0; x < lines.length; x++) {
+                points.push([lines[x]["point1"], lines[x]["point2"]]);
+            }
+
+            /* drawing routes... */
+            var vectorLine = new ol.source.Vector({});
+
+            for (var x = 0; x < points.length; x++) {
+                for (var i = 0; i < points[x].length; i++) {
+                    points[x][i] = ol.proj.transform(points[x][i], 'EPSG:4326', 'EPSG:3857');
+                }
+
+                var featureLine = new ol.Feature({
+                    geometry: new ol.geom.LineString(points[x])
+                });
+
+                vectorLine.addFeature(featureLine);
+            }
+
+            var vectorLineLayer = new ol.layer.Vector({
+                source: vectorLine,
+                style: new ol.style.Style({
+                    fill: new ol.style.Fill({ color: '#888888', weight: 0.4 }),
+                    stroke: new ol.style.Stroke({ color: '#888888', width: 1 })
+                })
+            });
+
+            map.addLayer(vectorLineLayer);
+
+            some_stats += "Routes: " + lines.length + "\n";
+        }
+
+        /* drawing markers */
+        var vectorMarker = new ol.source.Vector({});
+
+        for (var x = 0; x < markers.length; x++) {
+            var iconStyle = [
+                new ol.style.Style({
+                    image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+                        src: "/static/favicon.ico"
+                    }))
+                }),
+                new ol.style.Style({
+                    text: new ol.style.Text({
+                        text: markers[x]["name"],
+                        offsetY: -12,
+                        scale: 1.3,
+                        fill: new ol.style.Fill({
+                            color: '#black',
+                        })
+                    })
+                })
+            ]
+
+            var featureMarker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(markers[x]["point"])),
+                desc: "/static/favicon.ico"
+            });
+
+            featureMarker.setStyle(iconStyle);
+            vectorMarker.addFeature(featureMarker);
+        }
+
+        some_stats += "Airports: " + markers.length;
+
+        var vectorMarkerLayer = new ol.layer.Vector({
+            source: vectorMarker,
+        });
+
+        map.addLayer(vectorMarkerLayer);
+
+        map.renderSync();
+
+        var extent = vectorMarkerLayer.getSource().getExtent();
+        map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
+
+        document.getElementById("some_stats").innerText = some_stats;
+    }
+
+    function Refresh() {
+        let filter_date = document.getElementById("filter_date").value;
+        let filter_noroutes = document.getElementById("filter_noroutes").checked;
+
+        parameters = "?filter_date=" + encodeURIComponent(filter_date) + "&filter_noroutes=" + encodeURIComponent(filter_noroutes);
+
+        loadMap(parameters)
+    }
+</script>
+{{end}}
