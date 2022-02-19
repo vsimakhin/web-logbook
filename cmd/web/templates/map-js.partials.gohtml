@@ -27,6 +27,8 @@
             })
         });
 
+        var some_stats = "";
+
         /* generate line points */
         var points = [];
         if (lines) { // lines can be empty if filter no-routes is true
@@ -59,6 +61,7 @@
 
             map.addLayer(vectorLineLayer);
 
+            some_stats += "Routes: " + lines.length + "\n";
         }
 
         /* drawing markers */
@@ -92,6 +95,8 @@
             vectorMarker.addFeature(featureMarker);
         }
 
+        some_stats += "Airports: " + markers.length;
+
         var vectorMarkerLayer = new ol.layer.Vector({
             source: vectorMarker,
         });
@@ -102,6 +107,8 @@
 
         var extent = vectorMarkerLayer.getSource().getExtent();
         map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
+
+        document.getElementById("some_stats").innerText = some_stats;
     }
 
     function Refresh() {

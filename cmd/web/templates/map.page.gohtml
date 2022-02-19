@@ -19,8 +19,8 @@ Maps
 
     <div class="row">
         <div class="col-md-2">
-            <form name="filters" id="filters" class="d-block" autocomplete="off">
-                <div class="row">
+            <div class="row">
+                <form name="filters" id="filters" class="d-block" autocomplete="off">
                     <div class="mb-2">
                         <label for="filter_date" class="form-label">Date Filter:</label>
                         <input type="text" class="form-control" id="filter_date" name="filter_date" value="{{$cd}}" placeholder="Date Filter"
@@ -33,9 +33,12 @@ Maps
                     <div class="mb-2">
                         <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
                     </div>
-                </div>
-            </form>
-
+                </form>
+            </div>
+            <hr>
+            <div class="row">
+                <div id="some_stats"></div>
+            </div>
         </div>
         <div class="col-md-10">
             <div id="map" class="ol-map"></div>
