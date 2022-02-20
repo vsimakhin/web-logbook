@@ -5,10 +5,11 @@ Settings
 {{ end }}
 
 {{ define "content" }}
+    {{$api := .API}}
     {{$settings := index .Data "settings"}}
     {{$records := index .Data "records"}}
 
-    <form action="/settings" method="post" name="settings" id="settings"
+    <form action="{{$api.Settings}}" method="post" name="settings" id="settings"
         class="d-block" autocomplete="off" novalidate="">
 
         <label for="owner_name" class="form-label"><strong>Owner Name</strong><br>
@@ -87,7 +88,7 @@ Settings
             body: JSON.stringify(payload),
         }
 
-        fetch("{{index .API "URL"}}{{index .API "Settings"}}", requestOptions)
+        fetch("{{index .API "Settings"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -109,7 +110,7 @@ Settings
             }
         }
 
-        fetch("{{index .API "URL"}}{{index .API "AirportUpdate"}}", requestOptions)
+        fetch("{{index .API "AirportUpdate"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {

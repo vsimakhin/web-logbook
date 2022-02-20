@@ -10,7 +10,7 @@ import (
 // HandlerSettings is a handler for Settings page
 func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/settings")
+		app.infoLog.Println(APISettings)
 	}
 
 	settings, err := app.db.GetSettings()
@@ -39,7 +39,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 // HandlerSettingsSave serves the POST request for settings update
 func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/settings")
+		app.infoLog.Println(APISettings)
 	}
 
 	var settings models.Settings

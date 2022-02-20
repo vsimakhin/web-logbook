@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -15,7 +16,7 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 	uuid := chi.URLParam(r, "id")
 
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/airport/%s\n", uuid)
+		app.infoLog.Println(strings.ReplaceAll(APIAirportID, "{id}", uuid))
 	}
 
 	airport, err := app.db.GetAirportByID(uuid)
@@ -44,7 +45,7 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 // HandlerAirportUpdate updates the Airports DB
 func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/airport/update")
+		app.infoLog.Println(APIAirportUpdate)
 	}
 
 	var airportsDB map[string]interface{}

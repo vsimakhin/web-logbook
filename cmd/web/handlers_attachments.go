@@ -15,7 +15,7 @@ import (
 func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/logbook/%s/attachments\n", uuid)
+		app.infoLog.Println(strings.ReplaceAll(APILogbookUUIDAttachments, "{uuid}", uuid))
 	}
 
 	attachments, err := app.db.GetAttachments(uuid)
@@ -48,7 +48,7 @@ func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Req
 // HandlerUploadAttachment handles attachments upload
 func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/attachments/upload")
+		app.infoLog.Println(APILogbookAttachmentsUpload)
 	}
 
 	var response models.JSONResponse
@@ -127,7 +127,7 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 // HandlerDeleteAttachment is a handler for removing attachments
 func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/attachments/delete")
+		app.infoLog.Println(APILogbookAttachmentsDelete)
 	}
 
 	var att models.Attachment
@@ -174,7 +174,7 @@ func (app *application) HandlerAttachmentDownload(w http.ResponseWriter, r *http
 	uuid := chi.URLParam(r, "uuid")
 
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/logbook/attachments/download/%s", uuid)
+		app.infoLog.Println(strings.ReplaceAll(APILogbookAttachmentsDownloadUUID, "{uuid}", uuid))
 	}
 
 	att, err := app.db.GetAttachmentByID(uuid)

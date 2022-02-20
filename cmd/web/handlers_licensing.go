@@ -16,7 +16,7 @@ import (
 // HandlerLicensing is a handler for /licensing page
 func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/licensing")
+		app.infoLog.Println(APILicensing)
 	}
 
 	if err := app.renderTemplate(w, r, "licensing", nil); err != nil {
@@ -27,7 +27,7 @@ func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request)
 // HandlerFlightRecordsData generates data for the logbook table at /logbook page
 func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/licensing/data")
+		app.infoLog.Println(APILicensingData)
 	}
 
 	type TableData struct {
@@ -103,7 +103,7 @@ func (app *application) HandlerLicensingRecordByID(w http.ResponseWriter, r *htt
 	uuid := chi.URLParam(r, "uuid")
 
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/licensing/%s", uuid)
+		app.infoLog.Println(strings.ReplaceAll(APILicensingUUID, "{uuid}", uuid))
 	}
 
 	license, err := app.db.GetLicenseRecordByID(uuid)
@@ -132,7 +132,7 @@ func (app *application) HandlerLicensingDownload(w http.ResponseWriter, r *http.
 	uuid := chi.URLParam(r, "uuid")
 
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/licensing/download/%s", uuid)
+		app.infoLog.Println(strings.ReplaceAll(APILicensingDownloadUUID, "{uuid}", uuid))
 	}
 
 	license, err := app.db.GetLicenseRecordByID(uuid)
@@ -153,7 +153,7 @@ func (app *application) HandlerLicensingDownload(w http.ResponseWriter, r *http.
 // HandlerLicensingRecordNew is a handler for creating a new license record
 func (app *application) HandlerLicensingRecordNew(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/licensing/new")
+		app.infoLog.Println(APILicensingNew)
 	}
 
 	var license models.License
@@ -175,7 +175,7 @@ func (app *application) HandlerLicensingRecordNew(w http.ResponseWriter, r *http
 // HandlerLicensingRecordDelete is a handler for deleting license record
 func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/licensing/delete")
+		app.infoLog.Println(APILicensingDelete)
 	}
 
 	var license models.License
@@ -196,7 +196,7 @@ func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *h
 	} else {
 		response.OK = true
 		response.Message = "License Record deleted"
-		response.RedirectURL = "/licensing"
+		response.RedirectURL = APILicensing
 
 		if app.config.env == "dev" {
 			app.infoLog.Printf("license record %s deleted\n", license.UUID)
@@ -221,7 +221,7 @@ func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *h
 
 func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/licensing/deleteattachment")
+		app.infoLog.Println(APILicensingAttachmentDelete)
 	}
 
 	var license models.License
@@ -242,7 +242,7 @@ func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, 
 	} else {
 		response.OK = true
 		response.Message = "Attachment removed"
-		response.RedirectURL = fmt.Sprintf("/licensing/%s", license.UUID)
+		response.RedirectURL = strings.ReplaceAll(APILicensingUUID, "{uuid}", license.UUID)
 
 		if app.config.env == "dev" {
 			app.infoLog.Printf("license record %s deleted\n", license.UUID)
@@ -268,7 +268,7 @@ func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, 
 // HandlerLicensingRecordSave is a handler for creating or updating license record
 func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/licensing/save")
+		app.infoLog.Println(APILicensingSave)
 	}
 
 	var response models.JSONResponse
@@ -329,7 +329,7 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		} else {
 			response.OK = true
 			response.Message = "New Record has been saved"
-			response.RedirectURL = fmt.Sprintf("/licensing/%s", license.UUID)
+			response.RedirectURL = strings.ReplaceAll(APILicensingUUID, "{uuid}", license.UUID)
 
 			if app.config.env == "dev" {
 				app.infoLog.Printf("new license record %s created", license.UUID)
@@ -346,7 +346,7 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		} else {
 			response.OK = true
 			response.Message = "License Record has been updated"
-			response.RedirectURL = fmt.Sprintf("/licensing/%s", license.UUID)
+			response.RedirectURL = strings.ReplaceAll(APILicensingUUID, "{uuid}", license.UUID)
 
 			if app.config.env == "dev" {
 				app.infoLog.Printf("license records %s updated\n", license.UUID)

@@ -1,12 +1,14 @@
 {{ template "base" .}}
 
 {{ define "title" }}
-    {{$fr := index .Data "flightRecord"}}
 
+{{$fr := index .Data "flightRecord"}}
 Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{end}}
+
 {{ end }}
 
 {{ define "css" }}
+
     <link rel="stylesheet" href="/static/css/ol.css">
     <style>
     .ol-map {
@@ -14,14 +16,16 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
         width: 100%;
     }
     </style>
+
 {{ end }}
 
 {{ define "content" }}
+    {{$api := .API}}
     {{$fr := index .Data "flightRecord"}}
     {{$aircraft_regs := index .Data "aircraftRegs"}}
     {{$aircraft_models := index .Data "aircraftModels"}}
 
-    <form action="/logbook/{{$fr.UUID}}" method="post" name="flight_record" id="flight_record"
+    <form action="{{$api.Logbook}}/{{$fr.UUID}}" method="post" name="flight_record" id="flight_record"
         class="d-block" autocomplete="off" novalidate="">
 
         <div class="row">

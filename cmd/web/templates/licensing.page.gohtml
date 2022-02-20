@@ -9,6 +9,7 @@ Licensing & Certification
 {{ end }}
 
 {{ define "content" }}
+    {{$api := .API}}
     <table id="logbook" class="table table-bordered nowrap table-fixed">
         <thead>
             <tr class="align-top text-center">
@@ -26,7 +27,7 @@ Licensing & Certification
         </tbody>
     </table>
 
-    <a id="new-license" href="/licensing/new" class="btn btn-primary" onclick="">Add New License</a>
+    <a id="new-license" href="{{$api.LicensingNew}}" class="btn btn-primary" onclick="">Add New License</a>
 {{ end }}
 
 {{ define "js" }}

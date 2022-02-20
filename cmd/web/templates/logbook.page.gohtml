@@ -9,6 +9,7 @@ Logbook
 {{ end }}
 
 {{ define "content" }}
+{{$api := .API}}
     <table id="logbook" class="table table-sm table-striped table-bordered nowrap table-fixed">
         <thead>
             <tr class="align-top text-center">
@@ -52,27 +53,27 @@ Logbook
         </tbody>
     </table>
 
-    <a id="new-flight-record" href="/logbook/new" class="btn btn-primary" onclick="">Add New Flight Record</a>
+    <a id="new-flight-record" href="{{$api.LogbookNew}}" class="btn btn-primary" onclick="">Add New Flight Record</a>
     <a id="export" href="#" class="btn btn-success float-right" onclick="ExportPDF()">Export to PDF</a>
-
-
 {{ end }}
 
 {{ define "js" }}
+{{$api := .API}}
+
 <script type="text/javascript" src="/static/js/datatables.min.js"></script>
 <script>
     $(document).ready( function () {
         $('#logbook').DataTable({
             "ordering": false,
             "info":     false,
-            "ajax": '/logbook/data',
+            "ajax": '{{index .API "LogbookData"}}',
             "lengthMenu": [[15, 50, -1], [15, 50, "All"]]
         } );
 
     } );
 
     function ExportPDF() {
-        window.open("/logbook/export", "_blank");
+        window.open("{{$api.LogbookExport}}", "_blank");
     }
 </script>
 {{ end }}

@@ -9,7 +9,7 @@ import (
 // HandlerStats is a handler for Stats page
 func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/stats")
+		app.infoLog.Println(APIStats)
 	}
 
 	data := make(map[string]interface{})

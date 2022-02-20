@@ -1,4 +1,6 @@
-{{ define "base"}}
+{{ define "base" }}
+{{$api := .API}}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -26,25 +28,25 @@
                         <div class="nav">
                             <!-- Core-->
                             <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="/logbook">
+                            <a class="nav-link" href="{{$api.Logbook}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                                 Logbook
                             </a>
-                            <a class="nav-link" href="/licensing">
+                            <a class="nav-link" href="{{$api.Licensing}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-certificate"></i></div>
                                 Licensing
                             </a>
-                            <a class="nav-link" href="/stats">
+                            <a class="nav-link" href="{{$api.Stats}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
                                 Stats
                             </a>
-                            <a class="nav-link" href="/map">
+                            <a class="nav-link" href="{{$api.Map}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-map"></i></div>
                                 Map
                             </a>
                             <!-- Addons-->
                             <div class="sb-sidenav-menu-heading">Addons</div>
-                            <a class="nav-link" href="/settings">
+                            <a class="nav-link" href="{{$api.Settings}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-cogs"></i></div>
                                 Settings
                             </a>

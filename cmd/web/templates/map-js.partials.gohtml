@@ -8,7 +8,7 @@
     function loadMap(parameters) {
         document.getElementById("map").innerText = "";
 
-        var data = loadJSON("{{index .API "URL"}}{{index .API "MapData"}}"+parameters);
+        var data = loadJSON("{{index .API "MapData"}}"+parameters);
 
         var lines = data["lines"];
         var markers = data["markers"];

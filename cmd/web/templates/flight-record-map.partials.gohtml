@@ -51,8 +51,8 @@
         document.getElementById("map").innerText = "";
 
         // load deprature & arrival airports
-        var dep = loadJSON("/airport/"+departure_place);
-        var arr = loadJSON("/airport/"+arrival_place);
+        var dep = loadJSON("{{index .API "Airport"}}"+departure_place);
+        var arr = loadJSON("{{index .API "Airport"}}"+arrival_place);
 
         // calculate center of the map
         var center = midpoint(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);
@@ -130,7 +130,6 @@
 
         document.getElementById("some_stats").innerText = "Distance: " + Math.floor(dist) + " km / " + Math.floor(dist/1.852) + " nm";
     }
-
 
 </script>
 

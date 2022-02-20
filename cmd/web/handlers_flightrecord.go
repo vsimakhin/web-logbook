@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -17,7 +18,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 	uuid := chi.URLParam(r, "uuid")
 
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/logbook/%s", uuid)
+		app.infoLog.Println(strings.ReplaceAll(APILogbookUUID, "{uuid}", uuid))
 	}
 
 	flightRecord, err := app.db.GetFlightRecordByID(uuid)
@@ -50,7 +51,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 // HandlerFlightRecordNew shows the empty form for a new flight record
 func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/new")
+		app.infoLog.Println(APILogbookNew)
 	}
 
 	var flightRecord models.FlightRecord
@@ -80,7 +81,7 @@ func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Re
 // HandlerFlightRecordDelete serves POST request for deleting flight record
 func (app *application) HandlerFlightRecordDelete(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/delete")
+		app.infoLog.Println(APILogbookDelete)
 	}
 
 	var flightRecord models.FlightRecord
@@ -101,7 +102,7 @@ func (app *application) HandlerFlightRecordDelete(w http.ResponseWriter, r *http
 	} else {
 		response.OK = true
 		response.Message = "Flight Record deleted"
-		response.RedirectURL = "/logbook"
+		response.RedirectURL = APILogbook
 
 		if app.config.env == "dev" {
 			app.infoLog.Printf("flight records %s deleted\n", flightRecord.UUID)
@@ -132,7 +133,7 @@ func (app *application) HandlerFlightRecordDelete(w http.ResponseWriter, r *http
 // HandlerFlightRecordSave updates the flight record or create a new one
 func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/save")
+		app.infoLog.Println(APILogbookSave)
 	}
 
 	var flightRecord models.FlightRecord
@@ -164,7 +165,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 		} else {
 			response.OK = true
 			response.Message = "New Flight Record has been saved"
-			response.RedirectURL = fmt.Sprintf("/logbook/%s", flightRecord.UUID)
+			response.RedirectURL = fmt.Sprintf("%s/%s", APILogbook, flightRecord.UUID)
 
 			if app.config.env == "dev" {
 				app.infoLog.Printf("few flight record %s created", flightRecord.UUID)
@@ -207,7 +208,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 // HandlerNightTime is a handler for calculating night time
 func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/nighttime")
+		app.infoLog.Println(APILogbookNight)
 	}
 
 	var fr models.FlightRecord

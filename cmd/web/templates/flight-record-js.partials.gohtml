@@ -135,7 +135,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{index .API "URL"}}{{index .API "LogbookSave"}}", requestOptions)
+        fetch("{{index .API "LogbookSave"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -163,7 +163,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{index .API "URL"}}{{index .API "LogbookDelete"}}", requestOptions)
+        fetch("{{index .API "LogbookDelete"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -263,7 +263,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{index .API "URL"}}{{index .API "LogbookNight"}}", requestOptions)
+        fetch("{{index .API "LogbookNight"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -295,7 +295,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{index .API "URL"}}{{index .API "LogbookAttachmentsDelete"}}", requestOptions)
+        fetch("{{index .API "LogbookAttachmentsDelete"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
@@ -311,14 +311,15 @@
         var tbody = document.getElementById("attachments_table");
         var rows = "";
 
-        data = loadJSON("/logbook/"+uuid+"/attachments");
+        logbook_attachments_url = "{{index .API "LogbookUUIDAttachments"}}";
+        data = loadJSON(logbook_attachments_url.replace("{uuid}", uuid));
 
         if (data.length) {
             tbody.innerHTML = "";
             for (var x = 0; x < data.length; x++) {
                 rows = rows +
                     `<tr>
-                        <td><a href="/logbook/attachments/download/${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
+                        <td><a href="{{index .API "LogbookAttachmentsDownload"}}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
                         <td id="ask_${data[x]["uuid"]}"><button type="button" class="btn-close" onclick="AskForDelete('${data[x]["uuid"]}')"></button></td>
                     </tr>`;
             }
@@ -344,7 +345,7 @@
             body: payload,
         }
 
-        fetch("{{index .API "URL"}}{{index .API "LogbookAttachmentsUpload"}}", requestOptions)
+        fetch("{{index .API "LogbookAttachmentsUpload"}}", requestOptions)
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
