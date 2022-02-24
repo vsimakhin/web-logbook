@@ -33,7 +33,7 @@ func TestHandlerFlightRecordsData(t *testing.T) {
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
 
-	resp, _ := http.Get(fmt.Sprintf("%s/logbook/data", srv.URL))
+	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILogbookData))
 	responseBody, _ := ioutil.ReadAll(resp.Body)
 
 	assert.Equal(t, resp.StatusCode, http.StatusOK)

@@ -152,14 +152,11 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 	var fr, emptyone FlightRecord
 	totals := make(map[string]FlightRecord)
 
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT
-			SUBSTR(m_date,0,5), se_time, me_time, mcc_time, total_time,
-			day_landings, night_landings,
-			night_time, ifr_time, pic_time, co_pilot_time,
-			dual_time, instructor_time, sim_time, departure_place, arrival_place
-		FROM logbook_view
-		ORDER BY m_date;`)
+	query := "SELECT SUBSTR(m_date,0,5), se_time, me_time, mcc_time, total_time, " +
+		"day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
+		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
+		"FROM logbook_view ORDER BY m_date"
+	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
 		return totals, err
@@ -196,14 +193,11 @@ func (m *DBModel) GetTotalsByAircraftType() (map[string]FlightRecord, error) {
 	var fr, emptyone FlightRecord
 	totals := make(map[string]FlightRecord)
 
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT
-			aircraft_model, se_time, me_time, mcc_time, total_time,
-			day_landings, night_landings,
-			night_time, ifr_time, pic_time, co_pilot_time,
-			dual_time, instructor_time, sim_time, departure_place, arrival_place
-		FROM logbook_view
-		ORDER BY m_date;`)
+	query := "SELECT aircraft_model, se_time, me_time, mcc_time, total_time, " +
+		"day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
+		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
+		"FROM logbook_view ORDER BY m_date"
+	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
 		return totals, err
