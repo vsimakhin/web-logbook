@@ -1,367 +1,369 @@
 {{define "flight-record-js"}}
 <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
 
-    function validate() {
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+});
 
-        let isValid = true;
-        let errorMessage = "";
+function validate() {
 
-        // validate date field
-        let date = document.getElementById("date");
-        if (!date.value) {
-            date.classList.add("is-invalid");
-            isValid = false
-            errorMessage = errorMessage + "Date cannot be empty\r\n";
-        } else {
-            date.classList.add("is-valid");
-        }
+    let isValid = true;
+    let errorMessage = "";
 
-        // valiudate departure and arrival time if they are not empty
-        if (!validateDepArrTime(document.getElementById("departure_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Departure Time should be in HHMM format or empty\r\n";
-        }
-        if (!validateDepArrTime(document.getElementById("arrival_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Arrival Time should be in HHMM format or empty\r\n";
-        }
-
-        // validate time fields
-        if (!validateTime(document.getElementById("total_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Total Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("se_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Single Engine Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("me_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Multi Engine Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("mcc_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "MCC Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("night_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Night Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("ifr_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "IFR Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("pic_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "PIC Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("sic_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "CoPilot Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("dual_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Dual Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("instr_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Instructor Time should be in HH:MM format or empty\r\n";
-        }
-        if (!validateTime(document.getElementById("sim_time"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Simulator Time should be in HH:MM format or empty\r\n";
-        }
-
-        if (!isValid) {
-            showErrorMessage(errorMessage);
-            return;
-        }
-
-        showInfoMessage("OK!");
-
-        SaveFlightRecord();
+    // validate date field
+    let date = document.getElementById("date");
+    if (!date.value) {
+        date.classList.add("is-invalid");
+        isValid = false
+        errorMessage = errorMessage + "Date cannot be empty\r\n";
+    } else {
+        date.classList.add("is-valid");
     }
 
-    function SaveFlightRecord() {
-        let payload = {
-            uuid: document.getElementById("uuid").value,
-            date: document.getElementById("date").value,
-            departure: {
-                place: document.getElementById("departure_place").value,
-                time: document.getElementById("departure_time").value
-            },
-            arrival: {
-                place: document.getElementById("arrival_place").value,
-                time: document.getElementById("arrival_time").value
-            },
-            aircraft: {
-                model: document.getElementById("aircraft_model").value,
-                reg_name: document.getElementById("aircraft_reg").value
-            },
-            time: {
-                se_time: document.getElementById("se_time").value,
-                me_time: document.getElementById("me_time").value,
-                mcc_time: document.getElementById("mcc_time").value,
-                total_time: document.getElementById("total_time").value,
-                night_time: document.getElementById("night_time").value,
-                ifr_time: document.getElementById("ifr_time").value,
-                pic_time: document.getElementById("pic_time").value,
-                co_pilot_time: document.getElementById("sic_time").value,
-                dual_time: document.getElementById("dual_time").value,
-                instructor_time: document.getElementById("instr_time").value
-            },
-            landings: {
-                day: formatLandings(document.getElementById("landings_day").value),
-                night: formatLandings(document.getElementById("landings_night").value)
-            },
-            sim: {
-                type: document.getElementById("sim_type").value,
-                time: document.getElementById("sim_time").value
-            },
-            pic_name: document.getElementById("pic_name").value,
-            remarks: document.getElementById("remarks").value
-        };
+    // valiudate departure and arrival time if they are not empty
+    if (!validateDepArrTime(document.getElementById("departure_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Departure Time should be in HHMM format or empty\r\n";
+    }
+    if (!validateDepArrTime(document.getElementById("arrival_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Arrival Time should be in HHMM format or empty\r\n";
+    }
 
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        }
+    // validate time fields
+    if (!validateTime(document.getElementById("total_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Total Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("se_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Single Engine Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("me_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Multi Engine Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("mcc_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "MCC Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("night_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Night Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("ifr_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "IFR Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("pic_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "PIC Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("sic_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "CoPilot Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("dual_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Dual Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("instr_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Instructor Time should be in HH:MM format or empty\r\n";
+    }
+    if (!validateTime(document.getElementById("sim_time"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Simulator Time should be in HH:MM format or empty\r\n";
+    }
 
-        fetch("{{index .API "LogbookSave"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    showErrorMessage(data.message);
+    if (!isValid) {
+        showErrorMessage(errorMessage);
+        return;
+    }
+
+    showInfoMessage("OK!");
+
+    SaveFlightRecord();
+}
+
+function SaveFlightRecord() {
+    let payload = {
+        uuid: document.getElementById("uuid").value,
+        date: document.getElementById("date").value,
+        departure: {
+            place: document.getElementById("departure_place").value,
+            time: document.getElementById("departure_time").value
+        },
+        arrival: {
+            place: document.getElementById("arrival_place").value,
+            time: document.getElementById("arrival_time").value
+        },
+        aircraft: {
+            model: document.getElementById("aircraft_model").value,
+            reg_name: document.getElementById("aircraft_reg").value
+        },
+        time: {
+            se_time: document.getElementById("se_time").value,
+            me_time: document.getElementById("me_time").value,
+            mcc_time: document.getElementById("mcc_time").value,
+            total_time: document.getElementById("total_time").value,
+            night_time: document.getElementById("night_time").value,
+            ifr_time: document.getElementById("ifr_time").value,
+            pic_time: document.getElementById("pic_time").value,
+            co_pilot_time: document.getElementById("sic_time").value,
+            dual_time: document.getElementById("dual_time").value,
+            instructor_time: document.getElementById("instr_time").value
+        },
+        landings: {
+            day: formatLandings(document.getElementById("landings_day").value),
+            night: formatLandings(document.getElementById("landings_night").value)
+        },
+        sim: {
+            type: document.getElementById("sim_type").value,
+            time: document.getElementById("sim_time").value
+        },
+        pic_name: document.getElementById("pic_name").value,
+        remarks: document.getElementById("remarks").value
+    };
+
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
+
+    fetch("{{index .API "LogbookSave"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                showInfoMessage(data.message);
+                if (typeof data.redirect_url !== 'undefined') {
+                    location.href = data.redirect_url;
                 }
-            })
-    }
-
-    function DeleteFlightRecord() {
-        let payload = {
-            uuid: document.getElementById("uuid").value
-        }
-
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        }
-
-        fetch("{{index .API "LogbookDelete"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    showErrorMessage(data.message);
-                }
-            })
-    }
-
-    function formatLandings(value) {
-        if (value === "") {
-            return 0;
-        } else {
-            return parseInt(value);
-        }
-    }
-    function validateDepArrTime(field) {
-        if (field.value !== "") {
-            if (field.value.length !== 4) {
-                field.classList.add("is-invalid")
-                return false
             } else {
-                field.classList.add("is-valid")
+                showErrorMessage(data.message);
             }
-        }
+        })
+}
 
-        return true
+function DeleteFlightRecord() {
+    let payload = {
+        uuid: document.getElementById("uuid").value
     }
 
-    function validateTime(field) {
-        if (field.value !== "") {
-            if (!/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(field.value)) {
-                field.classList.add("is-invalid")
-                return false
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
+
+    fetch("{{index .API "LogbookDelete"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                showInfoMessage(data.message);
+                if (typeof data.redirect_url !== 'undefined') {
+                    location.href = data.redirect_url;
+                }
             } else {
-                field.classList.add("is-valid")
+                showErrorMessage(data.message);
             }
-        }
+        })
+}
 
-        return true
+function formatLandings(value) {
+    if (value === "") {
+        return 0;
+    } else {
+        return parseInt(value);
     }
-
-    function CalculateTimes() {
-        let departure_time = document.getElementById("departure_time").value;
-        let arrival_time = document.getElementById("arrival_time").value;
-
-        if ((departure_time.length == 4) && (arrival_time.length == 4) && (!isNaN(departure_time)) && (!isNaN(arrival_time))) {
-            start = [departure_time.substring(0, 2), departure_time.substring(2)];
-            end = [arrival_time.substring(0, 2), arrival_time.substring(2)];
-
-            document.getElementById("total_time").value = CalculateTotalTime(start, end);
-
-            CalculateNightTime();
-        }
-    }
-
-    function CalculateTotalTime(start, end) {
-        var startDate = new Date(0, 0, 0, start[0], start[1], 0);
-        var endDate = new Date(0, 0, 0, end[0], end[1], 0);
-        var diff = endDate.getTime() - startDate.getTime();
-        var hours = Math.floor(diff / 1000 / 60 / 60);
-        diff -= hours * 1000 * 60 * 60;
-        var minutes = Math.floor(diff / 1000 / 60);
-
-
-        if (hours < 0) {
-            hours = hours + 24;
-        }
-
-        totalTime = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
-        return totalTime;
-    }
-
-    function CalculateNightTime() {
-        let payload = {
-            date: document.getElementById("date").value,
-            departure: {
-                place: document.getElementById("departure_place").value,
-                time: document.getElementById("departure_time").value
-            },
-            arrival: {
-                place: document.getElementById("arrival_place").value,
-                time: document.getElementById("arrival_time").value
-            }
-        };
-
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        }
-
-        fetch("{{index .API "LogbookNight"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    night_time = parseInt(data.message)
-                    if (night_time > 0) {
-                        var hours = Math.floor(night_time / 60);
-                        var minutes = night_time - (hours * 60);
-
-                        time = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
-                        document.getElementById("night_time").value = time;
-                    } else {
-                        document.getElementById("night_time").value = "";
-                    }
-                }
-            })
-    }
-
-    function DeleteAttachment(id) {
-        let payload = {
-            uuid: id
-        }
-
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        }
-
-        fetch("{{index .API "LogbookAttachmentsDelete"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    LoadAttachments();
-                } else {
-                    showErrorMessage(data.message);
-                }
-            })
-    };
-
-    function LoadAttachments() {
-        var uuid = document.getElementById("uuid").value
-        var tbody = document.getElementById("attachments_table");
-        var rows = "";
-
-        logbook_attachments_url = "{{index .API "LogbookUUIDAttachments"}}";
-        data = loadJSON(logbook_attachments_url.replace("{uuid}", uuid));
-
-        if (data.length) {
-            tbody.innerHTML = "";
-            for (var x = 0; x < data.length; x++) {
-                rows = rows +
-                    `<tr>
-                        <td><a href="{{index .API "LogbookAttachmentsDownload"}}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
-                        <td id="ask_${data[x]["uuid"]}"><button type="button" class="btn-close" onclick="AskForDelete('${data[x]["uuid"]}')"></button></td>
-                    </tr>`;
-            }
-            tbody.innerHTML = rows;
-            document.getElementById("attach_button").innerHTML = 'Attachments <span class="badge bg-secondary">' + data.length + '</span>';
+}
+function validateDepArrTime(field) {
+    if (field.value !== "") {
+        if (field.value.length !== 4) {
+            field.classList.add("is-invalid")
+            return false
         } else {
-            tbody.innerHTML = "";
-            document.getElementById("attach_button").innerHTML = "Attachments";
+            field.classList.add("is-valid")
+        }
+    }
+
+    return true
+}
+
+function validateTime(field) {
+    if (field.value !== "") {
+        if (!/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(field.value)) {
+            field.classList.add("is-invalid")
+            return false
+        } else {
+            field.classList.add("is-valid")
+        }
+    }
+
+    return true
+}
+
+function CalculateTimes() {
+    let departure_time = document.getElementById("departure_time").value;
+    let arrival_time = document.getElementById("arrival_time").value;
+
+    if ((departure_time.length == 4) && (arrival_time.length == 4) && (!isNaN(departure_time)) && (!isNaN(arrival_time))) {
+        start = [departure_time.substring(0, 2), departure_time.substring(2)];
+        end = [arrival_time.substring(0, 2), arrival_time.substring(2)];
+
+        document.getElementById("total_time").value = CalculateTotalTime(start, end);
+
+        CalculateNightTime();
+    }
+}
+
+function CalculateTotalTime(start, end) {
+    var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+    var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+    var diff = endDate.getTime() - startDate.getTime();
+    var hours = Math.floor(diff / 1000 / 60 / 60);
+    diff -= hours * 1000 * 60 * 60;
+    var minutes = Math.floor(diff / 1000 / 60);
+
+
+    if (hours < 0) {
+        hours = hours + 24;
+    }
+
+    totalTime = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+    return totalTime;
+}
+
+function CalculateNightTime() {
+    let payload = {
+        date: document.getElementById("date").value,
+        departure: {
+            place: document.getElementById("departure_place").value,
+            time: document.getElementById("departure_time").value
+        },
+        arrival: {
+            place: document.getElementById("arrival_place").value,
+            time: document.getElementById("arrival_time").value
         }
     };
 
-    function UploadAttachment() {
-        var doc = document.getElementById("document").value
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
 
-        if (doc === "") {
-            return;
-        }
+    fetch("{{index .API "LogbookNight"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                night_time = parseInt(data.message)
+                if (night_time > 0) {
+                    var hours = Math.floor(night_time / 60);
+                    var minutes = night_time - (hours * 60);
 
-        let payload = new FormData(flight_record_attachment_form);
-
-        const requestOptions = {
-            method: 'post',
-            body: payload,
-        }
-
-        fetch("{{index .API "LogbookAttachmentsUpload"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    showInfoMessage(data.message);
-                    LoadAttachments();
+                    time = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+                    document.getElementById("night_time").value = time;
                 } else {
-                    showErrorMessage(data.message);
+                    document.getElementById("night_time").value = "";
                 }
-            })
+            }
+        })
+}
 
-        document.getElementById("flight_record_attachment_form").reset();
-    };
+function DeleteAttachment(id) {
+    let payload = {
+        uuid: id
+    }
 
-    function AskForDelete(uuid) {
-        var tdbody = document.getElementById("ask_"+uuid);
-        tdbody.innerHTML = `<button type="button" class="btn btn-danger" onclick="DeleteAttachment('${uuid}')">Confirm</button>`;
-    };
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
+
+    fetch("{{index .API "LogbookAttachmentsDelete"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                LoadAttachments();
+            } else {
+                showErrorMessage(data.message);
+            }
+        })
+};
+
+function LoadAttachments() {
+    var uuid = document.getElementById("uuid").value
+    var tbody = document.getElementById("attachments_table");
+    var rows = "";
+
+    logbook_attachments_url = "{{index .API "LogbookUUIDAttachments"}}";
+    data = loadJSON(logbook_attachments_url.replace("{uuid}", uuid));
+
+    if (data.length) {
+        tbody.innerHTML = "";
+        for (var x = 0; x < data.length; x++) {
+            rows = rows +
+                `<tr>
+                    <td><a href="{{index .API "LogbookAttachmentsDownload"}}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
+                    <td id="ask_${data[x]["uuid"]}"><button type="button" class="btn-close" onclick="AskForDelete('${data[x]["uuid"]}')"></button></td>
+                </tr>`;
+        }
+        tbody.innerHTML = rows;
+        document.getElementById("attach_button").innerHTML = 'Attachments <span class="badge bg-secondary">' + data.length + '</span>';
+    } else {
+        tbody.innerHTML = "";
+        document.getElementById("attach_button").innerHTML = "Attachments";
+    }
+};
+
+function UploadAttachment() {
+    var doc = document.getElementById("document").value
+
+    if (doc === "") {
+        return;
+    }
+
+    let payload = new FormData(flight_record_attachment_form);
+
+    const requestOptions = {
+        method: 'post',
+        body: payload,
+    }
+
+    fetch("{{index .API "LogbookAttachmentsUpload"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                showInfoMessage(data.message);
+                LoadAttachments();
+            } else {
+                showErrorMessage(data.message);
+            }
+        })
+
+    document.getElementById("flight_record_attachment_form").reset();
+};
+
+function AskForDelete(uuid) {
+    var tdbody = document.getElementById("ask_"+uuid);
+    tdbody.innerHTML = `<button type="button" class="btn btn-danger" onclick="DeleteAttachment('${uuid}')">Confirm</button>`;
+};
+
 </script>
 {{end}}

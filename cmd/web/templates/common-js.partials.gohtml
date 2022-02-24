@@ -1,39 +1,41 @@
 {{define "common-js"}}
 <script>
-    function showErrorMessage(msg) {
-        var infoMsg = document.getElementById("info");
 
-        infoMsg.classList.add("alert-danger");
-        infoMsg.classList.remove("alert-success");
-        infoMsg.classList.remove("d-none");
-        infoMsg.innerText = msg;
-    }
+function showErrorMessage(msg) {
+    var infoMsg = document.getElementById("info");
 
-    function showInfoMessage(msg) {
-        var infoMsg = document.getElementById("info");
+    infoMsg.classList.add("alert-danger");
+    infoMsg.classList.remove("alert-success");
+    infoMsg.classList.remove("d-none");
+    infoMsg.innerText = msg;
+}
 
-        infoMsg.classList.remove("alert-danger");
-        infoMsg.classList.add("alert-success");
-        infoMsg.classList.remove("d-none");
-        infoMsg.innerText = msg;
-    }
+function showInfoMessage(msg) {
+    var infoMsg = document.getElementById("info");
 
-    function loadJSON(url) {
-        var json = null;
-        $.ajax({
-            'async': false,
-            'global': false,
-            'url': url,
-            'dataType': "json",
-            'success': function (data) {
-                json = data;
-            }
-        });
-        if (json) {
-            return json;
-        } else {
-            return [];
-        };
+    infoMsg.classList.remove("alert-danger");
+    infoMsg.classList.add("alert-success");
+    infoMsg.classList.remove("d-none");
+    infoMsg.innerText = msg;
+}
+
+function loadJSON(url) {
+    var json = null;
+    $.ajax({
+        'async': false,
+        'global': false,
+        'url': url,
+        'dataType': "json",
+        'success': function (data) {
+            json = data;
+        }
+    });
+    if (json) {
+        return json;
+    } else {
+        return [];
     };
+};
+
 </script>
 {{end}}

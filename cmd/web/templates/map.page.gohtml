@@ -1,49 +1,47 @@
 {{ template "base" .}}
 
-{{ define "title" }}
-Maps
-{{ end }}
+{{ define "title" }}Maps{{ end }}
 
 {{ define "css" }}
-    <link rel="stylesheet" href="/static/css/ol.css">
-    <style>
+<link rel="stylesheet" href="/static/css/ol.css">
+<style>
     .ol-map {
         height: 800px;
         width: 100%;
     }
-    </style>
+</style>
 {{ end }}
 
 {{ define "content" }}
-    {{$cd := index .Data "current_date"}}
+{{$cd := index .Data "current_date"}}
 
-    <div class="row">
-        <div class="col-md-2">
-            <div class="row">
-                <form name="filters" id="filters" class="d-block" autocomplete="off">
-                    <div class="mb-2">
-                        <label for="filter_date" class="form-label">Date Filter:</label>
-                        <input type="text" class="form-control" id="filter_date" name="filter_date" value="{{$cd}}" placeholder="Date Filter"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="For example, 01/{{$cd}} will show you the routes and airports for the January {{$cd}}">
-                    </div>
-                    <div class="mb-2">
-                        <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
-                        <label class="form-check-label" for="filter_noroutes">No Routes</label>
-                    </div>
-                    <div class="mb-2">
-                        <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
-                    </div>
-                </form>
-            </div>
-            <hr>
-            <div class="row">
-                <div id="some_stats"></div>
-            </div>
+<div class="row">
+    <div class="col-md-2">
+        <div class="row">
+            <form name="filters" id="filters" class="d-block" autocomplete="off">
+                <div class="mb-2">
+                    <label for="filter_date" class="form-label">Date Filter:</label>
+                    <input type="text" class="form-control" id="filter_date" name="filter_date" value="{{$cd}}" placeholder="Date Filter"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="For example, 01/{{$cd}} will show you the routes and airports for the January {{$cd}}">
+                </div>
+                <div class="mb-2">
+                    <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
+                    <label class="form-check-label" for="filter_noroutes">No Routes</label>
+                </div>
+                <div class="mb-2">
+                    <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
+                </div>
+            </form>
         </div>
-        <div class="col-md-10">
-            <div id="map" class="ol-map"></div>
+        <hr>
+        <div class="row">
+            <div id="some_stats"></div>
         </div>
     </div>
+    <div class="col-md-10">
+        <div id="map" class="ol-map"></div>
+    </div>
+</div>
 
 {{ end }}
 
@@ -53,8 +51,8 @@ Maps
 {{ block "map-js" . }}{{ end }}
 
 <script>
-    window.onload = function() {
-        Refresh();
-    };
+window.onload = function() {
+    Refresh();
+};
 </script>
 {{ end }}
