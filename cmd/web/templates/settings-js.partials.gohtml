@@ -1,0 +1,55 @@
+{{define "settings-js"}}
+<script>
+
+function Save() {
+    let payload = {
+        owner_name: document.getElementById("owner_name").value,
+        signature_text: document.getElementById("signature_text").value,
+        page_breaks: document.getElementById("page_breaks").value
+    }
+
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
+
+    fetch("{{index .API "Settings"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                showInfoMessage(data.message);
+            } else {
+                showErrorMessage(data.message);
+            }
+        });
+}
+
+function UpdateAirportsDB() {
+    showInfoMessage("Updating...");
+
+    const requestOptions = {
+        method: 'get',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    }
+
+    fetch("{{index .API "AirportUpdate"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                document.getElementById("airports").value = data.message + " airports";
+                showInfoMessage("Airports DB has been updated");
+            } else {
+                showErrorMessage(data.message);
+            }
+        });
+}
+
+</script>
+{{end}}

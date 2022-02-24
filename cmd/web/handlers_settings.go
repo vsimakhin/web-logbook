@@ -31,7 +31,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data["settings"] = settings
 	data["records"] = records
 
-	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}); err != nil {
+	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, "common-js", "settings-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
