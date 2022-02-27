@@ -10,7 +10,7 @@ import (
 // HandlerSettings is a handler for Settings page
 func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/settings")
+		app.infoLog.Println(APISettings)
 	}
 
 	settings, err := app.db.GetSettings()
@@ -31,7 +31,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data["settings"] = settings
 	data["records"] = records
 
-	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}); err != nil {
+	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, "common-js", "settings-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -39,7 +39,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 // HandlerSettingsSave serves the POST request for settings update
 func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/settings")
+		app.infoLog.Println(APISettings)
 	}
 
 	var settings models.Settings
@@ -66,18 +66,9 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

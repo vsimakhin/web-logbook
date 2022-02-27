@@ -1,149 +1,149 @@
 {{define "license-record-js"}}
 <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
 
-    let infoMsg = document.getElementById("info");
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+});
 
-    function validate() {
+function validate() {
 
-        let isValid = true;
-        let errorMessage = "";
+    let isValid = true;
+    let errorMessage = "";
 
-        // validate category field
-        let category = document.getElementById("category");
-        if (!category.value) {
-            category.classList.add("is-invalid");
-            isValid = false
-            errorMessage = errorMessage + "Category cannot be empty\r\n";
-        } else {
-            category.classList.add("is-valid");
-        }
-
-        // validate name field
-        let name = document.getElementById("name");
-        if (!name.value) {
-            name.classList.add("is-invalid");
-            isValid = false
-            errorMessage = errorMessage + "Name cannot be empty\r\n";
-        } else {
-            name.classList.add("is-valid");
-        }
-
-        if (!validateDate(document.getElementById("issued"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Issued Date should be in DD/MM/YYYY format or empty\r\n";
-        }
-        if (!validateDate(document.getElementById("valid_from"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Valid From should be in DD/MM/YYYY format or empty\r\n";
-        }
-        if (!validateDate(document.getElementById("valid_until"))) {
-            isValid = false;
-            errorMessage = errorMessage + "Valid Until should be in DD/MM/YYYY format or empty\r\n";
-        }
-
-        if (!isValid) {
-            showErrorMessage(errorMessage);
-            return;
-        }
-
-        showInfoMessage("OK!");
-
-        Savelicense();
+    // validate category field
+    let category = document.getElementById("category");
+    if (!category.value) {
+        category.classList.add("is-invalid");
+        isValid = false
+        errorMessage = errorMessage + "Category cannot be empty\r\n";
+    } else {
+        category.classList.add("is-valid");
     }
 
-    function Savelicense() {
-        let payload = new FormData(licensing);
+    // validate name field
+    let name = document.getElementById("name");
+    if (!name.value) {
+        name.classList.add("is-invalid");
+        isValid = false
+        errorMessage = errorMessage + "Name cannot be empty\r\n";
+    } else {
+        name.classList.add("is-valid");
+    }
 
-        const requestOptions = {
-            method: 'post',
-            body: payload,
-        }
+    if (!validateDate(document.getElementById("issued"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Issued Date should be in DD/MM/YYYY format or empty\r\n";
+    }
+    if (!validateDate(document.getElementById("valid_from"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Valid From should be in DD/MM/YYYY format or empty\r\n";
+    }
+    if (!validateDate(document.getElementById("valid_until"))) {
+        isValid = false;
+        errorMessage = errorMessage + "Valid Until should be in DD/MM/YYYY format or empty\r\n";
+    }
 
-        fetch("{{index .API "URL"}}{{index .API "LicensingSave"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    showErrorMessage(data.message);
+    if (!isValid) {
+        showErrorMessage(errorMessage);
+        return;
+    }
+
+    showInfoMessage("OK!");
+
+    Savelicense();
+}
+
+function Savelicense() {
+    let payload = new FormData(licensing);
+
+    const requestOptions = {
+        method: 'post',
+        body: payload,
+    }
+
+    fetch("{{index .API "LicensingSave"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                showInfoMessage(data.message);
+                if (typeof data.redirect_url !== 'undefined') {
+                    location.href = data.redirect_url;
                 }
-            })
-    }
-
-    function DeleteLicense() {
-        let payload = {
-            uuid: document.getElementById("uuid").value
-        }
-
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        }
-
-        fetch("{{index .API "URL"}}{{index .API "LicensingDelete"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    showErrorMessage(data.message);
-                }
-            })
-    }
-
-    function DeleteAttachment() {
-        let payload = {
-            uuid: document.getElementById("uuid").value
-        }
-
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        }
-
-        fetch("{{index .API "URL"}}{{index .API "LicensingAttachmentDelete"}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    showErrorMessage(data.message);
-                }
-            })
-    }
-
-    function validateDate(field) {
-        if (field.value !== "") {
-            if (!/^(0?[1-9]|[12][0-9]|3[01])[- /.]((0?[1-9]|1[012])[- /.](19|20)?[0-9]{2})*$/.test(field.value)) {
-                field.classList.add("is-invalid")
-                return false
             } else {
-                field.classList.add("is-valid")
+                showErrorMessage(data.message);
             }
-        }
+        })
+}
 
-        return true
+function DeleteLicense() {
+    let payload = {
+        uuid: document.getElementById("uuid").value
     }
+
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
+
+    fetch("{{index .API "LicensingDelete"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                showInfoMessage(data.message);
+                if (typeof data.redirect_url !== 'undefined') {
+                    location.href = data.redirect_url;
+                }
+            } else {
+                showErrorMessage(data.message);
+            }
+        })
+}
+
+function DeleteAttachment() {
+    let payload = {
+        uuid: document.getElementById("uuid").value
+    }
+
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
+
+    fetch("{{index .API "LicensingAttachmentDelete"}}", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                showInfoMessage(data.message);
+                if (typeof data.redirect_url !== 'undefined') {
+                    location.href = data.redirect_url;
+                }
+            } else {
+                showErrorMessage(data.message);
+            }
+        })
+}
+
+function validateDate(field) {
+    if (field.value !== "") {
+        if (!/^(0?[1-9]|[12][0-9]|3[01])[- /.]((0?[1-9]|1[012])[- /.](19|20)?[0-9]{2})*$/.test(field.value)) {
+            field.classList.add("is-invalid")
+            return false
+        } else {
+            field.classList.add("is-valid")
+        }
+    }
+
+    return true
+}
+
 </script>
 {{end}}

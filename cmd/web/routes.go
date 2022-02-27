@@ -4,45 +4,71 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+const APIRoot = "/"
+
+const APILogbook = "/logbook"
+const APILogbookUUID = "/logbook/{uuid}"
+const APILogbookData = "/logbook/data"
+
+const APILogbookNew = "/logbook/new"
+const APILogbookSave = "/logbook/save"
+const APILogbookDelete = "/logbook/delete"
+
+const APILogbookNight = "/logbook/night"
+const APILogbookExport = "/logbook/export"
+
+const APILogbookUUIDAttachments = "/logbook/{uuid}/attachments"
+const APILogbookAttachmentsDelete = "/logbook/attachments/delete"
+const APILogbookAttachmentsUpload = "/logbook/attachments/upload"
+const APILogbookAttachmentsDownload = "/logbook/attachments/download/"
+const APILogbookAttachmentsDownloadUUID = APILogbookAttachmentsDownload + "{uuid}"
+
+const APILicensing = "/licensing"
+const APILicensingData = "/licensing/data"
+const APILicensingUUID = "/licensing/{uuid}"
+const APILicensingNew = "/licensing/new"
 const APILicensingSave = "/licensing/save"
 const APILicensingDelete = "/licensing/delete"
 const APILicensingAttachmentDelete = "/licensing/attachment/delete"
+const APILicensingDownload = "/licensing/download/"
+const APILicensingDownloadUUID = APILicensingDownload + "{uuid}"
+
 const APISettings = "/settings"
+const APIAirport = "/airport/"
+const APIAirportID = APIAirport + "{id}"
 const APIAirportUpdate = "/airport/update"
-const APILogbookSave = "/logbook/save"
-const APILogbookDelete = "/logbook/delete"
-const APILogbookNight = "/logbook/night"
-const APILogbookAttachmentsDelete = "/logbook/attachments/delete"
-const APILogbookAttachmentsUpload = "/logbook/attachments/upload"
+
 const APIMap = "/map"
 const APIMapData = "/map/data"
+
+const APIStats = "/stats"
 
 func (app *application) routes() *chi.Mux {
 	server := chi.NewRouter()
 
 	// logbook
-	server.Get("/", app.HandlerLogbook)
-	server.Get("/logbook", app.HandlerLogbook)
-	server.Get("/logbook/data", app.HandlerFlightRecordsData)
+	server.Get(APIRoot, app.HandlerLogbook)
+	server.Get(APILogbook, app.HandlerLogbook)
+	server.Get(APILogbookData, app.HandlerFlightRecordsData)
 
-	server.Get("/logbook/{uuid}", app.HandlerFlightRecordByID)
-	server.Get("/logbook/new", app.HandlerFlightRecordNew)
+	server.Get(APILogbookUUID, app.HandlerFlightRecordByID)
+	server.Get(APILogbookNew, app.HandlerFlightRecordNew)
 
 	server.Post(APILogbookSave, app.HandlerFlightRecordSave)
 	server.Post(APILogbookDelete, app.HandlerFlightRecordDelete)
 
 	server.Post(APILogbookNight, app.HandlerNightTime)
 
-	server.Get("/logbook/{uuid}/attachments", app.HandlerGetAttachments)
+	server.Get(APILogbookUUIDAttachments, app.HandlerGetAttachments)
 	server.Post(APILogbookAttachmentsUpload, app.HandlerUploadAttachment)
 	server.Post(APILogbookAttachmentsDelete, app.HandlerDeleteAttachment)
-	server.Get("/logbook/attachments/download/{uuid}", app.HandlerAttachmentDownload)
+	server.Get(APILogbookAttachmentsDownloadUUID, app.HandlerAttachmentDownload)
 
 	// export
-	server.Get("/logbook/export", app.HandlerExportLogbook)
+	server.Get(APILogbookExport, app.HandlerExportLogbook)
 
 	// airports
-	server.Get("/airport/{id}", app.HandlerAirportByID)
+	server.Get(APIAirportID, app.HandlerAirportByID)
 	server.Get(APIAirportUpdate, app.HandlerAirportUpdate)
 
 	// settings
@@ -50,18 +76,18 @@ func (app *application) routes() *chi.Mux {
 	server.Post(APISettings, app.HandlerSettingsSave)
 
 	// stats
-	server.Get("/stats", app.HandlerStats)
+	server.Get(APIStats, app.HandlerStats)
 
 	// map
 	server.Get(APIMap, app.HandlerMap)
 	server.Get(APIMapData, app.HandlerMapData)
 
 	// documents
-	server.Get("/licensing", app.HandlerLicensing)
-	server.Get("/licensing/data", app.HandlerLicensingRecordsData)
-	server.Get("/licensing/{uuid}", app.HandlerLicensingRecordByID)
-	server.Get("/licensing/new", app.HandlerLicensingRecordNew)
-	server.Get("/licensing/download/{uuid}", app.HandlerLicensingDownload)
+	server.Get(APILicensing, app.HandlerLicensing)
+	server.Get(APILicensingData, app.HandlerLicensingRecordsData)
+	server.Get(APILicensingUUID, app.HandlerLicensingRecordByID)
+	server.Get(APILicensingNew, app.HandlerLicensingRecordNew)
+	server.Get(APILicensingDownloadUUID, app.HandlerLicensingDownload)
 
 	server.Post(APILicensingSave, app.HandlerLicensingRecordSave)
 	server.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)

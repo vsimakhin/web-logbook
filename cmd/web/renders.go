@@ -58,17 +58,36 @@ func formatNumber(n int) string {
 func (app *application) addDefaultData(td *templateData, req *http.Request) *templateData {
 	td.API = make(map[string]string)
 	td.API["URL"] = fmt.Sprintf("http://localhost:%d", app.config.port)
-	td.API["LicensingSave"] = APILicensingSave
-	td.API["LicensingDelete"] = APILicensingDelete
-	td.API["LicensingAttachmentDelete"] = APILicensingAttachmentDelete
-	td.API["Settings"] = APISettings
-	td.API["AirportUpdate"] = APIAirportUpdate
+	td.API["Root"] = APIRoot
+	td.API["Logbook"] = APILogbook
+	td.API["LogbookData"] = APILogbookData
+	td.API["LogbookUUID"] = APILogbookUUID
+	td.API["LogbookNew"] = APILogbookNew
 	td.API["LogbookSave"] = APILogbookSave
 	td.API["LogbookDelete"] = APILogbookDelete
 	td.API["LogbookNight"] = APILogbookNight
-	td.API["LogbookAttachmentsDelete"] = APILogbookAttachmentsDelete
+	td.API["LogbookUUIDAttachments"] = APILogbookUUIDAttachments
 	td.API["LogbookAttachmentsUpload"] = APILogbookAttachmentsUpload
+	td.API["LogbookAttachmentsDelete"] = APILogbookAttachmentsDelete
+	td.API["LogbookAttachmentsDownload"] = APILogbookAttachmentsDownload
+	td.API["LogbookAttachmentsDownloadUUID"] = APILogbookAttachmentsDownloadUUID
+	td.API["LogbookExport"] = APILogbookExport
+	td.API["Airport"] = APIAirport
+	td.API["AirportID"] = APIAirportID
+	td.API["AirportUpdate"] = APIAirportUpdate
+	td.API["Settings"] = APISettings
+	td.API["Stats"] = APIStats
+	td.API["Map"] = APIMap
 	td.API["MapData"] = APIMapData
+	td.API["Licensing"] = APILicensing
+	td.API["LicensingData"] = APILicensingData
+	td.API["LicensingUUID"] = APILicensingUUID
+	td.API["LicensingNew"] = APILicensingNew
+	td.API["LicensingDownload"] = APILicensingDownload
+	td.API["LicensingDownloadUUID"] = APILicensingDownloadUUID
+	td.API["LicensingSave"] = APILicensingSave
+	td.API["LicensingDelete"] = APILicensingDelete
+	td.API["LicensingAttachmentDelete"] = APILicensingAttachmentDelete
 
 	return td
 }

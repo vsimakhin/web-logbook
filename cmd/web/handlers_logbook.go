@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,7 +11,7 @@ import (
 // HandlerLogbook is a handler for /logbook page
 func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook")
+		app.infoLog.Println(APILogbook)
 	}
 
 	if err := app.renderTemplate(w, r, "logbook", nil); err != nil {
@@ -23,7 +22,7 @@ func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
 // HandlerFlightRecordsData generates data for the logbook table at /logbook page
 func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/data")
+		app.infoLog.Println(APILogbookData)
 	}
 
 	type TableData struct {
@@ -44,7 +43,7 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 			item.Time.ME = ""
 		}
 
-		tableRow := []string{fmt.Sprintf("<a href='/logbook/%s' class='link-primary'>%s</a>", item.UUID, item.Date), item.Departure.Place, item.Departure.Time,
+		tableRow := []string{fmt.Sprintf(`<a href="%s/%s" class="link-primary">%s</a>`, APILogbook, item.UUID, item.Date), item.Departure.Place, item.Departure.Time,
 			item.Arrival.Place, item.Arrival.Time, item.Aircraft.Model, item.Aircraft.Reg,
 			item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Total, formatRemarks(item.PIC), formatLandings(item.Landings.Day), formatLandings(item.Landings.Night),
 			item.Time.Night, item.Time.IFR, item.Time.PIC, item.Time.CoPilot, item.Time.Dual, item.Time.Instructor,
@@ -53,18 +52,9 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	out, err := json.Marshal(tableData)
+	err = app.writeJSON(w, http.StatusOK, tableData)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -76,7 +66,7 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 // HandlerExportLogbook executes the pdf export and returns pdf file
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/logbook/export")
+		app.infoLog.Println(APILogbookExport)
 	}
 
 	flightRecords, err := app.db.GetFlightRecords()

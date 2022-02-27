@@ -1,145 +1,146 @@
 {{ template "base" .}}
 
 {{ define "title" }}
-    {{$lic := index .Data "license"}}
+{{$lic := index .Data "license"}}
 License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
 {{ end }}
 
 {{ define "content" }}
-    {{$lic := index .Data "license"}}
-    {{$categories := index .Data "categories"}}
+{{$api := .API}}
+{{$lic := index .Data "license"}}
+{{$categories := index .Data "categories"}}
 
-    <form action="/licensing/{{$lic.UUID}}" method="post" name="licensing" id="licensing"
-        class="d-block" autocomplete="off" novalidate="" enctype="multipart/form-data">
+<form action="{{$api.Licensing}}/{{$lic.UUID}}" method="post" name="licensing" id="licensing"
+    class="d-block" autocomplete="off" novalidate="" enctype="multipart/form-data">
 
-        <div class="row">
-            <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-6">
 
-                <div class="mb-2 row">
-                    <div class="col-md-4">
-                        <label for="category" class="form-label">Category</label>
-                        <input class="form-control" id="category" name="category" value="{{$lic.Category}}"
-                            required="true" autocomplete="category" list="category_options">
-                        <datalist id="category_options">
-                        {{ range $categories}}
-                        <option value="{{.}}">
-                        {{ end}}
-                        </datalist>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{$lic.Name}}"
-                            required="true" autocomplete="off" placeholder="Document name">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="number" class="form-label">Number</label>
-                        <input type="text" class="form-control" id="number" name="number" value="{{$lic.Number}}"
-                            required="" autocomplete="off" placeholder="Number">
-                    </div>
+            <div class="mb-2 row">
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <input class="form-control" id="category" name="category" value="{{$lic.Category}}"
+                        required="true" autocomplete="category" list="category_options">
+                    <datalist id="category_options">
+                    {{ range $categories}}
+                    <option value="{{.}}">
+                    {{ end}}
+                    </datalist>
                 </div>
-
-                <div class="mb-2 row">
-                    <div class="col-md-4">
-                        <label for="issued" class="form-label">Issued</label>
-                        <input type="text" class="form-control" id="issued" name="issued" value="{{$lic.Issued}}"
-                            required="" autocomplete="off" placeholder="DD/MM/YYYY">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="valid_from" class="form-label">Valid From</label>
-                        <input type="text" class="form-control" id="valid_from" name="valid_from" value="{{$lic.ValidFrom}}"
-                            required="" autocomplete="off" placeholder="DD/MM/YYYY">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="valid_until" class="form-label">Valid Until</label>
-                        <input type="text" class="form-control" id="valid_until" name="valid_until" value="{{$lic.ValidUntil}}"
-                            required="" autocomplete="off" placeholder="DD/MM/YYYY">
-                    </div>
+                <div class="col-md-4">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{$lic.Name}}"
+                        required="true" autocomplete="off" placeholder="Document name">
                 </div>
+                <div class="col-md-4">
+                    <label for="number" class="form-label">Number</label>
+                    <input type="text" class="form-control" id="number" name="number" value="{{$lic.Number}}"
+                        required="" autocomplete="off" placeholder="Number">
+                </div>
+            </div>
 
-                <div class="mb-2 row">
-                    <div class="col-md-8">
-                        <label for="document" class="form-label">Document</label>
-                        <input type="file" class="form-control" id="document" name="document">
-                    </div>
+            <div class="mb-2 row">
+                <div class="col-md-4">
+                    <label for="issued" class="form-label">Issued</label>
+                    <input type="text" class="form-control" id="issued" name="issued" value="{{$lic.Issued}}"
+                        required="" autocomplete="off" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="col-md-4">
+                    <label for="valid_from" class="form-label">Valid From</label>
+                    <input type="text" class="form-control" id="valid_from" name="valid_from" value="{{$lic.ValidFrom}}"
+                        required="" autocomplete="off" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="col-md-4">
+                    <label for="valid_until" class="form-label">Valid Until</label>
+                    <input type="text" class="form-control" id="valid_until" name="valid_until" value="{{$lic.ValidUntil}}"
+                        required="" autocomplete="off" placeholder="DD/MM/YYYY">
+                </div>
+            </div>
 
+            <div class="mb-2 row">
+                <div class="col-md-8">
+                    <label for="document" class="form-label">Document</label>
+                    <input type="file" class="form-control" id="document" name="document">
                 </div>
 
             </div>
 
-            <div class="col-md-6">
-                <div class="mb-2 row">
-                    {{if $lic.DocumentName}}
-                    <object data="/licensing/download/{{$lic.UUID}}" width="100%" height="700px">
-                        <p>Your browser does not support preview of the document</p>
-                    </object>
-                    {{else}}
-                    <object data="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" width="100%" height="700px"></object>
-                    {{end}}
-                </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-2 row">
+                {{if $lic.DocumentName}}
+                <object data="{{$api.LicensingDownload}}{{$lic.UUID}}" width="100%" height="700px">
+                    <p>Your browser does not support preview of the document</p>
+                </object>
+                {{else}}
+                <object data="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" width="100%" height="700px"></object>
+                {{end}}
             </div>
         </div>
+    </div>
 
-        <input type="hidden" name="uuid" id="uuid" value="{{if $lic.UUID}}{{$lic.UUID}}{{end}}">
-        <div class="mb-3 row">
-            <div class="col">
-                <div class="alert-danger text-center d-none" id="info" role="alert"></div>
-            </div>
+    <input type="hidden" name="uuid" id="uuid" value="{{if $lic.UUID}}{{$lic.UUID}}{{end}}">
+    <div class="mb-3 row">
+        <div class="col">
+            <div class="alert-danger text-center d-none" id="info" role="alert"></div>
         </div>
-        <hr>
+    </div>
+    <hr>
 
-        <button class="btn btn-primary" type="button" onclick="validate()" id="save">Save</button>
-        {{if $lic.DocumentName}}
-            <a href='/licensing/download/{{$lic.UUID}}' target="_blank" class="btn btn-success">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                </svg>
-                Download
-            </a>
-        {{end}}
-        <div class="float-end">
-            {{if $lic.UUID}}<a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>{{end}}
-            {{if $lic.DocumentName}}<a id="delete_attachment" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-attachment">Delete Attachment</a>{{end}}
-        </div>
+    <button class="btn btn-primary" type="button" onclick="validate()" id="save">Save</button>
+    {{if $lic.DocumentName}}
+        <a href='{{$api.LicensingDownload}}{{$lic.UUID}}' target="_blank" class="btn btn-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+            </svg>
+            Download
+        </a>
+    {{end}}
+    <div class="float-end">
+        {{if $lic.UUID}}<a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>{{end}}
+        {{if $lic.DocumentName}}<a id="delete_attachment" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-attachment">Delete Attachment</a>{{end}}
+    </div>
 
-    </form>
+</form>
 
-    <!-- Modal -->
-    <div class="modal fade" id="delete-record" tabindex="-1" aria-labelledby="delete-record" aria-hidden="true">
+<!-- Modal -->
+<div class="modal fade" id="delete-record" tabindex="-1" aria-labelledby="delete-record" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="delete">Delete Record?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
-        </div>
-        <div class="modal-body">
-            Are you sure you want to delete the record?
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger" onclick="DeleteLicense()">Delete</button>
-        </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete">Delete Record?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the record?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="DeleteLicense()">Delete</button>
+            </div>
         </div>
     </div>
-    </div>
+</div>
 
-    <div class="modal fade" id="delete-attachment" tabindex="-1" aria-labelledby="delete-attachment" aria-hidden="true">
+<div class="modal fade" id="delete-attachment" tabindex="-1" aria-labelledby="delete-attachment" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="delete">Delete Attachment?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
-        </div>
-        <div class="modal-body">
-            Are you sure you want to delete the attached document?
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger" onclick="DeleteAttachment()">Delete</button>
-        </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete">Delete Attachment?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the attached document?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="DeleteAttachment()">Delete</button>
+            </div>
         </div>
     </div>
-    </div>
+</div>
 
 {{ end }}
 

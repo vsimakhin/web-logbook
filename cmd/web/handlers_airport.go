@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -15,7 +16,7 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 	uuid := chi.URLParam(r, "id")
 
 	if app.config.env == "dev" {
-		app.infoLog.Printf("/airport/%s\n", uuid)
+		app.infoLog.Println(strings.ReplaceAll(APIAirportID, "{id}", uuid))
 	}
 
 	airport, err := app.db.GetAirportByID(uuid)
@@ -25,18 +26,9 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	out, err := json.Marshal(airport)
+	err = app.writeJSON(w, http.StatusOK, airport)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -44,7 +36,7 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 // HandlerAirportUpdate updates the Airports DB
 func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println("/airport/update")
+		app.infoLog.Println(APIAirportUpdate)
 	}
 
 	var airportsDB map[string]interface{}
@@ -133,18 +125,9 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

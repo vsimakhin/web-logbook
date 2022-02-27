@@ -33,11 +33,11 @@ func TestHandlerFlightRecordsData(t *testing.T) {
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
 
-	resp, _ := http.Get(fmt.Sprintf("%s/logbook/data", srv.URL))
+	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILogbookData))
 	responseBody, _ := ioutil.ReadAll(resp.Body)
 
 	assert.Equal(t, resp.StatusCode, http.StatusOK)
 	assert.Equal(t, resp.Header["Content-Type"][0], "application/json")
-	assert.Equal(t, string(responseBody), `{"data":[["\u003ca href='/logbook/uuid' class='link-primary'\u003e01/02/2022\u003c/a\u003e","LKPR","1000","EDDM","1200","C152","OK-XXX","2:00","","2:00","2:00","Self","1","2","2:00","2:00","2:00","2:00","2:00","2:00","SIM","2:00","Remarks"]]}`)
+	assert.Equal(t, string(responseBody), `{"data":[["\u003ca href=\"/logbook/uuid\" class=\"link-primary\"\u003e01/02/2022\u003c/a\u003e","LKPR","1000","EDDM","1200","C152","OK-XXX","2:00","","2:00","2:00","Self","1","2","2:00","2:00","2:00","2:00","2:00","2:00","SIM","2:00","Remarks"]]}`)
 
 }

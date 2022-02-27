@@ -16,7 +16,7 @@ func TestHandlerLicensing(t *testing.T) {
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
 
-	resp, _ := http.Get(fmt.Sprintf("%s/licensing", srv.URL))
+	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILicensing))
 	responseBody, _ := ioutil.ReadAll(resp.Body)
 
 	assert.Equal(t, resp.StatusCode, http.StatusOK)
