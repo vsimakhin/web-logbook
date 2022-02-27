@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
@@ -63,18 +62,9 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 	data["lines"] = render.Lines
 	data["markers"] = render.Markers
 
-	out, err := json.Marshal(data)
+	err = app.writeJSON(w, http.StatusOK, data)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

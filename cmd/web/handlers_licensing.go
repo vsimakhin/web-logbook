@@ -78,18 +78,9 @@ func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *ht
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	out, err := json.Marshal(tableData)
+	err = app.writeJSON(w, http.StatusOK, tableData)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -203,18 +194,9 @@ func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *h
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -249,18 +231,9 @@ func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, 
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -354,18 +327,9 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

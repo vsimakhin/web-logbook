@@ -26,18 +26,9 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	out, err := json.Marshal(airport)
+	err = app.writeJSON(w, http.StatusOK, airport)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -134,18 +125,9 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

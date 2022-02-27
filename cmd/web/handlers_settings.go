@@ -66,18 +66,9 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

@@ -114,18 +114,9 @@ func (app *application) HandlerFlightRecordDelete(w http.ResponseWriter, r *http
 		app.errorLog.Println(err)
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -189,18 +180,9 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -258,18 +240,9 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 	response.OK = true
 	response.Message = fmt.Sprintf("%d", int(route.NightTime().Minutes()))
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

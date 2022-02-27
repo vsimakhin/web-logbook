@@ -25,18 +25,9 @@ func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	out, err := json.Marshal(attachments)
+	err = app.writeJSON(w, http.StatusOK, attachments)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -108,18 +99,9 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -153,18 +135,9 @@ func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.R
 		}
 	}
 
-	out, err := json.Marshal(response)
+	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

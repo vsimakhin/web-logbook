@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -53,18 +52,9 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	out, err := json.Marshal(tableData)
+	err = app.writeJSON(w, http.StatusOK, tableData)
 	if err != nil {
 		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(out)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
