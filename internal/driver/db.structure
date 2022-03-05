@@ -51,11 +51,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);
 CREATE INDEX IF NOT EXISTS airports_iata ON airports(iata);
 
 /* settings table */
-CREATE TABLE IF NOT EXISTS settings (
+CREATE TABLE IF NOT EXISTS settings2 (
     id INTEGER PRIMARY_KEY,
-    owner_name TEXT,
-    signature_text TEXT,
-    page_breaks TEXT
+    settings TEXT
 );
 
 /* licengins */

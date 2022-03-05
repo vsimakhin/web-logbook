@@ -70,7 +70,6 @@ type Airport struct {
 
 // Settings is a type for settings
 type Settings struct {
-	ID            int    `json:"id"`
 	OwnerName     string `json:"owner_name"`
 	SignatureText string `json:"signature_text"`
 	PageBreaks    string `json:"page_breaks"`
