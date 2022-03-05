@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 )
 
@@ -11,11 +12,17 @@ func (m *DBModel) GetSettings() (Settings, error) {
 	defer cancel()
 
 	var settings Settings
+	var raw string
 
-	query := "SELECT id, owner_name, signature_text, page_breaks FROM settings WHERE id=1"
+	query := "SELECT settings FROM settings2 WHERE id=0"
 	row := m.DB.QueryRowContext(ctx, query)
 
-	err := row.Scan(&settings.ID, &settings.OwnerName, &settings.SignatureText, &settings.PageBreaks)
+	err := row.Scan(&raw)
+	if err != nil {
+		return settings, err
+	}
+
+	err = json.Unmarshal([]byte(raw), &settings)
 	if err != nil {
 		return settings, err
 	}
@@ -28,9 +35,13 @@ func (m *DBModel) UpdateSettings(settings Settings) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "UPDATE settings SET owner_name = ?, signature_text = ?, page_breaks = ? WHERE id = 1"
-	_, err := m.DB.ExecContext(ctx, query, settings.OwnerName, settings.SignatureText, settings.PageBreaks)
+	out, err := json.Marshal(settings)
+	if err != nil {
+		return err
+	}
 
+	query := "UPDATE settings2 SET settings = ? WHERE id = 0"
+	_, err = m.DB.ExecContext(ctx, query, string(out))
 	if err != nil {
 		return err
 	}

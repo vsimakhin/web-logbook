@@ -84,17 +84,17 @@ func InitMock(mock sqlmock.Sqlmock) {
 		)
 
 	// mock GetSettings
-	mock.ExpectQuery("SELECT (.+) FROM settings WHERE id=1").WithArgs().
+	mock.ExpectQuery("SELECT (.+) FROM settings2 WHERE id=0").WithArgs().
 		WillReturnRows(
 			mock.NewRows([]string{
-				"id", "owner_name", "signature_text", "page_breaks",
+				"settings",
 			}).
-				AddRow(1, "Owner Name", "I certify that the entries in this log are true.", ""),
+				AddRow(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks":""}`),
 		)
 
 	// mock UpdateSettings
-	mock.ExpectExec("UPDATE settings SET").
-		WithArgs("Owner Name", "I certify that the entries in this log are true.", "").
+	mock.ExpectExec("UPDATE settings2 SET").
+		WithArgs(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks":""}`).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// mock GetTotals

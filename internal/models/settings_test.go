@@ -14,7 +14,6 @@ func TestGetSettings(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, set.ID, 1)
 	assert.Equal(t, set.OwnerName, "Owner Name")
 	assert.Equal(t, set.PageBreaks, "")
 	assert.Equal(t, set.SignatureText, "I certify that the entries in this log are true.")
