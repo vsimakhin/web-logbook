@@ -27,5 +27,7 @@ func TestHandlerStats(t *testing.T) {
 	assert.Contains(t, string(responseBody), `<div class="tab-pane fade" id="nav-totals-by-year" role="tabpanel" aria-labelledby="nav-totals-by-year">`)
 	// third tab with totals by aircraft
 	assert.Contains(t, string(responseBody), `<div class="tab-pane fade" id="nav-totals-by-type" role="tabpanel" aria-labelledby="nav-totals-by-type">`)
+	// fourth tab with totals by class
+	assert.Contains(t, string(responseBody), `<div class="tab-pane fade" id="nav-totals-by-class" role="tabpanel" aria-labelledby="nav-totals-by-class">`)
 
 }

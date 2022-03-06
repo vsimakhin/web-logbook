@@ -33,7 +33,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 		app.errorLog.Println(err)
 	}
 
-	aircraftModels, err := app.db.GetAircraftModels()
+	aircraftModels, err := app.db.GetAircraftModels(models.JustLastModels)
 	if err != nil {
 		app.errorLog.Println(err)
 	}
@@ -63,7 +63,7 @@ func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Re
 		app.errorLog.Println(err)
 	}
 
-	aircraftModels, err := app.db.GetAircraftModels()
+	aircraftModels, err := app.db.GetAircraftModels(models.JustLastModels)
 	if err != nil {
 		app.errorLog.Println(err)
 	}

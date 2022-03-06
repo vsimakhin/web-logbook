@@ -6,6 +6,9 @@ const ThisYear = 999
 const ThisMonth = 888
 const AllTotals = 0
 
+const AllAircraftModels = 1
+const JustLastModels = 2
+
 // jsonResponse is a type for post data handlers response
 type JSONResponse struct {
 	OK          bool   `json:"ok"`
@@ -70,9 +73,10 @@ type Airport struct {
 
 // Settings is a type for settings
 type Settings struct {
-	OwnerName     string `json:"owner_name"`
-	SignatureText string `json:"signature_text"`
-	PageBreaks    string `json:"page_breaks"`
+	OwnerName       string            `json:"owner_name"`
+	SignatureText   string            `json:"signature_text"`
+	PageBreaks      string            `json:"page_breaks"`
+	AircraftClasses map[string]string `json:"aircraft_classes"`
 }
 
 // License is a type for licesing

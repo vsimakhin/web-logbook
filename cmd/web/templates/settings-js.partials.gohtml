@@ -1,11 +1,73 @@
 {{define "settings-js"}}
+{{$settings := index .Data "settings"}}
 <script>
+var removeButton = '<button class="btn-sm btn-danger" type="button" onclick="" id="remove_row"><i class="fas fa-minus" aria-hidden="true"></i></button>';
+var rowBody = `<tr><td contenteditable="true">CLASS_NAME</td><td contenteditable="true">TYPE_NAME</td><td>${removeButton}</td></tr>`;
+
+$("#add_row").on("click", function(){
+    $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", "New Class Name").replace("TYPE_NAME", "Type1, Type2, Type3"));
+});
+
+$("#aircraft_class").on("click", "#remove_row", function(){
+    $(this).closest("tr").remove();
+});
+
+$(document).ready( function () {
+    PopulateAircraftClassesTable();
+} );
+
+function PopulateAircraftClassesTable() {
+    $('#aircraft_class').find('tbody').empty();
+
+    var models_data = loadJSON("{{index .API "AircraftModels"}}");
+    var classes_data = loadJSON("{{index .API "AircraftClasses"}}");
+
+    for (var key of Object.keys(classes_data)) {
+        $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", key).replace("TYPE_NAME", classes_data[key]));
+
+        var tmp_models_data = [...models_data];
+
+        for (var i = 0; i < tmp_models_data.length; i++) {
+            if (classes_data[key].includes(tmp_models_data[i])) {
+                models_data = removeArrayItem(models_data, tmp_models_data[i]);
+            }
+        }
+    }
+
+    if (models_data.length > 0) {
+        document.getElementById("not_populated").innerHTML = "<br>Aircraft models without classification: " + models_data;
+    } else {
+        document.getElementById("not_populated").innerHTML = "";
+    }
+}
+
+function removeArrayItem(arr, value) {
+    var index = arr.indexOf(value);
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+    return arr;
+}
 
 function Save() {
+    var table = document.getElementById("aircraft_class");
+
+    var aircraft_classes = {}
+    for (var i = 0, row; row = table.rows[i]; i++) {
+
+        class_name = row.cells[0].innerText;
+        types = row.cells[1].innerText;
+
+        if (class_name !== "Class Name") {
+            aircraft_classes[class_name] = types
+        }
+    }
+
     let payload = {
         owner_name: document.getElementById("owner_name").value,
         signature_text: document.getElementById("signature_text").value,
-        page_breaks: document.getElementById("page_breaks").value
+        page_breaks: document.getElementById("page_breaks").value,
+        aircraft_classes: aircraft_classes
     }
 
     const requestOptions = {
@@ -22,10 +84,12 @@ function Save() {
         .then(function(data) {
             if (data.ok) {
                 showInfoMessage(data.message);
+                PopulateAircraftClassesTable();
             } else {
                 showErrorMessage(data.message);
             }
         });
+
 }
 
 function UpdateAirportsDB() {

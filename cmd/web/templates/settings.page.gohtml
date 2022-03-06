@@ -9,55 +9,80 @@
 
 <form action="{{$api.Settings}}" method="post" name="settings" id="settings" class="d-block" autocomplete="off" novalidate="">
 
-    <div class="row mb-2">
-        <div class="col-md-4">
-            <label for="owner_name" class="form-label"><strong>Owner Name</strong><br>
-            This name is printed in the logbook footer</label>
+<div class="row">
+    <div class="col-md-4">
 
-            <input type="text" class="form-control" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
-                required="true" autocomplete="off" placeholder="Owner Name">
+        <div class="row mb-2">
+            <div class="col">
+                <label for="owner_name" class="form-label"><strong>Owner Name</strong><br>
+                This name is printed in the logbook footer</label>
+
+                <input type="text" class="form-control" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
+                    required="true" autocomplete="off" placeholder="Owner Name">
+            </div>
         </div>
+
+        <div class="row mb-2">
+            <div class="col">
+                <label for="signature_text" class="form-label"><strong>Signature Text</strong><br>
+                This signature is printed in the logbook footer under signature</label>
+
+                <input type="text" class="form-control" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
+                    required="true" autocomplete="off" placeholder="Signature text">
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col">
+                <label for="date" class="form-label"><strong>Page breaks</strong><br>
+                In case you need to divide your logbook to several ones, use page breaks in format <i>page_number1, page_number2</i>
+                where the page counter will reset to 1</label>
+
+                <input type="text" class="form-control" id="page_breaks" name="page_breaks" value="{{$settings.PageBreaks}}"
+                    required="true" autocomplete="off" placeholder="Page breaks">
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col">
+                <label for="airports" class="form-label"><strong>Airport database</strong><br>
+                Click </i>Update Airport DB</i> to get the latest list of airports</label>
+
+                <input type="text" class="form-control" id="airports" name="airports" value="{{$records}} airports"
+                    required="false" readonly>
+            </div>
+        </div>
+
     </div>
 
-    <div class="row mb-2">
-        <div class="col-md-4">
-            <label for="signature_text" class="form-label"><strong>Signature Text</strong><br>
-            This signature is printed in the logbook footer under signature</label>
+    <div class="col-md-8">
 
-            <input type="text" class="form-control" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
-                required="true" autocomplete="off" placeholder="Signature text">
+        <div class="card-body">
+            <table id="aircraft_class" class="table-editable table table-bordered table-responsive-md table-striped">
+                <thead>
+                    <tr>
+                        <th>Class Name</th>
+                        <th>Aircraft Types</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button class="btn-sm btn-success" type="button" id="add_row"><i class="fas fa-plus fa-2x" ></i></button>
+            <div id="not_populated"></div>
         </div>
+
     </div>
 
-    <div class="row mb-2">
-        <div class="col-md-4">
-            <label for="date" class="form-label"><strong>Page breaks</strong><br>
-            In case you need to divide your logbook to several ones, use page breaks in format <i>page_number1, page_number2</i>
-            where the page counter will reset to 1</label>
+</div>
 
-            <input type="text" class="form-control" id="page_breaks" name="page_breaks" value="{{$settings.PageBreaks}}"
-                required="true" autocomplete="off" placeholder="Page breaks">
-        </div>
-    </div>
-
-    <div class="row mb-2">
-        <div class="col-md-4">
-            <label for="airports" class="form-label"><strong>Airport database</strong><br>
-            Click </i>Update Airport DB</i> to get the latest list of airports</label>
-
-            <input type="text" class="form-control" id="airports" name="airports" value="{{$records}} airports"
-                required="false" readonly>
-        </div>
-    </div>
-
-    <div class="alert-danger text-center d-none" id="info" role="alert"></div>
-    <hr>
-    <button class="btn btn-primary" type="button" onclick="Save()" id="save">Save</button>
-    <button class="btn btn-primary" type="button" onclick="UpdateAirportsDB()" id="update">Update Airport DB</button>
+<div class="alert-danger text-center d-none" id="info" role="alert"></div>
+<hr>
+<button class="btn btn-primary" type="button" onclick="Save()" id="save">Save</button>
+<button class="btn btn-primary" type="button" onclick="UpdateAirportsDB()" id="update">Update Airport DB</button>
 
 </form>
 {{ end }}
-
 {{ define "js" }}
 {{ block "common-js" . }}{{ end }}
 {{ block "settings-js" . }}{{ end }}

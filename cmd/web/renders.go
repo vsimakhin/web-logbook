@@ -66,6 +66,8 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["LogbookSave"] = APILogbookSave
 	td.API["LogbookDelete"] = APILogbookDelete
 	td.API["LogbookNight"] = APILogbookNight
+	td.API["AircraftModels"] = APIAircraftModels
+	td.API["AircraftClasses"] = APIAircraftClasses
 	td.API["LogbookUUIDAttachments"] = APILogbookUUIDAttachments
 	td.API["LogbookAttachmentsUpload"] = APILogbookAttachmentsUpload
 	td.API["LogbookAttachmentsDelete"] = APILogbookAttachmentsDelete

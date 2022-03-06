@@ -38,6 +38,8 @@ func TestRoutes(t *testing.T) {
 		APILicensingSave,
 		APILicensingDelete,
 		APILicensingAttachmentDelete,
+		APIAircraftClasses,
+		APIAircraftModels,
 		"/static/*",
 		"/favicon.ico",
 	}

@@ -94,7 +94,7 @@ func InitMock(mock sqlmock.Sqlmock) {
 
 	// mock UpdateSettings
 	mock.ExpectExec("UPDATE settings2 SET").
-		WithArgs(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks":""}`).
+		WithArgs(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks":"","aircraft_classes":null}`).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// mock GetTotals
@@ -180,6 +180,22 @@ func InitMock(mock sqlmock.Sqlmock) {
 		)
 
 	// mock GetTotalsByAircraftType
+	mock.ExpectQuery("SELECT aircraft_model(.+) arrival_place FROM logbook_view ORDER BY m_date").WithArgs().
+		WillReturnRows(
+			mock.NewRows([]string{
+				"aircraft_model", "se_time", "me_time", "mcc_time", "total_time",
+				"day_landings", "night_landings",
+				"night_time", "ifr_time", "pic_time", "co_pilot_time",
+				"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
+			}).AddRow(
+				"C172", "2:00", "2:00", "2:00", "2:00",
+				1, 2,
+				"2:00", "2:00", "2:00", "2:00",
+				"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
+			),
+		)
+
+	// mock GetTotalsByAircraftClass
 	mock.ExpectQuery("SELECT aircraft_model(.+) arrival_place FROM logbook_view ORDER BY m_date").WithArgs().
 		WillReturnRows(
 			mock.NewRows([]string{

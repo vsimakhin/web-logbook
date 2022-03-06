@@ -3,30 +3,8 @@ package models
 import (
 	"context"
 	"fmt"
-	"math"
 	"time"
 )
-
-func deg2rad(degrees float64) float64 {
-	return degrees * math.Pi / 180
-}
-
-func hsin(theta float64) float64 {
-	return math.Pow(math.Sin(theta/2), 2)
-}
-
-// dist calculates a distance between 2 geo points
-func dist(lat1, lon1, lat2, lon2 float64) float64 {
-	lat1 = deg2rad(lat1)
-	lon1 = deg2rad(lon1)
-	lat2 = deg2rad(lat2)
-	lon2 = deg2rad(lon2)
-
-	r := 6378100.0
-	h := hsin(lat2-lat1) + math.Cos(lat1)*math.Cos(lat2)*hsin(lon2-lon1)
-
-	return 2 * r * math.Asin(math.Sqrt(h)) / 1000 / 1.852 // nautical miles
-}
 
 // distance calculates distance between 2 airports
 func (m *DBModel) distance(departure, arrival string) int {
@@ -226,6 +204,61 @@ func (m *DBModel) GetTotalsByAircraftType() (map[string]FlightRecord, error) {
 		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
 
 		totals[fr.Aircraft.Model] = CalculateTotals(totals[fr.Aircraft.Model], fr)
+	}
+
+	return totals, nil
+}
+
+// GetTotalsByAircraftClass calculates totals by aircraft class
+func (m *DBModel) GetTotalsByAircraftClass() (map[string]FlightRecord, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var fr, emptyone FlightRecord
+	totals := make(map[string]FlightRecord)
+
+	settings, err := m.GetSettings()
+	if err != nil {
+		return totals, err
+	}
+
+	query := "SELECT aircraft_model, se_time, me_time, mcc_time, total_time, " +
+		"day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
+		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
+		"FROM logbook_view ORDER BY m_date"
+	rows, err := m.DB.QueryContext(ctx, query)
+
+	if err != nil {
+		return totals, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+			&fr.Landings.Day, &fr.Landings.Night,
+			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
+			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
+
+		if err != nil {
+			return totals, err
+		}
+
+		if fr.Aircraft.Model == "" {
+			// looks like it's a simulator record
+			fr.Aircraft.Model = "SIM"
+		}
+
+		classes := getClassesForModel(settings.AircraftClasses, fr.Aircraft.Model)
+		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+
+		for _, class := range classes {
+			if _, ok := totals[class]; !ok {
+				totals[class] = emptyone
+			}
+
+			totals[class] = CalculateTotals(totals[class], fr)
+		}
+
 	}
 
 	return totals, nil
