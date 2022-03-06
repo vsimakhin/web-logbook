@@ -63,6 +63,13 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	totalsByClass, err := app.db.GetTotalsByAircraftClass()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	data["totals"] = totals
 	data["totals30"] = totals30
 	data["totals90"] = totals90
@@ -70,6 +77,7 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 	data["totalsM"] = totalsMonth
 	data["totalsByYear"] = totalsByYear
 	data["totalsByAircraft"] = totalsByAircraft
+	data["totalsByClass"] = totalsByClass
 
 	if err := app.renderTemplate(w, r, "stats", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)

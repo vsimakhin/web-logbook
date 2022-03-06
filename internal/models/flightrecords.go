@@ -232,17 +232,23 @@ func (m *DBModel) GetAircraftRegs() ([]string, error) {
 	return allRegs, nil
 }
 
-// GetAircraftModels returns all already recorded aircraft models
-func (m *DBModel) GetAircraftModels() ([]string, error) {
+// GetAircraftModels returns already recorded aircraft models
+func (m *DBModel) GetAircraftModels(condition int) ([]string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var aircraftModel string
 	var allModels []string
+	var query string
 
-	query := "SELECT aircraft_model " +
-		"FROM (SELECT aircraft_model FROM logbook_view ORDER BY m_date DESC LIMIT 300) " +
-		"GROUP BY aircraft_model ORDER BY aircraft_model"
+	if condition == AllAircraftModels {
+		query = "SELECT aircraft_model FROM logbook_view WHERE aircraft_model <> '' " +
+			"GROUP BY aircraft_model ORDER BY aircraft_model"
+	} else if condition == JustLastModels {
+		query = "SELECT aircraft_model " +
+			"FROM (SELECT aircraft_model FROM logbook_view ORDER BY m_date DESC LIMIT 300) " +
+			"GROUP BY aircraft_model ORDER BY aircraft_model"
+	}
 	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {

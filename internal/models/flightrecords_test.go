@@ -33,7 +33,7 @@ func TestGetAircraftRegs(t *testing.T) {
 func TestGetAircraftModels(t *testing.T) {
 	db := initModel(t)
 
-	records, err := db.GetAircraftModels()
+	records, err := db.GetAircraftModels(JustLastModels)
 	if err != nil {
 		t.Fatal(err)
 	}
