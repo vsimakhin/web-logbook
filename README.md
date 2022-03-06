@@ -68,6 +68,7 @@ Currently there are implemented several modules in the logbook app:
 
 ![Flight stats](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats.png)
 
+![Flight stats classes](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats-classes.png)
 
 ![Map](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats-map.png)
 
