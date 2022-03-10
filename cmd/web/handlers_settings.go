@@ -66,6 +66,11 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
+	if app.isAuthEnabled != settings.AuthEnabled && settings.AuthEnabled {
+		response.RedirectURL = "/login"
+	}
+	app.isAuthEnabled = settings.AuthEnabled
+
 	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
 		app.errorLog.Println(err)

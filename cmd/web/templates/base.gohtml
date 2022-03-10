@@ -50,6 +50,12 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-cogs"></i></div>
                                 Settings
                             </a>
+                            {{if .AuthEnabled}}
+                            <a class="nav-link" href="{{$api.Logout}}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                                Logout
+                            </a>
+                            {{end}}
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">

@@ -4,11 +4,13 @@ go 1.17
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/alexedwards/scs/v2 v2.5.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/google/uuid v1.3.0
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/stretchr/testify v1.7.0
 	github.com/vsimakhin/go-nighttime v1.0.0
+	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70
 	modernc.org/sqlite v1.14.3
 )
 

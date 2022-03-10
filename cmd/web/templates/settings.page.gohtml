@@ -53,6 +53,31 @@
             </div>
         </div>
 
+        <hr>
+
+        <div class="row mb-2">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="auth_enabled" name="auth_enabled" {{if $settings.AuthEnabled}}checked{{end}}>
+                <input type="hidden" id="previous_auth_value" value="{{$settings.AuthEnabled}}"/>
+                <label for="auth_enabled" class="form-label"><strong>Enable authentication</strong>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col">
+                <label for="login" class="form-label"><strong>Login</strong>
+                <input type="text" class="form-control" id="login" name="login" type="login" value="{{$settings.Login}}"
+                    autocomplete="off" placeholder="Login Name">
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col">
+                <label for="password" class="form-label"><strong>Password</strong>
+                <input type="text" class="form-control" id="password" name="password" type="password"
+                    autocomplete="off" placeholder="Password">
+            </div>
+        </div>
     </div>
 
     <div class="col-md-8">

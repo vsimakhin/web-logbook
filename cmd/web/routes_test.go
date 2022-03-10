@@ -40,8 +40,11 @@ func TestRoutes(t *testing.T) {
 		APILicensingAttachmentDelete,
 		APIAircraftClasses,
 		APIAircraftModels,
+		APILogin,
+		APILogout,
 		"/static/*",
 		"/favicon.ico",
+		"/*",
 	}
 
 	server := app.routes()
