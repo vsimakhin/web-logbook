@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Web Logbook" />
+    <meta name="author" content="github.com/vsimakhin/" />
+    <title>Login</title>
+    <link href="/static/css/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-dark">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
+                                <div class="card-body">
+                                    <form onsubmit="Submit(); return false;" action="">
+                                        <div class="alert-danger text-center d-none" id="info" role="alert"></div><br>
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="login" type="login" placeholder="Login" />
+                                            <label for="login">Login</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="password" type="password" placeholder="Password" />
+                                            <label for="password">Password</label>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center mt-4 mb-0">
+                                            <button class="btn btn-primary" type="submit">Login</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">&copy; <a href="https://github.com/vsimakhin/web-logbook">Web Logbook</a></div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+<script>
+
+function Submit() {
+    var login = document.getElementById("login").value;
+    var pwd = document.getElementById("password").value;
+
+    if (login === "" || pwd === "") {
+        showErrorMessage("Login or Password fields are empty");
+        return;
+    }
+
+    let payload = {
+        login: login,
+        password: pwd
+    }
+
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    }
+
+    fetch("/login", requestOptions)
+        .then(response => response.json())
+        .then(function(data) {
+            if (data.ok) {
+                console.log(data)
+                if (typeof data.redirect_url !== 'undefined') {
+                    location.href = data.redirect_url;
+                }
+            } else {
+                showErrorMessage(data.message);
+            }
+        })
+}
+
+function showErrorMessage(msg) {
+    var infoMsg = document.getElementById("info");
+
+    infoMsg.classList.add("alert-danger");
+    infoMsg.classList.remove("alert-success");
+    infoMsg.classList.remove("d-none");
+    infoMsg.innerText = msg;
+}
+
+</script>
+</body>
+</html>
+

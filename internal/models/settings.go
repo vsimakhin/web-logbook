@@ -3,7 +3,10 @@ package models
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // GetSettings returns settings parameters
@@ -34,6 +37,25 @@ func (m *DBModel) GetSettings() (Settings, error) {
 func (m *DBModel) UpdateSettings(settings Settings) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	// check password field
+	pwd := strings.TrimSpace(settings.Password)
+	if pwd != "" {
+		hash, err := bcrypt.GenerateFromPassword([]byte(pwd), 12)
+		if err != nil {
+			return err
+		}
+
+		settings.Hash = string(hash)
+		settings.Password = ""
+	} else {
+		// keep old hash
+		oldSettings, err := m.GetSettings()
+		if err != nil {
+			return err
+		}
+		settings.Hash = oldSettings.Hash
+	}
 
 	out, err := json.Marshal(settings)
 	if err != nil {

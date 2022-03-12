@@ -50,9 +50,23 @@ function removeArrayItem(arr, value) {
 }
 
 function Save() {
+    if (document.getElementById("auth_enabled").checked) {
+        if (document.getElementById("login").value === "") {
+            showErrorMessage("Login field is empty");
+            return;
+        }
+
+        if (document.getElementById("password").value === "") {
+            if (document.getElementById("previous_auth_value").value == "false") {
+                showErrorMessage("Password field is empty");
+                return;
+            }
+        }
+    }
+
     var table = document.getElementById("aircraft_class");
 
-    var aircraft_classes = {}
+    var aircraft_classes = {};
     for (var i = 0, row; row = table.rows[i]; i++) {
 
         class_name = row.cells[0].innerText;
@@ -67,8 +81,11 @@ function Save() {
         owner_name: document.getElementById("owner_name").value,
         signature_text: document.getElementById("signature_text").value,
         page_breaks: document.getElementById("page_breaks").value,
-        aircraft_classes: aircraft_classes
-    }
+        aircraft_classes: aircraft_classes,
+        auth_enabled: document.getElementById("auth_enabled").checked,
+        login: document.getElementById("login").value,
+        password: document.getElementById("password").value
+    };
 
     const requestOptions = {
         method: 'post',
@@ -77,7 +94,7 @@ function Save() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
-    }
+    };
 
     fetch("{{index .API "Settings"}}", requestOptions)
         .then(response => response.json())
@@ -85,11 +102,13 @@ function Save() {
             if (data.ok) {
                 showInfoMessage(data.message);
                 PopulateAircraftClassesTable();
+                if (typeof data.redirect_url !== 'undefined') {
+                    location.href = data.redirect_url;
+                }
             } else {
                 showErrorMessage(data.message);
             }
         });
-
 }
 
 function UpdateAirportsDB() {
@@ -101,7 +120,7 @@ function UpdateAirportsDB() {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         }
-    }
+    };
 
     fetch("{{index .API "AirportUpdate"}}", requestOptions)
         .then(response => response.json())
@@ -114,6 +133,5 @@ function UpdateAirportsDB() {
             }
         });
 }
-
 </script>
 {{end}}

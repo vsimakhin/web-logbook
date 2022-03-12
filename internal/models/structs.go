@@ -77,6 +77,10 @@ type Settings struct {
 	SignatureText   string            `json:"signature_text"`
 	PageBreaks      string            `json:"page_breaks"`
 	AircraftClasses map[string]string `json:"aircraft_classes"`
+	AuthEnabled     bool              `json:"auth_enabled"`
+	Login           string            `json:"login"`
+	Password        string            `json:"password"`
+	Hash            string            `json:"hash"`
 }
 
 // License is a type for licesing

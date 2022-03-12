@@ -8,8 +8,9 @@ import (
 )
 
 type templateData struct {
-	Data map[string]interface{}
-	API  map[string]string
+	Data        map[string]interface{}
+	API         map[string]string
+	AuthEnabled bool
 }
 
 var functions = template.FuncMap{
@@ -90,6 +91,10 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["LicensingSave"] = APILicensingSave
 	td.API["LicensingDelete"] = APILicensingDelete
 	td.API["LicensingAttachmentDelete"] = APILicensingAttachmentDelete
+	td.API["Login"] = APILogin
+	td.API["Logout"] = APILogout
+
+	td.AuthEnabled = app.isAuthEnabled
 
 	return td
 }

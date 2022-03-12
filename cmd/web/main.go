@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/vsimakhin/web-logbook/internal/driver"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
@@ -29,12 +31,15 @@ type application struct {
 	templateCache map[string]*template.Template
 	version       string
 	db            models.DBModel
+	session       *scs.SessionManager
+	isAuthEnabled bool
 }
 
 func (app *application) serve() error {
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", app.config.port),
-		Handler: http.Handler(app.routes()),
+		Addr:     fmt.Sprintf(":%d", app.config.port),
+		Handler:  http.Handler(app.routes()),
+		ErrorLog: app.errorLog,
 	}
 
 	app.infoLog.Printf("Web Logbook is ready on http://localhost:%d\n", app.config.port)
@@ -46,11 +51,13 @@ func main() {
 	var cfg config
 	var err error
 	var isPrintVersion bool
+	var disableAuth bool
 
 	flag.IntVar(&cfg.port, "port", 4000, "Server port")
 	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "SQLite file name")
 	flag.BoolVar(&isPrintVersion, "version", false, "Prints current version")
+	flag.BoolVar(&disableAuth, "disable-authentication", false, "Disable authentication (in case you forgot login credentials")
 	flag.Parse()
 
 	if isPrintVersion {
@@ -69,6 +76,10 @@ func main() {
 	}
 	defer conn.Close()
 
+	// set up session
+	session = scs.New()
+	session.Lifetime = 12 * time.Hour
+
 	app := &application{
 		config:        cfg,
 		infoLog:       infoLog,
@@ -76,9 +87,20 @@ func main() {
 		templateCache: tc,
 		version:       version,
 		db:            models.DBModel{DB: conn},
+		session:       session,
+	}
+
+	if disableAuth {
+		err := app.db.DisableAuthorization()
+		if err != nil {
+			app.errorLog.Panicln(err)
+		}
+		fmt.Println("authentication has been disabled")
+		os.Exit(0)
 	}
 
 	go app.db.CreateDistanceCache()
+	app.isAuthEnabled = app.db.IsAuthEnabled()
 
 	err = app.serve()
 	if err != nil {

@@ -4,8 +4,10 @@ import (
 	"html/template"
 	"log"
 	"os"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/alexedwards/scs/v2"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
@@ -28,6 +30,10 @@ func initTestApp() *application {
 	// init mock from models package
 	models.InitMock(mock)
 
+	// set up session
+	session = scs.New()
+	session.Lifetime = 12 * time.Hour
+
 	app := &application{
 		config:        cfg,
 		infoLog:       infoLog,
@@ -35,6 +41,8 @@ func initTestApp() *application {
 		templateCache: tc,
 		version:       version,
 		db:            models.DBModel{DB: db},
+		session:       session,
+		isAuthEnabled: false,
 	}
 
 	return app
