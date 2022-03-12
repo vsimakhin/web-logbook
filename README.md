@@ -35,6 +35,9 @@ Currently there are implemented several modules in the logbook app:
   * Map drawing and distance calculation for the flight record
   * Export to EASA PDF format
 * Settings
+  * Signature and owner name 
+  * Enable/Disable authentication (in case you need to expose the app to the public internet)
+  * Aircraft groups/classes 
 * Map
   * Filters for routes and airports 
 * Licensing & Certification
@@ -44,6 +47,7 @@ Currently there are implemented several modules in the logbook app:
   * Totals
   * By Year
   * By Aircraft 
+  * By Aircraft group/class, defined in settings
 
 ## Logbook
 
