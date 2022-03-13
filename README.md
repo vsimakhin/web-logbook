@@ -23,6 +23,22 @@ You also can easily export all flight records into EASA style pdf format, print 
 4. Open your browser and type http://localhost:4000
 5. Once you finished, use `Ctrl+C` or just close the terminal window
 
+## CLI options
+```
+$ ./web-logbook -h
+  -disable-authentication
+    	Disable authentication (in case you forgot login credentials)
+  -dsn string
+    	SQLite file name (default "web-logbook.sql")
+  -env string
+    	Environment {dev|prod} (default "prod")
+  -port int
+    	Server port (default 4000)
+  -version
+    	Prints current version
+
+```
+
 # Supported operating systems
 
 Since it's written in golang it can run on any system if you compile the sources. For now in the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page there are 3 binaries for linux, macos and windows, all of them are amd64.
