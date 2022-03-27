@@ -33,13 +33,18 @@
         </div>
 
         <div class="row mb-2">
-            <div class="col">
-                <label for="date" class="form-label"><strong>Page breaks</strong><br>
-                In case you need to divide your logbook to several ones, use page breaks in format <i>page_number1, page_number2</i>
+            <label class="form-label"><strong>Page breaks</strong><br>
+                In case you need to divide your exported logbook to several ones, use page breaks in format <i>page_number1, page_number2</i>
                 where the page counter will reset to 1</label>
-
-                <input type="text" class="form-control" id="page_breaks" name="page_breaks" value="{{$settings.PageBreaks}}"
-                    required="true" autocomplete="off" placeholder="Page breaks">
+            <div class="col-md-6">
+                <label class="form-label" for="page_breaks_a4"><strong>A4 PDF format</strong></label>
+                <input type="text" class="form-control" id="page_breaks_a4" name="page_breaks_a4" value="{{$settings.PageBreaksA4}}"
+                    required="true" autocomplete="off" placeholder="Page breaks A4">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="page_breaks_a5"><strong>A5 PDF format</strong></label>
+                <input type="text" class="form-control" id="page_breaks_a5" name="page_breaks_a5" value="{{$settings.PageBreaksA5}}"
+                    required="true" autocomplete="off" placeholder="Page breaks A5">
             </div>
         </div>
 

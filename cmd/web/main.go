@@ -14,7 +14,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "1.10.0"
+const version = "1.11.0"
 
 type config struct {
 	port int
@@ -57,7 +57,7 @@ func main() {
 	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "SQLite file name")
 	flag.BoolVar(&isPrintVersion, "version", false, "Prints current version")
-	flag.BoolVar(&disableAuth, "disable-authentication", false, "Disable authentication (in case you forgot login credentials")
+	flag.BoolVar(&disableAuth, "disable-authentication", false, "Disable authentication (in case you forgot login credentials)")
 	flag.Parse()
 
 	if isPrintVersion {

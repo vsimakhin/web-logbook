@@ -89,12 +89,12 @@ func InitMock(mock sqlmock.Sqlmock) {
 			mock.NewRows([]string{
 				"settings",
 			}).
-				AddRow(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks":"","aircraft_classes":null,"auth_enabled":false,"login":"","password":"","hash":""}`),
+				AddRow(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks_a4":"","page_breaks_a5":"","aircraft_classes":null,"auth_enabled":false,"login":"","password":"","hash":""}`),
 		)
 
 	// mock UpdateSettings
 	mock.ExpectExec("UPDATE settings2 SET").
-		WithArgs(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks":"","aircraft_classes":null,"auth_enabled":false,"login":"","password":"","hash":""}`).
+		WithArgs(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","page_breaks_a4":"","page_breaks_a5":"","aircraft_classes":null,"auth_enabled":false,"login":"","password":"","hash":""}`).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// mock GetTotals

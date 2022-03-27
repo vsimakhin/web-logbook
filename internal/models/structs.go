@@ -75,7 +75,8 @@ type Airport struct {
 type Settings struct {
 	OwnerName       string            `json:"owner_name"`
 	SignatureText   string            `json:"signature_text"`
-	PageBreaks      string            `json:"page_breaks"`
+	PageBreaksA4    string            `json:"page_breaks_a4"`
+	PageBreaksA5    string            `json:"page_breaks_a5"`
 	AircraftClasses map[string]string `json:"aircraft_classes"`
 	AuthEnabled     bool              `json:"auth_enabled"`
 	Login           string            `json:"login"`
