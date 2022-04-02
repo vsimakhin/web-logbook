@@ -21,7 +21,8 @@ You also can easily export all flight records into EASA style pdf format, print 
   * MacOS:
     * *I still didn't test it for the MacOS, so in theory should be as same as for linux, but... who knows ¯\\_(ツ)_/¯*
 4. Open your browser and type http://localhost:4000
-5. Once you finished, use `Ctrl+C` or just close the terminal window
+5. Go to Settings page and click "Restore Defaults" for the export formats (in case the values there are 0)
+6. Once you finished, use `Ctrl+C` or just close the terminal window
 
 ## CLI options
 ```
@@ -49,11 +50,12 @@ Currently there are implemented several modules in the logbook app:
 * Logbook itself
   * Attachments for the flight records
   * Map drawing and distance calculation for the flight record
-  * Export to EASA PDF format
+  * Export to EASA PDF format (A4 and A5)
 * Settings
   * Signature and owner name 
   * Enable/Disable authentication (in case you need to expose the app to the public internet)
-  * Aircraft groups/classes 
+  * Aircraft groups/classes
+  * Adjustable settings for each export format 
 * Map
   * Filters for routes and airports 
 * Licensing & Certification
@@ -71,7 +73,13 @@ Currently there are implemented several modules in the logbook app:
 
 ## Export
 
+### A4
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/logbook-export.png)
+
+### A5
+![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-a.png)
+![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-b.png)
+
 
 ## Flight record
 
@@ -83,6 +91,8 @@ Currently there are implemented several modules in the logbook app:
 ## Settings
 
 ![Settings](https://github.com/vsimakhin/web-logbook-assets/raw/main/settings.png)
+
+![A5 Format Settings](https://github.com/vsimakhin/web-logbook-assets/raw/main/settings-export-format.png)
 
 ## Stats
 
