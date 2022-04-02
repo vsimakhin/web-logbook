@@ -149,52 +149,52 @@ func (l *Logbook) init(format int) {
 		}
 
 	} else if format == PDFA5 {
-		logbookRows = 19
-		fillRow = 4
+		logbookRows = 20
+		fillRow = 3
 
-		leftMargin = 10.0
-		leftMarginB = 20.0
-		topMargin = 5.0
-		bodyRowHeight = 5.5
-		footerRowHeight = 5.5
+		leftMargin = 6.0
+		leftMarginB = 14.0
+		topMargin = 9.0
+		bodyRowHeight = 5.0
+		footerRowHeight = 5.0
 
-		w1 = []float64{15.5, 18.5, 18.5, 25.4, 36.6, 12.2, 35.86, 16.76, 24.4, 48.8, 36.4, 70.8}
+		w1 = []float64{15.5, 20.5, 20.5, 25.4, 36.6, 12.2, 41.86, 16.76, 24.4, 48.8, 36.4, 79.8}
 		w2 = []float64{
 			15.5,       //date
-			18.5,       //departure
-			18.5,       //arrival
+			20.5,       //departure
+			20.5,       //arrival
 			25.4,       //aircraft
 			24.4, 12.2, //single, mcc
 			12.2,  //total time
-			35.86, //pic name
+			41.86, //pic name
 			16.76, //landings
 			24.4,  //operational condition time
 			48.8,  //pilot function time
 			36.4,  //fstd session
-			70.8,  //remarks
+			79.8,  //remarks
 		}
 		w3 = []float64{
 			15.5,        //date
-			10.25, 8.25, //departue - place, time
-			10.25, 8.25, //arrival - place, time
+			12.25, 8.25, //departue - place, time
+			12.25, 8.25, //arrival - place, time
 			10, 15.4, //aircraft - type, reg
 			12.2, 12.2, 12.2, //se, me, mcc
 			12.2,       //total time
-			35.86,      //pic name
+			41.86,      //pic name
 			8.38, 8.38, //landings - day, night
 			12.2, 12.2, //night, ifr
 			12.2, 12.2, 12.2, 12.2, //pic, cop, dual, instr
 			24.2, 12.2, //fstd - type, time
-			70.8, //remarks
+			79.8, //remarks
 		}
 		w4 = []float64{
-			25.75,      //date + departure place
-			52.15,      //departure time...aircraft reg
+			27.75,      //date + departure place
+			54.15,      //departure time...aircraft reg
 			12.2,       //se
 			12.2,       //me
 			12.2,       //mcc
 			12.2,       //total
-			35.86,      //pic name
+			41.86,      //pic name
 			8.38, 8.38, //landings
 			12.2,       //night
 			12.2,       //ifr
@@ -203,7 +203,7 @@ func (l *Logbook) init(format int) {
 			12.2,       //dual
 			12.2,       //instr
 			24.2, 12.2, //fstd type and time
-			70.8, //remarks
+			79.8, //remarks
 		}
 	}
 }

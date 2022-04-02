@@ -8,6 +8,7 @@ import (
 
 	_ "embed"
 
+	"github.com/vsimakhin/web-logbook/internal/models"
 	_ "modernc.org/sqlite"
 )
 
@@ -59,14 +60,10 @@ func checkSettingsTable(db *sql.DB) error {
 	defer cancel()
 
 	// first let's check we migrate everything from old settings table to the new one
-	var s struct {
-		OwnerName     string `json:"owner_name"`
-		SignatureText string `json:"signature_text"`
-		PageBreaks    string `json:"page_breaks"`
-	}
+	var s models.Settings
 
 	row := db.QueryRowContext(ctx, "SELECT owner_name, signature_text, page_breaks FROM settings")
-	err := row.Scan(&s.OwnerName, &s.SignatureText, &s.PageBreaks)
+	err := row.Scan(&s.OwnerName, &s.SignatureText, &s.PageBreaksA4)
 	if err == nil {
 		// looks like we still have an old table
 		out, err := json.Marshal(s)
@@ -99,7 +96,8 @@ func checkSettingsTable(db *sql.DB) error {
 	if rowsCount == 0 {
 		// default values
 		s.OwnerName = "Owner Name"
-		s.PageBreaks = ""
+		s.PageBreaksA4 = ""
+		s.PageBreaksA5 = ""
 		s.SignatureText = "I certify that the entries in this log are true."
 
 		out, err := json.Marshal(s)

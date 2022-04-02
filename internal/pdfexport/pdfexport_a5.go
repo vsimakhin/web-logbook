@@ -239,6 +239,13 @@ func (l *Logbook) printA5LogbookBodyB(record models.FlightRecord, fill bool) {
 	l.pdf.SetX(leftMargin)
 }
 
+func (l *Logbook) TitlePage() {
+	l.pdf.AddPage()
+	l.pdf.SetFont(fontBold, "", 20)
+	l.pdf.SetXY(55, 60)
+	l.pdf.MultiCell(100, 2, "PILOT LOGBOOK", "", "C", false)
+}
+
 // ExportA5 creates A5 pdf with logbook in EASA format
 func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) error {
 	// init global vars
@@ -246,7 +253,7 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 
 	// start forming the pdf file
 	l.pdf = gofpdf.New("L", "mm", "A5", "")
-	l.pdf.SetAutoPageBreak(true, 5)
+	l.pdf.SetAutoPageBreak(false, 5)
 	l.loadFonts()
 
 	l.pdf.SetLineWidth(.2)
@@ -257,8 +264,8 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 	var totalEmpty models.FlightRecord
 	fill := false
 
-	// empty first page
-	l.pdf.AddPage()
+	// title page
+	l.TitlePage()
 
 	logBookRowA := func(item int) int {
 		rowCounter += 1
@@ -309,7 +316,7 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 			if len(l.PageBreaks) > 0 {
 				if fmt.Sprintf("%d", pageCounter-1) == l.PageBreaks[0] {
 					l.pdf.AddPage()
-					l.pdf.AddPage()
+					l.TitlePage()
 
 					pageCounter = 1
 
