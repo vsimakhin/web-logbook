@@ -19,26 +19,29 @@ func TestLogbookWidthHeaders(t *testing.T) {
 		return result
 	}
 
-	w1_sum := sum(w1)
-	w2_sum := sum(w2)
-	w3_sum := sum(w3)
-	w4_sum := sum(w4)
+	formats := [2]int{PDFA4, PDFA5}
 
-	if math.Abs(w1_sum-w2_sum) >= float64EqualityThreshold {
-		t.Fatalf("Sum of the elements of w1 (%f), w2 (%f), w3 (%f), w4 (%f) variables should be equal\n", w1_sum, w2_sum, w3_sum, w4_sum)
+	for _, i := range formats {
+		var l Logbook
+		l.init(i)
+
+		w1_sum := sum(w1)
+		w2_sum := sum(w2)
+		w3_sum := sum(w3)
+		w4_sum := sum(w4)
+
+		if math.Abs(w1_sum-w2_sum) >= float64EqualityThreshold {
+			t.Fatalf("Sum of the elements of w1 (%f), w2 (%f), w3 (%f), w4 (%f) variables should be equal\n", w1_sum, w2_sum, w3_sum, w4_sum)
+		}
+
+		if math.Abs(w2_sum-w3_sum) >= float64EqualityThreshold {
+			t.Fatalf("Sum of the elements of w1 (%f), w2 (%f), w3 (%f), w4 (%f) variables should be equal\n", w1_sum, w2_sum, w3_sum, w4_sum)
+		}
+
+		if math.Abs(w3_sum-w4_sum) >= float64EqualityThreshold {
+			t.Fatalf("Sum of the elements of w1 (%f), w2 (%f), w3 (%f), w4 (%f) variables should be equal\n", w1_sum, w2_sum, w3_sum, w4_sum)
+		}
 	}
-
-	if math.Abs(w2_sum-w3_sum) >= float64EqualityThreshold {
-		t.Fatalf("Sum of the elements of w1 (%f), w2 (%f), w3 (%f), w4 (%f) variables should be equal\n", w1_sum, w2_sum, w3_sum, w4_sum)
-	}
-
-	if math.Abs(w3_sum-w4_sum) >= float64EqualityThreshold {
-		t.Fatalf("Sum of the elements of w1 (%f), w2 (%f), w3 (%f), w4 (%f) variables should be equal\n", w1_sum, w2_sum, w3_sum, w4_sum)
-	}
-}
-
-func TestLogbookows(t *testing.T) {
-	assert.Equal(t, logbookRows, 23)
 }
 
 func TestLogbookHeaders(t *testing.T) {
@@ -48,7 +51,7 @@ func TestLogbookHeaders(t *testing.T) {
 }
 
 func TestFillLine(t *testing.T) {
-	assert.Equal(t, false, fillLine(0))
-	assert.Equal(t, false, fillLine(1))
-	assert.Equal(t, true, fillLine(2))
+	assert.Equal(t, false, fillLine(0, 3))
+	assert.Equal(t, false, fillLine(1, 3))
+	assert.Equal(t, true, fillLine(2, 3))
 }

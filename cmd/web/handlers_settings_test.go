@@ -23,6 +23,8 @@ func TestHandlerSettings(t *testing.T) {
 
 	assert.Contains(t, string(responseBody), `Owner Name`)
 	assert.Contains(t, string(responseBody), `Signature Text`)
-	assert.Contains(t, string(responseBody), `Page breaks`)
 	assert.Contains(t, string(responseBody), `Airport database`)
+	assert.Contains(t, string(responseBody), `Export A4`)
+	assert.Contains(t, string(responseBody), `Export A5`)
+
 }
