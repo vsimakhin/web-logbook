@@ -1,6 +1,6 @@
 # Web-logbook
 
-This is a simple free EASA style logbook local web app written in golang.
+This is a simple free EASA style logbook application written in golang.
 
 You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
 
