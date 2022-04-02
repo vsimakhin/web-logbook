@@ -83,6 +83,8 @@ type Logbook struct {
 	OwnerName  string
 	Signature  string
 	PageBreaks []string
+
+	Export models.Export
 }
 
 func (l *Logbook) init(format int) {
@@ -91,120 +93,85 @@ func (l *Logbook) init(format int) {
 	totalPrevious = emptyRecord
 	totalTime = emptyRecord
 
+	logbookRows = l.Export.LogbookRows
+	fillRow = l.Export.Fill
+
+	topMargin = l.Export.TopMargin
+	bodyRowHeight = l.Export.BodyRow
+	footerRowHeight = l.Export.FooterRow
+
 	if format == PDFA4 {
-		logbookRows = 23
-		fillRow = 3
-
-		leftMargin = 10.0
-		topMargin = 30.0
-		bodyRowHeight = 5.0
-		footerRowHeight = 6.0
-
-		w1 = []float64{12.2, 16.5, 16.5, 22.9, 33.6, 11.2, 22.86, 16.76, 22.4, 44.8, 22.4, 33.8}
-		w2 = []float64{
-			12.2,       //date
-			16.5,       //departure
-			16.5,       //arrival
-			22.9,       //aircraft
-			22.4, 11.2, //single, mcc
-			11.2,  //total time
-			22.86, //pic name
-			16.76, //landings
-			22.4,  //operational condition time
-			44.8,  //pilot function time
-			22.4,  //fstd session
-			33.8,  //remarks
-		}
-		w3 = []float64{
-			12.2,       //date
-			8.25, 8.25, //departue - place, time
-			8.25, 8.25, //arrival - place, time
-			10, 12.9, //aircraft - type, reg
-			11.2, 11.2, 11.2, //se, me, mcc
-			11.2,       //total time
-			22.86,      //pic name
-			8.38, 8.38, //landings - day, night
-			11.2, 11.2, //night, ifr
-			11.2, 11.2, 11.2, 11.2, //pic, cop, dual, instr
-			11.2, 11.2, //fstd - type, time
-			33.8, //remarks
-		}
-		w4 = []float64{
-			20.45,      //date + departure place
-			47.65,      //departure time...aircraft reg
-			11.2,       //se
-			11.2,       //me
-			11.2,       //mcc
-			11.2,       //total
-			22.86,      //pic name
-			8.38, 8.38, //landings
-			11.2,       //night
-			11.2,       //ifr
-			11.2,       //pic
-			11.2,       //cop
-			11.2,       //dual
-			11.2,       //instr
-			11.2, 11.2, //fstd type and time
-			33.8, //remarks
-		}
+		leftMargin = l.Export.LeftMargin
 
 	} else if format == PDFA5 {
-		logbookRows = 20
-		fillRow = 3
 
-		leftMargin = 6.0
-		leftMarginB = 14.0
-		topMargin = 9.0
-		bodyRowHeight = 5.0
-		footerRowHeight = 5.0
+		leftMargin = l.Export.LeftMarginA
+		leftMarginB = l.Export.LeftMarginB
+	}
 
-		w1 = []float64{15.5, 20.5, 20.5, 25.4, 36.6, 12.2, 41.86, 16.76, 24.4, 48.8, 36.4, 79.8}
-		w2 = []float64{
-			15.5,       //date
-			20.5,       //departure
-			20.5,       //arrival
-			25.4,       //aircraft
-			24.4, 12.2, //single, mcc
-			12.2,  //total time
-			41.86, //pic name
-			16.76, //landings
-			24.4,  //operational condition time
-			48.8,  //pilot function time
-			36.4,  //fstd session
-			79.8,  //remarks
-		}
-		w3 = []float64{
-			15.5,        //date
-			12.25, 8.25, //departue - place, time
-			12.25, 8.25, //arrival - place, time
-			10, 15.4, //aircraft - type, reg
-			12.2, 12.2, 12.2, //se, me, mcc
-			12.2,       //total time
-			41.86,      //pic name
-			8.38, 8.38, //landings - day, night
-			12.2, 12.2, //night, ifr
-			12.2, 12.2, 12.2, 12.2, //pic, cop, dual, instr
-			24.2, 12.2, //fstd - type, time
-			79.8, //remarks
-		}
-		w4 = []float64{
-			27.75,      //date + departure place
-			54.15,      //departure time...aircraft reg
-			12.2,       //se
-			12.2,       //me
-			12.2,       //mcc
-			12.2,       //total
-			41.86,      //pic name
-			8.38, 8.38, //landings
-			12.2,       //night
-			12.2,       //ifr
-			12.2,       //pic
-			12.2,       //cop
-			12.2,       //dual
-			12.2,       //instr
-			24.2, 12.2, //fstd type and time
-			79.8, //remarks
-		}
+	initWidths(l.Export.Columns)
+}
+
+func initWidths(c models.ColumnsWidth) {
+	w1 = []float64{
+		c.Col1,
+		c.Col2 + c.Col3,
+		c.Col4 + c.Col5,
+		c.Col6 + c.Col7,
+		c.Col8 + c.Col9 + c.Col10,
+		c.Col11,
+		c.Col12,
+		c.Col13 + c.Col14,
+		c.Col15 + c.Col16,
+		c.Col17 + c.Col18 + c.Col19 + c.Col20,
+		c.Col21 + c.Col22,
+		c.Col23,
+	}
+	w2 = []float64{
+		c.Col1,                   //date
+		c.Col2 + c.Col3,          //departure
+		c.Col4 + c.Col5,          //arrival
+		c.Col6 + c.Col7,          //aircraft
+		c.Col8 + c.Col9, c.Col10, //single, mcc
+		c.Col11,                               //total time
+		c.Col12,                               //pic name
+		c.Col13 + c.Col14,                     //landings
+		c.Col15 + c.Col16,                     //operational condition time
+		c.Col17 + c.Col18 + c.Col19 + c.Col20, //pilot function time
+		c.Col21 + c.Col22,                     //fstd session
+		c.Col23,                               //remarks
+	}
+	w3 = []float64{
+		c.Col1,         //date
+		c.Col2, c.Col3, //departue - place, time
+		c.Col4, c.Col5, //arrival - place, time
+		c.Col6, c.Col7, //aircraft - type, reg
+		c.Col8, c.Col9, c.Col10, //se, me, mcc
+		c.Col11,          //total time
+		c.Col12,          //pic name
+		c.Col13, c.Col14, //landings - day, night
+		c.Col15, c.Col16, //night, ifr
+		c.Col17, c.Col18, c.Col19, c.Col20, //pic, cop, dual, instr
+		c.Col21, c.Col22, //fstd - type, time
+		c.Col23, //remarks
+	}
+	w4 = []float64{
+		c.Col1 + c.Col2, //date + departure place
+		c.Col3 + c.Col4 + c.Col5 + c.Col6 + c.Col7, //departure time...aircraft reg
+		c.Col8,           //se
+		c.Col9,           //me
+		c.Col10,          //mcc
+		c.Col11,          //total
+		c.Col12,          //pic name
+		c.Col13, c.Col14, //landings
+		c.Col15,          //night
+		c.Col16,          //ifr
+		c.Col17,          //pic
+		c.Col18,          //cop
+		c.Col19,          //dual
+		c.Col20,          //instr
+		c.Col21, c.Col22, //fstd type and time
+		c.Col23, //remarks
 	}
 }
 

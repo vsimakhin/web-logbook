@@ -93,10 +93,14 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 	logbook.Signature = settings.SignatureText
 
 	if format == "A4" {
-		logbook.PageBreaks = strings.Split(settings.PageBreaksA4, ",")
+		logbook.PageBreaks = strings.Split(settings.ExportA4.PageBreaks, ",")
+		logbook.Export = settings.ExportA4
+
 		err = logbook.ExportA4(flightRecords, w)
 	} else if format == "A5" {
-		logbook.PageBreaks = strings.Split(settings.PageBreaksA5, ",")
+		logbook.PageBreaks = strings.Split(settings.ExportA5.PageBreaks, ",")
+		logbook.Export = settings.ExportA5
+
 		err = logbook.ExportA5(flightRecords, w)
 	} else {
 		err = errors.New("unknown export format")

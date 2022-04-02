@@ -63,7 +63,7 @@ func checkSettingsTable(db *sql.DB) error {
 	var s models.Settings
 
 	row := db.QueryRowContext(ctx, "SELECT owner_name, signature_text, page_breaks FROM settings")
-	err := row.Scan(&s.OwnerName, &s.SignatureText, &s.PageBreaksA4)
+	err := row.Scan(&s.OwnerName, &s.SignatureText, &s.ExportA4.PageBreaks)
 	if err == nil {
 		// looks like we still have an old table
 		out, err := json.Marshal(s)
@@ -96,9 +96,68 @@ func checkSettingsTable(db *sql.DB) error {
 	if rowsCount == 0 {
 		// default values
 		s.OwnerName = "Owner Name"
-		s.PageBreaksA4 = ""
-		s.PageBreaksA5 = ""
 		s.SignatureText = "I certify that the entries in this log are true."
+
+		s.ExportA5.LogbookRows = 20
+		s.ExportA5.Fill = 3
+		s.ExportA5.LeftMarginA = 6.0
+		s.ExportA5.LeftMarginB = 14.0
+		s.ExportA5.TopMargin = 9.0
+		s.ExportA5.BodyRow = 5.0
+		s.ExportA5.FooterRow = 5.0
+		s.ExportA5.Columns.Col1 = 15.5
+		s.ExportA5.Columns.Col2 = 12.25
+		s.ExportA5.Columns.Col3 = 8.25
+		s.ExportA5.Columns.Col4 = 12.25
+		s.ExportA5.Columns.Col5 = 8.25
+		s.ExportA5.Columns.Col6 = 10.0
+		s.ExportA5.Columns.Col7 = 15.4
+		s.ExportA5.Columns.Col8 = 12.2
+		s.ExportA5.Columns.Col9 = 12.2
+		s.ExportA5.Columns.Col10 = 12.2
+		s.ExportA5.Columns.Col11 = 12.2
+		s.ExportA5.Columns.Col12 = 41.86
+		s.ExportA5.Columns.Col13 = 8.38
+		s.ExportA5.Columns.Col14 = 8.38
+		s.ExportA5.Columns.Col15 = 12.2
+		s.ExportA5.Columns.Col16 = 12.2
+		s.ExportA5.Columns.Col17 = 12.2
+		s.ExportA5.Columns.Col18 = 12.2
+		s.ExportA5.Columns.Col19 = 12.2
+		s.ExportA5.Columns.Col20 = 12.2
+		s.ExportA5.Columns.Col21 = 24.2
+		s.ExportA5.Columns.Col22 = 12.2
+		s.ExportA5.Columns.Col23 = 79.8
+
+		s.ExportA4.LogbookRows = 23
+		s.ExportA4.Fill = 3
+		s.ExportA4.LeftMargin = 10.0
+		s.ExportA4.TopMargin = 30.0
+		s.ExportA4.BodyRow = 5.0
+		s.ExportA4.FooterRow = 6.0
+		s.ExportA4.Columns.Col1 = 12.2
+		s.ExportA4.Columns.Col2 = 8.25
+		s.ExportA4.Columns.Col3 = 8.25
+		s.ExportA4.Columns.Col4 = 8.25
+		s.ExportA4.Columns.Col5 = 8.25
+		s.ExportA4.Columns.Col6 = 10.0
+		s.ExportA4.Columns.Col7 = 12.9
+		s.ExportA4.Columns.Col8 = 11.2
+		s.ExportA4.Columns.Col9 = 11.2
+		s.ExportA4.Columns.Col10 = 11.2
+		s.ExportA4.Columns.Col11 = 11.2
+		s.ExportA4.Columns.Col12 = 22.86
+		s.ExportA4.Columns.Col13 = 8.38
+		s.ExportA4.Columns.Col14 = 8.38
+		s.ExportA4.Columns.Col15 = 11.2
+		s.ExportA4.Columns.Col16 = 11.2
+		s.ExportA4.Columns.Col17 = 11.2
+		s.ExportA4.Columns.Col18 = 11.2
+		s.ExportA4.Columns.Col19 = 11.2
+		s.ExportA4.Columns.Col20 = 11.2
+		s.ExportA4.Columns.Col21 = 11.2
+		s.ExportA4.Columns.Col22 = 11.2
+		s.ExportA4.Columns.Col23 = 33.8
 
 		out, err := json.Marshal(s)
 		if err != nil {

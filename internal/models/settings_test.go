@@ -15,8 +15,6 @@ func TestGetSettings(t *testing.T) {
 	}
 
 	assert.Equal(t, set.OwnerName, "Owner Name")
-	assert.Equal(t, set.PageBreaksA4, "")
-	assert.Equal(t, set.PageBreaksA5, "")
 	assert.Equal(t, set.SignatureText, "I certify that the entries in this log are true.")
 }
 
@@ -26,8 +24,6 @@ func TestUpdateSettings(t *testing.T) {
 	var set Settings
 
 	set.OwnerName = "Owner Name"
-	set.PageBreaksA4 = ""
-	set.PageBreaksA5 = ""
 	set.SignatureText = "I certify that the entries in this log are true."
 
 	err := db.UpdateSettings(set)
