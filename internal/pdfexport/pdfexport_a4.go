@@ -3,6 +3,7 @@ package pdfexport
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/jung-kurt/gofpdf"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -146,6 +147,18 @@ func (l *Logbook) printA4LogbookBody(record models.FlightRecord, fill bool) {
 	l.pdf.SetX(leftMargin)
 }
 
+// TitlePageA4 prints title page for A4
+func (l *Logbook) TitlePageA4() {
+	l.pdf.AddPage()
+	l.pdf.SetFont(fontBold, "", 20)
+	l.pdf.SetXY(95, 60)
+	l.pdf.MultiCell(100, 2, "PILOT LOGBOOK", "", "C", false)
+
+	l.pdf.SetFont(fontRegular, "", 15)
+	l.pdf.SetXY(65, 150)
+	l.pdf.MultiCell(160, 2, "HOLDER'S NAME: "+strings.ToUpper(l.OwnerName), "", "C", false)
+}
+
 // ExportA4 creates A4 pdf with logbook in EASA format
 func (l *Logbook) ExportA4(flightRecords []models.FlightRecord, w io.Writer) error {
 	// init global vars
@@ -163,6 +176,7 @@ func (l *Logbook) ExportA4(flightRecords []models.FlightRecord, w io.Writer) err
 
 	var totalEmpty models.FlightRecord
 
+	l.TitlePageA4()
 	l.pdf.AddPage()
 	l.printA4LogbookHeader()
 
@@ -191,7 +205,7 @@ func (l *Logbook) ExportA4(flightRecords []models.FlightRecord, w io.Writer) err
 			// check for the page breakes to separate logbooks
 			if len(l.PageBreaks) > 0 {
 				if fmt.Sprintf("%d", pageCounter) == l.PageBreaks[0] {
-					l.pdf.AddPage()
+					l.TitlePageA4()
 					pageCounter = 0
 
 					l.PageBreaks = append(l.PageBreaks[:0], l.PageBreaks[1:]...)
