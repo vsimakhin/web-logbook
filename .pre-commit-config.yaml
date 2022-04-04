@@ -9,7 +9,7 @@ repos:
       - id: go-unit-tests
       - id: go-build
 
-- repo: https://github.com/tekwizely/pre-commit-golang
-  rev: v1.0.0-beta.5
-  hooks:
-    - id: go-staticcheck-mod
+# - repo: https://github.com/tekwizely/pre-commit-golang
+#   rev: v1.0.0-beta.5
+#   hooks:
+#     - id: go-staticcheck-mod
