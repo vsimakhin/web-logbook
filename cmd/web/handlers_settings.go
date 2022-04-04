@@ -31,7 +31,8 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data["settings"] = settings
 	data["records"] = records
 
-	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, "common-js", "settings-js"); err != nil {
+	partials := []string{"common-js", "settings-js", "settings-general", "settings-export-a4", "settings-export-a5"}
+	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)
 	}
 }
