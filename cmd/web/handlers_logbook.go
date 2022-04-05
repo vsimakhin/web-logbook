@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -45,7 +44,7 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 			item.Time.ME = ""
 		}
 
-		tableRow := []string{fmt.Sprintf(`<a href="%s/%s" class="link-primary">%s</a>`, APILogbook, item.UUID, item.Date), item.Departure.Place, item.Departure.Time,
+		tableRow := []string{item.UUID, item.Date, item.Departure.Place, item.Departure.Time,
 			item.Arrival.Place, item.Arrival.Time, item.Aircraft.Model, item.Aircraft.Reg,
 			item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Total, formatRemarks(item.PIC), formatLandings(item.Landings.Day), formatLandings(item.Landings.Night),
 			item.Time.Night, item.Time.IFR, item.Time.PIC, item.Time.CoPilot, item.Time.Dual, item.Time.Instructor,

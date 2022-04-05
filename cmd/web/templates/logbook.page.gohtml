@@ -9,6 +9,7 @@
 <table id="logbook" class="table table-sm table-striped table-bordered nowrap table-fixed">
     <thead>
         <tr class="align-top text-center">
+            <th rowspan=2>ID</th>
             <th rowspan=2>Date</th>
             <th colspan=2>Departure</th>
             <th colspan=2>Arrival</th>
@@ -77,7 +78,17 @@ $(document).ready( function () {
         "ordering": false,
         "info":     false,
         "ajax": '{{index .API "LogbookData"}}',
-        "lengthMenu": [[15, 50, -1], [15, 50, "All"]]
+        "lengthMenu": [[15, 50, -1], [15, 50, "All"]],
+        "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            }
+        ],
+        "rowCallback": function(row, data, index){
+            $("td:eq(0)", row).html(`<a href="{{$api.Logbook}}/${data[0]}" class="link-primary">${data[1]}</a>`);
+        }
     } );
 
 } );
