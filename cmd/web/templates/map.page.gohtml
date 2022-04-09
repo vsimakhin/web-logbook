@@ -37,6 +37,22 @@
         <div class="row">
             <div id="some_stats"></div>
         </div>
+        <hr>
+        <div class="row">
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Predefined Filters
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="Filter('This year');">This year</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="Filter('Last year');">Last year</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="Filter('This month');">This month</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="Filter('Last month');">Last month</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="Filter('This month last year');">This month last year</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="col-md-10">
         <div id="map" class="ol-map"></div>

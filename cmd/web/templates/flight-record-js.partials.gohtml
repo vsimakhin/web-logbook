@@ -301,6 +301,7 @@ function DeleteAttachment(id) {
         .then(function(data) {
             if (data.ok) {
                 LoadAttachments();
+                showInfoMessage("Attachment deleted");
             } else {
                 showErrorMessage(data.message);
             }

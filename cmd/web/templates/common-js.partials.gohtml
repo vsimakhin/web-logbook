@@ -7,6 +7,7 @@ function showErrorMessage(msg) {
     infoMsg.classList.add("alert-danger");
     infoMsg.classList.remove("alert-success");
     infoMsg.classList.remove("d-none");
+
     infoMsg.innerText = msg;
 }
 
@@ -16,7 +17,10 @@ function showInfoMessage(msg) {
     infoMsg.classList.remove("alert-danger");
     infoMsg.classList.add("alert-success");
     infoMsg.classList.remove("d-none");
+
     infoMsg.innerText = msg;
+
+    setTimeout(function(){ infoMsg.innerText = "";}, 5000);
 }
 
 function loadJSON(url) {
