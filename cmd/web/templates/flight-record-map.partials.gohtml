@@ -70,7 +70,10 @@ function loadMap(departure_place, arrival_place) {
         view: new ol.View({
             center: ol.proj.fromLonLat([center.split("|")[1], center.split("|")[0]]),
             zoom: 5
-        })
+        }),
+        controls: ol.control.defaults().extend([
+            new ol.control.FullScreen()
+        ])
     });
 
     /* drawing route... */
