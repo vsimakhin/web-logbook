@@ -6,7 +6,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 {{ end }}
 
 {{ define "css" }}
-
+<link href="/static/css/jquery-ui.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="/static/css/ol.css">
 <style>
     .ol-map {
@@ -312,6 +312,12 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 window.onload = function() {
     DeppArrChange();
     {{if $fr.UUID}}LoadAttachments(){{end}}
+
+    $( function() {
+        $( "#date" ).datepicker({
+            dateFormat: "dd/mm/yy"
+        });
+  } );
 };
 </script>
 {{ end }}
