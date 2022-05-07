@@ -52,7 +52,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 <div class="col-md-2">
                     <label for="departure_time" class="form-label text-nowrap">Time</label>
                     <input type="text" class="form-control" id="departure_time" name="departure_time" value="{{$fr.Departure.Time}}"
-                        required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTimes()"
+                        required="" autocomplete="off" placeholder="HHMM" onkeyup="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Departure Time">
                 </div>
 
@@ -66,7 +66,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 <div class="col-md-2">
                     <label for="arrival_time" class="form-label text-nowrap">Time</label>
                     <input type="text" class="form-control" id="arrival_time" name="arrival_time" value="{{$fr.Arrival.Time}}"
-                        required="" autocomplete="off" placeholder="HHMM" onchange="CalculateTimes()"
+                        required="" autocomplete="off" placeholder="HHMM" onkeyup="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Arrival Time">
                 </div>
 
