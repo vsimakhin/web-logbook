@@ -287,14 +287,8 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 		l.printA5LogbookBodyA(record, fill)
 
 		if rowCounter >= logbookRows {
-			l.printA5LogbookFooterA()
-			l.printPageNumber(pageCounter)
-
 			rowCounter = 0
-			pageCounter += 1
 
-			l.pdf.AddPage()
-			l.printA5LogbookHeaderB()
 			return item
 		}
 		fill = fillLine(rowCounter, fillRow)
@@ -312,11 +306,36 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 		l.printA5LogbookBodyB(record, fill)
 
 		if rowCounter >= logbookRows {
+			rowCounter = 0
+		}
+		fill = fillLine(rowCounter, fillRow)
+	}
+
+	l.pdf.AddPage()
+	l.printA5LogbookHeaderA()
+
+	itemCounter := len(flightRecords)
+	for i := len(flightRecords) - 1; i >= 0; i-- {
+		currentItem := logBookRowA(i)
+
+		if currentItem >= 0 {
+			// page A closed
+			l.printA5LogbookFooterA()
+			l.printPageNumber(pageCounter)
+			pageCounter += 1
+
+			// let's print page B
+			l.pdf.AddPage()
+			l.printA5LogbookHeaderB()
+
+			for y := itemCounter - 1; y >= currentItem; y-- {
+				logBookRowB(y)
+			}
+
+			// end of page B
 			l.printA5LogbookFooterB()
 			totalPrevious = totalTime
 			totalPage = totalEmpty
-
-			rowCounter = 0
 
 			// check for the page breakes to separate logbooks
 			if len(l.PageBreaks) > 0 {
@@ -329,48 +348,40 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 					l.PageBreaks = append(l.PageBreaks[:0], l.PageBreaks[1:]...)
 				}
 			}
-		}
-		fill = fillLine(rowCounter, fillRow)
-	}
 
-	l.pdf.AddPage()
-	l.printA5LogbookHeaderA()
-
-	itemCounter := len(flightRecords)
-	for i := len(flightRecords) - 1; i >= 0; i-- {
-		currentItem := logBookRowA(i)
-
-		if currentItem > 0 {
-			for y := itemCounter - 1; y >= currentItem; y-- {
-				logBookRowB(y)
-			}
 			itemCounter = currentItem
-			l.pdf.AddPage()
-			l.printA5LogbookHeaderA()
+			if currentItem != 0 {
+				l.pdf.AddPage()
+				l.printA5LogbookHeaderA()
+			}
 		}
 	}
 
 	// check the last pages for the proper format
 	var emptyRecord models.FlightRecord
-	for i := rowCounter + 1; i <= logbookRows; i++ {
-		l.printA5LogbookBodyA(emptyRecord, fill)
-		fill = fillLine(i, fillRow)
+	if rowCounter != 0 {
+		for i := rowCounter + 1; i <= logbookRows; i++ {
+			l.printA5LogbookBodyA(emptyRecord, fill)
+			fill = fillLine(i, fillRow)
 
-	}
-	l.printA5LogbookFooterA()
-	l.printPageNumber(pageCounter)
+		}
+		l.printA5LogbookFooterA()
+		l.printPageNumber(pageCounter)
 
-	l.pdf.AddPage()
-	l.printA5LogbookHeaderB()
-	fill = false
-	for i := itemCounter - 1; i >= 0; i-- {
-		logBookRowB(i)
+		// page B
+		l.pdf.AddPage()
+		l.printA5LogbookHeaderB()
+		fill = false
+
+		for i := itemCounter - 1; i >= 0; i-- {
+			logBookRowB(i)
+		}
+		for i := itemCounter; i < logbookRows; i++ {
+			fill = fillLine(i, fillRow)
+			l.printA5LogbookBodyB(emptyRecord, fill)
+		}
+		l.printA5LogbookFooterB()
 	}
-	for i := itemCounter; i < logbookRows; i++ {
-		fill = fillLine(i, fillRow)
-		l.printA5LogbookBodyB(emptyRecord, fill)
-	}
-	l.printA5LogbookFooterB()
 
 	err := l.pdf.Output(w)
 
