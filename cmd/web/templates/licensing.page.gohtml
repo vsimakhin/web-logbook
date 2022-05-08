@@ -10,6 +10,7 @@
     <thead>
         <tr class="align-top text-center">
             <th>Category</th>
+            <th>ID</th>
             <th>Name</th>
             <th>Number</th>
             <th>Issued</th>
@@ -26,18 +27,31 @@
 {{ end }}
 
 {{ define "js" }}
+{{$api := .API}}
 <script type="text/javascript" src="/static/js/datatables.min.js"></script>
 <script>
 $(document).ready( function () {
+    var lic_download = "{{$api.LicensingDownload}}";
+    var dowload_icon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+	    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+	    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+	</svg>`
+
     var groupColumn = 0;
     var table = $('#logbook').DataTable({
         "columnDefs": [
-            { "visible": false, "targets": groupColumn }
+            { "visible": false, "targets": groupColumn },
+            {
+                "targets": [1],
+                "visible": false,
+                "searchable": false
+            }
         ],
         "ordering": false,
         "info":     false,
         "ajax": '/licensing/data',
-        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+        "lengthMenu": [[-1, 10, 20, 50], ["All", 10, 20, 50]],
+        "bLengthChange": false,
         "drawCallback": function ( settings ) {
             var api = this.api();
             var rows = api.rows( {page:'current'} ).nodes();
@@ -54,9 +68,13 @@ $(document).ready( function () {
             } );
         },
         "rowCallback": function(row, data, index){
-            if(data[6] === 'Expired!'){
+            if(data[7] === 'Expired!'){
                 $("td:nth-child(6)", row).addClass("text-danger");
             }
+            if(data[8] !== ''){
+                $("td:eq(6)", row).html(`<a href="{{$api.LicensingDownload}}${data[8]}" class="link-primary">${dowload_icon}</a>`);
+            }
+            $("td:eq(0)", row).html(`<a href="{{$api.Licensing}}/${data[1]}" class="link-primary">${data[2]}</a>`);
         }
     } );
 

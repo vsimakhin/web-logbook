@@ -43,10 +43,6 @@ func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *ht
 		return
 	}
 
-	icon := `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-	<path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-	<path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-	</svg>`
 	for _, item := range licenses {
 		expire := ""
 		if item.ValidUntil != "" {
@@ -67,14 +63,12 @@ func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *ht
 
 		link := ""
 		if item.DocumentName != "" {
-			link = fmt.Sprintf("<a href='/licensing/download/%s' target='_blank' class='link-primary'>%s</a>", item.UUID, icon)
+			link = item.UUID
 		} else {
 			link = ""
 		}
 
-		tableRow := []string{item.Category, fmt.Sprintf("<a href='/licensing/%s' class='link-primary'>%s</a>", item.UUID, item.Name),
-			item.Number, item.Issued, item.ValidFrom, item.ValidUntil, expire, link}
-
+		tableRow := []string{item.Category, item.UUID, item.Name, item.Number, item.Issued, item.ValidFrom, item.ValidUntil, expire, link}
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
