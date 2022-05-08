@@ -11,6 +11,7 @@ type templateData struct {
 	Data        map[string]interface{}
 	API         map[string]string
 	AuthEnabled bool
+	Version     string
 }
 
 var functions = template.FuncMap{
@@ -95,6 +96,7 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["Logout"] = APILogout
 
 	td.AuthEnabled = app.isAuthEnabled
+	td.Version = app.version
 
 	return td
 }
