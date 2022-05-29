@@ -58,11 +58,17 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             </div>
 
             <div class="mb-2 row">
+                <div class="col-md-12">
+                    <label for="remarks" class="form-label">Endorsement/Remarks</label>
+                    <textarea class="form-control form-control-sm" id="remarks" name="remarks" rows="3" required="" autocomplete="off">{{$lic.Remarks}}</textarea>
+                </div>
+            </div>
+
+            <div class="mb-2 row">
                 <div class="col-md-8">
                     <label for="document" class="form-label">Document</label>
                     <input type="file" class="form-control form-control-sm" id="document" name="document">
                 </div>
-
             </div>
 
         </div>

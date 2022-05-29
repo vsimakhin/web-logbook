@@ -44,12 +44,12 @@ func (m *DBModel) GetLicenseRecordByID(uuid string) (License, error) {
 	var lic License
 
 	query := "SELECT uuid, category, name, number, issued, " +
-		"valid_from, valid_until, document_name, document " +
+		"valid_from, valid_until, remarks, document_name, document " +
 		"FROM licensing WHERE uuid = ?"
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 
 	err := row.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
-		&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.Document)
+		&lic.ValidFrom, &lic.ValidUntil, &lic.Remarks, &lic.DocumentName, &lic.Document)
 
 	if err != nil {
 		return lic, err
@@ -97,22 +97,22 @@ func (m *DBModel) UpdateLicenseRecord(lic License) error {
 		query := "UPDATE licensing SET " +
 			"category = ?, name = ?, number = ?, " +
 			"issued = ?, valid_from = ?, valid_until = ?, " +
-			"document_name = ?, document = ? " +
+			"remarks = ?, document_name = ?, document = ? " +
 			"WHERE uuid = ?"
 		_, err = m.DB.ExecContext(ctx, query,
 			lic.Category, lic.Name, lic.Number,
 			lic.Issued, lic.ValidFrom, lic.ValidUntil,
-			lic.DocumentName, lic.Document,
+			lic.Remarks, lic.DocumentName, lic.Document,
 			lic.UUID,
 		)
 	} else {
 		query := "UPDATE licensing SET " +
 			"category = ?, name = ?, number = ?, " +
-			"issued = ?, valid_from = ?, valid_until = ? " +
+			"issued = ?, valid_from = ?, valid_until = ?,  remarks = ?" +
 			"WHERE uuid = ?"
 		_, err = m.DB.ExecContext(ctx, query,
 			lic.Category, lic.Name, lic.Number,
-			lic.Issued, lic.ValidFrom, lic.ValidUntil,
+			lic.Issued, lic.ValidFrom, lic.ValidUntil, lic.Remarks,
 			lic.UUID,
 		)
 	}
@@ -130,11 +130,11 @@ func (m *DBModel) InsertLicenseRecord(lic License) error {
 	defer cancel()
 
 	query := "INSERT INTO licensing " +
-		"(uuid, category, name, number, issued, valid_from, valid_until, document_name, document) " +
-		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+		"(uuid, category, name, number, issued, valid_from, valid_until, remarks, document_name, document) " +
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	_, err := m.DB.ExecContext(ctx, query,
 		lic.UUID, lic.Category, lic.Name, lic.Number,
-		lic.Issued, lic.ValidFrom, lic.ValidUntil,
+		lic.Issued, lic.ValidFrom, lic.ValidUntil, lic.Remarks,
 		lic.DocumentName, lic.Document,
 	)
 

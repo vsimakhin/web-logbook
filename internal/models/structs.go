@@ -133,6 +133,7 @@ type License struct {
 	Issued       string `json:"issued"`
 	ValidFrom    string `json:"valid_from"`
 	ValidUntil   string `json:"valid_until"`
+	Remarks      string `json:"remarks"`
 	DocumentName string `json:"document_name"`
 	Document     []byte
 }
