@@ -1,7 +1,7 @@
 {{define "settings-js"}}
 {{$settings := index .Data "settings"}}
 <script>
-var removeButton = '<button class="btn-sm btn-danger" type="button" onclick="" id="remove_row"><i class="fas fa-minus" aria-hidden="true"></i></button>';
+var removeButton = '<button class="btn-sm btn-outline-danger" type="button" onclick="" id="remove_row"><i class="bi bi-dash-square-fill"></i></button>';
 var rowBody = `<tr><td contenteditable="true">CLASS_NAME</td><td contenteditable="true">TYPE_NAME</td><td>${removeButton}</td></tr>`;
 
 $("#add_row").on("click", function(){

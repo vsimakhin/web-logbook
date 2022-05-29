@@ -323,14 +323,14 @@ function LoadAttachments() {
             rows = rows +
                 `<tr>
                     <td><a href="{{index .API "LogbookAttachmentsDownload"}}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
-                    <td id="ask_${data[x]["uuid"]}"><button type="button" class="btn-close" onclick="AskForDelete('${data[x]["uuid"]}')"></button></td>
+                    <td id="ask_${data[x]["uuid"]}"><a onclick="AskForDelete('${data[x]["uuid"]}')"><i class="bi bi-file-x-fill"></i></a></td>
                 </tr>`;
         }
         tbody.innerHTML = rows;
-        document.getElementById("attach_button").innerHTML = 'Attachments <span class="badge bg-secondary">' + data.length + '</span>';
+        document.getElementById("attach_button").innerHTML = '<i class="bi bi-paperclip"></i> Attachments <span class="badge bg-secondary">' + data.length + '</span>';
     } else {
         tbody.innerHTML = "";
-        document.getElementById("attach_button").innerHTML = "Attachments";
+        document.getElementById("attach_button").innerHTML = '<i class="bi bi-paperclip"></i> Attachments';
     }
 };
 
@@ -364,7 +364,7 @@ function UploadAttachment() {
 
 function AskForDelete(uuid) {
     var tdbody = document.getElementById("ask_"+uuid);
-    tdbody.innerHTML = `<button type="button" class="btn btn-danger" onclick="DeleteAttachment('${uuid}')">Confirm</button>`;
+    tdbody.innerHTML = `<button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteAttachment('${uuid}')"><i class="bi bi-check-square-fill"></i> Confirm</button>`;
 };
 
 </script>

@@ -10,7 +10,7 @@
                 <label for="owner_name" class="form-label"><strong>Owner Name</strong><br>
                 This name is printed in the logbook footer</label>
 
-                <input type="text" class="form-control" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
+                <input type="text" class="form-control form-control-sm" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
                     required="true" autocomplete="off" placeholder="Owner Name">
             </div>
         </div>
@@ -20,7 +20,7 @@
                 <label for="signature_text" class="form-label"><strong>Signature Text</strong><br>
                 This signature is printed in the logbook footer under signature</label>
 
-                <input type="text" class="form-control" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
+                <input type="text" class="form-control form-control-sm" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
                     required="true" autocomplete="off" placeholder="Signature text">
             </div>
         </div>
@@ -30,11 +30,11 @@
                 <label for="airports" class="form-label"><strong>Airport database</strong><br>
                 Click </i>Update Airport DB</i> to get the latest list of airports</label>
 
-                <input type="text" class="form-control col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports"
+                <input type="text" class="form-control form-control-sm col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports"
                     required="false" readonly>
                 <br>
 
-                <button class="btn btn-primary" type="button" onclick="UpdateAirportsDB()" id="update">Update Airport DB</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="UpdateAirportsDB()" id="update"><i class="bi bi-arrow-clockwise"></i> Update Airport DB</button>
             </div>
         </div>
 
@@ -51,7 +51,7 @@
         <div class="row mb-2">
             <div class="col">
                 <label for="login" class="form-label"><strong>Login</strong>
-                <input type="text" class="form-control" id="login" name="login" type="login" value="{{$settings.Login}}"
+                <input type="text" class="form-control form-control-sm" id="login" name="login" type="login" value="{{$settings.Login}}"
                     autocomplete="off" placeholder="Login Name">
             </div>
         </div>
@@ -59,7 +59,7 @@
         <div class="row mb-2">
             <div class="col">
                 <label for="password" class="form-label"><strong>Password</strong>
-                <input type="text" class="form-control" id="password" name="password" type="password"
+                <input type="text" class="form-control form-control-sm" id="password" name="password" type="password"
                     autocomplete="off" placeholder="Password">
             </div>
         </div>
@@ -78,7 +78,7 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <button class="btn-sm btn-success" type="button" id="add_row"><i class="fas fa-plus fa-2x" ></i></button>
+            <button class="btn-sm btn-outline-secondary" type="button" id="add_row"><i class="bi bi-plus-square-fill"></i></button>
             <div id="not_populated"></div>
         </div>
 

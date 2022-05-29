@@ -19,7 +19,7 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             <div class="mb-2 row">
                 <div class="col-md-4">
                     <label for="category" class="form-label">Category</label>
-                    <input class="form-control" id="category" name="category" value="{{$lic.Category}}"
+                    <input class="form-control form-control-sm" id="category" name="category" value="{{$lic.Category}}"
                         required="true" autocomplete="category" list="category_options">
                     <datalist id="category_options">
                     {{ range $categories}}
@@ -29,12 +29,12 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
                 </div>
                 <div class="col-md-4">
                     <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" value="{{$lic.Name}}"
+                    <input type="text" class="form-control form-control-sm" id="name" name="name" value="{{$lic.Name}}"
                         required="true" autocomplete="off" placeholder="Document name">
                 </div>
                 <div class="col-md-4">
                     <label for="number" class="form-label">Number</label>
-                    <input type="text" class="form-control" id="number" name="number" value="{{$lic.Number}}"
+                    <input type="text" class="form-control form-control-sm" id="number" name="number" value="{{$lic.Number}}"
                         required="" autocomplete="off" placeholder="Number">
                 </div>
             </div>
@@ -42,17 +42,17 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             <div class="mb-2 row">
                 <div class="col-md-4">
                     <label for="issued" class="form-label">Issued</label>
-                    <input type="text" class="form-control" id="issued" name="issued" value="{{$lic.Issued}}"
+                    <input type="text" class="form-control form-control-sm" id="issued" name="issued" value="{{$lic.Issued}}"
                         required="" autocomplete="off" placeholder="DD/MM/YYYY">
                 </div>
                 <div class="col-md-4">
                     <label for="valid_from" class="form-label">Valid From</label>
-                    <input type="text" class="form-control" id="valid_from" name="valid_from" value="{{$lic.ValidFrom}}"
+                    <input type="text" class="form-control form-control-sm" id="valid_from" name="valid_from" value="{{$lic.ValidFrom}}"
                         required="" autocomplete="off" placeholder="DD/MM/YYYY">
                 </div>
                 <div class="col-md-4">
                     <label for="valid_until" class="form-label">Valid Until</label>
-                    <input type="text" class="form-control" id="valid_until" name="valid_until" value="{{$lic.ValidUntil}}"
+                    <input type="text" class="form-control form-control-sm" id="valid_until" name="valid_until" value="{{$lic.ValidUntil}}"
                         required="" autocomplete="off" placeholder="DD/MM/YYYY">
                 </div>
             </div>
@@ -60,7 +60,7 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             <div class="mb-2 row">
                 <div class="col-md-8">
                     <label for="document" class="form-label">Document</label>
-                    <input type="file" class="form-control" id="document" name="document">
+                    <input type="file" class="form-control form-control-sm" id="document" name="document">
                 </div>
 
             </div>
@@ -88,19 +88,13 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
     </div>
     <hr>
 
-    <button class="btn btn-primary" type="button" onclick="validate()" id="save">Save</button>
+    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="validate()" id="save"><i class="bi bi-save-fill"></i> Save</button>
     {{if $lic.DocumentName}}
-        <a href='{{$api.LicensingDownload}}{{$lic.UUID}}' target="_blank" class="btn btn-success">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-            </svg>
-            Download
-        </a>
+        <a href='{{$api.LicensingDownload}}{{$lic.UUID}}' target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-cloud-arrow-down-fill"></i> Download</a>
     {{end}}
     <div class="float-end">
-        {{if $lic.UUID}}<a id="delete" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record">Delete</a>{{end}}
-        {{if $lic.DocumentName}}<a id="delete_attachment" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-attachment">Delete Attachment</a>{{end}}
+        {{if $lic.UUID}}<a id="delete" class="btn btn-sm btn-outline-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record"><i class="bi bi-file-x-fill"></i> Delete</a>{{end}}
+        {{if $lic.DocumentName}}<a id="delete_attachment" class="btn btn-sm btn-outline-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-attachment"><i class="bi bi-file-x-fill"></i> Delete Attachment</a>{{end}}
     </div>
 
 </form>
@@ -117,8 +111,8 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
                 Are you sure you want to delete the record?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="DeleteLicense()">Delete</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteLicense()"><i class="bi bi-file-x-fill"></i> Delete</button>
             </div>
         </div>
     </div>
@@ -135,8 +129,8 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
                 Are you sure you want to delete the attached document?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="DeleteAttachment()">Delete</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteAttachment()"><i class="bi bi-file-x-fill"></i> Delete</button>
             </div>
         </div>
     </div>
