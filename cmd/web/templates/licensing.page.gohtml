@@ -22,8 +22,9 @@
     </thead>
     <tbody></tbody>
 </table>
-
-<a id="new-license" href="{{$api.LicensingNew}}" class="btn btn-primary" onclick="">Add New License</a>
+<br>
+<a id="new-license" href="{{$api.LicensingNew}}" class="btn btn-sm btn-outline-secondary" onclick=""><i class="bi bi-plus-square-fill"></i> Add New License</a>
+<br>
 {{ end }}
 
 {{ define "js" }}
@@ -32,10 +33,7 @@
 <script>
 $(document).ready( function () {
     var lic_download = "{{$api.LicensingDownload}}";
-    var dowload_icon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-	    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-	    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-	</svg>`
+    var dowload_icon = `<i class="bi bi-cloud-arrow-down-fill"></i>`
 
     var groupColumn = 0;
     var table = $('#logbook').DataTable({
@@ -48,9 +46,10 @@ $(document).ready( function () {
             }
         ],
         "ordering": false,
-        "info":     false,
+        "paging": true,
+        "info": false,
         "ajax": '/licensing/data',
-        "lengthMenu": [[-1, 10, 20, 50], ["All", 10, 20, 50]],
+        "lengthMenu": [[10, 30, -1], [10, 30, "All"]],
         "bLengthChange": false,
         "drawCallback": function ( settings ) {
             var api = this.api();

@@ -255,6 +255,7 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		Issued:     r.PostFormValue("issued"),
 		ValidFrom:  r.PostFormValue("valid_from"),
 		ValidUntil: r.PostFormValue("valid_until"),
+		Remarks:    r.PostFormValue("remarks"),
 	}
 
 	// check attached file

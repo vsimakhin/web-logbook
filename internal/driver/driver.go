@@ -52,9 +52,40 @@ func validateDB(db *sql.DB) error {
 		return err
 	}
 
+	// check migration for v2.0.0
+	err = migration200(db)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
+// migration200 verifies a proper migration to version 2.0.0
+// changelog: added field remarks to the table licensing
+func migration200(db *sql.DB) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var l models.License
+	row := db.QueryRowContext(ctx, "SELECT remarks FROM licensing LIMIT 1")
+	err := row.Scan(&l.Remarks)
+	if err != nil {
+		// looks like there is no remarks field
+		_, err = db.ExecContext(ctx, "ALTER TABLE licensing ADD COLUMN remarks TEXT")
+		if err != nil {
+			return err
+		}
+		_, err = db.ExecContext(ctx, "UPDATE licensing SET remarks = ''")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// checkSettingsTable verifies the proper transition to the new settings table
 func checkSettingsTable(db *sql.DB) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

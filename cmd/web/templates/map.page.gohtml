@@ -21,7 +21,7 @@
             <form name="filters" id="filters" class="d-block" autocomplete="off">
                 <div class="mb-2">
                     <label for="filter_date" class="form-label">Date Filter:</label>
-                    <input type="text" class="form-control" id="filter_date" name="filter_date" value="{{$cd}}" placeholder="Date Filter"
+                    <input type="text" class="form-control form-control-sm" id="filter_date" name="filter_date" value="{{$cd}}" placeholder="Date Filter"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="For example, 01/{{$cd}} will show you the routes and airports for the January {{$cd}}">
                 </div>
                 <div class="mb-2">
@@ -29,7 +29,7 @@
                     <label class="form-check-label" for="filter_noroutes">No Routes</label>
                 </div>
                 <div class="mb-2">
-                    <button class="btn btn-primary float-right" type="button" onclick="Refresh()" id="refresh">Refresh</button>
+                    <button class="btn btn-sm btn-outline-secondary float-right" type="button" onclick="Refresh()" id="refresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
                 </div>
             </form>
         </div>
@@ -40,8 +40,8 @@
         <hr>
         <div class="row">
             <div class="btn-group">
-                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    Predefined Filters
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-filter-circle-fill"></i> Predefined Filters
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#" onclick="Filter('This year');">This year</a></li>
