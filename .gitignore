@@ -15,3 +15,4 @@ dist/
 logbook.csv
 web-logbook.sql
 airports.csv
+weblogbook-output.log
