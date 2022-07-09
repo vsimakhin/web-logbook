@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -14,7 +15,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "2.0.0"
+const version = "2.0.1"
 
 type config struct {
 	port int
@@ -65,8 +66,16 @@ func main() {
 		os.Exit(0)
 	}
 
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	// create multilog writer
+	logf, err := os.OpenFile("weblogbook-output.log", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	if err != nil {
+		fmt.Printf("error opening file: %v\n", err)
+	}
+	defer logf.Close()
+	multilog := io.MultiWriter(logf, os.Stdout)
+
+	infoLog := log.New(multilog, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(multilog, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	tc := make(map[string]*template.Template)
 
