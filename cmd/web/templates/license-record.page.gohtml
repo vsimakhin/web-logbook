@@ -5,6 +5,10 @@
 License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
 {{ end }}
 
+{{ define "css" }}
+<link href="/static/css/jquery-ui.min.css" rel="stylesheet" />
+{{ end }}
+
 {{ define "content" }}
 {{$api := .API}}
 {{$lic := index .Data "license"}}
@@ -147,4 +151,19 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
 {{ define "js" }}
 {{ block "common-js" . }}{{ end }}
 {{ block "license-record-js" .}}{{ end }}
+<script>
+window.onload = function() {
+    $( function() {
+        $( "#issued" ).datepicker({
+            dateFormat: "dd/mm/yy"
+        });
+        $( "#valid_from" ).datepicker({
+            dateFormat: "dd/mm/yy"
+        });
+        $( "#valid_until" ).datepicker({
+            dateFormat: "dd/mm/yy"
+        });
+    } );
+};
+</script>
 {{ end }}
