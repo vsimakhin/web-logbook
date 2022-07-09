@@ -67,9 +67,7 @@ func migration200(db *sql.DB) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var l models.License
-	row := db.QueryRowContext(ctx, "SELECT remarks FROM licensing LIMIT 1")
-	err := row.Scan(&l.Remarks)
+	_, err := db.QueryContext(ctx, "SELECT remarks FROM licensing LIMIT 1")
 	if err != nil {
 		// looks like there is no remarks field
 		_, err = db.ExecContext(ctx, "ALTER TABLE licensing ADD COLUMN remarks TEXT")
@@ -93,8 +91,7 @@ func checkSettingsTable(db *sql.DB) error {
 	// first let's check we migrate everything from old settings table to the new one
 	var s models.Settings
 
-	row := db.QueryRowContext(ctx, "SELECT owner_name, signature_text, page_breaks FROM settings")
-	err := row.Scan(&s.OwnerName, &s.SignatureText, &s.ExportA4.PageBreaks)
+	_, err := db.QueryContext(ctx, "SELECT owner_name, signature_text, page_breaks FROM settings")
 	if err == nil {
 		// looks like we still have an old table
 		out, err := json.Marshal(s)
@@ -117,7 +114,7 @@ func checkSettingsTable(db *sql.DB) error {
 
 	// check settings table (first app run)
 	var rowsCount int
-	row = db.QueryRowContext(ctx, "SELECT COUNT(*) FROM settings2")
+	row := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM settings2")
 
 	err = row.Scan(&rowsCount)
 	if err != nil {
