@@ -242,7 +242,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 
     <button class="btn btn-sm btn-outline-secondary" type="button" onclick="validate()" id="save"><i class="bi bi-save-fill"></i> Save</button>
     {{if $fr.UUID}}<a id="attach_button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#attachments" href=#><i class="bi bi-paperclip"></i> Attachments</a>{{end}}
-    {{if $fr.UUID}}<a id="new_flight_record" class="btn btn-sm btn-outline-secondary" href="{{$api.LogbookNew}}"><i class="bi bi-plus-square-fill"></i> Add New Flight Record</a>{{end}}
+    {{if $fr.UUID}}<a id="new_flight_record" class="btn btn-sm btn-outline-secondary" href="{{$api.LogbookNew}}?last_arrival={{$fr.Arrival.Place}}"><i class="bi bi-plus-square-fill"></i> Add New Flight Record</a>{{end}}
 
     <div class="float-end">
         {{if $fr.UUID}}<a id="delete" class="btn btn-sm btn-outline-danger float-right" data-bs-toggle="modal" data-bs-target="#delete-record"><i class="bi bi-file-x-fill"></i> Delete</a>{{end}}
