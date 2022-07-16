@@ -79,7 +79,6 @@ function Submit() {
         .then(response => response.json())
         .then(function(data) {
             if (data.ok) {
-                console.log(data)
                 if (typeof data.redirect_url !== 'undefined') {
                     location.href = data.redirect_url;
                 }

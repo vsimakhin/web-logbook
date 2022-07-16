@@ -15,7 +15,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "2.0.3"
+const version = "2.1.0"
 
 type config struct {
 	port int
