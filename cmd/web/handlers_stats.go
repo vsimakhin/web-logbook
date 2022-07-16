@@ -79,7 +79,7 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 	data["totalsByAircraft"] = totalsByAircraft
 	data["totalsByClass"] = totalsByClass
 
-	partials := []string{"stats-totals", "stats-totals-year", "stats-totals-type", "stats-totals-class"}
+	partials := []string{"stats-totals", "stats-totals-year", "stats-totals-type", "stats-totals-class", "stats-js"}
 
 	if err := app.renderTemplate(w, r, "stats", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)

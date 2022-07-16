@@ -151,3 +151,7 @@ i {
   color: black !important;
   font-size: 0.875rem !important;
 }
+
+.th-hover:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}

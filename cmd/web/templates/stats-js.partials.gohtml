@@ -1,0 +1,78 @@
+{{define "stats-js"}}
+{{$totals := index .Data "totals"}}
+{{$totals30 := index .Data "totals30"}}
+{{$totals90 := index .Data "totals90"}}
+{{$totalsM := index .Data "totalsM"}}
+{{$totalsY := index .Data "totalsY"}}
+
+<script type="text/javascript" src="/static/js/chart.min.js"></script>
+<script>
+const ctx = document.getElementById('myChart').getContext('2d');
+const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {},
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins:{
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+function convert(time) {
+    if (time === "") {
+        return 0;
+    }
+
+    if (!time.includes(":")) {
+        return time.replace(" ",""); // already converted
+    }
+
+    var hoursMinutes = time.split(/[.:]/);
+    var hours = parseInt(hoursMinutes[0], 10);
+    var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+
+    return hours + Math.round(minutes / 60 * 100) / 100;
+}
+
+function StatsClick(table_name, cl) {
+    var tb = document.getElementById(table_name);
+    var rows = tb.rows.length - 1;
+
+    if (table_name === "totals") {
+        rows = rows - 2 // correction for this table
+        chart.data.labels = ['Total', 'SE', 'ME', 'MCC', 'Night', 'IFR', 'PIC', 'CoPilot', 'Dual', 'Instr', 'Sim'];
+
+    } else if ((table_name == "totals_by_year") || (table_name == "totals_by_type") || (table_name == "totals_by_class")) {
+        var labels = [];
+        for (var i = 1; i <= rows; i++) {
+            labels.push(tb.rows[i].cells[0].innerText);
+        }
+        chart.data.labels = labels;
+
+    }
+
+    var values = [];
+    for (var i = 1; i <= rows; i++) {
+        values.push(convert(tb.rows[i].cells[cl].innerText));
+    }
+
+    chart.data.datasets = [
+        {
+            data: values,
+            backgroundColor: 'rgba(36, 112, 220, 0.7)',
+            borderColor: 'rgba(36, 112, 220, 0.7)',
+            borderWidth: 1
+        }
+    ]
+    chart.update();
+}
+
+</script>
+{{end}}
