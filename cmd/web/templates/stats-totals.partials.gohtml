@@ -1,0 +1,128 @@
+{{define "stats-totals"}}
+{{$totals := index .Data "totals"}}
+{{$totals30 := index .Data "totals30"}}
+{{$totals90 := index .Data "totals90"}}
+{{$totalsM := index .Data "totalsM"}}
+{{$totalsY := index .Data "totalsY"}}
+
+<br>
+
+<table id="totals" class="table table-striped table-bordered nowrap">
+    <thead>
+        <tr class="align-top text-center">
+            <th></th>
+            <th>30 days</th>
+            <th>Month</th>
+            <th>90 days</th>
+            <th>Year</th>
+            <th>Totals</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Total</strong></td>
+            <td>{{$totals30.Time.Total}}</td>
+            <td>{{$totalsM.Time.Total}}</td>
+            <td>{{$totals90.Time.Total}}</td>
+            <td>{{$totalsY.Time.Total}}</td>
+            <td>{{$totals.Time.Total}}</td>
+        </tr>
+        <tr>
+            <td><strong>Single Engine</strong></td>
+            <td>{{$totals30.Time.SE}}</td>
+            <td>{{$totalsM.Time.SE}}</td>
+            <td>{{$totals90.Time.SE}}</td>
+            <td>{{$totalsY.Time.SE}}</td>
+            <td>{{$totals.Time.SE}}</td>
+        </tr>
+        <tr>
+            <td><strong>Multi Engine</strong></td>
+            <td>{{$totals30.Time.ME}}</td>
+            <td>{{$totalsM.Time.ME}}</td>
+            <td>{{$totals90.Time.ME}}</td>
+            <td>{{$totalsY.Time.ME}}</td>
+            <td>{{$totals.Time.ME}}</td>
+        </tr>
+        <tr>
+            <td><strong>MCC</strong></td>
+            <td>{{$totals30.Time.MCC}}</td>
+            <td>{{$totalsM.Time.MCC}}</td>
+            <td>{{$totals90.Time.MCC}}</td>
+            <td>{{$totalsY.Time.MCC}}</td>
+            <td>{{$totals.Time.MCC}}</td>
+        </tr>
+        <tr>
+            <td><strong>Night</strong></td>
+            <td>{{$totals30.Time.Night}}</td>
+            <td>{{$totalsM.Time.Night}}</td>
+            <td>{{$totals90.Time.Night}}</td>
+            <td>{{$totalsY.Time.Night}}</td>
+            <td>{{$totals.Time.Night}}</td>
+        </tr>
+        <tr>
+            <td><strong>IFR</strong></td>
+            <td>{{$totals30.Time.IFR}}</td>
+            <td>{{$totalsM.Time.IFR}}</td>
+            <td>{{$totals90.Time.IFR}}</td>
+            <td>{{$totalsY.Time.IFR}}</td>
+            <td>{{$totals.Time.IFR}}</td>
+        </tr>
+        <tr>
+            <td><strong>PIC</strong></td>
+            <td>{{$totals30.Time.PIC}}</td>
+            <td>{{$totalsM.Time.PIC}}</td>
+            <td>{{$totals90.Time.PIC}}</td>
+            <td>{{$totalsY.Time.PIC}}</td>
+            <td>{{$totals.Time.PIC}}</td>
+        </tr>
+        <tr>
+            <td><strong>Co Pilot</strong></td>
+            <td>{{$totals30.Time.CoPilot}}</td>
+            <td>{{$totalsM.Time.CoPilot}}</td>
+            <td>{{$totals90.Time.CoPilot}}</td>
+            <td>{{$totalsY.Time.CoPilot}}</td>
+            <td>{{$totals.Time.CoPilot}}</td>
+        </tr>
+        <tr>
+            <td><strong>Dual</strong></td>
+            <td>{{$totals30.Time.Dual}}</td>
+            <td>{{$totalsM.Time.Dual}}</td>
+            <td>{{$totals90.Time.Dual}}</td>
+            <td>{{$totalsY.Time.Dual}}</td>
+            <td>{{$totals.Time.Dual}}</td>
+        </tr>
+        <tr>
+            <td><strong>Instructor</strong></td>
+            <td>{{$totals30.Time.Instructor}}</td>
+            <td>{{$totalsM.Time.Instructor}}</td>
+            <td>{{$totals90.Time.Instructor}}</td>
+            <td>{{$totalsY.Time.Instructor}}</td>
+            <td>{{$totals.Time.Instructor}}</td>
+        </tr>
+        <tr>
+            <td><strong>Simulator</strong></td>
+            <td>{{$totals30.SIM.Time}}</td>
+            <td>{{$totalsM.SIM.Time}}</td>
+            <td>{{$totals90.SIM.Time}}</td>
+            <td>{{$totalsY.SIM.Time}}</td>
+            <td>{{$totals.SIM.Time}}</td>
+        </tr>
+        <tr>
+            <td><strong>Landings (day/night)</strong></td>
+            <td>{{$totals30.Landings.Day}}/{{$totals30.Landings.Night}}</td>
+            <td>{{$totalsM.Landings.Day}}/{{$totalsM.Landings.Night}}</td>
+            <td>{{$totals90.Landings.Day}}/{{$totals90.Landings.Night}}</td>
+            <td>{{$totalsY.Landings.Day}}/{{$totalsY.Landings.Night}}</td>
+            <td>{{$totals.Landings.Day}}/{{$totals.Landings.Night}}</td>
+        </tr>
+        <tr>
+            <td><strong>Distance (nm)</strong></td>
+            <td>{{formatNumber $totals30.Distance}}</td>
+            <td>{{formatNumber $totalsM.Distance}}</td>
+            <td>{{formatNumber $totals90.Distance}}</td>
+            <td>{{formatNumber $totalsY.Distance}}</td>
+            <td>{{formatNumber $totals.Distance}}</td>
+        </tr>
+    </tbody>
+</table>
+{{end}}

@@ -1,0 +1,45 @@
+{{define "stats-totals-type"}}
+{{$totalsByAircraft := index .Data "totalsByAircraft"}}
+
+<br>
+<table id="totals_by_type" class="table table-striped table-bordered nowrap">
+    <thead>
+        <tr class="align-top text-center">
+            <th>Aircraft</th>
+            <th>SE</th>
+            <th>ME</th>
+            <th>MCC</th>
+            <th>Night</th>
+            <th>IFR</th>
+            <th>PIC</th>
+            <th>CoP</th>
+            <th>Dual</th>
+            <th>Instr</th>
+            <th>Sim</th>
+            <th>Landings</th>
+            <th>Distance</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range $key, $value := $totalsByAircraft}}
+        <tr>
+            <td><strong>{{$key}}</strong></td>
+            <td>{{$value.Time.SE}}</td>
+            <td>{{$value.Time.ME}}</td>
+            <td>{{$value.Time.MCC}}</td>
+            <td>{{$value.Time.Night}}</td>
+            <td>{{$value.Time.IFR}}</td>
+            <td>{{$value.Time.PIC}}</td>
+            <td>{{$value.Time.CoPilot}}</td>
+            <td>{{$value.Time.Dual}}</td>
+            <td>{{$value.Time.Instructor}}</td>
+            <td>{{$value.SIM.Time}}</td>
+            <td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>
+            <td>{{formatNumber $value.Distance}}</td>
+            <td><strong>{{if eq $key "SIM"}}{{$value.SIM.Time}}{{else}}{{$value.Time.Total}}{{end}}</strong></td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{end}}
