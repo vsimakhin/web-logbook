@@ -121,4 +121,5 @@ In case you'd like to add some other features for the logbook or you found a bug
 * Openlayers https://openlayers.org/
 * Golang gofpdf https://github.com/jung-kurt/gofpdf
 * Golang chi web-server https://github.com/go-chi/chi
+* Chart.js https://www.chartjs.org/
 
