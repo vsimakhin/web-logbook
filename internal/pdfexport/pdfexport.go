@@ -48,7 +48,7 @@ var header2 = []string{
 	"OPERATIONAL CONDITION TIME",
 	"PILOT FUNCTION TIME",
 	"FSTD SESSION",
-	"REMARKS AND ENDORSMENTS",
+	"REMARKS AND ENDORSEMENTS",
 }
 var header3 = []string{
 	"",
