@@ -97,7 +97,7 @@ type ColumnsWidth struct {
 	Col23 float64 `json:"col23"`
 }
 
-type Export struct {
+type ExportPDF struct {
 	LogbookRows int          `json:"logbook_rows"`
 	Fill        int          `json:"fill"`
 	LeftMargin  float64      `json:"left_margin"`
@@ -110,6 +110,15 @@ type Export struct {
 	Columns     ColumnsWidth `json:"columns"`
 }
 
+type ExportXLS struct {
+	ConvertTime bool `json:"convert_time"`
+}
+
+type ExportCSV struct {
+	Delimeter string `json:"delimeter"`
+	CRLF      bool   `json:"crlf"`
+}
+
 // Settings is a type for settings
 type Settings struct {
 	OwnerName       string            `json:"owner_name"`
@@ -120,8 +129,10 @@ type Settings struct {
 	Password        string            `json:"password"`
 	Hash            string            `json:"hash"`
 
-	ExportA4 Export `json:"export_a4"`
-	ExportA5 Export `json:"export_a5"`
+	ExportA4  ExportPDF `json:"export_a4"`
+	ExportA5  ExportPDF `json:"export_a5"`
+	ExportXLS ExportXLS `json:"export_xls"`
+	ExportCSV ExportCSV `json:"export_csv"`
 }
 
 // License is a type for licesing

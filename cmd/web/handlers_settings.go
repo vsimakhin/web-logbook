@@ -31,7 +31,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data["settings"] = settings
 	data["records"] = records
 
-	partials := []string{"common-js", "settings-js", "settings-general", "settings-export-a4", "settings-export-a5"}
+	partials := []string{"common-js", "settings-js", "settings-general"}
 	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -43,15 +43,28 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 		app.infoLog.Println(APISettings)
 	}
 
-	var settings models.Settings
-	var response models.JSONResponse
-
-	err := json.NewDecoder(r.Body).Decode(&settings)
+	oldsettings, err := app.db.GetSettings()
 	if err != nil {
 		app.errorLog.Panicln(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	var settings models.Settings
+	var response models.JSONResponse
+
+	err = json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.errorLog.Panicln(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// rewrite export settings since they are set from /export page
+	settings.ExportA4 = oldsettings.ExportA4
+	settings.ExportA5 = oldsettings.ExportA5
+	settings.ExportXLS = oldsettings.ExportXLS
+	settings.ExportCSV = oldsettings.ExportCSV
 
 	err = app.db.UpdateSettings(settings)
 	if err != nil {

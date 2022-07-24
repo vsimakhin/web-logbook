@@ -1,0 +1,20 @@
+{{define "export-xls"}}
+{{$settings := index .Data "settings"}}
+{{$api := .API}}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="row mb-2">
+            <label for="convert_time_xls" class="form-label col-md-8 col-form-label">Convert time to XLS time format</label>
+            <div class="col-md-4">
+                <input type="checkbox" class="form-check-input" id="convert_time_xls" name="convert_time_xls" {{if $settings.ExportXLS.ConvertTime}}checked{{end}}>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
+<button class="btn btn-sm btn-outline-secondary" type="button" onclick="SaveExportXLS()" id="save_xls"><i class="bi bi-save-fill"></i> Save</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" onclick="Export('{{$api.ExportFormatXLS}}')" id="export_xls"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Export XLS</button>
+
+{{end}}

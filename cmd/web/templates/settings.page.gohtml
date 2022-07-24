@@ -12,22 +12,12 @@
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-general" type="button" role="tab" aria-controls="nav-general" aria-selected="true">General</button>
-        <button class="nav-link" id="nav-export-a4-tab" data-bs-toggle="tab" data-bs-target="#nav-export-a4" type="button" role="tab" aria-controls="nav-export-a4" aria-selected="false">Export A4</button>
-        <button class="nav-link" id="nav-export-a5-tab" data-bs-toggle="tab" data-bs-target="#nav-export-a5" type="button" role="tab" aria-controls="nav-export-a5" aria-selected="false">Export A5</button>
     </div>
 </nav>
 
 <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
         <br>{{block "settings-general" .}}{{end}}
-    </div>
-
-    <div class="tab-pane fade" id="nav-export-a4" role="tabpanel" aria-labelledby="nav-export-a4-tab">
-        <br>{{block "settings-export-a4" .}}{{end}}
-    </div>
-
-    <div class="tab-pane fade" id="nav-export-a5" role="tabpanel" aria-labelledby="nav-export-a5-tab">
-        <br>{{block "settings-export-a5" .}}{{end}}
     </div>
 </div>
 
