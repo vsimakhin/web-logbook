@@ -75,7 +75,8 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["LogbookAttachmentsDelete"] = APILogbookAttachmentsDelete
 	td.API["LogbookAttachmentsDownload"] = APILogbookAttachmentsDownload
 	td.API["LogbookAttachmentsDownloadUUID"] = APILogbookAttachmentsDownloadUUID
-	td.API["LogbookExport"] = APILogbookExport
+	td.API["Export"] = APIExport
+	td.API["ExportFormat"] = APIExportFormat
 	td.API["Airport"] = APIAirport
 	td.API["AirportID"] = APIAirportID
 	td.API["AirportUpdate"] = APIAirportUpdate
@@ -94,6 +95,11 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["LicensingAttachmentDelete"] = APILicensingAttachmentDelete
 	td.API["Login"] = APILogin
 	td.API["Logout"] = APILogout
+
+	td.API["ExportFormatA4"] = exportA4
+	td.API["ExportFormatA5"] = exportA5
+	td.API["ExportFormatCSV"] = exportCSV
+	td.API["ExportFormatXLS"] = exportXLS
 
 	td.AuthEnabled = app.isAuthEnabled
 	td.Version = app.version
