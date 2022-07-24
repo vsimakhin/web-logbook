@@ -1,12 +1,7 @@
 package main
 
 import (
-	"errors"
 	"net/http"
-	"strings"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/vsimakhin/web-logbook/internal/pdfexport"
 )
 
 // HandlerLogbook is a handler for /logbook page
@@ -61,53 +56,5 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 
 	if app.config.env == "dev" {
 		app.infoLog.Printf("%d flight records generated for the table\n", len(tableData.Data))
-	}
-}
-
-// HandlerExportLogbook executes the pdf export and returns pdf file
-func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
-	format := chi.URLParam(r, "format")
-
-	if app.config.env == "dev" {
-		app.infoLog.Println(strings.ReplaceAll(APILogbookExportFormat, "{format}", format))
-	}
-
-	flightRecords, err := app.db.GetFlightRecords()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/pdf")
-	var logbook pdfexport.Logbook
-	logbook.OwnerName = settings.OwnerName
-	logbook.Signature = settings.SignatureText
-
-	if format == "A4" {
-		logbook.PageBreaks = strings.Split(settings.ExportA4.PageBreaks, ",")
-		logbook.Export = settings.ExportA4
-
-		err = logbook.ExportA4(flightRecords, w)
-	} else if format == "A5" {
-		logbook.PageBreaks = strings.Split(settings.ExportA5.PageBreaks, ",")
-		logbook.Export = settings.ExportA5
-
-		err = logbook.ExportA5(flightRecords, w)
-	} else {
-		err = errors.New("unknown export format")
-	}
-
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }

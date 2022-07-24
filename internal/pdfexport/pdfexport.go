@@ -84,7 +84,7 @@ type Logbook struct {
 	Signature  string
 	PageBreaks []string
 
-	Export models.Export
+	Export models.ExportPDF
 }
 
 func (l *Logbook) init(format int) {
