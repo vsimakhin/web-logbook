@@ -15,7 +15,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "2.1.1"
+const version = "2.2.0"
 
 type config struct {
 	port int
@@ -43,7 +43,7 @@ func (app *application) serve() error {
 		ErrorLog: app.errorLog,
 	}
 
-	app.infoLog.Printf("Web Logbook is ready on http://localhost:%d\n", app.config.port)
+	app.infoLog.Printf("Web Logbook %s is ready on http://localhost:%d\n", version, app.config.port)
 
 	return srv.ListenAndServe()
 }

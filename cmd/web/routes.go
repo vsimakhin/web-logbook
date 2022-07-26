@@ -18,8 +18,9 @@ const APILogbookSave = "/logbook/save"
 const APILogbookDelete = "/logbook/delete"
 
 const APILogbookNight = "/logbook/night"
-const APILogbookExport = "/logbook/export"
-const APILogbookExportFormat = APILogbookExport + "/{format}"
+
+const APIExport = "/export"
+const APIExportFormat = APIExport + "/{format}"
 
 const APIAircraftModels = "/aircraft/models"
 const APIAircraftClasses = "/aircraft/classes"
@@ -80,7 +81,9 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APILogbookAttachmentsDownloadUUID, app.HandlerAttachmentDownload)
 
 		// export
-		server.Get(APILogbookExportFormat, app.HandlerExportLogbook)
+		server.Get(APIExport, app.HandlerExport)
+		server.Get(APIExportFormat, app.HandlerExportLogbook)
+		server.Post(APIExportFormat, app.HandlerExportSettingsSave)
 
 		// airports
 		server.Get(APIAirportID, app.HandlerAirportByID)

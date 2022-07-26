@@ -51,11 +51,13 @@
 <a id="new-flight-record" href="{{$api.LogbookNew}}" class="btn btn-sm btn-outline-secondary" onclick=""><i class="bi bi-plus-square-fill"></i> Add New Flight Record</a>
 <div class="btn-group dropend">
     <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-file-pdf-fill"></i> Export
+        <i class="bi bi-file-earmark-arrow-down-fill"></i> Export
     </button>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#" onclick="ExportPDF('A4')">PDF A4</a></li>
-        <li><a class="dropdown-item" href="#" onclick="ExportPDF('A5')">PDF A5</a></li>
+        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatA4}}')"><i class="bi bi-file-pdf-fill"></i> PDF A4</a></li>
+        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatA5}}')"><i class="bi bi-file-pdf-fill"></i> PDF A5</a></li>
+        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatXLS}}')"><i class="bi bi-file-earmark-spreadsheet-fill"></i> XLS</a></li>
+        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatCSV}}')"><i class="bi bi-file-text-fill"></i> CSV</a></li>
     </ul>
 </div>
 {{ end }}
@@ -85,8 +87,8 @@ $(document).ready( function () {
 
 } );
 
-function ExportPDF(format) {
-    window.open("{{$api.LogbookExport}}/" + format, "_blank");
+function Export(format) {
+    window.open("{{$api.Export}}/" + format, "_blank");
 }
 </script>
 {{ end }}

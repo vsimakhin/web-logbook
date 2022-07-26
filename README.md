@@ -12,7 +12,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 1. Download the latest release from https://github.com/vsimakhin/web-logbook/releases
 1. Extract archive to some folder/directory
-1. Run: 
+1. Run:
   * Windows:
     * Double click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (need to solve it later), but just run it.
   * Linux:
@@ -52,19 +52,19 @@ Currently there are implemented several modules in the logbook app:
   * Map drawing and distance calculation for the flight record
   * Export to EASA PDF format (A4 and A5)
 * Settings
-  * Signature and owner name 
+  * Signature and owner name
   * Enable/Disable authentication (in case you need to expose the app to the public internet)
   * Aircraft groups/classes
-  * Adjustable settings for each export format 
+  * Adjustable settings for each export format
 * Map
-  * Filters for routes and airports 
+  * Filters for routes and airports
 * Licensing & Certification
   * Document attachments and preview
-  * Expiration time tracking  
+  * Expiration time tracking
 * Statistics
   * Totals
   * By Year
-  * By Aircraft 
+  * By Aircraft
   * By Aircraft group/class, defined in settings
 
 ## Logbook
@@ -121,5 +121,5 @@ In case you'd like to add some other features for the logbook or you found a bug
 * Openlayers https://openlayers.org/
 * Golang gofpdf https://github.com/jung-kurt/gofpdf
 * Golang chi web-server https://github.com/go-chi/chi
+* Golang Excelize https://github.com/xuri/excelize
 * Chart.js https://www.chartjs.org/
-

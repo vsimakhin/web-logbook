@@ -1,0 +1,29 @@
+{{define "export-csv"}}
+{{$settings := index .Data "settings"}}
+{{$api := .API}}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="row mb-2">
+            <label for="crlf_csv" class="form-label col-md-8 col-form-label">Use '\r\n' as the line terminator</label>
+            <div class="col-md-4">
+                <input type="checkbox" class="form-check-input" id="crlf_csv" name="crlf_csv" {{if $settings.ExportCSV.CRLF}}checked{{end}}>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="row mb-2">
+            <label for="delimeter_csv" class="form-label col-md-8 col-form-label">Field Delimeter (default is ',')</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control form-control-sm" id="delimeter_csv" name="delimeter_csv" value="{{$settings.ExportCSV.Delimeter}}"
+                    required="true" autocomplete="off">
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
+<button class="btn btn-sm btn-outline-secondary" type="button" onclick="SaveExportCSV()" id="save_csv"><i class="bi bi-save-fill"></i> Save</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" onclick="Export('{{$api.ExportFormatCSV}}')" id="export_csv"><i class="bi bi-file-text-fill"></i> Export CSV</button>
+
+{{end}}

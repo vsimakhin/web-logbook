@@ -77,14 +77,14 @@ var totalTime models.FlightRecord
 //go:embed font/*
 var content embed.FS
 
-type Logbook struct {
-	pdf *gofpdf.Fpdf
+var pdf *gofpdf.Fpdf
 
+type Logbook struct {
 	OwnerName  string
 	Signature  string
 	PageBreaks []string
 
-	Export models.Export
+	Export models.ExportPDF
 }
 
 func (l *Logbook) init(format int) {
@@ -196,14 +196,14 @@ func fillLine(rowCounter int, fill int) bool {
 func (l *Logbook) loadFonts() {
 
 	fontRegularBytes, _ := content.ReadFile(fmt.Sprintf("font/%s.ttf", fontRegular))
-	l.pdf.AddUTF8FontFromBytes(fontRegular, "", fontRegularBytes)
+	pdf.AddUTF8FontFromBytes(fontRegular, "", fontRegularBytes)
 
 	fontBoldBytes, _ := content.ReadFile(fmt.Sprintf("font/%s.ttf", fontBold))
-	l.pdf.AddUTF8FontFromBytes(fontBold, "", fontBoldBytes)
+	pdf.AddUTF8FontFromBytes(fontBold, "", fontBoldBytes)
 }
 
 func (l *Logbook) printPageNumber(pageCounter int) {
-	l.pdf.SetFont(fontRegular, "", 6)
-	l.pdf.SetY(l.pdf.GetY() + 2)
-	l.pdf.MultiCell(10, 1, fmt.Sprintf("page %d", pageCounter), "", "L", false)
+	pdf.SetFont(fontRegular, "", 6)
+	pdf.SetY(pdf.GetY() + 2)
+	pdf.MultiCell(10, 1, fmt.Sprintf("page %d", pageCounter), "", "L", false)
 }

@@ -23,7 +23,7 @@ func TestRoutes(t *testing.T) {
 		APILogbookAttachmentsUpload,
 		APILogbookAttachmentsDelete,
 		APILogbookAttachmentsDownloadUUID,
-		APILogbookExport,
+		APIExport,
 		APIAirportID,
 		APIAirportUpdate,
 		APISettings,
