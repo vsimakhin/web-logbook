@@ -50,11 +50,13 @@ Currently there are implemented several modules in the logbook app:
 * Logbook itself
   * Attachments for the flight records
   * Map drawing and distance calculation for the flight record
-  * Export to EASA PDF format (A4 and A5)
 * Settings
   * Signature and owner name
   * Enable/Disable authentication (in case you need to expose the app to the public internet)
   * Aircraft groups/classes
+* Export
+  * Export to EASA PDF format (A4 and A5)
+  * Additional export formats (XLSX, CSV)
   * Adjustable settings for each export format
 * Map
   * Filters for routes and airports
@@ -83,7 +85,6 @@ A5 format output is still in beta mode, I didn't fully test the page margins on 
 
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-a.png)
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-b.png)
-
 
 ## Flight record
 
