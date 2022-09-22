@@ -56,14 +56,20 @@ func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Re
 
 	var flightRecord models.FlightRecord
 
-	flightRecord.Date = time.Now().Format("02/01/2006")
-
 	// check if the page opened from the existing flight record
 	// in this case we can assume it's a next flight and we can set departure = last arrival
+	// and the date of the new record = same date
 	r.ParseForm()
 	lastArrival := r.FormValue("last_arrival")
 	if lastArrival != "" {
 		flightRecord.Departure.Place = lastArrival
+	}
+
+	lastDate := r.FormValue("last_date")
+	if lastDate != "" {
+		flightRecord.Date = lastDate
+	} else {
+		flightRecord.Date = time.Now().Format("02/01/2006")
 	}
 
 	aircraftRegs, err := app.db.GetAircraftRegs()
