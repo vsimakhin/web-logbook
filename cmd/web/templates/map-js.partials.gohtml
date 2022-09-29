@@ -26,7 +26,7 @@ function loadMap(parameters) {
             center: ol.proj.fromLonLat([14.2588996887, 50.3246994019]),
             zoom: 5
         }),
-        controls: ol.control.defaults().extend([
+        controls: ol.control.defaults.defaults().extend([
             new ol.control.FullScreen()
         ])
     });
