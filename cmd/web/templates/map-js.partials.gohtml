@@ -8,6 +8,8 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 
 function loadMap(parameters) {
     document.getElementById("map").innerText = "";
+    document.getElementById("some_stats").innerText = "Routes: 0\nAirports: 0";
+    document.getElementById("airport_info").innerHTML = "";
 
     var data = loadJSON("{{index .API "MapData"}}"+parameters);
 
@@ -93,7 +95,12 @@ function loadMap(parameters) {
 
             var featureMarker = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.fromLonLat(markers[x]["point"])),
-                desc: "/static/favicon.ico"
+                desc: "/static/favicon.ico",
+                name: markers[x]["name"],
+                civil_name: markers[x]["civil_name"],
+                country: markers[x]["country"],
+                city: markers[x]["city"],
+                elevation: markers[x]["elevation"]
             });
 
             featureMarker.setStyle(iconStyle);
@@ -103,7 +110,7 @@ function loadMap(parameters) {
         some_stats += "Airports: " + markers.length;
     } else {
         map.renderSync();
-        document.getElementById("some_stats").innerText = "Routes: 0\nAirports: 0";
+
         return;
     }
 
@@ -119,6 +126,50 @@ function loadMap(parameters) {
     map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
 
     document.getElementById("some_stats").innerText = some_stats;
+
+    map.on('click', function (evt) {
+        const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+            return feature;
+        });
+
+        // cliked somewhere on the map
+        if (!feature) {
+            document.getElementById("airport_info").innerHTML = "";
+            return;
+        }
+
+        // clicked but not on the marker
+        if (feature.get("name") === undefined) {
+            document.getElementById("airport_info").innerHTML = "";
+            return;
+        }
+
+        // show airport/marker info
+        airport_info = `Airport: ${feature.get("name")}<br>`
+        airport_info += `Name: ${feature.get("civil_name")}<br>`
+        airport_info += `Country: ${feature.get("country")}<br>`;
+        airport_info += `Elevation: ${feature.get("elevation")}<br>`;
+        document.getElementById("airport_info").innerHTML = airport_info;
+    });
+
+    map.on('pointermove', function (e) {
+        const pixel = map.getEventPixel(e.originalEvent);
+
+        var is_marker = false;
+        features = map.getFeaturesAtPixel(pixel);
+        for (var x = 0; x < features.length; x++) {
+            if (features[x].get("name") !== undefined) {
+                is_marker = true;
+            }
+        }
+
+        if(is_marker) {
+            const hit = map.hasFeatureAtPixel(pixel);
+            document.getElementById('map').style.cursor = hit ? 'pointer' : '';
+        } else {
+            document.getElementById('map').style.cursor = '';
+        }
+    });
 }
 
 function Refresh() {
