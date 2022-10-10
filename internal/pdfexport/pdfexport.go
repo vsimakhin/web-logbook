@@ -4,7 +4,7 @@ import (
 	"embed"
 	"fmt"
 
-	"github.com/jung-kurt/gofpdf"
+	"github.com/go-pdf/fpdf"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
@@ -77,7 +77,7 @@ var totalTime models.FlightRecord
 //go:embed font/*
 var content embed.FS
 
-var pdf *gofpdf.Fpdf
+var pdf *fpdf.Fpdf
 
 type Logbook struct {
 	OwnerName  string

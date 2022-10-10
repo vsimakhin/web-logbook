@@ -120,7 +120,7 @@ In case you'd like to add some other features for the logbook or you found a bug
 * Bootstrap https://getbootstrap.com/
 * Datatables https://datatables.net/
 * Openlayers https://openlayers.org/
-* Golang gofpdf https://github.com/jung-kurt/gofpdf
+* Golang go-pdf https://github.com/go-pdf/fpdf
 * Golang chi web-server https://github.com/go-chi/chi
 * Golang Excelize https://github.com/xuri/excelize
 * Chart.js https://www.chartjs.org/
