@@ -372,6 +372,7 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 		pdf.AddPage()
 		l.printA5LogbookHeaderB()
 		fill = false
+		rowCounter = 0
 
 		for i := itemCounter - 1; i >= 0; i-- {
 			logBookRowB(i)
