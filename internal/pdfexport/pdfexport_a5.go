@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/jung-kurt/gofpdf"
+	"github.com/go-pdf/fpdf"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
@@ -258,7 +258,7 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 	l.init(PDFA5)
 
 	// start forming the pdf file
-	pdf = gofpdf.New("L", "mm", "A5", "")
+	pdf = fpdf.New("L", "mm", "A5", "")
 	pdf.SetAutoPageBreak(false, 5)
 	l.loadFonts()
 
