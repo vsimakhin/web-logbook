@@ -21,8 +21,9 @@ You also can easily export all flight records into EASA style pdf format, print 
   * MacOS:
     * *I still didn't test it for the MacOS, so in theory should be as same as for linux, but... who knows ¯\\_(ツ)_/¯*
 4. Open your browser and type http://localhost:4000
-5. Go to Settings page and click "Restore Defaults" for the export formats (in case the values there are 0)
-6. Once you finished, use `Ctrl+C` or just close the terminal window
+5. Go to the [Settings](http://localhost:4000/settings) page and click on the `Update Airport DB` button
+5. Go to the [Export](http://localhost:4000/export) page and click `Restore Defaults` and `Save` for the all export formats (in case the values there are 0)
+6. Once you finished, use `Ctrl+C` in the terminal window or just close it
 
 ## CLI options
 ```
