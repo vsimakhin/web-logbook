@@ -81,8 +81,6 @@ Currently there are implemented several modules in the logbook app:
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/logbook-export.png)
 
 ### A5
-A5 format output is still in beta mode, I didn't fully test the page margins on the real paper
-
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-a.png)
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-b.png)
 
