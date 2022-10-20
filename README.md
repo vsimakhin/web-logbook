@@ -84,6 +84,9 @@ Currently there are implemented several modules in the logbook app:
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-a.png)
 ![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-b.png)
 
+So in real life the logbook could look like
+![Pilot logbook](https://github.com/vsimakhin/web-logbook-assets/raw/main/logbook_irl.jpg)
+
 ## Flight record
 
 ![Flight record](https://github.com/vsimakhin/web-logbook-assets/raw/main/flight-record-example.png)
