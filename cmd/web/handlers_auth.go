@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -41,7 +42,8 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 
 	err := app.session.RenewToken(r.Context())
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(fmt.Errorf("cannot renew auth token - %s", err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	var user struct {
@@ -52,7 +54,7 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 
 	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -89,11 +91,11 @@ func (app *application) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 
 	err := app.session.Destroy(r.Context())
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(fmt.Errorf("cannot destroy the user session - %s", err))
 	}
 	err = app.session.RenewToken(r.Context())
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(fmt.Errorf("cannot renew the auth token - %s", err))
 	}
 
 	http.Redirect(w, r, "/login", http.StatusSeeOther)

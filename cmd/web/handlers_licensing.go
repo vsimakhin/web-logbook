@@ -168,7 +168,7 @@ func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *h
 
 	err := json.NewDecoder(r.Body).Decode(&license)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -205,7 +205,7 @@ func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, 
 
 	err := json.NewDecoder(r.Body).Decode(&license)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -242,7 +242,7 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

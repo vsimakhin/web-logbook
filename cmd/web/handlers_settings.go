@@ -45,7 +45,7 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 
 	oldsettings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -55,7 +55,7 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 
 	err = json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

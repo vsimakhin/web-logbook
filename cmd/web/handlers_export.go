@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -127,7 +128,7 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 
 	currsettings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(fmt.Errorf("cannot get the export settings - %s", err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -137,7 +138,7 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 
 	err = json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

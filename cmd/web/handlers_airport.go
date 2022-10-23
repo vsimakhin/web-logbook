@@ -21,7 +21,7 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 
 	airport, err := app.db.GetAirportByID(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("cannot find %s in the database - %s", uuid, err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
