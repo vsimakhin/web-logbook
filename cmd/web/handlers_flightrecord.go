@@ -23,7 +23,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 
 	flightRecord, err := app.db.GetFlightRecordByID(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("cannot find the flight record %s - %s", uuid, err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -103,14 +103,14 @@ func (app *application) HandlerFlightRecordDelete(w http.ResponseWriter, r *http
 
 	err := json.NewDecoder(r.Body).Decode(&flightRecord)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = app.db.DeleteFlightRecord(flightRecord.UUID)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("error deleting the flight record - %s", err))
 		response.OK = false
 		response.Message = err.Error()
 	} else {
@@ -146,7 +146,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 
 	err := json.NewDecoder(r.Body).Decode(&flightRecord)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -164,7 +164,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 
 		err = app.db.InsertFlightRecord(flightRecord)
 		if err != nil {
-			app.errorLog.Println(err)
+			app.errorLog.Println(fmt.Errorf("error creating a new flight record - %s", err))
 			response.OK = false
 			response.Message = err.Error()
 		} else {
@@ -181,7 +181,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 		// just update the current flight record
 		err = app.db.UpdateFlightRecord(flightRecord)
 		if err != nil {
-			app.errorLog.Println(err)
+			app.errorLog.Println(fmt.Errorf("error updating the flight record - %s", err))
 			response.OK = false
 			response.Message = err.Error()
 		} else {
@@ -212,29 +212,32 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(&fr)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(fmt.Errorf("error calculating night time - %s", err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	departure_place, err := app.db.GetAirportByID(fr.Departure.Place)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err))
 		return
 	}
+
 	departure_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err))
 		return
 	}
+
 	arrival_place, err := app.db.GetAirportByID(fr.Arrival.Place)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err))
 		return
 	}
+
 	arrival_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err))
 		return
 	}
 
@@ -256,7 +259,7 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 
 	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("error calculating night time - %s", err))
 		return
 	}
 }

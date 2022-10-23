@@ -102,7 +102,7 @@ func main() {
 	if disableAuth {
 		err := app.db.DisableAuthorization()
 		if err != nil {
-			app.errorLog.Panicln(err)
+			app.errorLog.Println(err)
 		}
 		fmt.Println("authentication has been disabled")
 		os.Exit(0)

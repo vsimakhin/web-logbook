@@ -132,7 +132,7 @@ func (app *application) renderTemplate(w http.ResponseWriter, req *http.Request,
 
 	err = t.Execute(w, td)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		return err
 	}
 

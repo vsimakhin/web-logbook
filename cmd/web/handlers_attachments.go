@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -46,7 +47,7 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -117,7 +118,7 @@ func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.R
 
 	err := json.NewDecoder(r.Body).Decode(&att)
 	if err != nil {
-		app.errorLog.Panicln(err)
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
