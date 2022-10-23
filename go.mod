@@ -9,7 +9,7 @@ require (
 	github.com/go-pdf/fpdf v0.6.0
 	github.com/google/uuid v1.3.0
 	github.com/stretchr/testify v1.8.0
-	github.com/vsimakhin/go-nighttime v1.0.2
+	github.com/vsimakhin/go-nighttime v1.0.3
 	github.com/xuri/excelize/v2 v2.6.1
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
 	modernc.org/sqlite v1.19.1
@@ -27,9 +27,11 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20220927061507-ef77025ab5aa // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
-	github.com/ringsaturn/tzf v0.8.1 // indirect
+	github.com/ringsaturn/tzf v0.8.3 // indirect
 	github.com/ringsaturn/tzf-rel v0.0.2021-c3 // indirect
-	github.com/tidwall/geojson v1.3.5 // indirect
+	github.com/tidwall/geoindex v1.7.0 // indirect
+	github.com/tidwall/geojson v1.4.0 // indirect
+	github.com/tidwall/rtree v1.9.2 // indirect
 	github.com/twpayne/go-polyline v1.1.1 // indirect
 	github.com/xuri/efp v0.0.0-20220603152613-6918739fd470 // indirect
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
