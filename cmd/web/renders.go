@@ -12,6 +12,7 @@ type templateData struct {
 	API         map[string]string
 	AuthEnabled bool
 	Version     string
+	NewVersion  bool
 }
 
 var functions = template.FuncMap{
@@ -103,6 +104,7 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 
 	td.AuthEnabled = app.isAuthEnabled
 	td.Version = app.version
+	td.NewVersion = app.isNewVersion
 
 	return td
 }

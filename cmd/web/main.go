@@ -15,7 +15,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "2.5.1"
+const version = "2.6.0"
 
 type config struct {
 	port int
@@ -34,6 +34,7 @@ type application struct {
 	db            models.DBModel
 	session       *scs.SessionManager
 	isAuthEnabled bool
+	isNewVersion  bool
 }
 
 func (app *application) serve() error {
@@ -110,6 +111,8 @@ func main() {
 
 	go app.db.CreateDistanceCache()
 	app.isAuthEnabled = app.db.IsAuthEnabled()
+
+	go app.checkNewVersion()
 
 	err = app.serve()
 	if err != nil {

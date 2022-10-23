@@ -51,7 +51,8 @@
                             <hr>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="https://github.com/vsimakhin/web-logbook"><i class="bi bi-github"></i> v{{.Version}}</a>
+                            <a class="nav-link" href="https://github.com/vsimakhin/web-logbook"><i class="bi bi-github"></i> v{{.Version}}
+                            {{if .NewVersion}}<span class="badge rounded-pill bg-danger">New</span>{{ end }}</a>
                         </li>
                     </ul>
                 </div>
