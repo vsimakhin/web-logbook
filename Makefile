@@ -39,7 +39,7 @@ build_all: test clean
 			CGO_ENABLED=0 \
 			GOOS=$$OS \
 			GOARCH=$$ARCH \
-			go build \
+			go build -trimpath \
 			-o=$(BIN)/$(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) ./cmd/web; \
 			[ $$OS = "windows" ] && (cd $(BIN); mv $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME).exe; zip -r $(BINARY_NAME)-$$OS-$$ARCH.zip $(BINARY_NAME)-$$OS-$$ARCH; cd ../) \
 				|| (cd $(BIN); tar czf $(BINARY_NAME)-$$OS-$$ARCH.tar.gz $(BINARY_NAME)-$$OS-$$ARCH; cd ../) ;\
