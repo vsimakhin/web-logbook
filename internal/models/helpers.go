@@ -3,6 +3,8 @@ package models
 import (
 	"math"
 	"strings"
+
+	"golang.org/x/exp/slices"
 )
 
 func deg2rad(degrees float64) float64 {
@@ -26,11 +28,12 @@ func dist(lat1, lon1, lat2, lon2 float64) float64 {
 	return 2 * r * math.Asin(math.Sqrt(h)) / 1000 / 1.852 // nautical miles
 }
 
+// getClassesForModel returns all defined classes for the aircraft
 func getClassesForModel(classes map[string]string, model string) []string {
 	var ac []string
 
 	for key, element := range classes {
-		if strings.Contains(element, model) {
+		if slices.Contains(strings.Split(element, ","), model) {
 			ac = append(ac, key)
 		}
 	}
