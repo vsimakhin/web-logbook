@@ -22,8 +22,8 @@ const APILogbookNight = "/logbook/night"
 const APIExport = "/export"
 const APIExportFormat = APIExport + "/{format}"
 
-const APIAircraftModels = "/aircraft/models"
-const APIAircraftClasses = "/aircraft/classes"
+const APIAircrafts = "/aircrafts/"
+const APIAircraftsFilter = "/aircrafts/{filter}"
 
 const APILogbookUUIDAttachments = "/logbook/{uuid}/attachments"
 const APILogbookAttachmentsDelete = "/logbook/attachments/delete"
@@ -42,6 +42,8 @@ const APILicensingDownload = "/licensing/download/"
 const APILicensingDownloadUUID = APILicensingDownload + "{uuid}"
 
 const APISettings = "/settings"
+const APISettingsAircraftClasses = "/settings/classes"
+
 const APIAirport = "/airport/"
 const APIAirportID = APIAirport + "{id}"
 const APIAirportUpdate = "/airport/update"
@@ -90,8 +92,9 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APIAirportUpdate, app.HandlerAirportUpdate)
 
 		// aircrafts
-		server.Get(APIAircraftModels, app.HandlerAircraftModels)
-		server.Get(APIAircraftClasses, app.HandlerAircraftClasses)
+		server.Get(APISettingsAircraftClasses, app.HandlerSettingsAircraftClasses)
+		server.Get(APIAircrafts, app.HandlerAircrafts)
+		server.Get(APIAircraftsFilter, app.HandlerAircrafts)
 
 		// settings
 		server.Get(APISettings, app.HandlerSettings)

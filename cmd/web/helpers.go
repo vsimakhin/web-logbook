@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
 // writeJSON writes arbitrary data out as JSON
@@ -62,4 +64,19 @@ func (app *application) checkNewVersion() {
 		app.infoLog.Printf("new version %s is available https://github.com/vsimakhin/web-logbook\n", release.Name)
 		app.isNewVersion = true
 	}
+}
+
+// lastRegsAndModels returns aircrafts registrations and models for the last 100 flight records
+func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftModels []string) {
+	lastAircrafts, err := app.db.GetAircrafts(models.LastAircrafts)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
+	}
+
+	for key, val := range lastAircrafts {
+		aircraftRegs = append(aircraftRegs, key)
+		aircraftModels = append(aircraftModels, val)
+	}
+
+	return aircraftRegs, aircraftModels
 }

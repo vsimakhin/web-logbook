@@ -45,28 +45,28 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 <div class="col-md-2">
                     <label for="departure_place" class="form-label text-nowrap">Departure</label>
                     <input type="text" class="form-control form-control-sm text-transform: uppercase" id="departure_place" name="departure_place" value="{{$fr.Departure.Place}}"
-                        required="" autocomplete="departure_place" onkeyup="this.value = this.value.toUpperCase();" onchange="DeppArrChange()"
+                        required="" autocomplete="departure_place" oninput="this.value = this.value.toUpperCase();" onchange="DepArrChange()"
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Departure Place">
                 </div>
 
                 <div class="col-md-2">
                     <label for="departure_time" class="form-label text-nowrap">Time</label>
                     <input type="text" class="form-control form-control-sm" id="departure_time" name="departure_time" value="{{$fr.Departure.Time}}"
-                        required="" autocomplete="off" placeholder="HHMM" onkeyup="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
+                        required="" autocomplete="off" placeholder="HHMM" oninput="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Departure Time">
                 </div>
 
                 <div class="col-md-2">
                     <label for="arrival_place" class="form-label text-nowrap">Arrival</label>
                     <input type="text" class="form-control form-control-sm" id="arrival_place" name="arrival_place" value="{{$fr.Arrival.Place}}"
-                        required="" autocomplete="arrival_place" onkeyup="this.value = this.value.toUpperCase();" onchange="DeppArrChange()"
+                        required="" autocomplete="arrival_place" oninput="this.value = this.value.toUpperCase();" onchange="DepArrChange()"
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Arrival Place">
                 </div>
 
                 <div class="col-md-2">
                     <label for="arrival_time" class="form-label text-nowrap">Time</label>
                     <input type="text" class="form-control form-control-sm" id="arrival_time" name="arrival_time" value="{{$fr.Arrival.Time}}"
-                        required="" autocomplete="off" placeholder="HHMM" onkeyup="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
+                        required="" autocomplete="off" placeholder="HHMM" oninput="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Arrival Time">
                 </div>
 
@@ -104,7 +104,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 <div class="col-md-3">
                     <label for="aircraft_reg" class="form-label">Registration</label>
                     <input class="form-control form-control-sm" id="aircraft_reg" name="aircraft_reg" value="{{$fr.Aircraft.Reg}}"
-                        required="" autocomplete="aircraft_reg" list="aircraft_reg_options">
+                        required="" autocomplete="aircraft_reg" list="aircraft_reg_options" oninput="this.value = this.value.toUpperCase(); OnRegChange();">
                     <datalist id="aircraft_reg_options">
                     {{ range $aircraft_regs}}
                     <option value="{{.}}">
@@ -309,15 +309,19 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 {{ block "flight-record-map" . }}{{ end }}
 
 <script>
+let aircrafts;
+
 window.onload = function() {
-    DeppArrChange();
+    DepArrChange();
     {{if $fr.UUID}}LoadAttachments(){{end}}
 
     $( function() {
         $( "#date" ).datepicker({
             dateFormat: "dd/mm/yy"
         });
-  } );
+    });
+
+    aircrafts = loadJSON('{{index .API "Aircrafts"}}');
 };
 </script>
 {{ end }}

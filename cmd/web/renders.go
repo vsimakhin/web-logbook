@@ -69,8 +69,8 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["LogbookSave"] = APILogbookSave
 	td.API["LogbookDelete"] = APILogbookDelete
 	td.API["LogbookNight"] = APILogbookNight
-	td.API["AircraftModels"] = APIAircraftModels
-	td.API["AircraftClasses"] = APIAircraftClasses
+	td.API["Aircrafts"] = APIAircrafts
+	td.API["AircraftsFilter"] = APIAircraftsFilter
 	td.API["LogbookUUIDAttachments"] = APILogbookUUIDAttachments
 	td.API["LogbookAttachmentsUpload"] = APILogbookAttachmentsUpload
 	td.API["LogbookAttachmentsDelete"] = APILogbookAttachmentsDelete
@@ -82,6 +82,7 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["AirportID"] = APIAirportID
 	td.API["AirportUpdate"] = APIAirportUpdate
 	td.API["Settings"] = APISettings
+	td.API["SettingsAircraftClasses"] = APISettingsAircraftClasses
 	td.API["Stats"] = APIStats
 	td.API["Map"] = APIMap
 	td.API["MapData"] = APIMapData

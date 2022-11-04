@@ -19,28 +19,6 @@ func TestGetFlightRecords(t *testing.T) {
 	}
 }
 
-func TestGetAircraftRegs(t *testing.T) {
-	db := initModel(t)
-
-	records, err := db.GetAircraftRegs()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, records[0], "REG1")
-}
-
-func TestGetAircraftModels(t *testing.T) {
-	db := initModel(t)
-
-	records, err := db.GetAircraftModels(JustLastModels)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, records[0], "MODEL1")
-}
-
 func TestDeleteFlightRecord(t *testing.T) {
 	db := initModel(t)
 

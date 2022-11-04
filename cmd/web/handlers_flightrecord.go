@@ -28,15 +28,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	aircraftRegs, err := app.db.GetAircraftRegs()
-	if err != nil {
-		app.errorLog.Println(err)
-	}
-
-	aircraftModels, err := app.db.GetAircraftModels(models.JustLastModels)
-	if err != nil {
-		app.errorLog.Println(err)
-	}
+	aircraftRegs, aircraftModels := app.lastRegsAndModels()
 
 	data := make(map[string]interface{})
 	data["flightRecord"] = flightRecord
@@ -72,15 +64,7 @@ func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Re
 		flightRecord.Date = time.Now().Format("02/01/2006")
 	}
 
-	aircraftRegs, err := app.db.GetAircraftRegs()
-	if err != nil {
-		app.errorLog.Println(err)
-	}
-
-	aircraftModels, err := app.db.GetAircraftModels(models.JustLastModels)
-	if err != nil {
-		app.errorLog.Println(err)
-	}
+	aircraftRegs, aircraftModels := app.lastRegsAndModels()
 
 	data := make(map[string]interface{})
 	data["flightRecord"] = flightRecord
