@@ -34,6 +34,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 	data["flightRecord"] = flightRecord
 	data["aircraftRegs"] = aircraftRegs
 	data["aircraftModels"] = aircraftModels
+	data["enableHelpMessages"] = app.getShowFlightRecordHelpSetting()
 
 	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}, "common-js", "flight-record-js", "flight-record-map"); err != nil {
 		app.errorLog.Println(err)
@@ -70,6 +71,7 @@ func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Re
 	data["flightRecord"] = flightRecord
 	data["aircraftRegs"] = aircraftRegs
 	data["aircraftModels"] = aircraftModels
+	data["enableHelpMessages"] = app.getShowFlightRecordHelpSetting()
 
 	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}, "common-js", "flight-record-js", "flight-record-map"); err != nil {
 		app.errorLog.Println(err)

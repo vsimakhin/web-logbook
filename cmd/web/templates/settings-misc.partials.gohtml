@@ -1,0 +1,17 @@
+{{define "settings-misc"}}
+{{$settings := index .Data "settings"}}
+
+<div class="row">
+    <div class="col-md-4">
+
+        <div class="row mb-2">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="enable_flightrecord_help" name="enable_flightrecord_help" {{if $settings.EnableFlightRecordHelp}}checked{{end}}>
+                <label for="enable_flightrecord_help" class="form-label"><strong>Enable help messages on the flight record page</strong>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{{end}}
