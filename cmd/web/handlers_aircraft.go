@@ -1,47 +1,36 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerAircraftModels is a handler for a list of all aircraft models in the logbook
-func (app *application) HandlerAircraftModels(w http.ResponseWriter, r *http.Request) {
+// HandlerNightTime is a handler for calculating night time
+func (app *application) HandlerAircrafts(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
-		app.infoLog.Println(APIAircraftModels)
+		app.infoLog.Println(APIAircrafts)
 	}
 
-	aircraftModels, err := app.db.GetAircraftModels(models.AllAircraftModels)
+	var aircrafts map[string]string
+	var err error
+
+	filter := chi.URLParam(r, "filter")
+
+	if filter == "last" {
+		aircrafts, err = app.db.GetAircrafts(models.LastAircrafts)
+	} else {
+		aircrafts, err = app.db.GetAircrafts(models.AllAircrafts)
+	}
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
 	}
 
-	err = app.writeJSON(w, http.StatusOK, aircraftModels)
+	err = app.writeJSON(w, http.StatusOK, aircrafts)
 	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-}
-
-// HandlerAircraftClasses is a handler for aircraft groups/classes
-func (app *application) HandlerAircraftClasses(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIAircraftClasses)
-	}
-
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = app.writeJSON(w, http.StatusOK, settings.AircraftClasses)
-	if err != nil {
-		app.errorLog.Println(err)
+		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
 		return
 	}
 }

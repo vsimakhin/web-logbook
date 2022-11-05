@@ -367,5 +367,16 @@ function AskForDelete(uuid) {
     tdbody.innerHTML = `<button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteAttachment('${uuid}')"><i class="bi bi-check-square-fill"></i> Confirm</button>`;
 };
 
+function OnRegChange() {
+    if (document.getElementById("aircraft_model").value === "") {
+        aircraft_reg = document.getElementById("aircraft_reg").value;
+        for (var item in aircrafts) {
+            if (item === aircraft_reg) {
+                document.getElementById("aircraft_model").value = aircrafts[item]
+                break;
+            }
+        }
+    }
+}
 </script>
 {{end}}

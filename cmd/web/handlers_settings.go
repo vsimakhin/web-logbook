@@ -91,3 +91,23 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 		return
 	}
 }
+
+// HandlerSettingsAircraftClasses is a handler for aircraft groups/classes
+func (app *application) HandlerSettingsAircraftClasses(w http.ResponseWriter, r *http.Request) {
+	if app.config.env == "dev" {
+		app.infoLog.Println(APISettingsAircraftClasses)
+	}
+
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, settings.AircraftClasses)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}

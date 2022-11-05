@@ -6,8 +6,8 @@ const ThisYear = 999
 const ThisMonth = 888
 const AllTotals = 0
 
-const AllAircraftModels = 1
-const JustLastModels = 2
+const AllAircrafts = 0
+const LastAircrafts = 1
 
 // jsonResponse is a type for post data handlers response
 type JSONResponse struct {

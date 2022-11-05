@@ -19,8 +19,15 @@ $(document).ready( function () {
 function PopulateAircraftClassesTable() {
     $('#aircraft_class').find('tbody').empty();
 
-    var models_data = loadJSON("{{index .API "AircraftModels"}}");
-    var classes_data = loadJSON("{{index .API "AircraftClasses"}}");
+    var aircrafts = loadJSON("{{index .API "Aircrafts"}}");
+    var models_data = [];
+    for (var item in aircrafts) {
+        if (!models_data.includes(aircrafts[item])){
+            models_data.push(aircrafts[item]);
+        }
+    }
+
+    var classes_data = loadJSON("{{index .API "SettingsAircraftClasses"}}");
 
     for (var key of Object.keys(classes_data)) {
         $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", key).replace("TYPE_NAME", classes_data[key]));

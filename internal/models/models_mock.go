@@ -23,17 +23,17 @@ func InitMock(mock sqlmock.Sqlmock) {
 					"SIM", "2:00", "Self", "Remarks",
 				),
 		)
-
-	// mock GetAircraftRegs
-	mock.ExpectQuery("SELECT (.+) FROM \\(SELECT reg_name FROM logbook_view ORDER BY m_date DESC LIMIT 300\\)").
+	// mock GetAircrafts (last)
+	mock.ExpectQuery("SELECT (.+) FROM \\(SELECT aircraft_model, reg_name FROM logbook_view WHERE aircraft_model <> '' ORDER BY m_date DESC LIMIT 100\\)").
 		WillReturnRows(
-			mock.NewRows([]string{"reg_name"}).AddRow("REG1"),
+			mock.NewRows([]string{"aircraft_model", "reg_name"}).AddRow("MODEL", "REG"),
 		)
 
-	// mock GetAircraftModels
-	mock.ExpectQuery("SELECT (.+) FROM \\(SELECT aircraft_model FROM logbook_view ORDER BY m_date DESC LIMIT 300\\)").
+	// mock GetAircrafts (all)
+	mock.ExpectQuery("SELECT (.+) FROM logbook_view WHERE aircraft_model <> '' " +
+		"GROUP BY aircraft_model, reg_name ORDER BY aircraft_model").
 		WillReturnRows(
-			mock.NewRows([]string{"aircraft_model"}).AddRow("MODEL1"),
+			mock.NewRows([]string{"aircraft_model", "reg_name"}).AddRow("MODEL", "REG"),
 		)
 
 	// mock DeleteFlightRecord
