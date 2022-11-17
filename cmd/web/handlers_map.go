@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/vsimakhin/web-logbook/internal/maprender"
 )
@@ -15,7 +14,6 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := make(map[string]interface{})
-	data["current_date"] = time.Now().Format("2006")
 
 	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}, "common-js", "map-js"); err != nil {
 		app.errorLog.Println(err)
@@ -29,7 +27,8 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get filter parameters
-	filterDate := r.URL.Query().Get("filter_date")
+	startDate := r.URL.Query().Get("start_date")
+	endDate := r.URL.Query().Get("end_date")
 	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
 
 	if app.config.env == "dev" {
@@ -52,7 +51,8 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 
 	render := maprender.MapRender{
 		FlightRecords:  flightRecords,
-		FilterDate:     filterDate,
+		StartDate:      startDate,
+		EndDate:        endDate,
 		FilterNoRoutes: filterNoRoutes,
 		AirportsDB:     airports,
 	}

@@ -23,7 +23,8 @@ type Marker struct {
 
 type MapRender struct {
 	FlightRecords  []models.FlightRecord
-	FilterDate     string `json:"filter_date"`
+	StartDate      string `json:"start_date"`
+	EndDate        string `json:"end_date"`
 	FilterNoRoutes bool   `json:"filter_noroutes"`
 	AirportsDB     map[string]models.Airport
 
@@ -41,7 +42,8 @@ func (mr *MapRender) Render() {
 		if fr.Departure.Place == "" || fr.Arrival.Place == "" {
 			continue
 		}
-		if (mr.FilterDate != "" && strings.Contains(fr.Date, mr.FilterDate)) || mr.FilterDate == "" {
+
+		if (mr.StartDate <= fr.MDate) && (fr.MDate <= mr.EndDate) {
 			// add to the list of the airport markers departure and arrival
 			// it will be automatically a list of unique airports
 			airportMarkers[fr.Departure.Place] = struct{}{}

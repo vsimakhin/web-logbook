@@ -173,38 +173,12 @@ function loadMap(parameters) {
 }
 
 function Refresh() {
-    let filter_date = document.getElementById("filter_date").value;
     let filter_noroutes = document.getElementById("filter_noroutes").checked;
-
-    parameters = "?filter_date=" + encodeURIComponent(filter_date) + "&filter_noroutes=" + encodeURIComponent(filter_noroutes);
+    parameters = "?start_date=" + encodeURIComponent(start.format("YYYYMMDD")) +
+        "&end_date=" + encodeURIComponent(end.format("YYYYMMDD")) +
+        "&filter_noroutes=" + encodeURIComponent(filter_noroutes);
 
     loadMap(parameters)
-}
-
-function Filter(flt) {
-    var yy = new Date().getFullYear();
-    var mm = new Date().getMonth() + 1;
-    var filter_date = document.getElementById("filter_date");
-
-    if (flt === "This year") {
-        filter_date.value = yy;
-    } else if (flt === "Last year") {
-        filter_date.value = yy - 1;
-    } else if (flt === "This month") {
-        filter_date.value = `${(mm <= 9 ? "0" + mm : "")}/${yy}`
-    } else if (flt === "Last month") {
-        if (parseInt(mm) === 1) {
-            mm = 12;
-        } else {
-            mm = mm - 1;
-        }
-        filter_date.value = `${(mm <= 9 ? "0" + mm : "")}/${yy}`
-    } else if (flt === "This month last year") {
-        yy = yy - 1;
-        filter_date.value = `${(mm <= 9 ? "0" + mm : "")}/${yy}`
-    }
-
-    Refresh();
 }
 </script>
 {{end}}
