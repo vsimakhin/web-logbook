@@ -5,9 +5,7 @@
 License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
 {{ end }}
 
-{{ define "css" }}
-<link href="/static/css/jquery-ui.min.css" rel="stylesheet" />
-{{ end }}
+{{ define "css" }}{{ end }}
 
 {{ define "content" }}
 {{$api := .API}}
@@ -153,17 +151,70 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
 {{ block "license-record-js" .}}{{ end }}
 <script>
 window.onload = function() {
-    $( function() {
-        $( "#issued" ).datepicker({
-            dateFormat: "dd/mm/yy"
+    $(function() {
+        // issued
+        $('input[name="issued"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD/MM/YYYY',
+            },
+            autoUpdateInput: false,
+            autoApply: true,
+        }, function(start, end, label) {
+            $(this).val(start.format('DD/MM/YYYY'));
         });
-        $( "#valid_from" ).datepicker({
-            dateFormat: "dd/mm/yy"
+
+        $('input[name="issued"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD/MM/YYYY'));
         });
-        $( "#valid_until" ).datepicker({
-            dateFormat: "dd/mm/yy"
+
+        $('input[name="issued"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
         });
-    } );
+
+        // valid from
+        $('input[name="valid_from"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD/MM/YYYY',
+            },
+            autoUpdateInput: false,
+            autoApply: true,
+        }, function(start, end, label) {
+            $(this).val(start.format('DD/MM/YYYY'));
+        });
+
+        $('input[name="valid_from"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD/MM/YYYY'));
+        });
+
+        $('input[name="valid_from"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+
+        // valid until
+        $('input[name="valid_until"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD/MM/YYYY',
+            },
+            autoUpdateInput: false,
+            autoApply: true,
+        }, function(start, end, label) {
+            $(this).val(start.format('DD/MM/YYYY'));
+        });
+
+        $('input[name="valid_until"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD/MM/YYYY'));
+        });
+
+        $('input[name="valid_until"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+    });
 };
 </script>
 {{ end }}
