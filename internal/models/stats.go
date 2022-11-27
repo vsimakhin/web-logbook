@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"time"
 )
 
@@ -75,7 +74,6 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 
 	var fr FlightRecord
 	var totals FlightRecord
-	var condition string
 
 	sqlQuery := "SELECT m_date, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, " +
@@ -83,7 +81,7 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
 		"FROM logbook_view"
 
-	rows, err := m.DB.QueryContext(ctx, fmt.Sprintf("%s %s", sqlQuery, condition))
+	rows, err := m.DB.QueryContext(ctx, sqlQuery)
 
 	if err != nil {
 		return totals, err
