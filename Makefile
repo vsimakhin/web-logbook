@@ -2,9 +2,7 @@ PORT=4000
 ENV=dev
 
 XC_OS ?= linux darwin windows
-XC_ARCH ?= amd64 arm64
-XC_OS ?= linux
-XC_ARCH ?= amd64
+XC_ARCH ?= amd64 arm64 arm
 BIN="./dist"
 BINARY_NAME="web-logbook"
 
@@ -35,6 +33,7 @@ build_all: test clean
 	@for OS in $(XC_OS); do \
 		for ARCH in $(XC_ARCH); do \
 			[ $$OS = "windows" ] && [ $$ARCH = "arm64" ] && continue; \
+			[ $$OS != "linux" ] && [ $$ARCH = "arm" ] && continue; \
 			echo Building $$OS/$$ARCH to $(BIN)/$(BINARY_NAME)-$$OS-$$ARCH; \
 			CGO_ENABLED=0 \
 			GOOS=$$OS \
