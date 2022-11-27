@@ -84,6 +84,9 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["Settings"] = APISettings
 	td.API["SettingsAircraftClasses"] = APISettingsAircraftClasses
 	td.API["Stats"] = APIStats
+	td.API["StatsTotals"] = APIStatsTotals
+	td.API["StatsTotalsByType"] = APIStatsTotalsByType
+	td.API["StatsTotalsByClass"] = APIStatsTotalsByClass
 	td.API["Map"] = APIMap
 	td.API["MapData"] = APIMapData
 	td.API["Licensing"] = APILicensing

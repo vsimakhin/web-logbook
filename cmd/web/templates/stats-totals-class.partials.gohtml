@@ -1,8 +1,7 @@
 {{define "stats-totals-class"}}
-{{$totalsByClass := index .Data "totalsByClass"}}
 
 <br>
-<table id="totals_by_class" class="table table-striped table-bordered nowrap">
+<table id="totals_by_class" class="table table-striped table-bordered nowrap" width="100%">
     <thead>
         <tr class="align-top text-center">
             <th>Class</th>
@@ -21,25 +20,5 @@
             <th onclick="StatsClick('totals_by_class', 13);"><a class="nav-link th-hover" href=#>Total</a></th>
         </tr>
     </thead>
-    <tbody>
-        {{range $key, $value := $totalsByClass}}
-        <tr>
-            <td><strong>{{$key}}</strong></td>
-            <td>{{$value.Time.SE}}</td>
-            <td>{{$value.Time.ME}}</td>
-            <td>{{$value.Time.MCC}}</td>
-            <td>{{$value.Time.Night}}</td>
-            <td>{{$value.Time.IFR}}</td>
-            <td>{{$value.Time.PIC}}</td>
-            <td>{{$value.Time.CoPilot}}</td>
-            <td>{{$value.Time.Dual}}</td>
-            <td>{{$value.Time.Instructor}}</td>
-            <td>{{$value.SIM.Time}}</td>
-            <td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>
-            <td>{{formatNumber $value.Distance}}</td>
-            <td><strong>{{if eq $key "SIM"}}{{$value.SIM.Time}}{{else}}{{$value.Time.Total}}{{end}}</strong></td>
-        </tr>
-        {{end}}
-    </tbody>
 </table>
 {{end}}

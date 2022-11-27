@@ -156,8 +156,6 @@ i {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* div.dataTables_filter input{
-  margin-left:.5em;
-  display:inline-block;
-  width:100px !important;
-} */
+.datatable-bold-column {
+  font-weight:bold;
+}

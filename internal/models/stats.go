@@ -68,7 +68,8 @@ func (m *DBModel) CreateDistanceCache() {
 }
 
 // GetTotals calculates totals
-func (m *DBModel) GetTotals(days int) (FlightRecord, error) {
+// startDate and endDate are in the format 20060102
+func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -76,24 +77,11 @@ func (m *DBModel) GetTotals(days int) (FlightRecord, error) {
 	var totals FlightRecord
 	var condition string
 
-	sqlQuery := "SELECT se_time, me_time, mcc_time, total_time, " +
+	sqlQuery := "SELECT m_date, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, " +
 		"night_time, ifr_time, pic_time, co_pilot_time, " +
 		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
 		"FROM logbook_view"
-
-	if days == AllTotals {
-		// all totals
-		condition = ""
-	} else {
-		if days == ThisYear {
-			condition = fmt.Sprintf(`WHERE SUBSTR(m_date,0,5) = "%s";`, time.Now().UTC().Format("2006"))
-		} else if days == ThisMonth {
-			condition = fmt.Sprintf(`WHERE SUBSTR(m_date,0,7) = "%s";`, time.Now().UTC().Format("200601"))
-		} else {
-			condition = fmt.Sprintf(`WHERE m_date>="%s"`, time.Now().AddDate(0, 0, -1*days).UTC().Format("20060102"))
-		}
-	}
 
 	rows, err := m.DB.QueryContext(ctx, fmt.Sprintf("%s %s", sqlQuery, condition))
 
@@ -103,7 +91,7 @@ func (m *DBModel) GetTotals(days int) (FlightRecord, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+		err := rows.Scan(&fr.MDate, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
 			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
@@ -112,10 +100,10 @@ func (m *DBModel) GetTotals(days int) (FlightRecord, error) {
 			return fr, err
 		}
 
-		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
-
-		totals = CalculateTotals(totals, fr)
-
+		if (startDate <= fr.MDate) && (fr.MDate <= endDate) {
+			fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+			totals = CalculateTotals(totals, fr)
+		}
 	}
 
 	return totals, nil
@@ -164,17 +152,18 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 }
 
 // GetTotalsByAircraftType calculates totals by aircraft type
-func (m *DBModel) GetTotalsByAircraftType() (map[string]FlightRecord, error) {
+// startDate and endDate are in the format 20060102
+func (m *DBModel) GetTotalsByAircraftType(startDate string, endDate string) (map[string]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var fr, emptyone FlightRecord
 	totals := make(map[string]FlightRecord)
 
-	query := "SELECT aircraft_model, se_time, me_time, mcc_time, total_time, " +
+	query := "SELECT m_date, aircraft_model, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
 		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
-		"FROM logbook_view ORDER BY m_date"
+		"FROM logbook_view"
 	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
@@ -183,7 +172,7 @@ func (m *DBModel) GetTotalsByAircraftType() (map[string]FlightRecord, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+		err := rows.Scan(&fr.MDate, &fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
 			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
@@ -192,25 +181,28 @@ func (m *DBModel) GetTotalsByAircraftType() (map[string]FlightRecord, error) {
 			return totals, err
 		}
 
-		if fr.Aircraft.Model == "" {
-			// looks like it's a simulator record
-			fr.Aircraft.Model = "SIM"
+		if (startDate <= fr.MDate) && (fr.MDate <= endDate) {
+			if fr.Aircraft.Model == "" {
+				// looks like it's a simulator record
+				fr.Aircraft.Model = "SIM"
+			}
+
+			if _, ok := totals[fr.Aircraft.Model]; !ok {
+				totals[fr.Aircraft.Model] = emptyone
+			}
+
+			fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+
+			totals[fr.Aircraft.Model] = CalculateTotals(totals[fr.Aircraft.Model], fr)
 		}
-
-		if _, ok := totals[fr.Aircraft.Model]; !ok {
-			totals[fr.Aircraft.Model] = emptyone
-		}
-
-		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
-
-		totals[fr.Aircraft.Model] = CalculateTotals(totals[fr.Aircraft.Model], fr)
 	}
 
 	return totals, nil
 }
 
 // GetTotalsByAircraftClass calculates totals by aircraft class
-func (m *DBModel) GetTotalsByAircraftClass() (map[string]FlightRecord, error) {
+// startDate and endDate are in the format 20060102
+func (m *DBModel) GetTotalsByAircraftClass(startDate string, endDate string) (map[string]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -222,10 +214,10 @@ func (m *DBModel) GetTotalsByAircraftClass() (map[string]FlightRecord, error) {
 		return totals, err
 	}
 
-	query := "SELECT aircraft_model, se_time, me_time, mcc_time, total_time, " +
+	query := "SELECT m_date, aircraft_model, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
 		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
-		"FROM logbook_view ORDER BY m_date"
+		"FROM logbook_view"
 	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {
@@ -234,7 +226,7 @@ func (m *DBModel) GetTotalsByAircraftClass() (map[string]FlightRecord, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+		err := rows.Scan(&fr.MDate, &fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
 			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
@@ -243,20 +235,22 @@ func (m *DBModel) GetTotalsByAircraftClass() (map[string]FlightRecord, error) {
 			return totals, err
 		}
 
-		if fr.Aircraft.Model == "" {
-			// looks like it's a simulator record
-			fr.Aircraft.Model = "SIM"
-		}
-
-		classes := getClassesForModel(settings.AircraftClasses, fr.Aircraft.Model)
-		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
-
-		for _, class := range classes {
-			if _, ok := totals[class]; !ok {
-				totals[class] = emptyone
+		if (startDate <= fr.MDate) && (fr.MDate <= endDate) {
+			if fr.Aircraft.Model == "" {
+				// looks like it's a simulator record
+				fr.Aircraft.Model = "SIM"
 			}
 
-			totals[class] = CalculateTotals(totals[class], fr)
+			classes := getClassesForModel(settings.AircraftClasses, fr.Aircraft.Model)
+			fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+
+			for _, class := range classes {
+				if _, ok := totals[class]; !ok {
+					totals[class] = emptyone
+				}
+
+				totals[class] = CalculateTotals(totals[class], fr)
+			}
 		}
 
 	}
