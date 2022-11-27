@@ -6,7 +6,6 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 {{ end }}
 
 {{ define "css" }}
-<link href="/static/css/jquery-ui.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="/static/css/ol.css">
 <style>
     .ol-map {
@@ -314,9 +313,16 @@ window.onload = function() {
     DepArrChange();
     {{if $fr.UUID}}LoadAttachments(){{end}}
 
-    $( function() {
-        $( "#date" ).datepicker({
-            dateFormat: "dd/mm/yy"
+    $(function() {
+        $('input[name="date"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD/MM/YYYY'
+            },
+            autoApply: true,
+        }, function(start, end, label) {
+            $(this).val(start.format('DD/MM/YYYY'));
         });
     });
 

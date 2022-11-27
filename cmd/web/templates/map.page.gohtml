@@ -13,16 +13,13 @@
 {{ end }}
 
 {{ define "content" }}
-{{$cd := index .Data "current_date"}}
-
 <div class="row">
     <div class="col-md-2">
         <div class="row">
             <form name="filters" id="filters" class="d-block" autocomplete="off">
                 <div class="mb-2">
                     <label for="filter_date" class="form-label">Date Filter:</label>
-                    <input type="text" class="form-control form-control-sm" id="filter_date" name="filter_date" value="{{$cd}}" placeholder="Date Filter"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="For example, 01/{{$cd}} will show you the routes and airports for the January {{$cd}}">
+                    <input class="form-control form-control-sm" type="text" id="daterange" name="daterange" value="Date filters...">
                 </div>
                 <div class="mb-2">
                     <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
@@ -36,22 +33,6 @@
         <hr>
         <div class="row">
             <div id="some_stats"></div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-filter-circle-fill"></i> Predefined Filters
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" onclick="Filter('This year');">This year</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="Filter('Last year');">Last year</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" onclick="Filter('This month');">This month</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="Filter('Last month');">Last month</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="Filter('This month last year');">This month last year</a></li>
-                </ul>
-            </div>
         </div>
         <hr>
         <div class="row">
@@ -71,8 +52,44 @@
 {{ block "map-js" . }}{{ end }}
 
 <script>
-window.onload = function() {
-    Refresh();
-};
+var start = moment().startOf('year');
+var end = moment().endOf('year');
+
+$(document).ready( function () {
+    function setrange (start, end) {
+        $('input[name="daterange"]').val(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+        Refresh();
+    }
+
+    // daterange logic
+    $('input[name="daterange"]').daterangepicker({
+        opens: 'right',
+        autoUpdateInput: false,
+        ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'This Year': [moment().startOf('year'), moment().endOf('year')],
+            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+        },
+        alwaysShowCalendars: true,
+        linkedCalendars: false,
+        startDate: start,
+        endDate: end,
+    });
+
+    setrange(start, end);
+
+    $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+        start = picker.startDate
+        end = picker.endDate
+        setrange(start, end);
+    });
+
+    {{/* Refresh(); */}}
+});
 </script>
 {{ end }}

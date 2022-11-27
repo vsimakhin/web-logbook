@@ -1,11 +1,5 @@
 package models
 
-const Last30Days = 30
-const Last90Days = 90
-const ThisYear = 999
-const ThisMonth = 888
-const AllTotals = 0
-
 const AllAircrafts = 0
 const LastAircrafts = 1
 
@@ -156,4 +150,9 @@ type Attachment struct {
 	RecordID     string `json:"record_id"`
 	DocumentName string `json:"document_name"`
 	Document     []byte
+}
+
+// TableData is a type for Datatables
+type TableData struct {
+	Data [][]string `json:"data"`
 }

@@ -97,66 +97,18 @@ func InitMock(mock sqlmock.Sqlmock) {
 		WithArgs(`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","aircraft_classes":null,"auth_enabled":false,"login":"","password":"","hash":"","enable_flightrecord_help":false,"export_a4":{"logbook_rows":0,"fill":0,"left_margin":0,"left_margin_a":0,"left_margin_b":0,"top_margin":0,"body_row_height":0,"footer_row_height":0,"page_breaks":"","columns":{"col1":0,"col2":0,"col3":0,"col4":0,"col5":0,"col6":0,"col7":0,"col8":0,"col9":0,"col10":0,"col11":0,"col12":0,"col13":0,"col14":0,"col15":0,"col16":0,"col17":0,"col18":0,"col19":0,"col20":0,"col21":0,"col22":0,"col23":0}},"export_a5":{"logbook_rows":0,"fill":0,"left_margin":0,"left_margin_a":0,"left_margin_b":0,"top_margin":0,"body_row_height":0,"footer_row_height":0,"page_breaks":"","columns":{"col1":0,"col2":0,"col3":0,"col4":0,"col5":0,"col6":0,"col7":0,"col8":0,"col9":0,"col10":0,"col11":0,"col12":0,"col13":0,"col14":0,"col15":0,"col16":0,"col17":0,"col18":0,"col19":0,"col20":0,"col21":0,"col22":0,"col23":0}},"export_xls":{"convert_time":false},"export_csv":{"delimeter":"","crlf":false}}`).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	// mock GetTotals
-	mock.ExpectQuery("SELECT (.+) FROM logbook_view WHERE").WithArgs().
-		WillReturnRows(
-			mock.NewRows([]string{
-				"se_time", "me_time", "mcc_time", "total_time",
-				"day_landings", "night_landings",
-				"night_time", "ifr_time", "pic_time", "co_pilot_time",
-				"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
-			}).AddRow(
-				"2:00", "2:00", "2:00", "2:00",
-				1, 2,
-				"2:00", "2:00", "2:00", "2:00",
-				"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
-			),
-		)
-
-	// mock GetTotals without params
-	mock.ExpectQuery("SELECT (.+) arrival_place FROM logbook_view ").WithArgs().
-		WillReturnRows(
-			mock.NewRows([]string{
-				"se_time", "me_time", "mcc_time", "total_time",
-				"day_landings", "night_landings",
-				"night_time", "ifr_time", "pic_time", "co_pilot_time",
-				"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
-			}).AddRow(
-				"2:00", "2:00", "2:00", "2:00",
-				1, 2,
-				"2:00", "2:00", "2:00", "2:00",
-				"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
-			),
-		)
-
-	// mock GetTotals with WHERE m_date
-	mock.ExpectQuery("SELECT (.+) FROM logbook_view WHERE m_date").WithArgs().
-		WillReturnRows(
-			mock.NewRows([]string{
-				"se_time", "me_time", "mcc_time", "total_time",
-				"day_landings", "night_landings",
-				"night_time", "ifr_time", "pic_time", "co_pilot_time",
-				"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
-			}).AddRow(
-				"2:00", "2:00", "2:00", "2:00",
-				1, 2,
-				"2:00", "2:00", "2:00", "2:00",
-				"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
-			),
-		)
-
-	// mock GetTotals with WHERE SUBSTR (need it 2 times for stats page)
-	for i := 1; i <= 2; i++ {
-		mock.ExpectQuery("SELECT (.+) FROM logbook_view WHERE SUBSTR").WithArgs().
+	// mock GetTotals (several mocks due to several requests)
+	for i := range []int{1, 2, 3, 4, 5} {
+		mock.ExpectQuery("SELECT (.+) FROM logbook_view").WithArgs().
 			WillReturnRows(
 				mock.NewRows([]string{
-					"se_time", "me_time", "mcc_time", "total_time",
+					"m_date", "se_time", "me_time", "mcc_time", "total_time",
 					"day_landings", "night_landings",
 					"night_time", "ifr_time", "pic_time", "co_pilot_time",
 					"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
 				}).AddRow(
-					"2:00", "2:00", "2:00", "2:00",
-					1, 2,
+					"20220101", "2:00", "2:00", "2:00", "2:00",
+					i, i,
 					"2:00", "2:00", "2:00", "2:00",
 					"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
 				),
@@ -180,15 +132,15 @@ func InitMock(mock sqlmock.Sqlmock) {
 		)
 
 	// mock GetTotalsByAircraftType
-	mock.ExpectQuery("SELECT aircraft_model(.+) arrival_place FROM logbook_view ORDER BY m_date").WithArgs().
+	mock.ExpectQuery("SELECT m_date, aircraft_model(.+) FROM logbook_view").WithArgs().
 		WillReturnRows(
 			mock.NewRows([]string{
-				"aircraft_model", "se_time", "me_time", "mcc_time", "total_time",
+				"m_date", "aircraft_model", "se_time", "me_time", "mcc_time", "total_time",
 				"day_landings", "night_landings",
 				"night_time", "ifr_time", "pic_time", "co_pilot_time",
 				"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
 			}).AddRow(
-				"C172", "2:00", "2:00", "2:00", "2:00",
+				"20220101", "C172", "2:00", "2:00", "2:00", "2:00",
 				1, 2,
 				"2:00", "2:00", "2:00", "2:00",
 				"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
@@ -196,15 +148,15 @@ func InitMock(mock sqlmock.Sqlmock) {
 		)
 
 	// mock GetTotalsByAircraftClass
-	mock.ExpectQuery("SELECT aircraft_model(.+) arrival_place FROM logbook_view ORDER BY m_date").WithArgs().
+	mock.ExpectQuery("SELECT m_date, aircraft_model(.+) arrival_place FROM logbook_view").WithArgs().
 		WillReturnRows(
 			mock.NewRows([]string{
-				"aircraft_model", "se_time", "me_time", "mcc_time", "total_time",
+				"m_date", "aircraft_model", "se_time", "me_time", "mcc_time", "total_time",
 				"day_landings", "night_landings",
 				"night_time", "ifr_time", "pic_time", "co_pilot_time",
 				"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
 			}).AddRow(
-				"C172", "2:00", "2:00", "2:00", "2:00",
+				"20220101", "C172", "2:00", "2:00", "2:00", "2:00",
 				1, 2,
 				"2:00", "2:00", "2:00", "2:00",
 				"2:00", "2:00", "2:00", "ZZZZ", "XXXX",

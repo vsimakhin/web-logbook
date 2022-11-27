@@ -31,3 +31,15 @@ func TestHandlerStats(t *testing.T) {
 	assert.Contains(t, string(responseBody), `<div class="tab-pane fade" id="nav-totals-by-class" role="tabpanel" aria-labelledby="nav-totals-by-class">`)
 
 }
+
+func TestHandlerStatsTotals(t *testing.T) {
+
+	app := initTestApp()
+	srv := httptest.NewServer(app.routes())
+	defer srv.Close()
+
+	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIStatsTotals))
+
+	assert.Equal(t, resp.StatusCode, http.StatusOK)
+
+}
