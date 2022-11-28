@@ -1,6 +1,10 @@
 package models
 
-import "github.com/DATA-DOG/go-sqlmock"
+import (
+	"database/sql/driver"
+
+	"github.com/DATA-DOG/go-sqlmock"
+)
 
 // InitMock is a common sqlmock init function
 // which is used by tests in package models and main
@@ -195,4 +199,76 @@ func InitMock(mock sqlmock.Sqlmock) {
 
 	// any order of the queries
 	mock.MatchExpectationsInOrder(false)
+}
+
+var SQLMock = make(map[string]Mock)
+
+func InitSQLMockValues() {
+	// GetSettings
+	SQLMock["GetSettings"] = Mock{
+		Query:  "SELECT (.+) FROM settings2 WHERE id=0",
+		Rows:   []string{"settings"},
+		Values: []driver.Value{`{"owner_name":"Owner Name","signature_text":"I certify that the entries in this log are true.","aircraft_classes":null,"auth_enabled":false,"login":"","password":"","hash":"","enable_flightrecord_help":false,"export_a4":{"logbook_rows":0,"fill":0,"left_margin":0,"left_margin_a":0,"left_margin_b":0,"top_margin":0,"body_row_height":0,"footer_row_height":0,"page_breaks":"","columns":{"col1":0,"col2":0,"col3":0,"col4":0,"col5":0,"col6":0,"col7":0,"col8":0,"col9":0,"col10":0,"col11":0,"col12":0,"col13":0,"col14":0,"col15":0,"col16":0,"col17":0,"col18":0,"col19":0,"col20":0,"col21":0,"col22":0,"col23":0}},"export_a5":{"logbook_rows":0,"fill":0,"left_margin":0,"left_margin_a":0,"left_margin_b":0,"top_margin":0,"body_row_height":0,"footer_row_height":0,"page_breaks":"","columns":{"col1":0,"col2":0,"col3":0,"col4":0,"col5":0,"col6":0,"col7":0,"col8":0,"col9":0,"col10":0,"col11":0,"col12":0,"col13":0,"col14":0,"col15":0,"col16":0,"col17":0,"col18":0,"col19":0,"col20":0,"col21":0,"col22":0,"col23":0}},"export_xls":{"convert_time":false},"export_csv":{"delimeter":"","crlf":false}}`},
+	}
+
+	// GetTotals
+	SQLMock["GetTotals"] = Mock{
+		Query: "SELECT (.+) FROM logbook_view",
+		Rows: []string{
+			"m_date", "se_time", "me_time", "mcc_time", "total_time",
+			"day_landings", "night_landings",
+			"night_time", "ifr_time", "pic_time", "co_pilot_time",
+			"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
+		},
+		Values: []driver.Value{"20220101", "2:00", "2:00", "2:00", "2:00",
+			1, 1,
+			"2:00", "2:00", "2:00", "2:00",
+			"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
+		},
+	}
+
+	// GetTotals by Class or Type
+	SQLMock["GetTotalsClassType"] = Mock{
+		Query: "SELECT (.+) FROM logbook_view",
+		Rows: []string{
+			"m_date", "aircraft_model", "se_time", "me_time", "mcc_time", "total_time",
+			"day_landings", "night_landings",
+			"night_time", "ifr_time", "pic_time", "co_pilot_time",
+			"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
+		},
+		Values: []driver.Value{"20220101", "MODEL", "2:00", "2:00", "2:00", "2:00",
+			1, 1,
+			"2:00", "2:00", "2:00", "2:00",
+			"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
+		},
+	}
+
+	// GetTotals by Year
+	SQLMock["GetTotalsYear"] = Mock{
+		Query: "SELECT SUBSTR(.+) FROM logbook_view ORDER BY m_date",
+		Rows: []string{
+			"m_date", "se_time", "me_time", "mcc_time", "total_time",
+			"day_landings", "night_landings",
+			"night_time", "ifr_time", "pic_time", "co_pilot_time",
+			"dual_time", "instructor_time", "sim_time", "departure_place", "arrival_place",
+		},
+		Values: []driver.Value{"2022", "2:00", "2:00", "2:00", "2:00",
+			1, 1,
+			"2:00", "2:00", "2:00", "2:00",
+			"2:00", "2:00", "2:00", "ZZZZ", "XXXX",
+		},
+	}
+
+}
+
+func AddMock(mock sqlmock.Sqlmock, item string) {
+	if len(SQLMock[item].Args) == 0 {
+		mock.ExpectQuery(SQLMock[item].Query).WithArgs().
+			WillReturnRows(mock.NewRows(SQLMock[item].Rows).
+				AddRow(SQLMock[item].Values...))
+	} else {
+		mock.ExpectQuery(SQLMock[item].Query).WithArgs(SQLMock[item].Args).
+			WillReturnRows(mock.NewRows(SQLMock[item].Rows).
+				AddRow(SQLMock[item].Values...))
+	}
 }

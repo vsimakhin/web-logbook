@@ -15,7 +15,7 @@ clean:
 
 ## tests
 test:
-	@go test -v ./...
+	@go test -v ./... -coverpkg=./...
 
 ## build: builds the binaty
 build: clean
