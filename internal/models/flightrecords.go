@@ -19,7 +19,7 @@ func atod(value string) time.Duration {
 
 	duration, err := time.ParseDuration(strTime)
 	if err != nil {
-		fmt.Printf("Error parsing time %s", strTime)
+		fmt.Printf("Error parsing time %s\n", strTime)
 		duration, _ = time.ParseDuration("0h0m")
 	}
 

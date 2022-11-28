@@ -166,7 +166,7 @@ func (m *DBModel) DeleteLicenseAttachment(uuid string) error {
 
 	var err error
 
-	query := `UPDATE licensing SET	document_name = "", document = null WHERE uuid = ?`
+	query := `UPDATE licensing SET document_name = "", document = null WHERE uuid = ?`
 	_, err = m.DB.ExecContext(ctx, query, uuid)
 
 	if err != nil {

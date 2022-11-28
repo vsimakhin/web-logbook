@@ -366,6 +366,125 @@ func InitSQLMockValues() {
 	SQLMock["DeleteAttachmentsForFlightRecord"] = Mock{
 		Query: "DELETE FROM attachments WHERE record_id",
 	}
+
+	// GetFlightRecords
+	SQLMock["GetFlightRecords"] = Mock{
+		Query: "SELECT (.+) FROM logbook_view ORDER BY m_date desc, departure_time desc",
+		Rows: []string{
+			"uuid", "date", "m_date", "departure_place", "departure_time",
+			"arrival_place", "arrival_time", "aircraft_model", "reg_name",
+			"se_time", "me_time", "mcc_time", "total_time", "day_landings", "night_landings",
+			"night_time", "ifr_time", "pic_time", "co_pilot_time", "dual_time", "instructor_time",
+			"sim_type", "sim_time", "pic_name", "remarks",
+		},
+		Values: []driver.Value{
+			"uuid", "01/02/2022", "20220201", "LKPR", "1000",
+			"EDDM", "1200", "C152", "OK-XXX",
+			"2:00", "2:00", "2:00", "2:00", 1, 2,
+			"2:00", "2:00", "2:00", "2:00", "2:00", "2:00",
+			"SIM", "2:00", "Self", "Remarks",
+		},
+	}
+
+	// GetFlightRecordByID
+	SQLMock["GetFlightRecordByID"] = Mock{
+		Query: "SELECT (.+) FROM logbook_view WHERE uuid",
+		Rows: []string{
+			"uuid", "date", "m_date", "departure_place", "departure_time",
+			"arrival_place", "arrival_time", "aircraft_model", "reg_name",
+			"se_time", "me_time", "mcc_time", "total_time", "day_landings", "night_landings",
+			"night_time", "ifr_time", "pic_time", "co_pilot_time", "dual_time", "instructor_time",
+			"sim_type", "sim_time", "pic_name", "remarks",
+		},
+		Values: []driver.Value{
+			"uuid", "01/02/2022", "20220201", "LKPR", "1000",
+			"EDDM", "1200", "C152", "OK-XXX",
+			"2:00", "2:00", "2:00", "2:00", 1, 2,
+			"2:00", "2:00", "2:00", "2:00", "2:00", "2:00",
+			"SIM", "2:00", "Self", "Remarks",
+		},
+		Args: []driver.Value{
+			"uuid",
+		},
+	}
+
+	// UpdateFlightRecord
+	SQLMock["UpdateFlightRecord"] = Mock{
+		Query: "UPDATE logbook SET",
+	}
+
+	// InsertFlightRecord
+	SQLMock["InsertFlightRecord"] = Mock{
+		Query: "INSERT INTO logbook \\(uuid, date, departure_place, departure_time, " +
+			"arrival_place, arrival_time, aircraft_model, reg_name, se_time, me_time, mcc_time, " +
+			"total_time, day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
+			"dual_time, instructor_time, sim_type, sim_time, pic_name, remarks\\)",
+	}
+
+	// DeleteFlightRecord
+	SQLMock["DeleteFlightRecord"] = Mock{
+		Query: "DELETE FROM logbook WHERE uuid",
+	}
+
+	// GetLicenses
+	SQLMock["GetLicenses"] = Mock{
+		Query: "SELECT (.+) FROM licensing ORDER BY category, name",
+		Rows: []string{
+			"uuid", "category", "name", "number", "issued",
+			"valid_from", "valid_until", "document_name",
+		},
+		Values: []driver.Value{
+			"uuid", "category", "name", "number", "issued",
+			"01/01/2022", "01/01/2023", "document_name",
+		},
+	}
+
+	// GetLicenseRecordByID
+	SQLMock["GetLicenseRecordByID"] = Mock{
+		Query: "SELECT (.+) FROM licensing WHERE uuid",
+		Rows: []string{
+			"uuid", "category", "name", "number", "issued",
+			"valid_from", "valid_until", "remarks", "document_name", "document",
+		},
+		Values: []driver.Value{
+			"uuid", "category", "name", "number", "issued",
+			"01/01/2022", "01/01/2023", "remarks", "document_name", "document",
+		},
+		Args: []driver.Value{
+			"uuid",
+		},
+	}
+
+	// GetLicensesCategory
+	SQLMock["GetLicensesCategory"] = Mock{
+		Query: "SELECT category FROM licensing GROUP BY category ORDER BY category",
+		Rows: []string{
+			"category",
+		},
+		Values: []driver.Value{
+			"category",
+		},
+	}
+
+	// UpdateLicenseRecord
+	SQLMock["UpdateLicenseRecord"] = Mock{
+		Query: "UPDATE licensing SET",
+	}
+
+	// InsertLicenseRecord
+	SQLMock["InsertLicenseRecord"] = Mock{
+		Query: "INSERT INTO licensing",
+	}
+
+	// DeleteLicenseRecord
+	SQLMock["DeleteLicenseRecord"] = Mock{
+		Query: "DELETE FROM licensing WHERE uuid",
+	}
+
+	// DeleteLicenseAttachment
+	SQLMock["DeleteLicenseAttachment"] = Mock{
+		Query: "UPDATE licensing SET document_name",
+	}
 }
 
 func AddMock(mock sqlmock.Sqlmock, item string) {
