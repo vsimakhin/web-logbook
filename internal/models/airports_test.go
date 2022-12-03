@@ -16,8 +16,8 @@ func TestGetAirportByID(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, ap.ICAO, "XXXX")
-	assert.Equal(t, ap.IATA, "XXX")
+	assert.Equal(t, "XXXX", ap.ICAO)
+	assert.Equal(t, "XXX", ap.IATA)
 }
 
 func TestGetAirports(t *testing.T) {
@@ -31,8 +31,8 @@ func TestGetAirports(t *testing.T) {
 	}
 
 	for _, ap := range aps {
-		assert.Equal(t, ap.ICAO, "XXXX")
-		assert.Equal(t, ap.IATA, "XXX")
+		assert.Equal(t, "XXXX", ap.ICAO)
+		assert.Equal(t, "XXX", ap.IATA)
 	}
 }
 
@@ -46,5 +46,5 @@ func TestGetAirportCount(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, c, 100)
+	assert.Equal(t, 100, c)
 }

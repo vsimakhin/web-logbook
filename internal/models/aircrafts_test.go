@@ -18,7 +18,7 @@ func TestGetAircrafts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, aircrafts["REG"], "MODEL")
+	assert.Equal(t, "MODEL", aircrafts["REG"])
 
 	// Last aircrafts
 	aircrafts, err = db.GetAircrafts(LastAircrafts)
@@ -26,5 +26,5 @@ func TestGetAircrafts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, aircrafts["REG"], "MODEL")
+	assert.Equal(t, "MODEL", aircrafts["REG"])
 }

@@ -16,8 +16,8 @@ func TestGetSettings(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, set.OwnerName, "Owner Name")
-	assert.Equal(t, set.SignatureText, "I certify that the entries in this log are true.")
+	assert.Equal(t, "Owner Name", set.OwnerName)
+	assert.Equal(t, "I certify that the entries in this log are true.", set.SignatureText)
 }
 
 func TestUpdateSettings(t *testing.T) {

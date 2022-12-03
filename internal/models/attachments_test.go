@@ -17,8 +17,8 @@ func TestGetAttachments(t *testing.T) {
 	}
 
 	for _, att := range atts {
-		assert.Equal(t, att.UUID, "UUID")
-		assert.Equal(t, att.RecordID, "RECORDID")
+		assert.Equal(t, "UUID", att.UUID)
+		assert.Equal(t, "RECORDID", att.RecordID)
 	}
 }
 
@@ -32,8 +32,8 @@ func TestGetAttachmentByID(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, att.UUID, "UUID")
-	assert.Equal(t, att.RecordID, "RECORDID")
+	assert.Equal(t, "UUID", att.UUID)
+	assert.Equal(t, "RECORDID", att.RecordID)
 }
 
 func TestInsertAttachment(t *testing.T) {

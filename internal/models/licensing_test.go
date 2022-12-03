@@ -17,9 +17,9 @@ func TestGetLicenses(t *testing.T) {
 	}
 
 	for _, lic := range lics {
-		assert.Equal(t, lic.UUID, "uuid")
-		assert.Equal(t, lic.Category, "category")
-		assert.Equal(t, lic.DocumentName, "document_name")
+		assert.Equal(t, "uuid", lic.UUID)
+		assert.Equal(t, "category", lic.Category)
+		assert.Equal(t, "document_name", lic.DocumentName)
 	}
 }
 
@@ -33,7 +33,7 @@ func TestGetLicenseRecordByID(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, lic.UUID, "uuid")
+	assert.Equal(t, "uuid", lic.UUID)
 }
 
 func TestGetLicensesCategory(t *testing.T) {
@@ -46,7 +46,7 @@ func TestGetLicensesCategory(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, cats[0], "category")
+	assert.Equal(t, "category", cats[0])
 }
 
 func TestUpdateLicenseRecord(t *testing.T) {

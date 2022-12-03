@@ -43,7 +43,7 @@ func TestHandlerStats(t *testing.T) {
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIStats))
 	responseBody, _ := ioutil.ReadAll(resp.Body)
 
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	// first tab with totals
 	assert.Contains(t, string(responseBody), `<div class="tab-pane fade show active" id="nav-totals" role="tabpanel" aria-labelledby="nav-totals-tab">`)
@@ -76,7 +76,7 @@ func TestHandlerStatsTotals(t *testing.T) {
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIStatsTotals))
 
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 }
 
@@ -92,7 +92,7 @@ func TestHandlerStatsByClass(t *testing.T) {
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIStatsTotalsByClass))
 
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 }
 
@@ -107,6 +107,6 @@ func TestHandlerStatsByType(t *testing.T) {
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIStatsTotalsByType))
 
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 }

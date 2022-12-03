@@ -16,7 +16,7 @@ func TestGetTotals(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, fr.Time.Total, "2:00")
+	assert.Equal(t, "2:00", fr.Time.Total)
 }
 
 func TestGetTotalsByAicraftType(t *testing.T) {
@@ -29,7 +29,7 @@ func TestGetTotalsByAicraftType(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, fr["MODEL"].Time.Total, "2:00")
+	assert.Equal(t, "2:00", fr["MODEL"].Time.Total)
 }
 
 func TestGetTotalsByAicraftClass(t *testing.T) {
@@ -43,7 +43,7 @@ func TestGetTotalsByAicraftClass(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, fr["MODEL"].Time.Total, "2:00")
+	assert.Equal(t, "2:00", fr["MODEL"].Time.Total)
 }
 
 func TestGetTotalsByYear(t *testing.T) {
@@ -56,5 +56,5 @@ func TestGetTotalsByYear(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, fr["2022"].Time.Total, "2:00")
+	assert.Equal(t, "2:00", fr["2022"].Time.Total)
 }

@@ -30,7 +30,7 @@ func TestGetFlightRecords(t *testing.T) {
 	}
 
 	for _, fr := range frs {
-		assert.Equal(t, fr.UUID, "uuid")
+		assert.Equal(t, "uuid", fr.UUID)
 	}
 }
 
@@ -129,7 +129,7 @@ func TestGetFlightRecordsByID(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, fr.UUID, "uuid")
+	assert.Equal(t, "uuid", fr.UUID)
 }
 
 func TestCalculateTotals(t *testing.T) {
@@ -149,17 +149,17 @@ func TestCalculateTotals(t *testing.T) {
 	fr.Landings.Night = 2
 	fr.SIM.Time = "2:00"
 
-	assert.Equal(t, CalculateTotals(fr, fr).Time.SE, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.ME, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.MCC, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.Total, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.Night, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.IFR, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.PIC, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.CoPilot, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.Dual, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Time.Instructor, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).SIM.Time, "4:00")
-	assert.Equal(t, CalculateTotals(fr, fr).Landings.Day, 2)
-	assert.Equal(t, CalculateTotals(fr, fr).Landings.Night, 4)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.SE)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.ME)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.MCC)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.Total)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.Night)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.IFR)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.PIC)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.CoPilot)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.Dual)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).Time.Instructor)
+	assert.Equal(t, "4:00", CalculateTotals(fr, fr).SIM.Time)
+	assert.Equal(t, 2, CalculateTotals(fr, fr).Landings.Day)
+	assert.Equal(t, 4, CalculateTotals(fr, fr).Landings.Night)
 }
