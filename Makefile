@@ -20,7 +20,7 @@ test:
 ## build: builds the binaty
 build: clean
 	@echo "Building..."
-	@go build -o dist/web-logbook ./cmd/web
+	@go build -ldflags="-s -w" -o dist/web-logbook ./cmd/web
 	@echo "Web-logbook built!"
 
 ## start: starts the web-logbook
@@ -38,7 +38,7 @@ build_all: test clean
 			CGO_ENABLED=0 \
 			GOOS=$$OS \
 			GOARCH=$$ARCH \
-			go build -trimpath \
+			go build -ldflags="-s -w" -trimpath \
 			-o=$(BIN)/$(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) ./cmd/web; \
 			[ $$OS = "windows" ] && (cd $(BIN); mv $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME).exe; zip -r $(BINARY_NAME)-$$OS-$$ARCH.zip $(BINARY_NAME)-$$OS-$$ARCH; cd ../) \
 				|| (cd $(BIN); tar czf $(BINARY_NAME)-$$OS-$$ARCH.tar.gz $(BINARY_NAME)-$$OS-$$ARCH; cd ../) ;\
