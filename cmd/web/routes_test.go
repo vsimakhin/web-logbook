@@ -8,7 +8,7 @@ import (
 
 func TestRoutes(t *testing.T) {
 
-	app := initTestApp()
+	app, _ := initTestApplication()
 
 	routes := []string{
 		APIRoot,

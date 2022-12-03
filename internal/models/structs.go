@@ -1,5 +1,7 @@
 package models
 
+import "database/sql/driver"
+
 const AllAircrafts = 0
 const LastAircrafts = 1
 
@@ -155,4 +157,12 @@ type Attachment struct {
 // TableData is a type for Datatables
 type TableData struct {
 	Data [][]string `json:"data"`
+}
+
+// Mock is a type for mocking sql requests
+type Mock struct {
+	Query  string
+	Rows   []string
+	Values []driver.Value
+	Args   []driver.Value
 }

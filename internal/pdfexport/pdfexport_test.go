@@ -45,9 +45,9 @@ func TestLogbookWidthHeaders(t *testing.T) {
 }
 
 func TestLogbookHeaders(t *testing.T) {
-	assert.Equal(t, len(header1), 12)
-	assert.Equal(t, len(header2), 13)
-	assert.Equal(t, len(header3), 23)
+	assert.Equal(t, 12, len(header1))
+	assert.Equal(t, 13, len(header2))
+	assert.Equal(t, 23, len(header3))
 }
 
 func TestFillLine(t *testing.T) {

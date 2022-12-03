@@ -5,27 +5,27 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-func TestHandlerAirportByID(t *testing.T) {
+func TestHandlerAircrafts(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetAirports")
+	models.AddMock(mock, "GetAircraftsAll")
+	models.AddMock(mock, "GetAircraftsLast")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
 
-	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, strings.ReplaceAll(APIAirportID, "{uuid}", "XXXX")))
+	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIAircrafts))
 	responseBody, _ := ioutil.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-
-	assert.Contains(t, string(responseBody), `{"icao":"XXXX","iata":"XXX","name":"Airport","city":"City","country":"Country","elevation":100,"lat":55.5,"lon":44.4}`)
+	assert.Equal(t, "application/json", resp.Header["Content-Type"][0])
+	assert.Equal(t, `{"REG":"MODEL"}`, string(responseBody))
 
 }

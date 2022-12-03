@@ -11,7 +11,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-func initTestApp() *application {
+func initTestApplication() (*application, sqlmock.Sqlmock) {
 	cfg := config{
 		port: 4000,
 		env:  "prod",
@@ -27,8 +27,10 @@ func initTestApp() *application {
 		errorLog.Panicf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	// init mock from models package
-	models.InitMock(mock)
+	models.InitSQLMockValues()
+
+	// any order of the queries
+	mock.MatchExpectationsInOrder(false)
 
 	// set up session
 	session = scs.New()
@@ -45,5 +47,5 @@ func initTestApp() *application {
 		isAuthEnabled: false,
 	}
 
-	return app
+	return app, mock
 }

@@ -11,6 +11,6 @@ func TestFormatRecord(t *testing.T) {
 	var e ExportCSV
 	var fr models.FlightRecord
 
-	assert.Equal(t, len(e.formatRecord(&fr)), 23)
-	assert.Equal(t, len(e.formatRecord(nil)), 23)
+	assert.Equal(t, 23, len(e.formatRecord(&fr)))
+	assert.Equal(t, 23, len(e.formatRecord(nil)))
 }
