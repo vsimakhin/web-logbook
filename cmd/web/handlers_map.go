@@ -3,8 +3,10 @@ package main
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/vsimakhin/web-logbook/internal/maprender"
+	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
 // HandlerStatsMap is a handler for Map page
@@ -13,7 +15,13 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 		app.infoLog.Println(APIMap)
 	}
 
+	classes, err := app.db.GetAircraftClasses()
+	if err != nil {
+		app.errorLog.Printf("cannot get aircraft classes - %s", err)
+	}
+
 	data := make(map[string]interface{})
+	data["classes"] = classes
 
 	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}, "common-js", "map-js"); err != nil {
 		app.errorLog.Println(err)
@@ -29,6 +37,10 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 	// get filter parameters
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
+	aircraftReg := strings.TrimSpace(r.URL.Query().Get("reg"))
+	aircraftModel := r.URL.Query().Get("model")
+	aircraftClass := r.URL.Query().Get("class")
+	routePlace := r.URL.Query().Get("place")
 	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
 
 	if app.config.env == "dev" {
@@ -49,12 +61,37 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	classes, err := app.db.GetAircraftClasses()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// filter flight records
+	var filteredFlightRecords []models.FlightRecord
+
+	for _, fr := range flightRecords {
+		if fr.Departure.Place == "" || fr.Arrival.Place == "" {
+			continue
+		}
+
+		// filters
+		if ((startDate <= fr.MDate) && (fr.MDate <= endDate)) &&
+			parameterFilter(fr.Aircraft.Reg, aircraftReg) &&
+			parameterFilter(fr.Aircraft.Model, aircraftModel) &&
+			parameterClassFilter(classes, fr.Aircraft.Model, aircraftClass) &&
+			(parameterFilter(fr.Arrival.Place, routePlace) || parameterFilter(fr.Departure.Place, routePlace)) {
+
+			filteredFlightRecords = append(filteredFlightRecords, fr)
+		}
+	}
+
 	render := maprender.MapRender{
-		FlightRecords:  flightRecords,
-		StartDate:      startDate,
-		EndDate:        endDate,
+		FlightRecords: filteredFlightRecords,
+		AirportsDB:    airports,
+
 		FilterNoRoutes: filterNoRoutes,
-		AirportsDB:     airports,
 	}
 	render.Render()
 

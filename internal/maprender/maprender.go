@@ -22,11 +22,10 @@ type Marker struct {
 }
 
 type MapRender struct {
-	FlightRecords  []models.FlightRecord
-	StartDate      string `json:"start_date"`
-	EndDate        string `json:"end_date"`
-	FilterNoRoutes bool   `json:"filter_noroutes"`
-	AirportsDB     map[string]models.Airport
+	FlightRecords []models.FlightRecord
+	AirportsDB    map[string]models.Airport
+
+	FilterNoRoutes bool
 
 	Lines   []Line
 	Markers []Marker
@@ -39,21 +38,15 @@ func (mr *MapRender) Render() {
 
 	// parsing
 	for _, fr := range mr.FlightRecords {
-		if fr.Departure.Place == "" || fr.Arrival.Place == "" {
-			continue
-		}
+		// add to the list of the airport markers departure and arrival
+		// it will be automatically a list of unique airports
+		airportMarkers[fr.Departure.Place] = struct{}{}
+		airportMarkers[fr.Arrival.Place] = struct{}{}
 
-		if (mr.StartDate <= fr.MDate) && (fr.MDate <= mr.EndDate) {
-			// add to the list of the airport markers departure and arrival
-			// it will be automatically a list of unique airports
-			airportMarkers[fr.Departure.Place] = struct{}{}
-			airportMarkers[fr.Arrival.Place] = struct{}{}
-
-			// the same for the route lines
-			if !mr.FilterNoRoutes {
-				if fr.Departure.Place != fr.Arrival.Place {
-					routeLines[fmt.Sprintf("%s-%s", fr.Departure.Place, fr.Arrival.Place)] = struct{}{}
-				}
+		// the same for the route lines
+		if !mr.FilterNoRoutes {
+			if fr.Departure.Place != fr.Arrival.Place {
+				routeLines[fmt.Sprintf("%s-%s", fr.Departure.Place, fr.Arrival.Place)] = struct{}{}
 			}
 		}
 	}

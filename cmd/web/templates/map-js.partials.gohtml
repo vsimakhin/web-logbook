@@ -174,9 +174,22 @@ function loadMap(parameters) {
 
 function Refresh() {
     let filter_noroutes = document.getElementById("filter_noroutes").checked;
-    parameters = "?start_date=" + encodeURIComponent(start.format("YYYYMMDD")) +
-        "&end_date=" + encodeURIComponent(end.format("YYYYMMDD")) +
-        "&filter_noroutes=" + encodeURIComponent(filter_noroutes);
+    let filter_reg = document.getElementById("filter_registration").value;
+    let filter_model = document.getElementById("filter_model").value;
+    let filter_class = document.getElementById("filter_class").value;
+    let filter_place = document.getElementById("filter_place").value;
+
+    const data = {
+        start_date: encodeURIComponent(start.format("YYYYMMDD")),
+        end_date: encodeURIComponent(end.format("YYYYMMDD")),
+        filter_noroutes: encodeURIComponent(filter_noroutes),
+        reg: encodeURIComponent(filter_reg),
+        model: encodeURIComponent(filter_model),
+        class: encodeURIComponent(filter_class),
+        place: encodeURIComponent(filter_place)
+    };
+
+    const parameters = "?" + new URLSearchParams(data);
 
     loadMap(parameters)
 }
