@@ -2,7 +2,7 @@
 
 This is a simple free EASA style logbook application written in golang.
 
-You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
+You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases). The changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
 Once you start the app it automatically creates a sqlite local db and start listening on a port 4000 by default. So you can open it in your standard web-browser on http://localhost:4000
 
