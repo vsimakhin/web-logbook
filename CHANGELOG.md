@@ -3,8 +3,8 @@
 ## Not released yet
 
 - Updated: unit tests were redesigned and updated, made them more reliable and not random sometimes. This doesn't affect UI or functionality, just internal thing
-- Added: `-ldflags="-s -w"` when compiling binaries. It removes the debug information and should reduce the final size.
-- Added: aircraft registration, model and class filter and route arrival/departure filter to the map page
+- New: Added `-ldflags="-s -w"` when compiling binaries. It removes the debug information and should reduce the final size.
+- New: Added few filters to the map page: aircraft registration, model and class, route arrival/departure.
 
 ## [2.9.0] - 27.11.2022
 
