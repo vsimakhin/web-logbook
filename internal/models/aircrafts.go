@@ -42,3 +42,10 @@ func (m *DBModel) GetAircrafts(condition int) (map[string]string, error) {
 
 	return aircrafts, nil
 }
+
+// GetAircraftClasses returns aircraft clasess
+func (m *DBModel) GetAircraftClasses() (map[string]string, error) {
+
+	settings, err := m.GetSettings()
+	return settings.AircraftClasses, err
+}

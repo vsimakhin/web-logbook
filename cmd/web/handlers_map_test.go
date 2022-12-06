@@ -13,7 +13,10 @@ import (
 
 func TestHandlerMap(t *testing.T) {
 
-	app, _ := initTestApplication()
+	app, mock := initTestApplication()
+
+	models.AddMock(mock, "GetSettings")
+
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
 
@@ -31,6 +34,7 @@ func TestHandlerMapGetData(t *testing.T) {
 
 	app, mock := initTestApplication()
 
+	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetFlightRecords")
 	models.AddMock(mock, "GetAirports")
 

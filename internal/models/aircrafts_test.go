@@ -28,3 +28,17 @@ func TestGetAircrafts(t *testing.T) {
 
 	assert.Equal(t, "MODEL", aircrafts["REG"])
 }
+
+func TestGetAircraftClasses(t *testing.T) {
+	db, mock := initDBModel(t)
+
+	AddMock(mock, "GetSettings")
+
+	classes, err := db.GetAircraftClasses()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, "model1,model2", classes["class"])
+
+}

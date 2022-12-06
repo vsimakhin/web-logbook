@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
+	"golang.org/x/exp/slices"
 )
 
 // writeJSON writes arbitrary data out as JSON
@@ -90,4 +91,34 @@ func (app *application) getShowFlightRecordHelpSetting() bool {
 	}
 
 	return settings.EnableFlightRecordHelp
+}
+
+// parameterFilter is some custom string compare function
+func parameterFilter(s string, substr string) bool {
+	if strings.TrimSpace(s) == "" {
+		return true
+	}
+
+	return strings.Contains(s, substr)
+}
+
+func parameterClassFilter(classes map[string]string, model string, filter string) bool {
+	if strings.TrimSpace(filter) == "" {
+		return true
+	}
+
+	var ac []string
+
+	for key, element := range classes {
+		if slices.Contains(strings.Split(element, ","), model) {
+			ac = append(ac, key)
+		}
+	}
+
+	// aircraft is not classified
+	if len(ac) == 0 {
+		ac = append(ac, model)
+	}
+
+	return slices.Contains(ac, filter)
 }
