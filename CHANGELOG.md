@@ -5,6 +5,7 @@
 - Updated: unit tests were redesigned and updated, made them more reliable and not random sometimes. This doesn't affect UI or functionality, just internal thing
 - New: Added `-ldflags="-s -w"` when compiling binaries. It removes the debug information and should reduce the final size.
 - New: Added few filters to the map page: aircraft registration, model and class, route arrival/departure.
+- New: Double click on the `PIC Name` will set `Self` value for the field
 
 ## [2.9.0] - 27.11.2022
 

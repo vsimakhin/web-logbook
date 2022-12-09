@@ -114,7 +114,8 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 <div class="col-md-6">
                     <label for="pic_name" class="form-label">PIC Name</label>
                     <input type="text" class="form-control form-control-sm" id="pic_name" name="pic_name" value="{{$fr.PIC}}"
-                        required="" autocomplete="pic_name">
+                        required="" autocomplete="pic_name" ondblclick="this.value='Self';"
+                        {{if $enable_help}}data-bs-toggle="tooltip" data-bs-placement="bottom" title="Double Click will set 'Self' value"{{end}}>
                 </div>
             </div>
 
