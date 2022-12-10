@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released yet
+## [2.10.0] - 10.12.2022
 
 - Updated: unit tests were redesigned and updated, made them more reliable and not random sometimes. This doesn't affect UI or functionality, just internal thing
 - New: Added `-ldflags="-s -w"` when compiling binaries. It removes the debug information and should reduce the final size.
