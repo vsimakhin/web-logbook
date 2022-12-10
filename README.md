@@ -103,8 +103,6 @@ So in real life the logbook could look like
 
 ![Flight stats](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats.png)
 
-![Flight stats classes](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats-classes.png)
-
 ![Map](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats-map.png)
 
 ## Licensing & Certifications
