@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.10.1] - 10.12.2022
+
+- Fix: When clicked on the `Remove` button for the attachment the modal window just closed without letting you to confirm the deletion. This was fixed by updating bootstrap css and js files.
+- Fix: Updated alert info fields to show the proper color as well (green/red)
+
 ## [2.10.0] - 10.12.2022
 
 - Updated: unit tests were redesigned and updated, made them more reliable and not random sometimes. This doesn't affect UI or functionality, just internal thing

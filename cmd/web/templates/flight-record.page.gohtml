@@ -234,7 +234,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
     <div class="mb-2 row">
         <input type="hidden" name="uuid" id="uuid" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
         <div class="col">
-            <div class="alert-danger text-center d-none" id="info" role="alert"></div>
+            <div class="alert alert-danger text-center d-none" id="info" role="alert"></div>
         </div>
     </div>
     <hr>
@@ -269,7 +269,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 </div>
 
 <!-- Modal Attachments -->
-<div class="modal fade" id="attachments" tabindex="-1" aria-labelledby="attachments" aria-hidden="true">
+<div class="modal fade" id="attachments" tabindex="-1" aria-labelledby="attachments" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
