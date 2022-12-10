@@ -322,7 +322,7 @@ function LoadAttachments() {
             rows = rows +
                 `<tr>
                     <td><a href="{{index .API "LogbookAttachmentsDownload"}}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
-                    <td id="ask_${data[x]["uuid"]}"><a onclick="AskForDelete('${data[x]["uuid"]}')"><i class="bi bi-file-x-fill"></i></a></td>
+                    <td id="ask_${data[x]["uuid"]}"><a onclick="AskForDelete('${data[x]["uuid"]}');"><i class="bi bi-file-x-fill"></i> Delete</a></td>
                 </tr>`;
         }
         tbody.innerHTML = rows;

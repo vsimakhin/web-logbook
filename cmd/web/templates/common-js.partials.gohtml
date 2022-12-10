@@ -20,7 +20,7 @@ function showInfoMessage(msg) {
 
     infoMsg.innerText = msg;
 
-    setTimeout(function(){ infoMsg.innerText = "";}, 5000);
+    setTimeout(function(){ infoMsg.innerText = ""; infoMsg.classList.add("d-none");}, 5000);
 }
 
 function loadJSON(url) {
