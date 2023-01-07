@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -41,7 +41,7 @@ func TestHandlerStats(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIStats))
-	responseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 

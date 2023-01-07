@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -47,7 +47,7 @@ func (app *application) checkNewVersion() {
 		return
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		app.errorLog.Println(fmt.Errorf("cannot retrieve the latest release - %s", err))
 		return

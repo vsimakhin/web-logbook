@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -68,7 +68,7 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 		attachment.DocumentName = header.Filename
 
 		// read file
-		bs, err := ioutil.ReadAll(file)
+		bs, err := io.ReadAll(file)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
