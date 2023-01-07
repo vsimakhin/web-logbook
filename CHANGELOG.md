@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Updated: golang version 1.19 and dependencies
+
 ## [2.10.1] - 10.12.2022
 
 - Fix: When clicked on the `Remove` button for the attachment the modal window just closed without letting you to confirm the deletion. This was fixed by updating bootstrap css and js files.
