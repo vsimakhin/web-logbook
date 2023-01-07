@@ -215,6 +215,66 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// HandlerStatsLimits is a handler for the Flight Time Limitations table source
+func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Request) {
+
+	if app.config.env == "dev" {
+		app.infoLog.Println(APIStatsLimits)
+	}
+
+	var tableData models.TableData
+	now := time.Now().UTC()
+	minus12m := now.AddDate(0, -11, 0).UTC()
+
+	days28 := now.AddDate(0, 0, -27).UTC().Format("20060102")
+	days90 := now.AddDate(0, 0, -89).UTC().Format("20060102")
+	months12 := time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC).Format("20060102")
+	beginningOfYear := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC).Format("20060102")
+	endOfYear := time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, time.UTC).Format("20060102")
+
+	// last 28 days
+	totals28, err := app.db.GetTotals(days28, farFuture)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// last 90 days
+	totals90, err := app.db.GetTotals(days90, farFuture)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// last 12 calendar months
+	totals12m, err := app.db.GetTotals(months12, farFuture)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// current calendar year
+	totalsYear, err := app.db.GetTotals(beginningOfYear, endOfYear)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// let's form our custom table
+	tableData.Data = append(tableData.Data,
+		[]string{totals28.Time.Total, totals90.Time.Total, totals12m.Time.Total, totalsYear.Time.Total})
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
 // HandlerStats is a handler for Stats page
 func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 	if app.config.env == "dev" {
