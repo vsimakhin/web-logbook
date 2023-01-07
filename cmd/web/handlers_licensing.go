@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -270,7 +270,7 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		license.DocumentName = header.Filename
 
 		// read file
-		bs, err := ioutil.ReadAll(file)
+		bs, err := io.ReadAll(file)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

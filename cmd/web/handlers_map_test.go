@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,7 +21,7 @@ func TestHandlerMap(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIMap))
-	responseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 

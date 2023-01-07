@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -22,7 +22,7 @@ func TestHandlerLicensing(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILicensing))
-	responseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -42,7 +42,7 @@ func TestHandlerLicensingRecordsData(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILicensingData))
-	responseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, `{"data":[["category","uuid","name","number","issued","01/01/2022","01/01/2022","Expired!","uuid"]]}`, string(responseBody))
@@ -59,7 +59,7 @@ func TestHandlerLicensingRecordByID(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, strings.ReplaceAll(APILicensingUUID, "{uuid}", "uuid")))
-	responseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -79,7 +79,7 @@ func TestHandlerLicensingDownload(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, strings.ReplaceAll(APILicensingDownloadUUID, "{uuid}", "uuid")))
-	responseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -97,7 +97,7 @@ func TestHandlerLicensingRecordNew(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILicensingNew))
-	responseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
