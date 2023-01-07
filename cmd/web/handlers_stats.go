@@ -205,7 +205,7 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 			fmt.Sprintf("%d/%d", totalsYear.Landings.Day, totalsYear.Landings.Night),
 			fmt.Sprintf("%d/%d", totals.Landings.Day, totals.Landings.Night)})
 	tableData.Data = append(tableData.Data,
-		[]string{"M", "Single Engine", formatNumber(totals30.Distance), formatNumber(totalsMonth.Distance), formatNumber(totals90.Distance),
+		[]string{"M", "Distance", formatNumber(totals30.Distance), formatNumber(totalsMonth.Distance), formatNumber(totals90.Distance),
 			formatNumber(totalsYear.Distance), formatNumber(totals.Distance)})
 
 	err = app.writeJSON(w, http.StatusOK, tableData)

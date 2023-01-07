@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Updated: golang version 1.19 and dependencies
+- Fix: Typo fix on the Stats page, the label was "Single Engine" instead of "Distance"
 
 ## [2.10.1] - 10.12.2022
 
