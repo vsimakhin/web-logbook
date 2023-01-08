@@ -45,3 +45,26 @@ func getClassesForModel(classes map[string]string, model string) []string {
 
 	return ac
 }
+
+// initZeroFlightRecord inits an empty var of FlightRecord with 0:00/0 values for stats
+func initZeroFlightRecord() FlightRecord {
+	var fr FlightRecord
+
+	fr.Time.SE = "0:00"
+	fr.Time.ME = "0:00"
+	fr.Time.MCC = "0:00"
+	fr.Time.Total = "0:00"
+	fr.Time.Night = "0:00"
+	fr.Time.IFR = "0:00"
+	fr.Time.PIC = "0:00"
+	fr.Time.CoPilot = "0:00"
+	fr.Time.Dual = "0:00"
+	fr.Time.Instructor = "0:00"
+
+	fr.Landings.Day = 0
+	fr.Landings.Night = 0
+
+	fr.SIM.Time = "0:00"
+
+	return fr
+}
