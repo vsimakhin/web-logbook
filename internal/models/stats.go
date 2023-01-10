@@ -73,7 +73,7 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 	defer cancel()
 
 	var fr FlightRecord
-	var totals FlightRecord
+	totals := initZeroFlightRecord()
 
 	sqlQuery := "SELECT m_date, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, " +
@@ -113,7 +113,7 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var fr, emptyone FlightRecord
+	var fr FlightRecord
 	totals := make(map[string]FlightRecord)
 
 	query := "SELECT SUBSTR(m_date,0,5), se_time, me_time, mcc_time, total_time, " +
@@ -138,7 +138,7 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 		}
 
 		if _, ok := totals[fr.MDate]; !ok {
-			totals[fr.MDate] = emptyone
+			totals[fr.MDate] = initZeroFlightRecord()
 		}
 
 		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
@@ -155,7 +155,7 @@ func (m *DBModel) GetTotalsByAircraftType(startDate string, endDate string) (map
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var fr, emptyone FlightRecord
+	var fr FlightRecord
 	totals := make(map[string]FlightRecord)
 
 	query := "SELECT m_date, aircraft_model, se_time, me_time, mcc_time, total_time, " +
@@ -186,7 +186,7 @@ func (m *DBModel) GetTotalsByAircraftType(startDate string, endDate string) (map
 			}
 
 			if _, ok := totals[fr.Aircraft.Model]; !ok {
-				totals[fr.Aircraft.Model] = emptyone
+				totals[fr.Aircraft.Model] = initZeroFlightRecord()
 			}
 
 			fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
@@ -204,7 +204,7 @@ func (m *DBModel) GetTotalsByAircraftClass(startDate string, endDate string) (ma
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var fr, emptyone FlightRecord
+	var fr FlightRecord
 	totals := make(map[string]FlightRecord)
 
 	settings, err := m.GetSettings()
@@ -244,7 +244,7 @@ func (m *DBModel) GetTotalsByAircraftClass(startDate string, endDate string) (ma
 
 			for _, class := range classes {
 				if _, ok := totals[class]; !ok {
-					totals[class] = emptyone
+					totals[class] = initZeroFlightRecord()
 				}
 
 				totals[class] = CalculateTotals(totals[class], fr)

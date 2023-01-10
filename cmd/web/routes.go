@@ -55,6 +55,7 @@ const APIStats = "/stats"
 const APIStatsTotals = "/stats/totals"
 const APIStatsTotalsByType = "/stats/totals-by-type"
 const APIStatsTotalsByClass = "/stats/totals-by-class"
+const APIStatsLimits = "/stats/limits"
 
 const APILogin = "/login"
 const APILogout = "/logout"
@@ -108,6 +109,7 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APIStatsTotals, app.HandlerStatsTotals)
 		server.Get(APIStatsTotalsByType, app.HandlerStatsTotalsByType)
 		server.Get(APIStatsTotalsByClass, app.HandlerStatsTotalsByClass)
+		server.Get(APIStatsLimits, app.HandlerStatsLimits)
 
 		// map
 		server.Get(APIMap, app.HandlerMap)

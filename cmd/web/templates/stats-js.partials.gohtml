@@ -77,6 +77,38 @@ function ShowRangeField(flag) {
     }
 }
 
+function ProgressBarHTML(data, max) {
+    var intData = convert(data);
+    var percentData = parseInt(intData/max*100);
+
+    if (data === "") {
+        data = "0:00";
+    }
+    // inner and outer text for progress bar
+    // depends on the % the text will be inside or outside the filled area
+    // otherwise the area could be small and text not visible
+    var innerText = "";
+    var outerText = "";
+
+    if (percentData <= 40) {
+        outerText = `${data} of ${max}:00`
+    } else {
+        innerText = `${data} of ${max}:00`
+    }
+
+    // progress bar color
+    var progressColor = "bg-success";
+
+    if (percentData >= 50 && percentData <= 80) {
+        progressColor = "bg-warning";
+    } else if (percentData > 80) {
+        progressColor = "bg-danger";
+    }
+
+    return `<div class="progress" role="progressbar" aria-valuenow="${intData}" aria-valuemin="0" aria-valuemax="${max}">
+        <div class="progress-bar ${progressColor}" style="width: ${percentData}%">${innerText}</div>${outerText}</div>`;
+}
+
 var startDate = null;
 var endDate = null;
 
@@ -97,6 +129,24 @@ $(document).ready( function () {
             // Show Totals for chart
             StatsClick('totals', 5);
         }
+    });
+
+    // init Limitations table
+    var tableLimits = $('#limits').DataTable({
+        "ordering": false,
+        "info": false,
+        "ajax": '{{index .API "StatsLimits"}}',
+        "columnDefs": [
+            {"targets": [0,1,2,3], "width": "25%"},
+        ],
+        "paging": false,
+        "searching": false,
+        "rowCallback": function(row, data, index){
+            $("td:eq(0)", row).html(ProgressBarHTML(data[0],90));
+            $("td:eq(1)", row).html(ProgressBarHTML(data[1],280));
+            $("td:eq(2)", row).html(ProgressBarHTML(data[2],1000));
+            $("td:eq(3)", row).html(ProgressBarHTML(data[3],900));
+        },
     });
 
     // init Totals By Type table
