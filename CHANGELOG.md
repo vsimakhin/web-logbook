@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.11.0] - 10.01.2023
 
 - New: Added progress check for the flight time limitations on the Stats page. It's based on the EASA rules (mostly for commercially flying pilots): 100 hours in a period of 28 consecutive calendar days, 280 in a period of 90 consecutive calendar days, 900 hours in a calendar year and 1000 in a period of 12 consecutive calendar months.
 - Updated: golang version 1.19 and dependencies
