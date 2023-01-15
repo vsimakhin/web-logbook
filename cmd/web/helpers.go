@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"golang.org/x/exp/slices"
@@ -121,4 +122,64 @@ func parameterClassFilter(classes map[string]string, model string, filter string
 	}
 
 	return slices.Contains(ac, filter)
+}
+
+// func getTotalStats returns set of flight statistics which is used by stats handlers
+func (app *application) getTotalStats(startDate string, endDate string) (map[string]models.FlightRecord, error) {
+	var err error
+	totals := make(map[string]models.FlightRecord)
+
+	now := time.Now().UTC()
+	minus12m := now.AddDate(0, -11, 0).UTC()
+
+	days28 := now.AddDate(0, 0, -27).UTC().Format("20060102")
+	days90 := now.AddDate(0, 0, -89).UTC().Format("20060102")
+	months12 := time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC).Format("20060102")
+	beginningOfMonth := now.AddDate(0, 0, -now.Day()+1).Format("20060102")
+	endOfMonth := now.AddDate(0, 1, -now.Day()).Format("20060102")
+	beginningOfYear := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC).Format("20060102")
+	endOfYear := time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, time.UTC).Format("20060102")
+
+	if startDate == "" || endDate == "" {
+		startDate = farPast
+		endDate = farFuture
+	}
+
+	// range totals
+	totals["Totals"], err = app.db.GetTotals(startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	// last 28 days
+	totals["Last28"], err = app.db.GetTotals(days28, farFuture)
+	if err != nil {
+		return nil, err
+	}
+
+	// last 90 days
+	totals["Last90"], err = app.db.GetTotals(days90, farFuture)
+	if err != nil {
+		return nil, err
+	}
+
+	// this months
+	totals["Month"], err = app.db.GetTotals(beginningOfMonth, endOfMonth)
+	if err != nil {
+		return nil, err
+	}
+
+	// last 12 calendar months
+	totals["Last12M"], err = app.db.GetTotals(months12, farFuture)
+	if err != nil {
+		return nil, err
+	}
+
+	// this years
+	totals["Year"], err = app.db.GetTotals(beginningOfYear, endOfYear)
+	if err != nil {
+		return nil, err
+	}
+
+	return totals, nil
 }

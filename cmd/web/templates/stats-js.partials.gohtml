@@ -121,13 +121,13 @@ $(document).ready( function () {
         "columnDefs": [
             {"targets": 0, "visible": false, "searchable": false},
             {"targets": 1, "className": "datatable-bold-column"},
-            {"targets": [2,3,4,5,6], "width": "15%"},
+            {"targets": [2,3,4,5,6,7], "width": "13%"},
         ],
         "paging": false,
         "searching": false,
         'initComplete': function () {
             // Show Totals for chart
-            StatsClick('totals', 5);
+            StatsClick('totals', 6);
         }
     });
 
@@ -215,15 +215,5 @@ $(document).ready( function () {
         tableTotalsByClass.ajax.url('{{index .API "StatsTotalsByClass"}}').load();
     });
 });
-
-var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
-triggerTabList.forEach(function (triggerEl) {
-    var tabTrigger = new bootstrap.Tab(triggerEl)
-
-    triggerEl.addEventListener('click', function (event) {
-        event.preventDefault()
-        tabTrigger.show()
-    })
-})
 </script>
 {{end}}
