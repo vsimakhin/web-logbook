@@ -18,7 +18,7 @@ func TestHandlerStats(t *testing.T) {
 	// first tab
 	// totals
 	models.AddMock(mock, "GetTotals")
-	// last 30 days
+	// last 28 days
 	models.AddMock(mock, "GetTotals")
 	// last 90 days
 	models.AddMock(mock, "GetTotals")
@@ -62,11 +62,13 @@ func TestHandlerStatsTotals(t *testing.T) {
 
 	// totals
 	models.AddMock(mock, "GetTotals")
-	// last 30 days
+	// last 28 days
 	models.AddMock(mock, "GetTotals")
 	// last 90 days
 	models.AddMock(mock, "GetTotals")
-	// this months
+	// this month
+	models.AddMock(mock, "GetTotals")
+	// last 12 months
 	models.AddMock(mock, "GetTotals")
 	// this year
 	models.AddMock(mock, "GetTotals")
