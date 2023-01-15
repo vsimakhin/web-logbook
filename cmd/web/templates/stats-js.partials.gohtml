@@ -1,5 +1,6 @@
 {{define "stats-js"}}
 {{$api := .API}}
+{{$settings := index .Data "settings"}}
 <script type="text/javascript" src="/static/js/chart.min.js"></script>
 <script>
 
@@ -74,6 +75,13 @@ wlbStats = function () {
         chart.update();
     }
 
+    // func onStatsTabChange get the amount of columns and calls the onStatsClick
+    function onStatsTabChange(table_name) {
+        var tb = document.getElementById(table_name);
+        var cols = tb.rows[0].cells.length;
+        onStatsClick(table_name, cols-1);
+    }
+
     //func showRangeField shows or hides the field to select a time range for certain colums
     function showRangeField(flag) {
         if (flag) {
@@ -119,6 +127,7 @@ wlbStats = function () {
     // export functions
     return {
         onStatsClick:onStatsClick,
+        onStatsTabChange:onStatsTabChange,
         showRangeField:showRangeField,
         drawProgressBar:drawProgressBar
     }
@@ -171,6 +180,18 @@ $(document).ready( function () {
         "ajax": '{{index .API "StatsTotalsByType"}}',
         "columnDefs": [
             {"targets": 0, "className": "datatable-bold-column"},
+            {{if $settings.HideStatsFields.SE}}{"targets": 1, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.ME}}{"targets": 2, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.MCC}}{"targets": 3, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Night}}{"targets": 4, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.IFR}}{"targets": 5, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.PIC}}{"targets": 6, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.CoPilot}}{"targets": 7, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Dual}}{"targets": 8, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Instructor}}{"targets": 9, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Sim}}{"targets": 10, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Landings}}{"targets": 11, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Distance}}{"targets": 12, "visible": false, "searchable": false},{{end}}
         ],
         "paging": false,
         "searching": false
@@ -183,6 +204,18 @@ $(document).ready( function () {
         "ajax": '{{index .API "StatsTotalsByClass"}}',
         "columnDefs": [
             {"targets": 0, "className": "datatable-bold-column"},
+            {{if $settings.HideStatsFields.SE}}{"targets": 1, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.ME}}{"targets": 2, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.MCC}}{"targets": 3, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Night}}{"targets": 4, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.IFR}}{"targets": 5, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.PIC}}{"targets": 6, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.CoPilot}}{"targets": 7, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Dual}}{"targets": 8, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Instructor}}{"targets": 9, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Sim}}{"targets": 10, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Landings}}{"targets": 11, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Distance}}{"targets": 12, "visible": false, "searchable": false},{{end}}
         ],
         "paging": false,
         "searching": false

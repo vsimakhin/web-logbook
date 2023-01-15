@@ -91,7 +91,21 @@ function Save() {
         auth_enabled: document.getElementById("auth_enabled").checked,
         login: document.getElementById("login").value,
         password: document.getElementById("password").value,
-        disable_flightrecord_help: document.getElementById("disable_flightrecord_help").checked
+        disable_flightrecord_help: document.getElementById("disable_flightrecord_help").checked,
+        hide_stats_fields: {
+            hide_se: document.getElementById("hide_se").checked,
+            hide_me: document.getElementById("hide_me").checked,
+            hide_mcc: document.getElementById("hide_mcc").checked,
+            hide_night: document.getElementById("hide_night").checked,
+            hide_ifr: document.getElementById("hide_ifr").checked,
+            hide_pic: document.getElementById("hide_pic").checked,
+            hide_copilot: document.getElementById("hide_copilot").checked,
+            hide_dual: document.getElementById("hide_dual").checked,
+            hide_instructor: document.getElementById("hide_instructor").checked,
+            hide_sim: document.getElementById("hide_sim").checked,
+            hide_landings: document.getElementById("hide_landings").checked,
+            hide_distance: document.getElementById("hide_distance").checked
+        }
     };
 
     const requestOptions = {

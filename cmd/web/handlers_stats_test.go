@@ -73,6 +73,8 @@ func TestHandlerStatsTotals(t *testing.T) {
 	// this year
 	models.AddMock(mock, "GetTotals")
 
+	models.AddMock(mock, "GetSettings")
+
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
 

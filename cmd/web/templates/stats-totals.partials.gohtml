@@ -5,12 +5,12 @@
         <tr class="align-top text-center">
             <th></th>
             <th></th>
-            <th onclick="wlbStats.onStatsClick('totals', 1);"><a class="nav-link th-hover" href=#>28 days</a></th>
-            <th onclick="wlbStats.onStatsClick('totals', 2);"><a class="nav-link th-hover" href=#>This Month</a></th>
-            <th onclick="wlbStats.onStatsClick('totals', 3);"><a class="nav-link th-hover" href=#>90 days</a></th>
-            <th onclick="wlbStats.onStatsClick('totals', 4);"><a class="nav-link th-hover" href=#>Last 12 months</a></th>
-            <th onclick="wlbStats.onStatsClick('totals', 5);"><a class="nav-link th-hover" href=#>This Year</a></th>
-            <th onclick="wlbStats.onStatsClick('totals', 6);"><a class="nav-link th-hover" href=#>Totals (range)</a></th>
+            <th onclick="wlbStats.onStatsClick('totals', this.cellIndex);"><a class="nav-link th-hover" href=#>28 days</a></th>
+            <th onclick="wlbStats.onStatsClick('totals', this.cellIndex);"><a class="nav-link th-hover" href=#>This Month</a></th>
+            <th onclick="wlbStats.onStatsClick('totals', this.cellIndex);"><a class="nav-link th-hover" href=#>90 days</a></th>
+            <th onclick="wlbStats.onStatsClick('totals', this.cellIndex);"><a class="nav-link th-hover" href=#>Last 12 months</a></th>
+            <th onclick="wlbStats.onStatsClick('totals', this.cellIndex);"><a class="nav-link th-hover" href=#>This Year</a></th>
+            <th onclick="wlbStats.onStatsClick('totals', this.cellIndex);"><a class="nav-link th-hover" href=#>Totals (range)</a></th>
         </tr>
     </thead>
 </table>

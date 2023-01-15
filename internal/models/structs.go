@@ -115,6 +115,22 @@ type ExportCSV struct {
 	CRLF      bool   `json:"crlf"`
 }
 
+// HideFields is a type to keep whish fields are hidden
+type HideFields struct {
+	SE         bool `json:"hide_se"`
+	ME         bool `json:"hide_me"`
+	MCC        bool `json:"hide_mcc"`
+	Night      bool `json:"hide_night"`
+	IFR        bool `json:"hide_ifr"`
+	PIC        bool `json:"hide_pic"`
+	CoPilot    bool `json:"hide_copilot"`
+	Dual       bool `json:"hide_dual"`
+	Instructor bool `json:"hide_instructor"`
+	Sim        bool `json:"hide_sim"`
+	Landings   bool `json:"hide_landings"`
+	Distance   bool `json:"hide_distance"`
+}
+
 // Settings is a type for settings
 type Settings struct {
 	OwnerName               string            `json:"owner_name"`
@@ -130,6 +146,8 @@ type Settings struct {
 	ExportA5  ExportPDF `json:"export_a5"`
 	ExportXLS ExportXLS `json:"export_xls"`
 	ExportCSV ExportCSV `json:"export_csv"`
+
+	HideStatsFields HideFields `json:"hide_stats_fields"`
 }
 
 // License is a type for licesing
