@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 - Fix: Correct column name from `Arrival/Departure Date` to `Arrival/Departure Time` on the main logbook page
+- New: Added `Last 12 Months` column to the main stats page
+- Updated: Rewrote slightly javascript file for `Stats` page/template to follow some best practices from "javascript world" (whatever it means...). Will be doing the same for other included JS template partials in the future.
 
 ## [2.11.0] - 10.01.2023
 
