@@ -83,15 +83,15 @@ func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftMode
 	return aircraftRegs, aircraftModels
 }
 
-// getShowFlightRecordHelpSetting returns if help messages on the flight record page are enabled
-func (app *application) getShowFlightRecordHelpSetting() bool {
+// getFlightRecordHelpSetting returns if help messages on the flight record page are enabled
+func (app *application) isFlightRecordHelpEnabled() bool {
 	settings, err := app.db.GetSettings()
 	if err != nil {
 		app.errorLog.Println(err)
 		return false
 	}
 
-	return settings.EnableFlightRecordHelp
+	return !settings.DisableFlightRecordHelp
 }
 
 // parameterFilter is some custom string compare function

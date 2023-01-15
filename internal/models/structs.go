@@ -117,14 +117,14 @@ type ExportCSV struct {
 
 // Settings is a type for settings
 type Settings struct {
-	OwnerName              string            `json:"owner_name"`
-	SignatureText          string            `json:"signature_text"`
-	AircraftClasses        map[string]string `json:"aircraft_classes"`
-	AuthEnabled            bool              `json:"auth_enabled"`
-	Login                  string            `json:"login"`
-	Password               string            `json:"password"`
-	Hash                   string            `json:"hash"`
-	EnableFlightRecordHelp bool              `json:"enable_flightrecord_help"`
+	OwnerName               string            `json:"owner_name"`
+	SignatureText           string            `json:"signature_text"`
+	AircraftClasses         map[string]string `json:"aircraft_classes"`
+	AuthEnabled             bool              `json:"auth_enabled"`
+	Login                   string            `json:"login"`
+	Password                string            `json:"password"`
+	Hash                    string            `json:"hash"`
+	DisableFlightRecordHelp bool              `json:"disable_flightrecord_help"`
 
 	ExportA4  ExportPDF `json:"export_a4"`
 	ExportA5  ExportPDF `json:"export_a5"`
