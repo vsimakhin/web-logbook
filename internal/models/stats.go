@@ -39,6 +39,18 @@ func (m *DBModel) distance(departure, arrival string) int {
 	}
 }
 
+func (m *DBModel) processFlightrecord(fr *FlightRecord) {
+	// calculate distance
+	fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+
+	// check for cross country flights
+	if fr.Departure.Place != fr.Arrival.Place {
+		fr.Time.CrossCountry = fr.Time.Total
+	} else {
+		fr.Time.CrossCountry = "0:00"
+	}
+}
+
 // CreateDistanceCache fills cache map with calculated distances
 func (m *DBModel) CreateDistanceCache() {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -99,7 +111,7 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 		}
 
 		if (startDate <= fr.MDate) && (fr.MDate <= endDate) {
-			fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+			m.processFlightrecord(&fr)
 			totals = CalculateTotals(totals, fr)
 		}
 	}
@@ -141,8 +153,7 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 			totals[fr.MDate] = initZeroFlightRecord()
 		}
 
-		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
-
+		m.processFlightrecord(&fr)
 		totals[fr.MDate] = CalculateTotals(totals[fr.MDate], fr)
 	}
 
@@ -189,8 +200,7 @@ func (m *DBModel) GetTotalsByAircraftType(startDate string, endDate string) (map
 				totals[fr.Aircraft.Model] = initZeroFlightRecord()
 			}
 
-			fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
-
+			m.processFlightrecord(&fr)
 			totals[fr.Aircraft.Model] = CalculateTotals(totals[fr.Aircraft.Model], fr)
 		}
 	}
@@ -240,7 +250,7 @@ func (m *DBModel) GetTotalsByAircraftClass(startDate string, endDate string) (ma
 			}
 
 			classes := getClassesForModel(settings.AircraftClasses, fr.Aircraft.Model)
-			fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+			m.processFlightrecord(&fr)
 
 			for _, class := range classes {
 				if _, ok := totals[class]; !ok {

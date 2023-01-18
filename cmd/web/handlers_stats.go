@@ -41,7 +41,7 @@ func (app *application) HandlerStatsTotalsByClass(w http.ResponseWriter, r *http
 	for class, item := range totals {
 		tableRow := []string{class, item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Night,
 			item.Time.IFR, item.Time.PIC, item.Time.CoPilot, item.Time.Dual, item.Time.Instructor,
-			item.SIM.Time, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
+			item.SIM.Time, item.Time.CrossCountry, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
 			formatNumber(item.Distance), item.Time.Total}
 
 		tableData.Data = append(tableData.Data, tableRow)
@@ -89,14 +89,14 @@ func (app *application) HandlerStatsTotalsByType(w http.ResponseWriter, r *http.
 	for aircraft, item := range totals {
 		tableRow := []string{aircraft, item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Night,
 			item.Time.IFR, item.Time.PIC, item.Time.CoPilot, item.Time.Dual, item.Time.Instructor,
-			item.SIM.Time, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
+			item.SIM.Time, item.Time.CrossCountry, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
 			formatNumber(item.Distance), item.Time.Total}
 
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
 	if len(tableData.Data) == 0 {
-		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", ""})
+		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", "", ""})
 	}
 
 	err = app.writeJSON(w, http.StatusOK, tableData)
@@ -246,8 +246,18 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 			totals["Totals"].SIM.Time,
 		})
 	}
+	if !settings.HideStatsFields.CrossCountry {
+		tableData.Data = append(tableData.Data, []string{"L", "Cross Country",
+			totals["Last28"].Time.CrossCountry,
+			totals["Month"].Time.CrossCountry,
+			totals["Last90"].Time.CrossCountry,
+			totals["Last12M"].Time.CrossCountry,
+			totals["Year"].Time.CrossCountry,
+			totals["Totals"].Time.CrossCountry,
+		})
+	}
 	if !settings.HideStatsFields.Landings {
-		tableData.Data = append(tableData.Data, []string{"L", "Landings (day/night)",
+		tableData.Data = append(tableData.Data, []string{"M", "Landings (day/night)",
 			fmt.Sprintf("%d/%d", totals["Last28"].Landings.Day, totals["Last28"].Landings.Night),
 			fmt.Sprintf("%d/%d", totals["Month"].Landings.Day, totals["Month"].Landings.Night),
 			fmt.Sprintf("%d/%d", totals["Last90"].Landings.Day, totals["Last90"].Landings.Night),
@@ -257,7 +267,7 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 		})
 	}
 	if !settings.HideStatsFields.Distance {
-		tableData.Data = append(tableData.Data, []string{"M", "Distance",
+		tableData.Data = append(tableData.Data, []string{"N", "Distance",
 			formatNumber(totals["Last28"].Distance),
 			formatNumber(totals["Month"].Distance),
 			formatNumber(totals["Last90"].Distance),

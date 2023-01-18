@@ -16,6 +16,7 @@
             {{if not $settings.HideStatsFields.Dual}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Dual</a></th>{{end}}
             {{if not $settings.HideStatsFields.Instructor}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Instr</a></th>{{end}}
             {{if not $settings.HideStatsFields.Sim}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Sim</a></th>{{end}}
+            {{if not $settings.HideStatsFields.CrossCountry}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>CC</a></th>{{end}}
             {{if not $settings.HideStatsFields.Landings}}<th>Landings</th>{{end}}
             {{if not $settings.HideStatsFields.Distance}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Distance</a></th>{{end}}
             <th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Total</a></th>
@@ -35,6 +36,7 @@
             {{if not $settings.HideStatsFields.Dual}}<td>{{$value.Time.Dual}}</td>{{end}}
             {{if not $settings.HideStatsFields.Instructor}}<td>{{$value.Time.Instructor}}</td>{{end}}
             {{if not $settings.HideStatsFields.Sim}}<td>{{$value.SIM.Time}}</td>{{end}}
+            {{if not $settings.HideStatsFields.CrossCountry}}<td>{{$value.Time.CrossCountry}}</td>{{end}}
             {{if not $settings.HideStatsFields.Landings}}<td>{{$value.Landings.Day}}/{{$value.Landings.Night}}</td>{{end}}
             {{if not $settings.HideStatsFields.Distance}}<td>{{formatNumber $value.Distance}}</td>{{end}}
             <td><strong>{{$value.Time.Total}}</strong></td>

@@ -63,9 +63,15 @@
                 <label for="hide_sim" class="form-label"><strong>Simulator</strong>
             </div>
             <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_cc" name="hide_cc" {{if $settings.HideStatsFields.CrossCountry}}checked{{end}}>
+                <label for="hide_cc" class="form-label"><strong>Cross Country</strong>
+            </div>
+            <div class="col">
                 <input type="checkbox" class="form-check-input" id="hide_landings" name="hide_landings" {{if $settings.HideStatsFields.Landings}}checked{{end}}>
                 <label for="hide_landings" class="form-label"><strong>Landings</strong>
             </div>
+        </div>
+        <div class="row">
             <div class="col">
                 <input type="checkbox" class="form-check-input" id="hide_distance" name="hide_distance" {{if $settings.HideStatsFields.Distance}}checked{{end}}>
                 <label for="hide_distance" class="form-label"><strong>Distance</strong>

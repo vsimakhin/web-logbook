@@ -7,6 +7,7 @@
 - Updated: Rewrote slightly javascript file for `Stats` page/template to follow some best practices from "javascript world" (whatever it means...). Will be doing the same for other included JS template partials in the future.
 - Updated: Rename `Enable help messages on the flight record page` to `Disable...` and change the logic, otherwise for the new users this field is always unchecked and they don't see some tricks to quickly fill the flight record form
 - New: Added options to hide some columns for the Stats tables (you can find them in the `Settings`)
+- New: Added Cross Country for the Stats tables
 
 ## [2.11.0] - 10.01.2023
 

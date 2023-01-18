@@ -40,6 +40,8 @@ type FlightRecord struct {
 		CoPilot    string `json:"co_pilot_time"`
 		Dual       string `json:"dual_time"`
 		Instructor string `json:"instructor_time"`
+
+		CrossCountry string
 	} `json:"time"`
 	Landings struct {
 		Day   int `json:"day"`
@@ -117,18 +119,19 @@ type ExportCSV struct {
 
 // HideFields is a type to keep whish fields are hidden
 type HideFields struct {
-	SE         bool `json:"hide_se"`
-	ME         bool `json:"hide_me"`
-	MCC        bool `json:"hide_mcc"`
-	Night      bool `json:"hide_night"`
-	IFR        bool `json:"hide_ifr"`
-	PIC        bool `json:"hide_pic"`
-	CoPilot    bool `json:"hide_copilot"`
-	Dual       bool `json:"hide_dual"`
-	Instructor bool `json:"hide_instructor"`
-	Sim        bool `json:"hide_sim"`
-	Landings   bool `json:"hide_landings"`
-	Distance   bool `json:"hide_distance"`
+	SE           bool `json:"hide_se"`
+	ME           bool `json:"hide_me"`
+	MCC          bool `json:"hide_mcc"`
+	Night        bool `json:"hide_night"`
+	IFR          bool `json:"hide_ifr"`
+	PIC          bool `json:"hide_pic"`
+	CoPilot      bool `json:"hide_copilot"`
+	Dual         bool `json:"hide_dual"`
+	Instructor   bool `json:"hide_instructor"`
+	Sim          bool `json:"hide_sim"`
+	CrossCountry bool `json:"hide_cc"`
+	Landings     bool `json:"hide_landings"`
+	Distance     bool `json:"hide_distance"`
 }
 
 // Settings is a type for settings

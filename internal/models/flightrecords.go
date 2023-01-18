@@ -59,6 +59,7 @@ func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
 	totals.Landings.Night += record.Landings.Night
 
 	totals.Distance += record.Distance
+	totals.Time.CrossCountry = dtoa(atod(totals.Time.CrossCountry) + atod(record.Time.CrossCountry))
 
 	return totals
 }
