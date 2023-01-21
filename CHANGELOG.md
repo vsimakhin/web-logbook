@@ -8,6 +8,7 @@
 - Updated: Rename `Enable help messages on the flight record page` to `Disable...` and change the logic, otherwise for the new users this field is always unchecked and they don't see some tricks to quickly fill the flight record form
 - New: Added options to hide some columns for the Stats tables (you can find them in the `Settings`)
 - New: Added Cross Country for the Stats tables
+- New: Added new field `Stats tables font size` on the `Settings` page - due to lot of columns the table layout can be broken on the smaller screens, so you can set your own font size from 50% to 100%
 
 ## [2.11.0] - 10.01.2023
 

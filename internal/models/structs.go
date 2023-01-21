@@ -151,6 +151,7 @@ type Settings struct {
 	ExportCSV ExportCSV `json:"export_csv"`
 
 	HideStatsFields HideFields `json:"hide_stats_fields"`
+	StatsFontSize   string     `json:"stats_font_size"`
 }
 
 // License is a type for licesing

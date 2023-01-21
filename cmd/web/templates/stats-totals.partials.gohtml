@@ -1,6 +1,7 @@
 {{define "stats-totals"}}
+{{$settings := index .Data "settings"}}
 <br>
-<table id="totals" class="table table-striped table-bordered nowrap" width="100%" style="font-size:90%">
+<table id="totals" class="table table-striped table-bordered nowrap" width="100%" {{if $settings.StatsFontSize}}style="font-size:{{$settings.StatsFontSize}}%"{{end}}>
     <thead>
         <tr class="align-top text-center">
             <th></th>
@@ -16,7 +17,7 @@
 </table>
 
 <hr>
-<table id="limits" class="table table-bordered nowrap" style="font-size:90%">
+<table id="limits" class="table table-bordered nowrap" {{if $settings.StatsFontSize}}style="font-size:{{$settings.StatsFontSize}}%"{{end}}>
     <thead>
         <tr class="align-top text-center">
             <th>28 days</th>

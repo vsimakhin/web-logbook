@@ -1,7 +1,7 @@
 {{define "stats-totals-type"}}
-
+{{$settings := index .Data "settings"}}
 <br>
-<table id="totals_by_type" class="table table-striped table-bordered nowrap" width="100%" style="font-size:90%">
+<table id="totals_by_type" class="table table-striped table-bordered nowrap" width="100%" {{if $settings.StatsFontSize}}style="font-size:{{$settings.StatsFontSize}}%"{{end}}>
     <thead>
         <tr class="align-top text-center">
             <th>Aircraft</th>
