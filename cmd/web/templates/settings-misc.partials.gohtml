@@ -6,12 +6,85 @@
 
         <div class="row mb-2">
             <div class="col">
-                <input type="checkbox" class="form-check-input" id="enable_flightrecord_help" name="enable_flightrecord_help" {{if $settings.EnableFlightRecordHelp}}checked{{end}}>
-                <label for="enable_flightrecord_help" class="form-label"><strong>Enable help messages on the flight record page</strong>
+                <input type="checkbox" class="form-check-input" id="disable_flightrecord_help" name="disable_flightrecord_help" {{if $settings.DisableFlightRecordHelp}}checked{{end}}>
+                <label for="disable_flightrecord_help" class="form-label"><strong>Disable help messages on the flight record page</strong></label>
             </div>
         </div>
 
-    </div>
+        <hr>
+        <div class="row mb-2">
+            <div class="col">
+                <strong>Hide fileds for Stats</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_se" name="hide_se" {{if $settings.HideStatsFields.SE}}checked{{end}}>
+                <label for="hide_se" class="form-label"><strong>Single Engine</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_me" name="hide_me" {{if $settings.HideStatsFields.ME}}checked{{end}}>
+                <label for="hide_me" class="form-label"><strong>Multi Engine</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_mcc" name="hide_mcc" {{if $settings.HideStatsFields.MCC}}checked{{end}}>
+                <label for="hide_mcc" class="form-label"><strong>MCC</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_night" name="hide_night" {{if $settings.HideStatsFields.Night}}checked{{end}}>
+                <label for="hide_night" class="form-label"><strong>Night</strong></label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_ifr" name="hide_ifr" {{if $settings.HideStatsFields.IFR}}checked{{end}}>
+                <label for="hide_ifr" class="form-label"><strong>IFR</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_pic" name="hide_pic" {{if $settings.HideStatsFields.PIC}}checked{{end}}>
+                <label for="hide_pic" class="form-label"><strong>PIC</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_copilot" name="hide_copilot" {{if $settings.HideStatsFields.CoPilot}}checked{{end}}>
+                <label for="hide_copilot" class="form-label"><strong>CoPilot</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_dual" name="hide_dual" {{if $settings.HideStatsFields.Dual}}checked{{end}}>
+                <label for="hide_dual" class="form-label"><strong>Dual</strong></label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_instructor" name="hide_instructor" {{if $settings.HideStatsFields.Instructor}}checked{{end}}>
+                <label for="hide_instructor" class="form-label"><strong>Instructor</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_sim" name="hide_sim" {{if $settings.HideStatsFields.Sim}}checked{{end}}>
+                <label for="hide_sim" class="form-label"><strong>Simulator</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_cc" name="hide_cc" {{if $settings.HideStatsFields.CrossCountry}}checked{{end}}>
+                <label for="hide_cc" class="form-label"><strong>Cross Country</strong></label>
+            </div>
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_landings" name="hide_landings" {{if $settings.HideStatsFields.Landings}}checked{{end}}>
+                <label for="hide_landings" class="form-label"><strong>Landings</strong></label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="hide_distance" name="hide_distance" {{if $settings.HideStatsFields.Distance}}checked{{end}}>
+                <label for="hide_distance" class="form-label"><strong>Distance</strong></label>
+            </div>
+        </div>
 
+        <hr>
+        <div class="row mb-3">
+            <label for="stats_font" class="col-sm-10 col-form-label"><strong>Stats tables font size (%)</strong></label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control form-control-sm" id="stats_font" name="stats_font" value='{{if not $settings.StatsFontSize}}100{{else}}{{$settings.StatsFontSize}}{{end}}' min="50" max="100">
+            </div>
+        </div>
+    </div>
 </div>
 {{end}}

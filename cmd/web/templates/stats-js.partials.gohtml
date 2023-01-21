@@ -1,113 +1,137 @@
 {{define "stats-js"}}
 {{$api := .API}}
+{{$settings := index .Data "settings"}}
 <script type="text/javascript" src="/static/js/chart.min.js"></script>
 <script>
-const ctx = document.getElementById('myChart').getContext('2d');
-const chart = new Chart(ctx, {
-    type: 'bar',
-    data: {},
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        },
-        plugins:{
-            legend: {
-                display: false
+
+// WebLogbook Stats Namespace
+wlbStats = function () {
+    // chart
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {},
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            },
+            plugins:{
+                legend: { display: false }
             }
         }
+    });
+
+    // fields
+    var range_field = document.getElementById("range_field");
+
+    // func convertTime converts time in string format to integer
+    function convertTime(time) {
+        if (time === "") {
+            return 0;
+        }
+
+        if (!time.includes(":")) {
+            return time.replace(" ",""); // already converted
+        }
+
+        var hoursMinutes = time.split(/[.:]/);
+        var hours = parseInt(hoursMinutes[0], 10);
+        var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+
+        return hours + Math.round(minutes / 60 * 100) / 100;
     }
-});
 
-function convert(time) {
-    if (time === "") {
-        return 0;
-    }
+    // func onStatsClick redraw the chart based on the column/stats selection
+    function onStatsClick(table_name, cl) {
+        var tb = document.getElementById(table_name);
+        var rows = tb.rows.length - 1;
 
-    if (!time.includes(":")) {
-        return time.replace(" ",""); // already converted
-    }
+        if (table_name === "totals") {
+            rows = rows - 2 // correction for this table
+            chart.data.labels = ['Total', 'SE', 'ME', 'MCC', 'Night', 'IFR', 'PIC', 'CoPilot', 'Dual', 'Instr', 'Sim'];
 
-    var hoursMinutes = time.split(/[.:]/);
-    var hours = parseInt(hoursMinutes[0], 10);
-    var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+        } else if ((table_name == "totals_by_year") || (table_name == "totals_by_type") || (table_name == "totals_by_class")) {
+            var labels = [];
+            for (var i = 1; i <= rows; i++) {
+                labels.push(tb.rows[i].cells[0].innerText);
+            }
+            chart.data.labels = labels;
 
-    return hours + Math.round(minutes / 60 * 100) / 100;
-}
+        }
 
-function StatsClick(table_name, cl) {
-    var tb = document.getElementById(table_name);
-    var rows = tb.rows.length - 1;
-
-    if (table_name === "totals") {
-        rows = rows - 2 // correction for this table
-        chart.data.labels = ['Total', 'SE', 'ME', 'MCC', 'Night', 'IFR', 'PIC', 'CoPilot', 'Dual', 'Instr', 'Sim'];
-
-    } else if ((table_name == "totals_by_year") || (table_name == "totals_by_type") || (table_name == "totals_by_class")) {
-        var labels = [];
+        var values = [];
         for (var i = 1; i <= rows; i++) {
-            labels.push(tb.rows[i].cells[0].innerText);
+            values.push(convertTime(tb.rows[i].cells[cl].innerText));
         }
-        chart.data.labels = labels;
 
+        chart.data.datasets = [
+            {
+                data: values,
+                backgroundColor: 'rgba(36, 112, 220, 0.7)',
+                borderColor: 'rgba(36, 112, 220, 0.7)',
+                borderWidth: 1
+            }
+        ]
+        chart.update();
     }
 
-    var values = [];
-    for (var i = 1; i <= rows; i++) {
-        values.push(convert(tb.rows[i].cells[cl].innerText));
+    // func onStatsTabChange get the amount of columns and calls the onStatsClick
+    function onStatsTabChange(table_name) {
+        var tb = document.getElementById(table_name);
+        var cols = tb.rows[0].cells.length;
+        onStatsClick(table_name, cols-1);
     }
 
-    chart.data.datasets = [
-        {
-            data: values,
-            backgroundColor: 'rgba(36, 112, 220, 0.7)',
-            borderColor: 'rgba(36, 112, 220, 0.7)',
-            borderWidth: 1
+    //func showRangeField shows or hides the field to select a time range for certain colums
+    function showRangeField(flag) {
+        if (flag) {
+            range_field.classList.remove("d-none")
+        } else {
+            range_field.classList.add("d-none")
         }
-    ]
-    chart.update();
-}
-
-function ShowRangeField(flag) {
-    if (flag) {
-        document.getElementById("range_field").classList.remove("d-none")
-    } else {
-        document.getElementById("range_field").classList.add("d-none")
-    }
-}
-
-function ProgressBarHTML(data, max) {
-    var intData = convert(data);
-    var percentData = parseInt(intData/max*100);
-
-    if (data === "") {
-        data = "0:00";
-    }
-    // inner and outer text for progress bar
-    // depends on the % the text will be inside or outside the filled area
-    // otherwise the area could be small and text not visible
-    var innerText = "";
-    var outerText = "";
-
-    if (percentData <= 40) {
-        outerText = `${data} of ${max}:00`
-    } else {
-        innerText = `${data} of ${max}:00`
     }
 
-    // progress bar color
-    var progressColor = "bg-success";
+    // func drawProgressBar generates html to show in the stats limit cell
+    function drawProgressBar(data, max) {
+        var intData = convertTime(data);
+        var percentData = parseInt(intData/max*100);
 
-    if (percentData >= 50 && percentData <= 80) {
-        progressColor = "bg-warning";
-    } else if (percentData > 80) {
-        progressColor = "bg-danger";
+        if (data === "") {
+            data = "0:00";
+        }
+        // inner and outer text for progress bar
+        // depends on the % the text will be inside or outside the filled area
+        // otherwise the area could be small and text not visible
+        var innerText = "";
+        var outerText = "";
+
+        if (percentData <= 40) {
+            outerText = `${data} of ${max}:00`
+        } else {
+            innerText = `${data} of ${max}:00`
+        }
+
+        // progress bar color
+        var progressColor = "bg-success";
+
+        if (percentData >= 50 && percentData <= 80) {
+            progressColor = "bg-warning";
+        } else if (percentData > 80) {
+            progressColor = "bg-danger";
+        }
+
+        return `<div class="progress" role="progressbar" aria-valuenow="${intData}" aria-valuemin="0" aria-valuemax="${max}">
+            <div class="progress-bar ${progressColor}" style="width: ${percentData}%">${innerText}</div>${outerText}</div>`;
     }
 
-    return `<div class="progress" role="progressbar" aria-valuenow="${intData}" aria-valuemin="0" aria-valuemax="${max}">
-        <div class="progress-bar ${progressColor}" style="width: ${percentData}%">${innerText}</div>${outerText}</div>`;
-}
+    // export functions
+    return {
+        onStatsClick:onStatsClick,
+        onStatsTabChange:onStatsTabChange,
+        showRangeField:showRangeField,
+        drawProgressBar:drawProgressBar
+    }
+}();
 
 var startDate = null;
 var endDate = null;
@@ -121,13 +145,13 @@ $(document).ready( function () {
         "columnDefs": [
             {"targets": 0, "visible": false, "searchable": false},
             {"targets": 1, "className": "datatable-bold-column"},
-            {"targets": [2,3,4,5,6], "width": "15%"},
+            {"targets": [2,3,4,5,6,7], "width": "13%"},
         ],
         "paging": false,
         "searching": false,
         'initComplete': function () {
             // Show Totals for chart
-            StatsClick('totals', 5);
+            wlbStats.onStatsClick('totals', 6);
         }
     });
 
@@ -142,10 +166,10 @@ $(document).ready( function () {
         "paging": false,
         "searching": false,
         "rowCallback": function(row, data, index){
-            $("td:eq(0)", row).html(ProgressBarHTML(data[0],90));
-            $("td:eq(1)", row).html(ProgressBarHTML(data[1],280));
-            $("td:eq(2)", row).html(ProgressBarHTML(data[2],1000));
-            $("td:eq(3)", row).html(ProgressBarHTML(data[3],900));
+            $("td:eq(0)", row).html(wlbStats.drawProgressBar(data[0],90));
+            $("td:eq(1)", row).html(wlbStats.drawProgressBar(data[1],280));
+            $("td:eq(2)", row).html(wlbStats.drawProgressBar(data[2],1000));
+            $("td:eq(3)", row).html(wlbStats.drawProgressBar(data[3],900));
         },
     });
 
@@ -156,6 +180,19 @@ $(document).ready( function () {
         "ajax": '{{index .API "StatsTotalsByType"}}',
         "columnDefs": [
             {"targets": 0, "className": "datatable-bold-column"},
+            {{if $settings.HideStatsFields.SE}}{"targets": 1, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.ME}}{"targets": 2, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.MCC}}{"targets": 3, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Night}}{"targets": 4, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.IFR}}{"targets": 5, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.PIC}}{"targets": 6, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.CoPilot}}{"targets": 7, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Dual}}{"targets": 8, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Instructor}}{"targets": 9, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Sim}}{"targets": 10, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.CrossCountry}}{"targets": 11, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Landings}}{"targets": 12, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Distance}}{"targets": 13, "visible": false, "searchable": false},{{end}}
         ],
         "paging": false,
         "searching": false
@@ -168,6 +205,19 @@ $(document).ready( function () {
         "ajax": '{{index .API "StatsTotalsByClass"}}',
         "columnDefs": [
             {"targets": 0, "className": "datatable-bold-column"},
+            {{if $settings.HideStatsFields.SE}}{"targets": 1, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.ME}}{"targets": 2, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.MCC}}{"targets": 3, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Night}}{"targets": 4, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.IFR}}{"targets": 5, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.PIC}}{"targets": 6, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.CoPilot}}{"targets": 7, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Dual}}{"targets": 8, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Instructor}}{"targets": 9, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Sim}}{"targets": 10, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.CrossCountry}}{"targets": 11, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Landings}}{"targets": 12, "visible": false, "searchable": false},{{end}}
+            {{if $settings.HideStatsFields.Distance}}{"targets": 13, "visible": false, "searchable": false},{{end}}
         ],
         "paging": false,
         "searching": false
@@ -215,15 +265,5 @@ $(document).ready( function () {
         tableTotalsByClass.ajax.url('{{index .API "StatsTotalsByClass"}}').load();
     });
 });
-
-var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
-triggerTabList.forEach(function (triggerEl) {
-    var tabTrigger = new bootstrap.Tab(triggerEl)
-
-    triggerEl.addEventListener('click', function (event) {
-        event.preventDefault()
-        tabTrigger.show()
-    })
-})
 </script>
 {{end}}

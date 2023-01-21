@@ -40,6 +40,8 @@ type FlightRecord struct {
 		CoPilot    string `json:"co_pilot_time"`
 		Dual       string `json:"dual_time"`
 		Instructor string `json:"instructor_time"`
+
+		CrossCountry string
 	} `json:"time"`
 	Landings struct {
 		Day   int `json:"day"`
@@ -115,21 +117,41 @@ type ExportCSV struct {
 	CRLF      bool   `json:"crlf"`
 }
 
+// HideFields is a type to keep whish fields are hidden
+type HideFields struct {
+	SE           bool `json:"hide_se"`
+	ME           bool `json:"hide_me"`
+	MCC          bool `json:"hide_mcc"`
+	Night        bool `json:"hide_night"`
+	IFR          bool `json:"hide_ifr"`
+	PIC          bool `json:"hide_pic"`
+	CoPilot      bool `json:"hide_copilot"`
+	Dual         bool `json:"hide_dual"`
+	Instructor   bool `json:"hide_instructor"`
+	Sim          bool `json:"hide_sim"`
+	CrossCountry bool `json:"hide_cc"`
+	Landings     bool `json:"hide_landings"`
+	Distance     bool `json:"hide_distance"`
+}
+
 // Settings is a type for settings
 type Settings struct {
-	OwnerName              string            `json:"owner_name"`
-	SignatureText          string            `json:"signature_text"`
-	AircraftClasses        map[string]string `json:"aircraft_classes"`
-	AuthEnabled            bool              `json:"auth_enabled"`
-	Login                  string            `json:"login"`
-	Password               string            `json:"password"`
-	Hash                   string            `json:"hash"`
-	EnableFlightRecordHelp bool              `json:"enable_flightrecord_help"`
+	OwnerName               string            `json:"owner_name"`
+	SignatureText           string            `json:"signature_text"`
+	AircraftClasses         map[string]string `json:"aircraft_classes"`
+	AuthEnabled             bool              `json:"auth_enabled"`
+	Login                   string            `json:"login"`
+	Password                string            `json:"password"`
+	Hash                    string            `json:"hash"`
+	DisableFlightRecordHelp bool              `json:"disable_flightrecord_help"`
 
 	ExportA4  ExportPDF `json:"export_a4"`
 	ExportA5  ExportPDF `json:"export_a5"`
 	ExportXLS ExportXLS `json:"export_xls"`
 	ExportCSV ExportCSV `json:"export_csv"`
+
+	HideStatsFields HideFields `json:"hide_stats_fields"`
+	StatsFontSize   string     `json:"stats_font_size"`
 }
 
 // License is a type for licesing

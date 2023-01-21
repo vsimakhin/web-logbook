@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Correct column name from `Arrival/Departure Date` to `Arrival/Departure Time` on the main logbook page
+- New: Added `Last 12 Months` column to the main stats page
+- Updated: Rewrote slightly javascript file for `Stats` page/template to follow some best practices from "javascript world" (whatever it means...). Will be doing the same for other included JS template partials in the future.
+- Updated: Rename `Enable help messages on the flight record page` to `Disable...` and change the logic, otherwise for the new users this field is always unchecked and they don't see some tricks to quickly fill the flight record form
+- New: Added options to hide some columns for the Stats tables (you can find them in the `Settings`)
+- New: Added Cross Country for the Stats tables
+- New: Added new field `Stats tables font size` on the `Settings` page - due to lot of columns the table layout can be broken on the smaller screens, so you can set your own font size from 50% to 100%
+
 ## [2.11.0] - 10.01.2023
 
 - New: Added progress check for the flight time limitations on the Stats page. It's based on the EASA rules (mostly for commercially flying pilots): 100 hours in a period of 28 consecutive calendar days, 280 in a period of 90 consecutive calendar days, 900 hours in a calendar year and 1000 in a period of 12 consecutive calendar months.

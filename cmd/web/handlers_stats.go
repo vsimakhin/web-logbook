@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
@@ -42,7 +41,7 @@ func (app *application) HandlerStatsTotalsByClass(w http.ResponseWriter, r *http
 	for class, item := range totals {
 		tableRow := []string{class, item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Night,
 			item.Time.IFR, item.Time.PIC, item.Time.CoPilot, item.Time.Dual, item.Time.Instructor,
-			item.SIM.Time, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
+			item.SIM.Time, item.Time.CrossCountry, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
 			formatNumber(item.Distance), item.Time.Total}
 
 		tableData.Data = append(tableData.Data, tableRow)
@@ -90,14 +89,14 @@ func (app *application) HandlerStatsTotalsByType(w http.ResponseWriter, r *http.
 	for aircraft, item := range totals {
 		tableRow := []string{aircraft, item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Night,
 			item.Time.IFR, item.Time.PIC, item.Time.CoPilot, item.Time.Dual, item.Time.Instructor,
-			item.SIM.Time, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
+			item.SIM.Time, item.Time.CrossCountry, fmt.Sprintf("%d/%d", item.Landings.Day, item.Landings.Night),
 			formatNumber(item.Distance), item.Time.Total}
 
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
 	if len(tableData.Data) == 0 {
-		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", ""})
+		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", "", ""})
 	}
 
 	err = app.writeJSON(w, http.StatusOK, tableData)
@@ -122,52 +121,16 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 		}
 	}
 
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	var tableData models.TableData
-	now := time.Now().UTC()
-	days30 := now.AddDate(0, 0, -29).UTC().Format("20060102")
-	days90 := now.AddDate(0, 0, -89).UTC().Format("20060102")
-	beginningOfMonth := now.AddDate(0, 0, -now.Day()+1).Format("20060102")
-	endOfMonth := now.AddDate(0, 1, -now.Day()).Format("20060102")
-	beginningOfYear := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC).Format("20060102")
-	endOfYear := time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, time.UTC).Format("20060102")
 
-	if startDate == "" || endDate == "" {
-		startDate = farPast
-		endDate = farFuture
-	}
-	totals, err := app.db.GetTotals(startDate, endDate)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// last 30 days
-	totals30, err := app.db.GetTotals(days30, farFuture)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// last 90 days
-	totals90, err := app.db.GetTotals(days90, farFuture)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// this months
-	totalsMonth, err := app.db.GetTotals(beginningOfMonth, endOfMonth)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// this years
-	totalsYear, err := app.db.GetTotals(beginningOfYear, endOfYear)
+	totals, err := app.getTotalStats(startDate, endDate)
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -175,38 +138,144 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 	}
 
 	// let's form our custom totals table
-	tableData.Data = append(tableData.Data,
-		[]string{"A", "Total", totals30.Time.Total, totalsMonth.Time.Total, totals90.Time.Total, totalsYear.Time.Total, totals.Time.Total})
-	tableData.Data = append(tableData.Data,
-		[]string{"B", "Single Engine", totals30.Time.SE, totalsMonth.Time.SE, totals90.Time.SE, totalsYear.Time.SE, totals.Time.SE})
-	tableData.Data = append(tableData.Data,
-		[]string{"C", "Multi Engine", totals30.Time.ME, totalsMonth.Time.ME, totals90.Time.ME, totalsYear.Time.ME, totals.Time.ME})
-	tableData.Data = append(tableData.Data,
-		[]string{"D", "MCC", totals30.Time.MCC, totalsMonth.Time.MCC, totals90.Time.MCC, totalsYear.Time.MCC, totals.Time.MCC})
-	tableData.Data = append(tableData.Data,
-		[]string{"E", "Night", totals30.Time.Night, totalsMonth.Time.Night, totals90.Time.Night, totalsYear.Time.Night, totals.Time.Night})
-	tableData.Data = append(tableData.Data,
-		[]string{"F", "IFR", totals30.Time.IFR, totalsMonth.Time.IFR, totals90.Time.IFR, totalsYear.Time.IFR, totals.Time.IFR})
-	tableData.Data = append(tableData.Data,
-		[]string{"G", "PIC", totals30.Time.PIC, totalsMonth.Time.PIC, totals90.Time.PIC, totalsYear.Time.PIC, totals.Time.PIC})
-	tableData.Data = append(tableData.Data,
-		[]string{"H", "CoPilot", totals30.Time.CoPilot, totalsMonth.Time.CoPilot, totals90.Time.CoPilot, totalsYear.Time.CoPilot, totals.Time.CoPilot})
-	tableData.Data = append(tableData.Data,
-		[]string{"I", "Dual", totals30.Time.Dual, totalsMonth.Time.Dual, totals90.Time.Dual, totalsYear.Time.Dual, totals.Time.Dual})
-	tableData.Data = append(tableData.Data,
-		[]string{"J", "Instructor", totals30.Time.Instructor, totalsMonth.Time.Instructor, totals90.Time.Instructor, totalsYear.Time.Instructor, totals.Time.Instructor})
-	tableData.Data = append(tableData.Data,
-		[]string{"K", "Simulator", totals30.SIM.Time, totalsMonth.SIM.Time, totals90.SIM.Time, totalsYear.SIM.Time, totals.SIM.Time})
-	tableData.Data = append(tableData.Data,
-		[]string{"L", "Landings (day/night)",
-			fmt.Sprintf("%d/%d", totals30.Landings.Day, totals30.Landings.Night),
-			fmt.Sprintf("%d/%d", totalsMonth.Landings.Day, totalsMonth.Landings.Night),
-			fmt.Sprintf("%d/%d", totals90.Landings.Day, totals90.Landings.Night),
-			fmt.Sprintf("%d/%d", totalsYear.Landings.Day, totalsYear.Landings.Night),
-			fmt.Sprintf("%d/%d", totals.Landings.Day, totals.Landings.Night)})
-	tableData.Data = append(tableData.Data,
-		[]string{"M", "Distance", formatNumber(totals30.Distance), formatNumber(totalsMonth.Distance), formatNumber(totals90.Distance),
-			formatNumber(totalsYear.Distance), formatNumber(totals.Distance)})
+	tableData.Data = append(tableData.Data, []string{"A", "Total",
+		totals["Last28"].Time.Total,
+		totals["Month"].Time.Total,
+		totals["Last90"].Time.Total,
+		totals["Last12M"].Time.Total,
+		totals["Year"].Time.Total,
+		totals["Totals"].Time.Total,
+	})
+	if !settings.HideStatsFields.SE {
+		tableData.Data = append(tableData.Data, []string{"B", "Single Engine",
+			totals["Last28"].Time.SE,
+			totals["Month"].Time.SE,
+			totals["Last90"].Time.SE,
+			totals["Last12M"].Time.SE,
+			totals["Year"].Time.SE,
+			totals["Totals"].Time.SE,
+		})
+	}
+	if !settings.HideStatsFields.ME {
+		tableData.Data = append(tableData.Data, []string{"C", "Multi Engine",
+			totals["Last28"].Time.ME,
+			totals["Month"].Time.ME,
+			totals["Last90"].Time.ME,
+			totals["Last12M"].Time.ME,
+			totals["Year"].Time.ME,
+			totals["Totals"].Time.ME,
+		})
+	}
+	if !settings.HideStatsFields.MCC {
+		tableData.Data = append(tableData.Data, []string{"D", "MCC",
+			totals["Last28"].Time.MCC,
+			totals["Month"].Time.MCC,
+			totals["Last90"].Time.MCC,
+			totals["Last12M"].Time.MCC,
+			totals["Year"].Time.MCC,
+			totals["Totals"].Time.MCC,
+		})
+	}
+	if !settings.HideStatsFields.Night {
+		tableData.Data = append(tableData.Data, []string{"E", "Night",
+			totals["Last28"].Time.Night,
+			totals["Month"].Time.Night,
+			totals["Last90"].Time.Night,
+			totals["Last12M"].Time.Night,
+			totals["Year"].Time.Night,
+			totals["Totals"].Time.Night,
+		})
+	}
+	if !settings.HideStatsFields.IFR {
+		tableData.Data = append(tableData.Data, []string{"F", "IFR",
+			totals["Last28"].Time.IFR,
+			totals["Month"].Time.IFR,
+			totals["Last90"].Time.IFR,
+			totals["Last12M"].Time.IFR,
+			totals["Year"].Time.IFR,
+			totals["Totals"].Time.IFR,
+		})
+	}
+	if !settings.HideStatsFields.PIC {
+		tableData.Data = append(tableData.Data, []string{"G", "PIC",
+			totals["Last28"].Time.PIC,
+			totals["Month"].Time.PIC,
+			totals["Last90"].Time.PIC,
+			totals["Last12M"].Time.PIC,
+			totals["Year"].Time.PIC,
+			totals["Totals"].Time.PIC,
+		})
+	}
+	if !settings.HideStatsFields.CoPilot {
+		tableData.Data = append(tableData.Data, []string{"H", "CoPilot",
+			totals["Last28"].Time.CoPilot,
+			totals["Month"].Time.CoPilot,
+			totals["Last90"].Time.CoPilot,
+			totals["Last12M"].Time.CoPilot,
+			totals["Year"].Time.CoPilot,
+			totals["Totals"].Time.CoPilot,
+		})
+	}
+	if !settings.HideStatsFields.Dual {
+		tableData.Data = append(tableData.Data, []string{"I", "Dual",
+			totals["Last28"].Time.Dual,
+			totals["Month"].Time.Dual,
+			totals["Last90"].Time.Dual,
+			totals["Last12M"].Time.Dual,
+			totals["Year"].Time.Dual,
+			totals["Totals"].Time.Dual,
+		})
+	}
+	if !settings.HideStatsFields.Instructor {
+		tableData.Data = append(tableData.Data, []string{"J", "Instructor",
+			totals["Last28"].Time.Instructor,
+			totals["Month"].Time.Instructor,
+			totals["Last12M"].Time.Instructor,
+			totals["Last90"].Time.Instructor,
+			totals["Year"].Time.Instructor,
+			totals["Totals"].Time.Instructor,
+		})
+	}
+	if !settings.HideStatsFields.Sim {
+		tableData.Data = append(tableData.Data, []string{"K", "Simulator",
+			totals["Last28"].SIM.Time,
+			totals["Month"].SIM.Time,
+			totals["Last90"].SIM.Time,
+			totals["Last12M"].SIM.Time,
+			totals["Year"].SIM.Time,
+			totals["Totals"].SIM.Time,
+		})
+	}
+	if !settings.HideStatsFields.CrossCountry {
+		tableData.Data = append(tableData.Data, []string{"L", "Cross Country",
+			totals["Last28"].Time.CrossCountry,
+			totals["Month"].Time.CrossCountry,
+			totals["Last90"].Time.CrossCountry,
+			totals["Last12M"].Time.CrossCountry,
+			totals["Year"].Time.CrossCountry,
+			totals["Totals"].Time.CrossCountry,
+		})
+	}
+	if !settings.HideStatsFields.Landings {
+		tableData.Data = append(tableData.Data, []string{"M", "Landings (day/night)",
+			fmt.Sprintf("%d/%d", totals["Last28"].Landings.Day, totals["Last28"].Landings.Night),
+			fmt.Sprintf("%d/%d", totals["Month"].Landings.Day, totals["Month"].Landings.Night),
+			fmt.Sprintf("%d/%d", totals["Last90"].Landings.Day, totals["Last90"].Landings.Night),
+			fmt.Sprintf("%d/%d", totals["Last12M"].Landings.Day, totals["Last12M"].Landings.Night),
+			fmt.Sprintf("%d/%d", totals["Year"].Landings.Day, totals["Year"].Landings.Night),
+			fmt.Sprintf("%d/%d", totals["Totals"].Landings.Day, totals["Totals"].Landings.Night),
+		})
+	}
+	if !settings.HideStatsFields.Distance {
+		tableData.Data = append(tableData.Data, []string{"N", "Distance",
+			formatNumber(totals["Last28"].Distance),
+			formatNumber(totals["Month"].Distance),
+			formatNumber(totals["Last90"].Distance),
+			formatNumber(totals["Last12M"].Distance),
+			formatNumber(totals["Year"].Distance),
+			formatNumber(totals["Totals"].Distance),
+		})
+	}
 
 	err = app.writeJSON(w, http.StatusOK, tableData)
 	if err != nil {
@@ -223,41 +292,8 @@ func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Reques
 	}
 
 	var tableData models.TableData
-	now := time.Now().UTC()
-	minus12m := now.AddDate(0, -11, 0).UTC()
 
-	days28 := now.AddDate(0, 0, -27).UTC().Format("20060102")
-	days90 := now.AddDate(0, 0, -89).UTC().Format("20060102")
-	months12 := time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC).Format("20060102")
-	beginningOfYear := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC).Format("20060102")
-	endOfYear := time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, time.UTC).Format("20060102")
-
-	// last 28 days
-	totals28, err := app.db.GetTotals(days28, farFuture)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// last 90 days
-	totals90, err := app.db.GetTotals(days90, farFuture)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// last 12 calendar months
-	totals12m, err := app.db.GetTotals(months12, farFuture)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// current calendar year
-	totalsYear, err := app.db.GetTotals(beginningOfYear, endOfYear)
+	totals, err := app.getTotalStats("", "")
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -266,7 +302,12 @@ func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Reques
 
 	// let's form our custom table
 	tableData.Data = append(tableData.Data,
-		[]string{totals28.Time.Total, totals90.Time.Total, totals12m.Time.Total, totalsYear.Time.Total})
+		[]string{
+			totals["Last28"].Time.Total,
+			totals["Last90"].Time.Total,
+			totals["Last12M"].Time.Total,
+			totals["Year"].Time.Total,
+		})
 
 	err = app.writeJSON(w, http.StatusOK, tableData)
 	if err != nil {
@@ -290,7 +331,15 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	data["totalsByYear"] = totalsByYear
+	data["settings"] = settings
 
 	partials := []string{"stats-totals", "stats-totals-year", "stats-totals-type", "stats-totals-class", "stats-js", "common-js"}
 

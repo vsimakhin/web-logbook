@@ -1,23 +1,24 @@
 {{define "stats-totals-class"}}
-
+{{$settings := index .Data "settings"}}
 <br>
-<table id="totals_by_class" class="table table-striped table-bordered nowrap" width="100%">
+<table id="totals_by_class" class="table table-striped table-bordered nowrap" width="100%" {{if $settings.StatsFontSize}}style="font-size:{{$settings.StatsFontSize}}%"{{end}}>
     <thead>
         <tr class="align-top text-center">
             <th>Class</th>
-            <th onclick="StatsClick('totals_by_class', 1);"><a class="nav-link th-hover" href=#>SE</a></th>
-            <th onclick="StatsClick('totals_by_class', 2);"><a class="nav-link th-hover" href=#>ME</a></th>
-            <th onclick="StatsClick('totals_by_class', 3);"><a class="nav-link th-hover" href=#>MCC</a></th>
-            <th onclick="StatsClick('totals_by_class', 4);"><a class="nav-link th-hover" href=#>Night</a></th>
-            <th onclick="StatsClick('totals_by_class', 5);"><a class="nav-link th-hover" href=#>IFR</a></th>
-            <th onclick="StatsClick('totals_by_class', 6);"><a class="nav-link th-hover" href=#>PIC</a></th>
-            <th onclick="StatsClick('totals_by_class', 7);"><a class="nav-link th-hover" href=#>CoP</a></th>
-            <th onclick="StatsClick('totals_by_class', 8);"><a class="nav-link th-hover" href=#>Dual</a></th>
-            <th onclick="StatsClick('totals_by_class', 9);"><a class="nav-link th-hover" href=#>Instr</a></th>
-            <th onclick="StatsClick('totals_by_class', 10);"><a class="nav-link th-hover" href=#>Sim</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>SE</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>ME</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>MCC</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>Night</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>IFR</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>PIC</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>CoP</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>Dual</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>Instr</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>Sim</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>CC</a></th>
             <th>Landings</th>
-            <th onclick="StatsClick('totals_by_class', 12);"><a class="nav-link th-hover" href=#>Distance</a></th>
-            <th onclick="StatsClick('totals_by_class', 13);"><a class="nav-link th-hover" href=#>Total</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>Distance</a></th>
+            <th onclick="wlbStats.onStatsClick('totals_by_class', this.cellIndex);"><a class="nav-link th-hover" href=#>Total</a></th>
         </tr>
     </thead>
 </table>
