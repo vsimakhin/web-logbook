@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.12.0] - 21.01.2023
 
 - Fix: Correct column name from `Arrival/Departure Date` to `Arrival/Departure Time` on the main logbook page
 - New: Added `Last 12 Months` column to the main stats page
