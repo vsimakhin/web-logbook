@@ -69,22 +69,18 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 		w.Header().Set("Content-Type", "application/pdf")
 		w.Header().Set("Content-Disposition", "attachment; filename=logbook.pdf")
 
-		var logbook pdfexport.Logbook
-		logbook.OwnerName = settings.OwnerName
-		logbook.Signature = settings.SignatureText
-
+		logbook := &pdfexport.Logbook{
+			OwnerName: settings.OwnerName,
+			Signature: settings.SignatureText,
+		}
 		if format == exportA4 {
-			logbook.PageBreaks = strings.Split(settings.ExportA4.PageBreaks, ",")
 			logbook.Export = settings.ExportA4
 
-			err = logbook.ExportA4(flightRecords, w)
-
 		} else if format == exportA5 {
-			logbook.PageBreaks = strings.Split(settings.ExportA5.PageBreaks, ",")
 			logbook.Export = settings.ExportA5
-
-			err = logbook.ExportA5(flightRecords, w)
 		}
+
+		err = logbook.ExportPDF(format, flightRecords, w)
 
 	} else if format == exportCSV {
 		// export to CSV format

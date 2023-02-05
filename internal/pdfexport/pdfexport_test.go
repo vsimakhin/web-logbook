@@ -19,7 +19,7 @@ func TestLogbookWidthHeaders(t *testing.T) {
 		return result
 	}
 
-	formats := [2]int{PDFA4, PDFA5}
+	formats := [2]string{PDFA4, PDFA5}
 
 	for _, i := range formats {
 		var l Logbook
@@ -51,7 +51,7 @@ func TestLogbookHeaders(t *testing.T) {
 }
 
 func TestFillLine(t *testing.T) {
-	assert.Equal(t, false, fillLine(0, 3))
-	assert.Equal(t, false, fillLine(1, 3))
-	assert.Equal(t, true, fillLine(2, 3))
+	assert.Equal(t, false, isFillLine(1, 3))
+	assert.Equal(t, false, isFillLine(2, 3))
+	assert.Equal(t, true, isFillLine(3, 3))
 }

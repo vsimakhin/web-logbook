@@ -16,10 +16,9 @@ var header3_div = 14
 var leftMarginB float64
 
 // printA5LogbookHeaderA prints header on the "left page"
-func (l *Logbook) printA5LogbookHeaderA() {
+func printA5LogbookHeaderA() {
 
-	pdf.SetFillColor(217, 217, 217)
-	pdf.SetFont(fontBold, "", 8)
+	setFontLogbookHeader()
 
 	pdf.SetX(leftMargin)
 	pdf.SetY(topMargin)
@@ -69,10 +68,9 @@ func (l *Logbook) printA5LogbookHeaderA() {
 }
 
 // printA5LogbookHeaderA prints header on the "right page"
-func (l *Logbook) printA5LogbookHeaderB() {
+func printA5LogbookHeaderB() {
 
-	pdf.SetFillColor(217, 217, 217)
-	pdf.SetFont(fontBold, "", 8)
+	setFontLogbookHeader()
 
 	// First header
 	pdf.SetXY(leftMarginB, topMargin)
@@ -119,97 +117,76 @@ func (l *Logbook) printA5LogbookHeaderB() {
 	pdf.SetY(y)
 }
 
-// printA5LogbookFooterA prints footer on the "left page"
-func (l *Logbook) printA5LogbookFooterA() {
+func printA5TotalA(totalName string, total models.FlightRecord) {
+	setFontLogbookFooter()
 
-	printTotal := func(totalName string, total models.FlightRecord) {
-		pdf.SetFillColor(217, 217, 217)
-		pdf.SetFont(fontBold, "", 8)
+	pdf.SetX(leftMargin)
 
-		pdf.SetX(leftMargin)
+	printFooterLeftBlock(totalName)
+	printFooterCell(w4[1], totalName)
+	printFooterCell(w4[2], total.Time.SE)
+	printFooterCell(w4[3], total.Time.ME)
+	printFooterCell(w4[4], total.Time.MCC)
+	printFooterCell(w4[5], total.Time.Total)
+	printFooterCell(w4[6], "")
+	printFooterCell(w4[7], fmt.Sprintf("%d", total.Landings.Day))
+	printFooterCell(w4[8], fmt.Sprintf("%d", total.Landings.Night))
 
-		if totalName == "TOTAL THIS PAGE" {
-			pdf.CellFormat(w4[0], footerRowHeight, "", "LTR", 0, "", true, 0, "")
-		} else if totalName == "TOTAL FROM PREVIOUS PAGES" {
-			pdf.CellFormat(w4[0], footerRowHeight, "", "LR", 0, "", true, 0, "")
-		} else {
-			pdf.CellFormat(w4[0], footerRowHeight, "", "LBR", 0, "", true, 0, "")
-		}
-		pdf.CellFormat(w4[1], footerRowHeight, totalName, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[2], footerRowHeight, total.Time.SE, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[3], footerRowHeight, total.Time.ME, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[4], footerRowHeight, total.Time.MCC, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[5], footerRowHeight, total.Time.Total, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[6], footerRowHeight, "", "1", 0, "", true, 0, "")
-		pdf.CellFormat(w4[7], footerRowHeight, fmt.Sprintf("%d", total.Landings.Day), "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[8], footerRowHeight, fmt.Sprintf("%d", total.Landings.Night), "1", 0, "C", true, 0, "")
-
-		pdf.Ln(-1)
-	}
-
-	printTotal("TOTAL THIS PAGE", totalPage)
-	printTotal("TOTAL FROM PREVIOUS PAGES", totalPrevious)
-	printTotal("TOTAL TIME", totalTime)
+	pdf.Ln(-1)
 }
 
 // printA5LogbookFooterA prints footer on the "left page"
-func (l *Logbook) printA5LogbookFooterB() {
+func printA5LogbookFooterA() {
+	printA5TotalA("TOTAL THIS PAGE", totalPage)
+	printA5TotalA("TOTAL FROM PREVIOUS PAGES", totalPrevious)
+	printA5TotalA("TOTAL TIME", totalTime)
+}
 
-	printTotal := func(totalName string, total models.FlightRecord) {
-		pdf.SetFillColor(217, 217, 217)
-		pdf.SetFont(fontBold, "", 8)
+func printA5TotalB(totalName string, total models.FlightRecord) {
+	setFontLogbookFooter()
 
-		pdf.SetX(leftMarginB)
+	pdf.SetX(leftMarginB)
 
-		pdf.CellFormat(w4[9], footerRowHeight, total.Time.Night, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[10], footerRowHeight, total.Time.IFR, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[11], footerRowHeight, total.Time.PIC, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[12], footerRowHeight, total.Time.CoPilot, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[13], footerRowHeight, total.Time.Dual, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[14], footerRowHeight, total.Time.Instructor, "1", 0, "C", true, 0, "")
-		pdf.CellFormat(w4[15], footerRowHeight, "", "1", 0, "", true, 0, "")
-		pdf.CellFormat(w4[16], footerRowHeight, total.SIM.Time, "1", 0, "C", true, 0, "")
+	printFooterCell(w4[9], total.Time.Night)
+	printFooterCell(w4[10], total.Time.IFR)
+	printFooterCell(w4[11], total.Time.PIC)
+	printFooterCell(w4[12], total.Time.CoPilot)
+	printFooterCell(w4[13], total.Time.Dual)
+	printFooterCell(w4[14], total.Time.Instructor)
+	printFooterCell(w4[15], "")
+	printFooterCell(w4[16], total.SIM.Time)
+	printFooterSignatureBlock(totalName)
 
-		pdf.SetFont(fontRegular, "", 6)
-		if totalName == "TOTAL THIS PAGE" {
-			pdf.CellFormat(w4[17], footerRowHeight, l.Signature, "LTR", 0, "C", true, 0, "")
-		} else if totalName == "TOTAL FROM PREVIOUS PAGES" {
-			pdf.CellFormat(w4[17], footerRowHeight, "", "LR", 0, "", true, 0, "")
-		} else {
-			pdf.CellFormat(w4[17], footerRowHeight, l.OwnerName, "LBR", 0, "C", true, 0, "")
-		}
+	pdf.Ln(-1)
+}
 
-		pdf.Ln(-1)
-	}
-
-	printTotal("TOTAL THIS PAGE", totalPage)
-	printTotal("TOTAL FROM PREVIOUS PAGES", totalPrevious)
-	printTotal("TOTAL TIME", totalTime)
+// printA5LogbookFooterA prints footer on the "left page"
+func printA5LogbookFooterB() {
+	printA5TotalB("TOTAL THIS PAGE", totalPage)
+	printA5TotalB("TOTAL FROM PREVIOUS PAGES", totalPrevious)
+	printA5TotalB("TOTAL TIME", totalTime)
 }
 
 // printA5LogbookBodyA forms and prints the logbook row on the "left page"
-func (l *Logbook) printA5LogbookBodyA(record models.FlightRecord, fill bool) {
-
-	pdf.SetFillColor(228, 228, 228)
-	pdf.SetTextColor(0, 0, 0)
-	pdf.SetFont(fontRegular, "", 8)
+func printA5LogbookBodyA(record models.FlightRecord, fill bool) {
+	setFontLogbookBody()
 
 	// 	Data
 	pdf.SetX(leftMargin)
-	pdf.CellFormat(w3[0], bodyRowHeight, record.Date, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[1], bodyRowHeight, record.Departure.Place, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[2], bodyRowHeight, record.Departure.Time, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[3], bodyRowHeight, record.Arrival.Place, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[4], bodyRowHeight, record.Arrival.Time, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[5], bodyRowHeight, record.Aircraft.Model, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[6], bodyRowHeight, record.Aircraft.Reg, "1", 0, "C", fill, 0, "")
+	printBodyTimeCell(w3[0], record.Date, fill)
+	printBodyTimeCell(w3[1], record.Departure.Place, fill)
+	printBodyTimeCell(w3[2], record.Departure.Time, fill)
+	printBodyTimeCell(w3[3], record.Arrival.Place, fill)
+	printBodyTimeCell(w3[4], record.Arrival.Time, fill)
+	printBodyTimeCell(w3[5], record.Aircraft.Model, fill)
+	printBodyTimeCell(w3[6], record.Aircraft.Reg, fill)
 	printSinglePilotTime(w3[7], record.Time.SE, fill)
 	printSinglePilotTime(w3[8], record.Time.ME, fill)
-	pdf.CellFormat(w3[9], bodyRowHeight, record.Time.MCC, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[10], bodyRowHeight, record.Time.Total, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[11], bodyRowHeight, record.PIC, "1", 0, "L", fill, 0, "")
-	pdf.CellFormat(w3[12], bodyRowHeight, formatLandings(record.Landings.Day), "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[12], bodyRowHeight, formatLandings(record.Landings.Night), "1", 0, "C", fill, 0, "")
+	printBodyTimeCell(w3[9], record.Time.MCC, fill)
+	printBodyTimeCell(w3[10], record.Time.Total, fill)
+	printBodyTextCell(w3[11], record.PIC, fill)
+	printBodyTimeCell(w3[12], formatLandings(record.Landings.Day), fill)
+	printBodyTimeCell(w3[12], formatLandings(record.Landings.Night), fill)
 
 	pdf.Ln(-1)
 
@@ -217,31 +194,29 @@ func (l *Logbook) printA5LogbookBodyA(record models.FlightRecord, fill bool) {
 }
 
 // printA5LogbookBodyB forms and prints the logbook row on the "right page"
-func (l *Logbook) printA5LogbookBodyB(record models.FlightRecord, fill bool) {
+func printA5LogbookBodyB(record models.FlightRecord, fill bool) {
 
-	pdf.SetFillColor(228, 228, 228)
-	pdf.SetTextColor(0, 0, 0)
-	pdf.SetFont(fontRegular, "", 8)
+	setFontLogbookBody()
 
 	// 	Data
 	pdf.SetX(leftMarginB)
-	pdf.CellFormat(w3[14], bodyRowHeight, record.Time.Night, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[15], bodyRowHeight, record.Time.IFR, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[16], bodyRowHeight, record.Time.PIC, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[17], bodyRowHeight, record.Time.CoPilot, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[18], bodyRowHeight, record.Time.Dual, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[19], bodyRowHeight, record.Time.Instructor, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[20], bodyRowHeight, record.SIM.Type, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[21], bodyRowHeight, record.SIM.Time, "1", 0, "C", fill, 0, "")
-	pdf.CellFormat(w3[22], bodyRowHeight, record.Remarks, "1", 0, "L", fill, 0, "")
+	printBodyTimeCell(w3[14], record.Time.Night, fill)
+	printBodyTimeCell(w3[15], record.Time.IFR, fill)
+	printBodyTimeCell(w3[16], record.Time.PIC, fill)
+	printBodyTimeCell(w3[17], record.Time.CoPilot, fill)
+	printBodyTimeCell(w3[18], record.Time.Dual, fill)
+	printBodyTimeCell(w3[19], record.Time.Instructor, fill)
+	printBodyTimeCell(w3[20], record.SIM.Type, fill)
+	printBodyTimeCell(w3[21], record.SIM.Time, fill)
+	printBodyTextCell(w3[22], record.Remarks, fill)
 
 	pdf.Ln(-1)
 
 	pdf.SetX(leftMargin)
 }
 
-// TitlePageA5 print title page for A5
-func (l *Logbook) TitlePageA5() {
+// titlePageA5 print title page for A5
+func titlePageA5() {
 	pdf.AddPage()
 	pdf.SetFont(fontBold, "", 20)
 	pdf.SetXY(55, 60)
@@ -249,18 +224,48 @@ func (l *Logbook) TitlePageA5() {
 
 	pdf.SetFont(fontRegular, "", 15)
 	pdf.SetXY(25, 100)
-	pdf.MultiCell(160, 2, "HOLDER'S NAME: "+strings.ToUpper(l.OwnerName), "", "C", false)
+	pdf.MultiCell(160, 2, "HOLDER'S NAME: "+strings.ToUpper(ownerName), "", "C", false)
 }
 
-// ExportA5 creates A5 pdf with logbook in EASA format
-func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) error {
-	// init global vars
-	l.init(PDFA5)
+// logBookRowA prints logbook record row for the left page
+func logBookRowA(record models.FlightRecord, rowCounter *int, pageCounter *int) bool {
+	*rowCounter += 1
 
+	if record.Time.MCC != "" {
+		record.Time.ME = ""
+	}
+
+	totalPage = models.CalculateTotals(totalPage, record)
+	totalTime = models.CalculateTotals(totalTime, record)
+
+	printA5LogbookBodyA(record, isFillLine(*rowCounter, fillRow))
+
+	if *rowCounter >= logbookRows {
+		*rowCounter = 0
+
+		return true
+	}
+
+	return false
+}
+
+// logBookRowV prints logbook record row for the right page
+func logBookRowB(record models.FlightRecord, rowCounter *int) {
+	*rowCounter += 1
+
+	printA5LogbookBodyB(record, isFillLine(*rowCounter, fillRow))
+
+	if *rowCounter >= logbookRows {
+		*rowCounter = 0
+	}
+}
+
+// exportA5 creates A5 pdf with logbook in EASA format
+func exportA5(flightRecords []models.FlightRecord, w io.Writer) error {
 	// start forming the pdf file
 	pdf = fpdf.New("L", "mm", "A5", "")
 	pdf.SetAutoPageBreak(false, 5)
-	l.loadFonts()
+	loadFonts()
 
 	pdf.SetLineWidth(.2)
 
@@ -268,91 +273,40 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 	pageCounter := 1
 
 	var totalEmpty models.FlightRecord
-	fill := false
 
-	// title page
-	l.TitlePageA5()
-
-	logBookRowA := func(item int) int {
-		rowCounter += 1
-
-		record := flightRecords[item]
-		if record.Time.MCC != "" {
-			record.Time.ME = ""
-		}
-
-		totalPage = models.CalculateTotals(totalPage, record)
-		totalTime = models.CalculateTotals(totalTime, record)
-
-		l.printA5LogbookBodyA(record, fill)
-
-		if rowCounter >= logbookRows {
-			rowCounter = 0
-
-			return item
-		}
-		fill = fillLine(rowCounter, fillRow)
-		return -1
-	}
-
-	logBookRowB := func(item int) {
-		rowCounter += 1
-
-		record := flightRecords[item]
-		if record.Time.MCC != "" {
-			record.Time.ME = ""
-		}
-
-		l.printA5LogbookBodyB(record, fill)
-
-		if rowCounter >= logbookRows {
-			rowCounter = 0
-		}
-		fill = fillLine(rowCounter, fillRow)
-	}
+	titlePageA5()
 
 	pdf.AddPage()
-	l.printA5LogbookHeaderA()
+	printA5LogbookHeaderA()
 
-	itemCounter := len(flightRecords)
 	for i := len(flightRecords) - 1; i >= 0; i-- {
-		currentItem := logBookRowA(i)
+		pageSplit := logBookRowA(flightRecords[i], &rowCounter, &pageCounter)
 
-		if currentItem >= 0 {
+		if pageSplit {
 			// page A closed
-			l.printA5LogbookFooterA()
-			l.printPageNumber(pageCounter)
-			pageCounter += 1
+			printA5LogbookFooterA()
+			printPageNumber(pageCounter)
 
 			// let's print page B
 			pdf.AddPage()
-			l.printA5LogbookHeaderB()
+			printA5LogbookHeaderB()
 
-			for y := itemCounter - 1; y >= currentItem; y-- {
-				logBookRowB(y)
+			for y := i + logbookRows - 1; y >= i; y-- {
+				logBookRowB(flightRecords[y], &rowCounter)
 			}
 
 			// end of page B
-			l.printA5LogbookFooterB()
+			printA5LogbookFooterB()
 			totalPrevious = totalTime
 			totalPage = totalEmpty
 
 			// check for the page breakes to separate logbooks
-			if len(l.PageBreaks) > 0 {
-				if fmt.Sprintf("%d", pageCounter-1) == l.PageBreaks[0] {
-					pdf.AddPage()
-					l.TitlePageA5()
+			checkPageBreaks(&pageCounter, titlePageA5)
+			pageCounter += 1
 
-					pageCounter = 1
-
-					l.PageBreaks = append(l.PageBreaks[:0], l.PageBreaks[1:]...)
-				}
-			}
-
-			itemCounter = currentItem
-			if currentItem != 0 {
+			if i != 0 {
 				pdf.AddPage()
-				l.printA5LogbookHeaderA()
+				printA5LogbookHeaderA()
 			}
 		}
 	}
@@ -361,27 +315,24 @@ func (l *Logbook) ExportA5(flightRecords []models.FlightRecord, w io.Writer) err
 	var emptyRecord models.FlightRecord
 	if rowCounter != 0 {
 		for i := rowCounter + 1; i <= logbookRows; i++ {
-			l.printA5LogbookBodyA(emptyRecord, fill)
-			fill = fillLine(i, fillRow)
-
+			printA5LogbookBodyA(emptyRecord, isFillLine(i, fillRow))
 		}
-		l.printA5LogbookFooterA()
-		l.printPageNumber(pageCounter)
+		printA5LogbookFooterA()
+		printPageNumber(pageCounter)
 
 		// page B
 		pdf.AddPage()
-		l.printA5LogbookHeaderB()
-		fill = false
+		printA5LogbookHeaderB()
 		rowCounter = 0
 
-		for i := itemCounter - 1; i >= 0; i-- {
-			logBookRowB(i)
+		for i := len(flightRecords)%logbookRows - 1; i >= 0; i-- {
+			logBookRowB(flightRecords[i], &rowCounter)
 		}
-		for i := itemCounter; i < logbookRows; i++ {
-			fill = fillLine(i, fillRow)
-			l.printA5LogbookBodyB(emptyRecord, fill)
+		for i := len(flightRecords) % logbookRows; i < logbookRows; i++ {
+			rowCounter++
+			printA5LogbookBodyB(emptyRecord, isFillLine(rowCounter, fillRow))
 		}
-		l.printA5LogbookFooterB()
+		printA5LogbookFooterB()
 	}
 
 	err := pdf.Output(w)
