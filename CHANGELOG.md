@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Added new setting `Replace SE and ME values for single pilot time with "✓" symbol` for PDF export formats. It's according to EASA Part FCL.050 logbook example https://www.easa.europa.eu/sites/default/files/dfu/Part-FCL.pdf
+
 ## [2.12.0] - 21.01.2023
 
 - Fix: Correct column name from `Arrival/Departure Date` to `Arrival/Departure Time` on the main logbook page

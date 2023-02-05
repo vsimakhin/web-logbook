@@ -315,6 +315,20 @@
         </div>
     </div>
 </div>
+
+<div class="row"><strong>Mics</strong></div>
+<hr>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row mb-2">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="replace_sp_time_a5" name="replace_sp_time_a5"  {{if $settings.ExportA5.ReplaceSPTime}}checked{{end}}>
+                <label for="replace_sp_time_a5" class="form-label">Replace SE and ME values for single pilot time with "✓" symbol (Part FCL.050 format)</label>
+            </div>
+        </div>
+    </div>
+</div>
+
 <hr>
 
 <button class="btn btn-sm btn-outline-secondary" type="button" onclick="RestoreDefaultsA5()" id="restore_defaults_a5"><i class="bi bi-circle-fill"></i> Restore Defaults</button>
