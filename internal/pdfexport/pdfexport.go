@@ -3,18 +3,22 @@ package pdfexport
 import (
 	"embed"
 	"fmt"
+	"io"
+	"strings"
 
 	"github.com/go-pdf/fpdf"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const PDFA4 = 0
-const PDFA5 = 1
+const PDFA4 = "A4"
+const PDFA5 = "A5"
 
+// fonts
 const fontBold = "LiberationSansNarrow-Bold"
 const fontRegular = "LiberationSansNarrow-Regular"
 const fontB612 = "B612Mono-Regular"
 
+// logbook page settings
 var logbookRows int
 var fillRow int
 
@@ -23,8 +27,7 @@ var topMargin float64
 var bodyRowHeight float64
 var footerRowHeight float64
 
-var replace_sp_time bool
-
+// headers captions
 var header1 = []string{
 	"1",
 	"2",
@@ -68,34 +71,58 @@ var header3 = []string{
 	"",
 }
 
+// colums widths
 var w1 []float64
 var w2 []float64
 var w3 []float64
 var w4 []float64
 
+// vars
 var totalPage models.FlightRecord
 var totalPrevious models.FlightRecord
 var totalTime models.FlightRecord
 
+var replace_sp_time bool
+
+var pageBreaks []string
+var ownerName string
+var signature string
+
 //go:embed font/*
 var content embed.FS
 
+// pdf
 var pdf *fpdf.Fpdf
 
 type Logbook struct {
-	OwnerName  string
-	Signature  string
-	PageBreaks []string
-
-	Export models.ExportPDF
+	OwnerName string
+	Signature string
+	Export    models.ExportPDF
 }
 
-func (l *Logbook) init(format int) {
+func (l *Logbook) ExportPDF(format string, flightRecords []models.FlightRecord, w io.Writer) error {
+	var err error
+
+	l.init(format)
+
+	switch format {
+	case PDFA4:
+		err = exportA4(flightRecords, w)
+	case PDFA5:
+		err = exportA5(flightRecords, w)
+	}
+
+	return err
+}
+
+func (l *Logbook) init(format string) {
+	// init empty records
 	var emptyRecord models.FlightRecord
 	totalPage = emptyRecord
 	totalPrevious = emptyRecord
 	totalTime = emptyRecord
 
+	// page format
 	logbookRows = l.Export.LogbookRows
 	fillRow = l.Export.Fill
 
@@ -112,6 +139,9 @@ func (l *Logbook) init(format int) {
 	}
 
 	replace_sp_time = l.Export.ReplaceSPTime
+	pageBreaks = strings.Split(l.Export.PageBreaks, ",")
+	ownerName = l.OwnerName
+	signature = l.Signature
 
 	initWidths(l.Export.Columns)
 }
@@ -187,9 +217,8 @@ func formatLandings(landing int) string {
 	}
 }
 
-// fillLine returns if the logbook line should be filled with gray color
-func fillLine(rowCounter int, fill int) bool {
-	if (rowCounter+1)%fill == 0 { // fill every "fill" row only
+func isFillLine(rowCounter int, fill int) bool {
+	if (rowCounter)%fill == 0 { // fill every "fill" row only
 		return true
 	} else {
 		return false
@@ -197,8 +226,7 @@ func fillLine(rowCounter int, fill int) bool {
 }
 
 // LoadFonts loads fonts for pdf object from embed fs
-func (l *Logbook) loadFonts() {
-
+func loadFonts() {
 	fontRegularBytes, _ := content.ReadFile(fmt.Sprintf("font/%s.ttf", fontRegular))
 	pdf.AddUTF8FontFromBytes(fontRegular, "", fontRegularBytes)
 
@@ -209,10 +237,44 @@ func (l *Logbook) loadFonts() {
 	pdf.AddUTF8FontFromBytes(fontB612, "", fontB612Bytes)
 }
 
-func (l *Logbook) printPageNumber(pageCounter int) {
+// printPageNumber just prints a page number
+func printPageNumber(pageCounter int) {
 	pdf.SetFont(fontRegular, "", 6)
 	pdf.SetY(pdf.GetY() + 2)
 	pdf.MultiCell(10, 1, fmt.Sprintf("page %d", pageCounter), "", "L", false)
+}
+
+func printBodyTimeCell(w float64, value string, fill bool) {
+	pdf.CellFormat(w, bodyRowHeight, value, "1", 0, "C", fill, 0, "")
+}
+
+func printBodyTextCell(w float64, value string, fill bool) {
+	pdf.CellFormat(w, bodyRowHeight, value, "1", 0, "L", fill, 0, "")
+}
+
+func printFooterCell(w float64, value string) {
+	pdf.CellFormat(w, footerRowHeight, value, "1", 0, "C", true, 0, "")
+}
+
+func printFooterLeftBlock(totalName string) {
+	if totalName == "TOTAL THIS PAGE" {
+		pdf.CellFormat(w4[0], footerRowHeight, "", "LTR", 0, "", true, 0, "")
+	} else if totalName == "TOTAL FROM PREVIOUS PAGES" {
+		pdf.CellFormat(w4[0], footerRowHeight, "", "LR", 0, "", true, 0, "")
+	} else {
+		pdf.CellFormat(w4[0], footerRowHeight, "", "LBR", 0, "", true, 0, "")
+	}
+}
+
+func printFooterSignatureBlock(totalName string) {
+	pdf.SetFont(fontRegular, "", 6)
+	if totalName == "TOTAL THIS PAGE" {
+		pdf.CellFormat(w4[17], footerRowHeight, signature, "LTR", 0, "C", true, 0, "")
+	} else if totalName == "TOTAL FROM PREVIOUS PAGES" {
+		pdf.CellFormat(w4[17], footerRowHeight, "", "LR", 0, "", true, 0, "")
+	} else {
+		pdf.CellFormat(w4[17], footerRowHeight, ownerName, "LBR", 0, "C", true, 0, "")
+	}
 }
 
 // printSinglePilotTime replaces single pilot time with check symbol if the replace_sp_time is set
@@ -221,10 +283,43 @@ func printSinglePilotTime(w float64, value string, fill bool) {
 		// set new font with symbol support
 		pdf.SetFont(fontB612, "", 8)
 		// put check symbol
-		pdf.CellFormat(w, bodyRowHeight, "✓", "1", 0, "C", fill, 0, "")
+		printBodyTimeCell(w, "✓", fill)
 		// set back the regular font
 		pdf.SetFont(fontRegular, "", 8)
 	} else {
-		pdf.CellFormat(w, bodyRowHeight, value, "1", 0, "C", fill, 0, "")
+		printBodyTimeCell(w, value, fill)
 	}
+}
+
+// checkPageBreaks prints the title page and resets the page counter
+func checkPageBreaks(pageCounter *int, titlePage func()) {
+	if len(pageBreaks) > 0 {
+		if fmt.Sprintf("%d", *pageCounter) == pageBreaks[0] {
+			titlePage()
+
+			*pageCounter = 0
+
+			pageBreaks = append(pageBreaks[:0], pageBreaks[1:]...)
+		}
+	}
+}
+
+// setFontLogbookBody sets font parameters for logbook rows
+func setFontLogbookBody() {
+	pdf.SetFillColor(228, 228, 228)
+	pdf.SetTextColor(0, 0, 0)
+	pdf.SetFont(fontRegular, "", 8)
+}
+
+// setFontLogbookHeader sets font parameters for logbook header
+func setFontLogbookHeader() {
+	pdf.SetFillColor(217, 217, 217)
+	pdf.SetTextColor(0, 0, 0)
+	pdf.SetFont(fontBold, "", 8)
+}
+
+// setFontLogbookFooter sets font parameters for logbook footer
+// eventually is as same as for headers
+func setFontLogbookFooter() {
+	setFontLogbookHeader()
 }
