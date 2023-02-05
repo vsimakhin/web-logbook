@@ -13,6 +13,7 @@ const PDFA5 = 1
 
 const fontBold = "LiberationSansNarrow-Bold"
 const fontRegular = "LiberationSansNarrow-Regular"
+const fontB612 = "B612Mono-Regular"
 
 var logbookRows int
 var fillRow int
@@ -21,6 +22,8 @@ var leftMargin float64
 var topMargin float64
 var bodyRowHeight float64
 var footerRowHeight float64
+
+var replace_sp_time bool
 
 var header1 = []string{
 	"1",
@@ -104,10 +107,11 @@ func (l *Logbook) init(format int) {
 		leftMargin = l.Export.LeftMargin
 
 	} else if format == PDFA5 {
-
 		leftMargin = l.Export.LeftMarginA
 		leftMarginB = l.Export.LeftMarginB
 	}
+
+	replace_sp_time = l.Export.ReplaceSPTime
 
 	initWidths(l.Export.Columns)
 }
@@ -200,10 +204,27 @@ func (l *Logbook) loadFonts() {
 
 	fontBoldBytes, _ := content.ReadFile(fmt.Sprintf("font/%s.ttf", fontBold))
 	pdf.AddUTF8FontFromBytes(fontBold, "", fontBoldBytes)
+
+	fontB612Bytes, _ := content.ReadFile(fmt.Sprintf("font/%s.ttf", fontB612))
+	pdf.AddUTF8FontFromBytes(fontB612, "", fontB612Bytes)
 }
 
 func (l *Logbook) printPageNumber(pageCounter int) {
 	pdf.SetFont(fontRegular, "", 6)
 	pdf.SetY(pdf.GetY() + 2)
 	pdf.MultiCell(10, 1, fmt.Sprintf("page %d", pageCounter), "", "L", false)
+}
+
+// printSinglePilotTime replaces single pilot time with check symbol if the replace_sp_time is set
+func printSinglePilotTime(w float64, value string, fill bool) {
+	if replace_sp_time && value != "" {
+		// set new font with symbol support
+		pdf.SetFont(fontB612, "", 8)
+		// put check symbol
+		pdf.CellFormat(w, bodyRowHeight, "✓", "1", 0, "C", fill, 0, "")
+		// set back the regular font
+		pdf.SetFont(fontRegular, "", 8)
+	} else {
+		pdf.CellFormat(w, bodyRowHeight, value, "1", 0, "C", fill, 0, "")
+	}
 }
