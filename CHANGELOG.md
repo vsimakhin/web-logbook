@@ -4,6 +4,7 @@
 
 - New: Added new setting `Replace SE and ME values for single pilot time with "✓" symbol` for PDF export formats. It's according to EASA Part FCL.050 logbook example https://www.easa.europa.eu/sites/default/files/dfu/Part-FCL.pdf
 - Updated: PDF export code adjustment to be more readable and flexible for future formats.
+- Updated: Labels for `Settings`->`Misc` page are set to use a regular font
 
 ## [2.12.0] - 21.01.2023
 
