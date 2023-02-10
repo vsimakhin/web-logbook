@@ -1,160 +1,244 @@
 {{define "settings-js"}}
 {{$settings := index .Data "settings"}}
+<script src="/static/js/signature_pad.umd.js"></script>
 <script>
-var removeButton = '<button class="btn-sm btn-outline-danger" type="button" onclick="" id="remove_row"><i class="bi bi-dash-square-fill"></i></button>';
-var rowBody = `<tr><td contenteditable="true">CLASS_NAME</td><td contenteditable="true">TYPE_NAME</td><td>${removeButton}</td></tr>`;
 
-$("#add_row").on("click", function(){
-    $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", "New Class Name").replace("TYPE_NAME", "Type1, Type2, Type3"));
-});
+// WebLogbook Settings Namespace
+wlbSettings = function () {
+    // signature pad
+    var canvas = document.getElementById("signature-pad");
+    var signaturePad = null
 
-$("#aircraft_class").on("click", "#remove_row", function(){
-    $(this).closest("tr").remove();
-});
+    // resize canvas for signature pad
+    function resizeCanvas() {
+        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+    }
 
-$(document).ready( function () {
-    PopulateAircraftClassesTable();
-} );
+    // init signature
+    function initSignature() {
+        signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(250,250,250)'
+        });
 
-function PopulateAircraftClassesTable() {
-    $('#aircraft_class').find('tbody').empty();
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+        loadSignature();
+    }
 
-    var aircrafts = loadJSON("{{index .API "Aircrafts"}}");
-    var models_data = [];
-    for (var item in aircrafts) {
-        if (!models_data.includes(aircrafts[item])){
-            models_data.push(aircrafts[item]);
+    function loadSignature() {
+        var signatureImage = "{{$settings.SignatureImage}}";
+        if (signatureImage!=="") {
+            signaturePad.fromDataURL(signatureImage);
         }
     }
 
-    var classes_data = loadJSON("{{index .API "SettingsAircraftClasses"}}");
+    // empty signature pad
+    function clearSignature() {
+        signaturePad.clear();
+    }
 
-    for (var key of Object.keys(classes_data)) {
-        $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", key).replace("TYPE_NAME", classes_data[key]));
+    // upload signature from file
+    function uploadSignature() {
+        var sf = document.getElementById("signature_file");
+        var file = sf.files[0],
+        url = URL.createObjectURL(file);
 
-        var tmp_models_data = [...models_data];
+        fetch(url)
+            .then((res) => res.blob())
+            .then((blob) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    signaturePad.fromDataURL(reader.result);
+                };
+                reader.readAsDataURL(blob);
+        });
 
-        for (var i = 0; i < tmp_models_data.length; i++) {
-            if (classes_data[key].includes(tmp_models_data[i])) {
-                models_data = removeArrayItem(models_data, tmp_models_data[i]);
+    }
+
+    var removeButton = '<button class="btn-sm btn-outline-danger" type="button" onclick="wlbSettings.removeClassesRow(this);" id="remove_row"><i class="bi bi-dash-square-fill"></i></button>';
+    var rowBody = `<tr><td contenteditable="true">CLASS_NAME</td><td contenteditable="true">TYPE_NAME</td><td>${removeButton}</td></tr>`;
+
+    // add new row for aircraft classes table
+    function addNewClassesRow() {
+        $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", "New Class Name").replace("TYPE_NAME", "Type1, Type2, Type3"));
+    }
+
+    // remove row from aircraft classes
+    function removeClassesRow(obj) {
+        obj.closest("tr").remove();
+    }
+
+    // helper function for reloadAircraftClassessTable()
+    function removeArrayItem(arr, value) {
+        var index = arr.indexOf(value);
+        if (index > -1) {
+            arr.splice(index, 1);
+        }
+        return arr;
+    }
+
+    // reload table with aircraft classess
+    function reloadAircraftClassesTable() {
+        $('#aircraft_class').find('tbody').empty();
+
+        var aircrafts = loadJSON("{{index .API "Aircrafts"}}");
+        var models_data = [];
+        for (var item in aircrafts) {
+            if (!models_data.includes(aircrafts[item])){
+                models_data.push(aircrafts[item]);
             }
         }
-    }
 
-    if (models_data.length > 0) {
-        document.getElementById("not_populated").innerHTML = "<br>Aircraft models without classification: " + models_data;
-    } else {
-        document.getElementById("not_populated").innerHTML = "";
-    }
-}
+        var classes_data = loadJSON("{{index .API "SettingsAircraftClasses"}}");
 
-function removeArrayItem(arr, value) {
-    var index = arr.indexOf(value);
-    if (index > -1) {
-        arr.splice(index, 1);
-    }
-    return arr;
-}
+        for (var key of Object.keys(classes_data)) {
+            $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", key).replace("TYPE_NAME", classes_data[key]));
 
-function Save() {
-    if (document.getElementById("auth_enabled").checked) {
-        if (document.getElementById("login").value === "") {
-            showErrorMessage("Login field is empty");
-            return;
+            var tmp_models_data = [...models_data];
+
+            for (var i = 0; i < tmp_models_data.length; i++) {
+                if (classes_data[key].includes(tmp_models_data[i])) {
+                    models_data = removeArrayItem(models_data, tmp_models_data[i]);
+                }
+            }
         }
 
-        if (document.getElementById("password").value === "") {
-            if (document.getElementById("previous_auth_value").value == "false") {
-                showErrorMessage("Password field is empty");
+        if (models_data.length > 0) {
+            document.getElementById("without_classes").innerHTML = "<br>Aircraft models without classification: " + models_data;
+        } else {
+            document.getElementById("without_classes").innerHTML = "";
+        }
+    }
+
+    function saveSettings() {
+        if (document.getElementById("auth_enabled").checked) {
+            if (document.getElementById("login").value === "") {
+                showErrorMessage("Login field is empty");
                 return;
             }
-        }
-    }
 
-    var table = document.getElementById("aircraft_class");
-
-    var aircraft_classes = {};
-    for (var i = 0, row; row = table.rows[i]; i++) {
-
-        class_name = row.cells[0].innerText;
-        types = row.cells[1].innerText;
-
-        if (class_name !== "Class Name") {
-            aircraft_classes[class_name] = types
-        }
-    }
-
-    let payload = {
-        owner_name: document.getElementById("owner_name").value,
-        signature_text: document.getElementById("signature_text").value,
-        aircraft_classes: aircraft_classes,
-        auth_enabled: document.getElementById("auth_enabled").checked,
-        login: document.getElementById("login").value,
-        password: document.getElementById("password").value,
-        disable_flightrecord_help: document.getElementById("disable_flightrecord_help").checked,
-        hide_stats_fields: {
-            hide_se: document.getElementById("hide_se").checked,
-            hide_me: document.getElementById("hide_me").checked,
-            hide_mcc: document.getElementById("hide_mcc").checked,
-            hide_night: document.getElementById("hide_night").checked,
-            hide_ifr: document.getElementById("hide_ifr").checked,
-            hide_pic: document.getElementById("hide_pic").checked,
-            hide_copilot: document.getElementById("hide_copilot").checked,
-            hide_dual: document.getElementById("hide_dual").checked,
-            hide_instructor: document.getElementById("hide_instructor").checked,
-            hide_sim: document.getElementById("hide_sim").checked,
-            hide_cc: document.getElementById("hide_cc").checked,
-            hide_landings: document.getElementById("hide_landings").checked,
-            hide_distance: document.getElementById("hide_distance").checked
-        },
-        stats_font_size: document.getElementById("stats_font").value
-    };
-
-    const requestOptions = {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-    };
-
-    fetch("{{index .API "Settings"}}", requestOptions)
-        .then(response => response.json())
-        .then(function(data) {
-            if (data.ok) {
-                showInfoMessage(data.message);
-                PopulateAircraftClassesTable();
-                if (typeof data.redirect_url !== 'undefined') {
-                    location.href = data.redirect_url;
+            if (document.getElementById("password").value === "") {
+                if (document.getElementById("previous_auth_value").value == "false") {
+                    showErrorMessage("Password field is empty");
+                    return;
                 }
-            } else {
-                showErrorMessage(data.message);
             }
-        });
-}
-
-function UpdateAirportsDB() {
-    showInfoMessage("Updating...");
-
-    const requestOptions = {
-        method: 'get',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
         }
-    };
 
-    fetch("{{index .API "AirportUpdate"}}", requestOptions)
-        .then(response => response.json())
-        .then(function(data) {
-            if (data.ok) {
-                document.getElementById("airports").value = data.message + " airports";
-                showInfoMessage("Airports DB has been updated");
-            } else {
-                showErrorMessage(data.message);
+        var table = document.getElementById("aircraft_class");
+
+        var aircraft_classes = {};
+        for (var i = 0, row; row = table.rows[i]; i++) {
+
+            class_name = row.cells[0].innerText;
+            types = row.cells[1].innerText;
+
+            if (class_name !== "Class Name") {
+                aircraft_classes[class_name] = types
             }
-        });
-}
+        }
+
+        // check signature
+        var signatureImage = "";
+        if (!signaturePad.isEmpty()) {
+            signatureImage = signaturePad.toDataURL();
+        }
+
+        let payload = {
+            owner_name: document.getElementById("owner_name").value,
+            signature_text: document.getElementById("signature_text").value,
+            signature_image: signatureImage,
+            aircraft_classes: aircraft_classes,
+            auth_enabled: document.getElementById("auth_enabled").checked,
+            login: document.getElementById("login").value,
+            password: document.getElementById("password").value,
+            disable_flightrecord_help: document.getElementById("disable_flightrecord_help").checked,
+            hide_stats_fields: {
+                hide_se: document.getElementById("hide_se").checked,
+                hide_me: document.getElementById("hide_me").checked,
+                hide_mcc: document.getElementById("hide_mcc").checked,
+                hide_night: document.getElementById("hide_night").checked,
+                hide_ifr: document.getElementById("hide_ifr").checked,
+                hide_pic: document.getElementById("hide_pic").checked,
+                hide_copilot: document.getElementById("hide_copilot").checked,
+                hide_dual: document.getElementById("hide_dual").checked,
+                hide_instructor: document.getElementById("hide_instructor").checked,
+                hide_sim: document.getElementById("hide_sim").checked,
+                hide_cc: document.getElementById("hide_cc").checked,
+                hide_landings: document.getElementById("hide_landings").checked,
+                hide_distance: document.getElementById("hide_distance").checked
+            },
+            stats_font_size: document.getElementById("stats_font").value
+        };
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        };
+
+        fetch("{{index .API "Settings"}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    showInfoMessage(data.message);
+                    reloadAircraftClassesTable();
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    showErrorMessage(data.message);
+                }
+            });
+    }
+
+    // update airports database
+    function updateAirportsDB() {
+        showInfoMessage("Updating...");
+
+        const requestOptions = {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        };
+
+        fetch("{{index .API "AirportUpdate"}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    document.getElementById("airports").value = data.message + " airports";
+                    showInfoMessage("Airports DB has been updated");
+                } else {
+                    showErrorMessage(data.message);
+                }
+            });
+    }
+
+    // export functions
+    return {
+        reloadAircraftClassesTable:reloadAircraftClassesTable,
+        addNewClassesRow:addNewClassesRow,
+        removeClassesRow:removeClassesRow,
+        saveSettings:saveSettings,
+        updateAirportsDB:updateAirportsDB,
+        initSignature:initSignature,
+        clearSignature:clearSignature,
+        uploadSignature:uploadSignature
+    }
+}();
+
+$(document).ready( function () {
+    wlbSettings.reloadAircraftClassesTable();
+    wlbSettings.initSignature();
+} );
+
 </script>
 {{end}}

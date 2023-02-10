@@ -139,6 +139,7 @@ type HideFields struct {
 type Settings struct {
 	OwnerName               string            `json:"owner_name"`
 	SignatureText           string            `json:"signature_text"`
+	SignatureImage          string            `json:"signature_image"`
 	AircraftClasses         map[string]string `json:"aircraft_classes"`
 	AuthEnabled             bool              `json:"auth_enabled"`
 	Login                   string            `json:"login"`
