@@ -20,7 +20,7 @@ wlbSettings = function () {
     // init signature
     function initSignature() {
         signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(250,250,250)'
+            backgroundColor: 'rgba(0,0,0,0)'
         });
 
         window.onresize = resizeCanvas;
@@ -56,6 +56,31 @@ wlbSettings = function () {
                 reader.readAsDataURL(blob);
         });
 
+    }
+
+    function pickSignatureColor() {
+        document.getElementById("signature_color").click();
+    }
+
+    function changeSignatureColor() {
+        function hexToRgb(hex) {
+            // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        var rgb_color = hexToRgb(document.getElementById("signature_color").value);
+
+        signaturePad.penColor = `rgb(${rgb_color.r}, ${rgb_color.g}, ${rgb_color.b})`;
     }
 
     var removeButton = '<button class="btn-sm btn-outline-danger" type="button" onclick="wlbSettings.removeClassesRow(this);" id="remove_row"><i class="bi bi-dash-square-fill"></i></button>';
@@ -231,7 +256,9 @@ wlbSettings = function () {
         updateAirportsDB:updateAirportsDB,
         initSignature:initSignature,
         clearSignature:clearSignature,
-        uploadSignature:uploadSignature
+        uploadSignature:uploadSignature,
+        pickSignatureColor:pickSignatureColor,
+        changeSignatureColor:changeSignatureColor
     }
 }();
 

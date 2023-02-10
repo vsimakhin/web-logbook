@@ -266,6 +266,7 @@ func exportA5(flightRecords []models.FlightRecord, w io.Writer) error {
 	pdf = fpdf.New("L", "mm", "A5", "")
 	pdf.SetAutoPageBreak(false, 5)
 	loadFonts()
+	loadSignature()
 
 	pdf.SetLineWidth(.2)
 

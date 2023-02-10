@@ -177,6 +177,7 @@ func exportA4(flightRecords []models.FlightRecord, w io.Writer) error {
 	pdf = fpdf.New("L", "mm", "A4", "")
 	pdf.SetAutoPageBreak(true, 5)
 	loadFonts()
+	loadSignature()
 
 	pdf.SetLineWidth(.2)
 

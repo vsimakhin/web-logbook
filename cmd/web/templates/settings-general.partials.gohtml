@@ -33,8 +33,11 @@
         </div>
         <div class="col">
             <div class="row mb-2">
-            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="$('#signature_file').click();" id="upload_signature"><i class="bi bi-arrow-clockwise"></i> Upload</button>
-            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.clearSignature();" id="clear_signature"><i class="bi bi-arrow-clockwise"></i> Clear</button>
+            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="$('#signature_file').click();" id="upload_signature"><i class="bi bi-cloud-arrow-up-fill"></i> Upload</button>
+            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.clearSignature();" id="clear_signature"><i class="bi bi-arrow-counterclockwise"></i> Clear</button>
+            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.pickSignatureColor();" id="pick_color"><i class="bi bi-brush-fill"></i> Color</button>
+
+            <input type="color" id="signature_color" name="signature_color" onchange="wlbSettings.changeSignatureColor();" hidden>
             </div>
         </div>
 

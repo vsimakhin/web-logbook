@@ -317,6 +317,12 @@
                 <label for="replace_sp_time_a4" class="form-label">Replace SE and ME values for single pilot time with "✓" symbol (Part FCL.050 format)</label>
             </div>
         </div>
+        <div class="row mb-2">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="include_signature_a4" name="include_signature_a4"  {{if $settings.ExportA4.IncludeSignature}}checked{{end}}>
+                <label for="include_signature_a4" class="form-label">Include signature</label>
+            </div>
+        </div>
     </div>
 </div>
 

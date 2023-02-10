@@ -96,17 +96,18 @@ type ColumnsWidth struct {
 }
 
 type ExportPDF struct {
-	LogbookRows   int          `json:"logbook_rows"`
-	Fill          int          `json:"fill"`
-	LeftMargin    float64      `json:"left_margin"`
-	LeftMarginA   float64      `json:"left_margin_a"`
-	LeftMarginB   float64      `json:"left_margin_b"`
-	TopMargin     float64      `json:"top_margin"`
-	BodyRow       float64      `json:"body_row_height"`
-	FooterRow     float64      `json:"footer_row_height"`
-	PageBreaks    string       `json:"page_breaks"`
-	Columns       ColumnsWidth `json:"columns"`
-	ReplaceSPTime bool         `json:"replace_sp_time"`
+	LogbookRows      int          `json:"logbook_rows"`
+	Fill             int          `json:"fill"`
+	LeftMargin       float64      `json:"left_margin"`
+	LeftMarginA      float64      `json:"left_margin_a"`
+	LeftMarginB      float64      `json:"left_margin_b"`
+	TopMargin        float64      `json:"top_margin"`
+	BodyRow          float64      `json:"body_row_height"`
+	FooterRow        float64      `json:"footer_row_height"`
+	PageBreaks       string       `json:"page_breaks"`
+	Columns          ColumnsWidth `json:"columns"`
+	ReplaceSPTime    bool         `json:"replace_sp_time"`
+	IncludeSignature bool         `json:"include_signature"`
 }
 
 type ExportXLS struct {

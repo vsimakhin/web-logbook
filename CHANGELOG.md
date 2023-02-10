@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Now you can add signature to the logbook in the PDF format. The new signature pad on the `Settings` page allows you to write/draw your signature in any color or upload it from file (`*.png` format only, and should be with transparent background). And then you can "turn it on" for each PDF export format with a checkbox `Include signature`
 - New: Added new setting `Replace SE and ME values for single pilot time with "✓" symbol` for PDF export formats. It's according to EASA Part FCL.050 logbook example https://www.easa.europa.eu/sites/default/files/dfu/Part-FCL.pdf
 - Updated: PDF export code adjustment to be more readable and flexible for future formats.
 - Updated: Labels for `Settings`->`Misc` page are set to use a regular font

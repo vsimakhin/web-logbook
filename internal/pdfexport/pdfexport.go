@@ -1,7 +1,9 @@
 package pdfexport
 
 import (
+	"bytes"
 	"embed"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"strings"
@@ -87,6 +89,7 @@ var replace_sp_time bool
 var pageBreaks []string
 var ownerName string
 var signature string
+var signatureImg string
 
 //go:embed font/*
 var content embed.FS
@@ -95,9 +98,10 @@ var content embed.FS
 var pdf *fpdf.Fpdf
 
 type Logbook struct {
-	OwnerName string
-	Signature string
-	Export    models.ExportPDF
+	OwnerName      string
+	Signature      string
+	SignatureImage string
+	Export         models.ExportPDF
 }
 
 func (l *Logbook) ExportPDF(format string, flightRecords []models.FlightRecord, w io.Writer) error {
@@ -142,6 +146,10 @@ func (l *Logbook) init(format string) {
 	pageBreaks = strings.Split(l.Export.PageBreaks, ",")
 	ownerName = l.OwnerName
 	signature = l.Signature
+	signatureImg = l.SignatureImage
+	if !l.Export.IncludeSignature {
+		signatureImg = ""
+	}
 
 	initWidths(l.Export.Columns)
 }
@@ -237,6 +245,20 @@ func loadFonts() {
 	pdf.AddUTF8FontFromBytes(fontB612, "", fontB612Bytes)
 }
 
+// loadSignature register PNG image with signature in a pdf file
+func loadSignature() {
+	if signatureImg != "" {
+		unbased, err := base64.StdEncoding.DecodeString(strings.ReplaceAll(signatureImg, "data:image/png;base64,", ""))
+		if err != nil {
+			fmt.Printf("error adding signature image to the pdf file - %s, continue without signature\n", err)
+			signatureImg = ""
+			return
+		}
+		r := bytes.NewReader(unbased)
+		pdf.RegisterImageReader("signature", "png", r)
+	}
+}
+
 // printPageNumber just prints a page number
 func printPageNumber(pageCounter int) {
 	pdf.SetFont(fontRegular, "", 6)
@@ -268,12 +290,20 @@ func printFooterLeftBlock(totalName string) {
 
 func printFooterSignatureBlock(totalName string) {
 	pdf.SetFont(fontRegular, "", 6)
+
 	if totalName == "TOTAL THIS PAGE" {
 		pdf.CellFormat(w4[17], footerRowHeight, signature, "LTR", 0, "C", true, 0, "")
 	} else if totalName == "TOTAL FROM PREVIOUS PAGES" {
 		pdf.CellFormat(w4[17], footerRowHeight, "", "LR", 0, "", true, 0, "")
 	} else {
 		pdf.CellFormat(w4[17], footerRowHeight, ownerName, "LBR", 0, "C", true, 0, "")
+		printSignature()
+	}
+}
+
+func printSignature() {
+	if signatureImg != "" {
+		pdf.Image("signature", pdf.GetX()-w4[17], pdf.GetY()-footerRowHeight*2, w4[17], footerRowHeight*3, false, "", 0, "")
 	}
 }
 
