@@ -4,37 +4,55 @@
 
 <div class="row">
     <div class="col-md-4">
-
-        <div class="row mb-2">
-            <div class="col">
-                <label for="owner_name" class="form-label"><strong>Owner Name</strong><br>
-                This name is printed in the logbook footer</label>
-
-                <input type="text" class="form-control form-control-sm" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
-                    required="true" autocomplete="off" placeholder="Owner Name">
+        <div class="col">
+            <div class="row mb-2">
+                <label for="owner_name" class="form-label col-md-3 col-form-label">Owner Name</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control form-control-sm" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
+                        autocomplete="off" placeholder="Owner Name">
+                </div>
             </div>
         </div>
 
-        <div class="row mb-2">
-            <div class="col">
-                <label for="signature_text" class="form-label"><strong>Signature Text</strong><br>
-                This signature is printed in the logbook footer under signature</label>
-
-                <input type="text" class="form-control form-control-sm" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
-                    required="true" autocomplete="off" placeholder="Signature text">
+        <div class="col">
+            <div class="row mb-2">
+                <label for="signature_text" class="form-label col-md-3 col-form-label">Signature text</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control form-control-sm" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
+                        autocomplete="off" placeholder="Signature text">
+                </div>
             </div>
         </div>
 
-        <div class="row mb-2">
-            <div class="col">
-                <label for="airports" class="form-label"><strong>Airport database</strong><br>
-                Click </i>Update Airport DB</i> to get the latest list of airports</label>
+        <div class="col">
+            <label for="signature_doc" class="form-label">Signature</label>
+            <input type=file onchange="wlbSettings.uploadSignature();" id="signature_file" name="signature_file" hidden accept="image/png">
+            <div class="row border border-secondary-subtle">
+                <canvas id="signature-pad" width="100%" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row mb-2">
+            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="$('#signature_file').click();" id="upload_signature"><i class="bi bi-cloud-arrow-up-fill"></i> Upload</button>
+            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.clearSignature();" id="clear_signature"><i class="bi bi-arrow-counterclockwise"></i> Clear</button>
+            <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.pickSignatureColor();" id="pick_color"><i class="bi bi-brush-fill"></i> Color</button>
 
-                <input type="text" class="form-control form-control-sm col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports"
-                    required="false" readonly>
-                <br>
+            <input type="color" id="signature_color" name="signature_color" onchange="wlbSettings.changeSignatureColor();" hidden>
+            </div>
+        </div>
 
-                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="UpdateAirportsDB()" id="update"><i class="bi bi-arrow-clockwise"></i> Update Airport DB</button>
+        <hr>
+
+        <div class="col">
+            <div class="row mb-2">
+                <label for="airports" class="form-label col-md-3 col-form-label">Airport database</label>
+                <div class="col-md-5">
+                    <input type="text" class="form-control form-control-sm col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports"
+                        required="false" readonly>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.updateAirportsDB()" id="update"><i class="bi bi-arrow-clockwise"></i> Update Airport DB</button>
+                </div>
             </div>
         </div>
 
@@ -44,23 +62,27 @@
             <div class="col">
                 <input type="checkbox" class="form-check-input" id="auth_enabled" name="auth_enabled" {{if $settings.AuthEnabled}}checked{{end}}>
                 <input type="hidden" id="previous_auth_value" value="{{$settings.AuthEnabled}}"/>
-                <label for="auth_enabled" class="form-label"><strong>Enable authentication</strong>
+                <label for="auth_enabled" class="form-label">Enable authentication</label>
             </div>
         </div>
 
-        <div class="row mb-2">
-            <div class="col">
-                <label for="login" class="form-label"><strong>Login</strong>
-                <input type="text" class="form-control form-control-sm" id="login" name="login" type="login" value="{{$settings.Login}}"
-                    autocomplete="off" placeholder="Login Name">
+        <div class="col">
+            <div class="row mb-2">
+                <label for="login" class="form-label col-md-3 col-form-label">Login</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control form-control-sm" id="login" name="login" type="login" value="{{$settings.Login}}"
+                        autocomplete="off" placeholder="Login Name">
+                </div>
             </div>
         </div>
 
-        <div class="row mb-2">
-            <div class="col">
-                <label for="password" class="form-label"><strong>Password</strong>
-                <input type="text" class="form-control form-control-sm" id="password" name="password" type="password"
-                    autocomplete="off" placeholder="Password">
+        <div class="col">
+            <div class="row mb-2">
+                <label for="password" class="form-label col-md-3 col-form-label">Password</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control form-control-sm" id="password" name="password" type="password"
+                        autocomplete="off" placeholder="Password">
+                </div>
             </div>
         </div>
     </div>
@@ -78,8 +100,8 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <button class="btn-sm btn-outline-secondary" type="button" id="add_row"><i class="bi bi-plus-square-fill"></i></button>
-            <div id="not_populated"></div>
+            <button class="btn-sm btn-outline-secondary" type="button" id="add_row" onclick="wlbSettings.addNewClassesRow();"><i class="bi bi-plus-square-fill"></i></button>
+            <div id="without_classes"></div>
         </div>
 
     </div>

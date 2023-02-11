@@ -70,8 +70,9 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 		w.Header().Set("Content-Disposition", "attachment; filename=logbook.pdf")
 
 		logbook := &pdfexport.Logbook{
-			OwnerName: settings.OwnerName,
-			Signature: settings.SignatureText,
+			OwnerName:      settings.OwnerName,
+			Signature:      settings.SignatureText,
+			SignatureImage: settings.SignatureImage,
 		}
 		if format == exportA4 {
 			logbook.Export = settings.ExportA4

@@ -27,7 +27,7 @@ func TestHandlerSettings(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	assert.Contains(t, string(responseBody), `Owner Name`)
-	assert.Contains(t, string(responseBody), `Signature Text`)
+	assert.Contains(t, string(responseBody), `Signature`)
 	assert.Contains(t, string(responseBody), `Airport database`)
 
 	assert.Contains(t, string(responseBody), `General`)

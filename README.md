@@ -129,3 +129,4 @@ In case you'd like to add some other features for the logbook or you found a bug
 * Golang Excelize https://github.com/xuri/excelize
 * Chart.js https://www.chartjs.org/
 * Date Range Picker https://www.daterangepicker.com/
+* Signature Pad https://github.com/szimek/signature_pad
