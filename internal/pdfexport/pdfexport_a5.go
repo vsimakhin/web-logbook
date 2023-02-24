@@ -77,7 +77,6 @@ func printA5LogbookHeaderB() {
 	x, y := pdf.GetXY()
 	for i := header1_div; i < len(header1); i++ {
 		width := w1[i]
-		// pdf.CellFormat(w1[i], footerRowHeight, header1[i], "1", 0, "C", true, 0, "")
 		pdf.Rect(x, y-1, width, 5, "FD")
 		pdf.MultiCell(width, 1, header1[i], "", "C", false)
 		x += width
@@ -102,10 +101,18 @@ func printA5LogbookHeaderB() {
 	x, y = pdf.GetXY()
 	for i := header3_div; i < len(header3); i++ {
 		width := w3[i]
+		// add Date columns for FSTD if format is extended
+		if i == 20 && isExtended {
+			pdf.Rect(x, y-1, w3[0], 4, "FD")
+			pdf.MultiCell(w3[0], 2, "Date", "", "C", false)
+			x += w3[0]
+			pdf.SetXY(x, y)
+		}
 		if header3[i] != "" {
 			pdf.Rect(x, y-1, width, 4, "FD")
 			pdf.MultiCell(width, 2, header3[i], "", "C", false)
 		}
+
 		x += width
 		pdf.SetXY(x, y)
 	}
@@ -173,7 +180,11 @@ func printA5LogbookBodyA(record models.FlightRecord, fill bool) {
 
 	// 	Data
 	pdf.SetX(leftMargin)
-	printBodyTimeCell(w3[0], record.Date, fill)
+	if isExtended && record.SIM.Type != "" {
+		printBodyTimeCell(w3[0], "", fill)
+	} else {
+		printBodyTimeCell(w3[0], record.Date, fill)
+	}
 	printBodyTimeCell(w3[1], record.Departure.Place, fill)
 	printBodyTimeCell(w3[2], record.Departure.Time, fill)
 	printBodyTimeCell(w3[3], record.Arrival.Place, fill)
@@ -206,6 +217,13 @@ func printA5LogbookBodyB(record models.FlightRecord, fill bool) {
 	printBodyTimeCell(w3[17], record.Time.CoPilot, fill)
 	printBodyTimeCell(w3[18], record.Time.Dual, fill)
 	printBodyTimeCell(w3[19], record.Time.Instructor, fill)
+	if isExtended {
+		if record.SIM.Type != "" {
+			printBodyTimeCell(w3[0], record.Date, fill)
+		} else {
+			printBodyTimeCell(w3[0], "", fill)
+		}
+	}
 	printBodyTimeCell(w3[20], record.SIM.Type, fill)
 	printBodyTimeCell(w3[21], record.SIM.Time, fill)
 	printBodyTextCell(w3[22], record.Remarks, fill)

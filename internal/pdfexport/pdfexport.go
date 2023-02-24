@@ -90,6 +90,7 @@ var pageBreaks []string
 var ownerName string
 var signature string
 var signatureImg string
+var isExtended bool
 
 //go:embed font/*
 var content embed.FS
@@ -150,6 +151,8 @@ func (l *Logbook) init(format string) {
 	if !l.Export.IncludeSignature {
 		signatureImg = ""
 	}
+
+	isExtended = l.Export.IsExtended
 
 	initWidths(l.Export.Columns)
 }
@@ -214,6 +217,20 @@ func initWidths(c models.ColumnsWidth) {
 		c.Col20,          //instr
 		c.Col21, c.Col22, //fstd type and time
 		c.Col23, //remarks
+	}
+
+	// extended format add Date column to the FSTD session by reducing Remarks
+	if isExtended {
+		w1[10] += c.Col1
+		w1[11] -= c.Col1
+
+		w2[11] += c.Col1
+		w2[12] -= c.Col1
+
+		w3[22] -= c.Col1
+
+		w4[15] += c.Col1
+		w4[17] -= c.Col1
 	}
 }
 
