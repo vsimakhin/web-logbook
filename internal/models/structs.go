@@ -108,6 +108,7 @@ type ExportPDF struct {
 	Columns          ColumnsWidth `json:"columns"`
 	ReplaceSPTime    bool         `json:"replace_sp_time"`
 	IncludeSignature bool         `json:"include_signature"`
+	IsExtended       bool         `json:"is_extended"`
 }
 
 type ExportXLS struct {

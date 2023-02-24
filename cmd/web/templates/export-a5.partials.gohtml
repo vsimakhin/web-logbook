@@ -332,6 +332,12 @@
                 <label for="include_signature_a5" class="form-label">Include signature</label>
             </div>
         </div>
+        <div class="row mb-2">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="is_extended_a5" name="is_extended_a5"  {{if $settings.ExportA5.IsExtended}}checked{{end}}>
+                <label for="is_extended_a5" class="form-label">Extended format, it will add Date column to the FSTD section and will reduce Remarks column. <br>This format fully matches Part FCL.050 format</label>
+            </div>
+        </div>
     </div>
 </div>
 
