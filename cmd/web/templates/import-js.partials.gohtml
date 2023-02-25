@@ -1,6 +1,7 @@
 {{define "import-js"}}
 {{$api := .API}}
 <script src="/static/js/papaparse.js"></script>
+<script type="text/javascript" src="/static/js/datatables.min.js"></script>
 <script>
 
 // WebLogbook Import Namespace
@@ -8,7 +9,9 @@ wlbImport = function () {
     const mapFieldsModal = new bootstrap.Modal(document.getElementById('mapFieldsModal'), {})
 
     var csv_import = null;
+    var table = null;
 
+    // add headers as options to each select in the mapping form
     function fillSelectOptions(options) {
         var elements = document.querySelectorAll("#mapFieldsModal select");
         for (var i = 0, element; element = elements[i++];) {
@@ -50,10 +53,25 @@ wlbImport = function () {
         });
     }
 
+    function initImportTable() {
+        table = $('#import').DataTable({
+            "ordering": false,
+            "info":     false,
+            "lengthMenu": [[15, 50, -1], [15, 50, "All"]],
+        } );
+    }
+
     return {
-        parseCSV:parseCSV
+        parseCSV:parseCSV,
+        initImportTable:initImportTable
     }
 }();
+
+
+$(document).ready( function () {
+    wlbImport.initImportTable();
+});
+
 
 </script>
 {{end}}

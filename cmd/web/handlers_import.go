@@ -12,7 +12,7 @@ func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 
-	partials := []string{"common-js", "import-js"}
+	partials := []string{"common-js", "import-js", "import-mapfields-modal"}
 	if err := app.renderTemplate(w, r, "import", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)
 	}
