@@ -80,6 +80,12 @@
 
         <hr>
         <div class="row mb-3">
+            <label for="logbook_font" class="col-sm-10 col-form-label">Logbook table font size (%)</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control form-control-sm" id="logbook_font" name="logbook_font" value='{{if not $settings.LogbookFontSize}}100{{else}}{{$settings.LogbookFontSize}}{{end}}' min="50" max="100">
+            </div>
+        </div>
+        <div class="row mb-3">
             <label for="stats_font" class="col-sm-10 col-form-label">Stats tables font size (%)</label>
             <div class="col-sm-2">
                 <input type="number" class="form-control form-control-sm" id="stats_font" name="stats_font" value='{{if not $settings.StatsFontSize}}100{{else}}{{$settings.StatsFontSize}}{{end}}' min="50" max="100">

@@ -8,14 +8,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
 func TestAuth(t *testing.T) {
 
-	app, _ := initTestApplication()
+	app, mock := initTestApplication()
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
+
+	models.AddMock(mock, "GetSettings")
 
 	// auth enabled
 	app.isAuthEnabled = true

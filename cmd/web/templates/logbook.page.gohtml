@@ -6,43 +6,44 @@
 
 {{ define "content" }}
 {{$api := .API}}
-<table id="logbook" class="table table-sm table-striped table-bordered nowrap table-fixed">
+{{$settings := index .Data "settings"}}
+<table id="logbook" class="table table-sm table-striped table-bordered nowrap table-fixed" {{if $settings.LogbookFontSize}}style="font-size:{{$settings.LogbookFontSize}}%"{{end}}>
     <thead>
         <tr class="align-top text-center">
-            <th rowspan=2>ID</th>
-            <th rowspan=2>Date</th>
-            <th colspan=2>Departure</th>
-            <th colspan=2>Arrival</th>
-            <th colspan=2>Aircraft</th>
-            <th colspan=2>Single Pilot<br>Time</th>
-            <th rowspan=2>MCC</th>
-            <th rowspan=2>Total<br>Time</th>
-            <th rowspan=2>PIC Name</th>
-            <th colspan=2>Landings</th>
-            <th colspan=2>Operational<br>Condition Time</th>
-            <th colspan=4>Pilot Function Time</th>
-            <th colspan=2>FSTD<br>Session</th>
-            <th rowspan=2>Remarks</th>
+            <th rowspan=2 class="text-center">ID</th>
+            <th rowspan=2 class="text-center">Date</th>
+            <th colspan=2 class="text-center">Departure</th>
+            <th colspan=2 class="text-center">Arrival</th>
+            <th colspan=2 class="text-center">Aircraft</th>
+            <th colspan=2 class="text-center">Single Pilot<br>Time</th>
+            <th rowspan=2 class="text-center">MCC</th>
+            <th rowspan=2 class="text-center">Total<br>Time</th>
+            <th rowspan=2 class="text-center">PIC Name</th>
+            <th colspan=2 class="text-center">Landings</th>
+            <th colspan=2 class="text-center">Operational<br>Condition Time</th>
+            <th colspan=4 class="text-center">Pilot Function Time</th>
+            <th colspan=2 class="text-center">FSTD<br>Session</th>
+            <th rowspan=2 class="text-center">Remarks</th>
         </tr>
         <tr class="text-center">
-            <th>Place</th>
-            <th>Time</th>
-            <th>Place</th>
-            <th>Time</th>
-            <th>Type</th>
-            <th class="text-nowrap">Reg</th>
-            <th>SE</th>
-            <th>ME</th>
-            <th>Day</th>
-            <th>Night</th>
-            <th>Night</th>
-            <th>IFR</th>
-            <th>PIC</th>
-            <th>COP</th>
-            <th>Dual</th>
-            <th>Instr</th>
-            <th>Type</th>
-            <th>Time</th>
+            <th class="text-center">Place</th>
+            <th class="text-center">Time</th>
+            <th class="text-center">Place</th>
+            <th class="text-center">Time</th>
+            <th class="text-center">Type</th>
+            <th class="text-nowrap text-center">Reg</th>
+            <th class="text-center">SE</th>
+            <th class="text-center">ME</th>
+            <th class="text-center">Day</th>
+            <th class="text-center">Night</th>
+            <th class="text-center">Night</th>
+            <th class="text-center">IFR</th>
+            <th class="text-center">PIC</th>
+            <th class="text-center">COP</th>
+            <th class="text-center">Dual</th>
+            <th class="text-center">Instr</th>
+            <th class="text-center">Type</th>
+            <th class="text-center">Time</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -90,21 +91,24 @@ $.fn.dataTable.ext.search.push(
 
 $(document).ready( function () {
     var table = $('#logbook').DataTable({
-        "ordering": false,
-        "info":     false,
-        "ajax": '{{index .API "LogbookData"}}',
-        "lengthMenu": [[15, 50, -1], [15, 50, "All"]],
-        "columnDefs": [
-            {
-                "targets": [ 0 ],
-                "visible": false,
-                "searchable": false
-            }
+        ordering: false,
+        info:     false,
+        ajax: '{{index .API "LogbookData"}}',
+        lengthMenu: [[15, 50, -1], [15, 50, "All"]],
+        columnDefs: [
+            { targets: [ 0 ], visible: false, searchable: false },
+            { targets: [0,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,22], className: "dt-body-center" },
+            { targets: [1], width: "1%" }, //date
+            { targets: [2,3,4,5], width: "3%" }, //places
+            { targets: [8,9,10,11,15,16,17,18,19,20,22], width: "3%" }, //time
+            { targets: [6,7,21], width: "4%" }, //aircraft
+            { targets: [13,14], width: "3%" }, //landings
+            { targets: [12], width: "9%" }, //pic
         ],
-        "rowCallback": function(row, data, index){
+        rowCallback: function(row, data, index){
             $("td:eq(0)", row).html(`<a href="{{$api.Logbook}}/${data[0]}" class="link-primary">${data[1]}</a>`);
         },
-        'initComplete': function () {
+        initComplete: function () {
             // daterange field
             $('.dataTables_filter').each(function () {
                 $(this).append('<input class="form-control form-control-sm" type="text" id="daterange" name="daterange" value="Date filters...">');

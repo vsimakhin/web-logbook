@@ -156,6 +156,7 @@ type Settings struct {
 
 	HideStatsFields HideFields `json:"hide_stats_fields"`
 	StatsFontSize   string     `json:"stats_font_size"`
+	LogbookFontSize string     `json:"logbook_font_size"`
 }
 
 // License is a type for licesing
