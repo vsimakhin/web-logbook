@@ -10,7 +10,18 @@ func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
 		app.infoLog.Println(APILogbook)
 	}
 
-	if err := app.renderTemplate(w, r, "logbook", nil); err != nil {
+	data := make(map[string]interface{})
+
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data["settings"] = settings
+
+	if err := app.renderTemplate(w, r, "logbook", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }

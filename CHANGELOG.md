@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Adjusted text and columns with for the main `Logbook` table. Also added `Logbook table font size` paramater to the `Settings` page.
+
 ## [2.13.0] - 24.02.2023
 
 - New: Add option for A5 pdf export format to add `Date` column to the `FSTD` section, which fully matches Part FCL.050 format (https://www.easa.europa.eu/sites/default/files/dfu/Part-FCL.pdf)

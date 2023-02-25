@@ -15,6 +15,7 @@ func TestHandlerLogbook(t *testing.T) {
 
 	app, mock := initTestApplication()
 
+	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetFlightRecords")
 
 	srv := httptest.NewServer(app.routes())
