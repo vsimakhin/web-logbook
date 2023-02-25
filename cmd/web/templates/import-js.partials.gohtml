@@ -1,12 +1,57 @@
 {{define "import-js"}}
 {{$api := .API}}
+<script src="/static/js/papaparse.js"></script>
 <script>
 
 // WebLogbook Import Namespace
 wlbImport = function () {
+    const mapFieldsModal = new bootstrap.Modal(document.getElementById('mapFieldsModal'), {})
+
+    var csv_import = null;
+
+    function fillSelectOptions(options) {
+        var elements = document.querySelectorAll("#mapFieldsModal select");
+        for (var i = 0, element; element = elements[i++];) {
+            // reset all options
+            element.length = 0;
+            var chooseOneOption = document.createElement("option");
+            chooseOneOption.text = "Select one...";
+            chooseOneOption.value = "-1";
+            element.add(chooseOneOption);
+
+            options.forEach(function(item, index){
+                var elementOption = document.createElement("option");
+                elementOption.text = item;
+                elementOption.value = index;
+                element.add(elementOption);
+            });
+        }
+    }
+
+    // loads csv file and parse it using papaparse lib
+    function parseCSV() {
+        var csv_file = document.getElementById("csv_file");
+        var file = csv_file.files[0];
+
+        Papa.parse(file, {
+            complete: function(results) {
+                if ( results.errors.length ) {
+                    showErrorMessage('csv parsing error: '+ results.errors[0].message);
+                }
+                else {
+                    showInfoMessage("CSV parsed, continue...")
+
+                    fillSelectOptions(results.data[0]);
+
+                    csv_import = results;
+                    mapFieldsModal.show();
+                }
+            }
+        });
+    }
 
     return {
-
+        parseCSV:parseCSV
     }
 }();
 
