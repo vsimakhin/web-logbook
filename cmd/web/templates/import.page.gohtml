@@ -1,0 +1,16 @@
+{{ template "base" .}}
+
+{{ define "title" }}Import{{ end }}
+
+{{ define "css" }}{{ end }}
+
+{{ define "content" }}
+{{$api := .API}}
+
+
+{{ end }}
+
+{{ define "js" }}
+{{ block "common-js" . }}{{ end }}
+{{ block "import-js" . }}{{ end }}
+{{ end }}

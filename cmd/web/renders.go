@@ -78,6 +78,7 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.API["LogbookAttachmentsDownloadUUID"] = APILogbookAttachmentsDownloadUUID
 	td.API["Export"] = APIExport
 	td.API["ExportFormat"] = APIExportFormat
+	td.API["Import"] = APIImport
 	td.API["Airport"] = APIAirport
 	td.API["AirportID"] = APIAirportID
 	td.API["AirportUpdate"] = APIAirportUpdate
