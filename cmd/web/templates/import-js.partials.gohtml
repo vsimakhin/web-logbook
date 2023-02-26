@@ -61,9 +61,58 @@ wlbImport = function () {
         } );
     }
 
+    // Autoload profiles for CSV mappings
+    function loadCSVProfile(profileName) {
+        if (profileName === "WebLogbook") {
+            loadCSVProfileWebLogbook();
+        }
+    }
+
+    function getHeaderId(name) {
+        var id = "-1";
+
+        if (csv_import !== null) {
+            if (csv_import.data.length > 0) {
+                csv_import.data[0].forEach(function(item, index){
+                    if (item === name) {
+                        id = index.toString();
+                    }
+                });
+            }
+        }
+
+        return id;
+    }
+
+    function loadCSVProfileWebLogbook() {
+        document.getElementById("date").value = getHeaderId("Date");
+        document.getElementById("departure_place").value = getHeaderId("Departure Place");
+        document.getElementById("departure_time").value = getHeaderId("Departure Time");
+        document.getElementById("arrival_place").value = getHeaderId("Arrival Place");
+        document.getElementById("arrival_time").value = getHeaderId("Arrival Time");
+        document.getElementById("aircraft_model").value = getHeaderId("Aircraft Model");
+        document.getElementById("aircraft_reg").value = getHeaderId("Aircraft Reg");
+        document.getElementById("se_time").value = getHeaderId("Time SE");
+        document.getElementById("me_time").value = getHeaderId("Time ME");
+        document.getElementById("mcc_time").value = getHeaderId("Time MCC");
+        document.getElementById("total_time").value = getHeaderId("Time Total");
+        document.getElementById("landings_day").value = getHeaderId("Landings Day");
+        document.getElementById("landings_night").value = getHeaderId("Landings Night");
+        document.getElementById("night_time").value = getHeaderId("Time Night");
+        document.getElementById("ifr_time").value = getHeaderId("Time IFR");
+        document.getElementById("pic_time").value = getHeaderId("Time PIC");
+        document.getElementById("sic_time").value = getHeaderId("Time CoPilot");
+        document.getElementById("dual_time").value = getHeaderId("Time Dual");
+        document.getElementById("sim_type").value = getHeaderId("SIM Type");
+        document.getElementById("sim_time").value = getHeaderId("SIM Time");
+        document.getElementById("pic_name").value = getHeaderId("PIC Name");
+        document.getElementById("remarks").value = getHeaderId("Remarks");
+    }
+
     return {
         parseCSV:parseCSV,
-        initImportTable:initImportTable
+        initImportTable:initImportTable,
+        loadCSVProfile:loadCSVProfile
     }
 }();
 

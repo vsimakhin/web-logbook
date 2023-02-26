@@ -148,9 +148,17 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-ui-checks"></i> Continue</button>
+        <div class="modal-footer justify-content-between">
+            <div>
+                <div class="input-group input-group-sm">
+                    <label class="form-control">Profiles: </label>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbImport.loadCSVProfile('WebLogbook');"><i class="bi bi-airplane-fill"></i> WebLogbook</button>
+                </div>
+            </div>
+            <div >
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-ui-checks"></i> Continue</button>
+            </div>
         </div>
         </div>
     </div>
