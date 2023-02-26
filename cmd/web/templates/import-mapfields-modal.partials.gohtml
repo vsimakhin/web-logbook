@@ -122,6 +122,12 @@
                         </div>
                     </div>
                     <div class="row mb-2">
+                        <label for="instr_time" class="form-label col-md-3 col-form-label">Time Instructor</label>
+                        <div class="col-md-9">
+                            <select class="form-select form-select-sm" id="instr_time" name="instr_time"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
                         <label for="sim_type" class="form-label col-md-3 col-form-label">Simulator Type</label>
                         <div class="col-md-9">
                             <select class="form-select form-select-sm" id="sim_type" name="sim_type"></select>
@@ -157,7 +163,7 @@
             </div>
             <div >
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-ui-checks"></i> Continue</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" onclick="wlbImport.previewImport();"><i class="bi bi-ui-checks"></i> Continue</button>
             </div>
         </div>
         </div>

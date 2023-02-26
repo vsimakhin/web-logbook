@@ -9,6 +9,7 @@ wlbImport = function () {
     const mapFieldsModal = new bootstrap.Modal(document.getElementById('mapFieldsModal'), {})
 
     var csv_import = null;
+    var table_data = null;
     var table = null;
 
     // add headers as options to each select in the mapping form
@@ -42,8 +43,6 @@ wlbImport = function () {
                     showErrorMessage('csv parsing error: '+ results.errors[0].message);
                 }
                 else {
-                    showInfoMessage("CSV parsed, continue...")
-
                     fillSelectOptions(results.data[0]);
 
                     csv_import = results;
@@ -55,9 +54,43 @@ wlbImport = function () {
 
     function initImportTable() {
         table = $('#import').DataTable({
-            "ordering": false,
-            "info":     false,
-            "lengthMenu": [[15, 50, -1], [15, 50, "All"]],
+            ordering: false,
+            info:     false,
+            lengthMenu: [[15, 50, -1], [15, 50, "All"]],
+            columns : [
+                { data: "date" },
+                { data: "departure_place" },
+                { data: "departure_time" },
+                { data: "arrival_place" },
+                { data: "arrival_time" },
+                { data: "aircraft_model" },
+                { data: "aircraft_reg" },
+                { data: "se_time" },
+                { data: "me_time" },
+                { data: "mcc_time" },
+                { data: "total_time" },
+                { data: "night_time" },
+                { data: "ifr_time" },
+                { data: "pic_time" },
+                { data: "sic_time" },
+                { data: "dual_time" },
+                { data: "instr_time" },
+                { data: "landings_day" },
+                { data: "landings_night" },
+                { data: "sim_type" },
+                { data: "sim_time" },
+                { data: "pic_name" },
+                { data: "remarks" }
+            ],
+            columnDefs: [
+                { targets: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,20], className: "dt-body-center" },
+                { targets: [0], width: "1%" }, //date
+                { targets: [1,2,3,4], width: "3%" }, //places
+                { targets: [7,8,9,10,11,12,13,14,15,16], width: "3%" }, //time
+                { targets: [5,6], width: "4%" }, //aircraft
+                { targets: [17,18], width: "3%" }, //landings
+                { targets: [21], width: "9%" }, //pic
+            ],
         } );
     }
 
@@ -103,16 +136,65 @@ wlbImport = function () {
         document.getElementById("pic_time").value = getHeaderId("Time PIC");
         document.getElementById("sic_time").value = getHeaderId("Time CoPilot");
         document.getElementById("dual_time").value = getHeaderId("Time Dual");
+        document.getElementById("instr_time").value = getHeaderId("Time Instructor");
         document.getElementById("sim_type").value = getHeaderId("SIM Type");
         document.getElementById("sim_time").value = getHeaderId("SIM Time");
         document.getElementById("pic_name").value = getHeaderId("PIC Name");
         document.getElementById("remarks").value = getHeaderId("Remarks");
     }
 
+    function getMappedValue(name, arr) {
+        id = document.getElementById(name).value;
+        if (id === "-1") {
+            return "";
+        } else {
+            return arr[id];
+        }
+    }
+
+    // preview data for import table
+    function previewImport() {
+        table_data = [];
+
+        for (var i = 1; i < csv_import.data.length-1; i++) {
+            var item = {
+                date: getMappedValue("date", csv_import.data[i]),
+                departure_place: getMappedValue("departure_place", csv_import.data[i]),
+                departure_time: getMappedValue("departure_time", csv_import.data[i]),
+                arrival_place: getMappedValue("arrival_place", csv_import.data[i]),
+                arrival_time: getMappedValue("arrival_time", csv_import.data[i]),
+                aircraft_model: getMappedValue("aircraft_model", csv_import.data[i]),
+                aircraft_reg: getMappedValue("aircraft_reg", csv_import.data[i]),
+                se_time: getMappedValue("se_time", csv_import.data[i]),
+                me_time: getMappedValue("me_time", csv_import.data[i]),
+                mcc_time: getMappedValue("mcc_time", csv_import.data[i]),
+                total_time: getMappedValue("total_time", csv_import.data[i]),
+                night_time: getMappedValue("night_time", csv_import.data[i]),
+                ifr_time: getMappedValue("ifr_time", csv_import.data[i]),
+                pic_time: getMappedValue("pic_time", csv_import.data[i]),
+                sic_time: getMappedValue("sic_time", csv_import.data[i]),
+                dual_time: getMappedValue("dual_time", csv_import.data[i]),
+                instr_time: getMappedValue("instr_time", csv_import.data[i]),
+                landings_day: getMappedValue("landings_day", csv_import.data[i]),
+                landings_night: getMappedValue("landings_night", csv_import.data[i]),
+                sim_type: getMappedValue("sim_type", csv_import.data[i]),
+                sim_time: getMappedValue("sim_time", csv_import.data[i]),
+                pic_name: getMappedValue("pic_name", csv_import.data[i]),
+                remarks: getMappedValue("remarks", csv_import.data[i])
+            };
+
+            table_data.push(item);
+        }
+
+        table.clear();
+        table.rows.add(table_data).draw();
+    }
+
     return {
         parseCSV:parseCSV,
         initImportTable:initImportTable,
-        loadCSVProfile:loadCSVProfile
+        loadCSVProfile:loadCSVProfile,
+        previewImport:previewImport
     }
 }();
 
