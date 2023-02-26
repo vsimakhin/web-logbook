@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- New: Adjusted text and columns with for the main `Logbook` table. Also added `Logbook table font size` paramater to the `Settings` page.
+- New: Adjusted text and columns width for the main `Logbook` table. Also added `Logbook table font size` paramater to the `Settings` page.
 
 ## [2.13.0] - 24.02.2023
 
