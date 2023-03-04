@@ -130,3 +130,4 @@ In case you'd like to add some other features for the logbook or you found a bug
 * Chart.js https://www.chartjs.org/
 * Date Range Picker https://www.daterangepicker.com/
 * Signature Pad https://github.com/szimek/signature_pad
+* PapaParse https://github.com/mholt/PapaParse

@@ -159,7 +159,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 			response.RedirectURL = fmt.Sprintf("%s/%s", APILogbook, flightRecord.UUID)
 
 			if app.config.env == "dev" {
-				app.infoLog.Printf("few flight record %s created", flightRecord.UUID)
+				app.infoLog.Printf("new flight record %s created", flightRecord.UUID)
 			}
 		}
 

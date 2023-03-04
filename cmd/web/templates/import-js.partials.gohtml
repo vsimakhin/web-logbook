@@ -85,9 +85,9 @@ wlbImport = function () {
             columnDefs: [
                 { targets: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,20], className: "dt-body-center" },
                 { targets: [0], width: "1%" }, //date
-                { targets: [1,2,3,4], width: "3%" }, //places
-                { targets: [7,8,9,10,11,12,13,14,15,16], width: "3%" }, //time
-                { targets: [5,6], width: "4%" }, //aircraft
+                { targets: [1,2,3,4], width: "4%" }, //places
+                { targets: [7,8,9,10,11,12,13,14,15,16,20], width: "3%" }, //time
+                { targets: [5,6,19], width: "4%" }, //aircraft
                 { targets: [17,18], width: "3%" }, //landings
                 { targets: [21], width: "9%" }, //pic
             ],
@@ -175,8 +175,8 @@ wlbImport = function () {
                 sic_time: getMappedValue("sic_time", csv_import.data[i]),
                 dual_time: getMappedValue("dual_time", csv_import.data[i]),
                 instr_time: getMappedValue("instr_time", csv_import.data[i]),
-                landings_day: getMappedValue("landings_day", csv_import.data[i]),
-                landings_night: getMappedValue("landings_night", csv_import.data[i]),
+                landings_day: formatLandings(getMappedValue("landings_day", csv_import.data[i])),
+                landings_night: formatLandings(getMappedValue("landings_night", csv_import.data[i])),
                 sim_type: getMappedValue("sim_type", csv_import.data[i]),
                 sim_time: getMappedValue("sim_time", csv_import.data[i]),
                 pic_name: getMappedValue("pic_name", csv_import.data[i]),
@@ -188,13 +188,178 @@ wlbImport = function () {
 
         table.clear();
         table.rows.add(table_data).draw();
+
+        showInfoMessage(`Loaded ${table_data.length} rows`);
+    }
+
+    // clear table
+    function clearTable() {
+        table_data = [];
+        table.clear();
+        table.rows.add(table_data).draw();
+
+        showInfoMessage(`Table cleared`);
+    }
+
+    // create backup
+    function createBackup() {
+        let payload = {};
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        }
+
+        fetch("{{index .API "ImportCreateBackup"}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    showInfoMessage(data.message);
+                } else {
+                    showErrorMessage(data.message);
+                }
+            })
+    }
+
+    // run import
+    function importData() {
+        startImportStatus();
+
+        payload = [];
+
+        for (var i = 0; i < table_data.length; i++) {
+            item = table_data[i];
+            payload.push(marshallItem(item));
+        };
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        }
+
+        fetch("{{index .API "ImportRun"}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    clearTable();
+                    showInfoMessage(data.message);
+                } else {
+                    var err_data = JSON.parse(data.data);
+
+                    table_data = [];
+                    for (var i = 0; i < err_data.length; i++) {
+                        item = err_data[i];
+                        table_data.push(unmarshallItem(item));
+                    };
+                    table.clear();
+                    table.rows.add(table_data).draw();
+
+                    showErrorMessage(data.message);
+                }
+
+                stopImportStatus();
+            })
+    }
+
+    function startImportStatus() {
+        document.getElementById("spinner").classList.remove("d-none");
+        document.getElementById("btn_import").disabled = true;
+    }
+
+    function stopImportStatus() {
+        document.getElementById("spinner").classList.add("d-none");
+        document.getElementById("btn_import").disabled = false;
+    }
+
+    function marshallItem(item) {
+        var converted_item = {
+            uuid: "",
+            date: item["date"],
+            departure: {
+                place: item["departure_place"],
+                time: item["departure_time"]
+            },
+            arrival: {
+                place: item["arrival_place"],
+                time: item["arrival_time"]
+            },
+            aircraft: {
+                model: item["aircraft_model"],
+                reg_name: item["aircraft_reg"]
+            },
+            time: {
+                se_time: item["se_time"],
+                me_time: item["me_time"],
+                mcc_time: item["mcc_time"],
+                total_time: item["total_time"],
+                night_time: item["night_time"],
+                ifr_time: item["ifr_time"],
+                pic_time: item["pic_time"],
+                co_pilot_time: item["sic_time"],
+                dual_time: item["dual_time"],
+                instructor_time: item["instr_time"]
+            },
+            landings: {
+                day: item["landings_day"],
+                night: item["landings_night"]
+            },
+            sim: {
+                type: item["sim_type"],
+                time: item["sim_time"]
+            },
+            pic_name: item["pic_name"],
+            remarks: item["remarks"]
+        };
+
+        return converted_item;
+    }
+
+    function unmarshallItem(item) {
+        var converted_item = {
+            date: item["date"],
+            departure_place: item["departure"]["place"],
+            departure_time: item["departure"]["time"],
+            arrival_place: item["arrival"]["place"],
+            arrival_time: item["arrival"]["time"],
+            aircraft_model: item["aircraft"]["model"],
+            aircraft_reg: item["aircraft"]["reg_name"],
+            se_time: item["time"]["se_time"],
+            me_time: item["time"]["me_time"],
+            mcc_time: item["time"]["mcc_time"],
+            total_time: item["time"]["total_time"],
+            night_time: item["time"]["night_time"],
+            ifr_time: item["time"]["ifr_time"],
+            pic_time: item["time"]["pic_time"],
+            sic_time: item["time"]["co_pilot_time"],
+            dual_time: item["time"]["dual_time"],
+            instr_time: item["time"]["instructor_time"],
+            landings_day: item["landings"]["day"],
+            landings_night: item["landings"]["night"],
+            sim_type: item["sim"]["type"],
+            sim_time: item["sim"]["time"],
+            pic_name: item["pic_name"],
+            remarks: item["remarks"]
+        };
+
+        return converted_item;
     }
 
     return {
         parseCSV:parseCSV,
         initImportTable:initImportTable,
         loadCSVProfile:loadCSVProfile,
-        previewImport:previewImport
+        previewImport:previewImport,
+        createBackup:createBackup,
+        importData:importData,
+        clearTable:clearTable
     }
 }();
 

@@ -41,5 +41,13 @@ function loadJSON(url) {
     };
 };
 
+function formatLandings(value) {
+    if (value === "") {
+        return 0;
+    } else {
+        return parseInt(value);
+    }
+}
+
 </script>
 {{end}}
