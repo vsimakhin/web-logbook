@@ -9,7 +9,7 @@ wlbImport = function () {
     const mapFieldsModal = new bootstrap.Modal(document.getElementById('mapFieldsModal'), {})
 
     var csv_import = null;
-    var table_data = null;
+    var table_data = [];
     var table = null;
 
     // add headers as options to each select in the mapping form
@@ -227,6 +227,11 @@ wlbImport = function () {
 
     // run import
     function importData() {
+        if (table_data.length === 0) {
+            showInfoMessage("Nothing to import");
+            return;
+        }
+
         startImportStatus();
 
         payload = [];
@@ -367,7 +372,6 @@ wlbImport = function () {
 $(document).ready( function () {
     wlbImport.initImportTable();
 });
-
 
 </script>
 {{end}}
