@@ -2,265 +2,273 @@
 {{$api := .API}}
 <script>
 
-function Export(format) {
-    window.open("{{$api.Export}}/" + format, "_blank");
-}
+// WebLogbook Export Namespace
+wlbExport = function () {
 
-function RestoreDefaultsA5() {
-    document.getElementById("logbook_rows_a5").value = 20
-    document.getElementById("fill_a5").value = 3
-    document.getElementById("left_margin_a_a5").value = parseFloat(6.0)
-    document.getElementById("left_margin_b_a5").value = parseFloat(14.5)
-    document.getElementById("top_margin_a5").value = parseFloat(9.0)
-    document.getElementById("row_height_a5").value = parseFloat(5.0)
-    document.getElementById("footer_height_a5").value = parseFloat(5.0)
-    document.getElementById("page_breaks_a5").value = ""
-    document.getElementById("col1_a5").value = parseFloat(15.5)
-    document.getElementById("col2_a5").value = parseFloat(12.25)
-    document.getElementById("col3_a5").value = parseFloat(8.25)
-    document.getElementById("col4_a5").value = parseFloat(12.25)
-    document.getElementById("col5_a5").value = parseFloat(8.25)
-    document.getElementById("col6_a5").value = parseFloat(10.0)
-    document.getElementById("col7_a5").value = parseFloat(15.4)
-    document.getElementById("col8_a5").value = parseFloat(12.2)
-    document.getElementById("col9_a5").value = parseFloat(12.2)
-    document.getElementById("col10_a5").value = parseFloat(12.2)
-    document.getElementById("col11_a5").value = parseFloat(12.2)
-    document.getElementById("col12_a5").value = parseFloat(41.86)
-    document.getElementById("col13_a5").value = parseFloat(8.38)
-    document.getElementById("col14_a5").value = parseFloat(8.38)
-    document.getElementById("col15_a5").value = parseFloat(12.2)
-    document.getElementById("col16_a5").value = parseFloat(12.2)
-    document.getElementById("col17_a5").value = parseFloat(12.2)
-    document.getElementById("col18_a5").value = parseFloat(12.2)
-    document.getElementById("col19_a5").value = parseFloat(12.2)
-    document.getElementById("col20_a5").value = parseFloat(12.2)
-    document.getElementById("col21_a5").value = parseFloat(24.2)
-    document.getElementById("col22_a5").value = parseFloat(12.2)
-    document.getElementById("col23_a5").value = parseFloat(78.8)
-}
+    function restoreDefaultsA5() {
+        document.getElementById("logbook_rows_a5").value = 20
+        document.getElementById("fill_a5").value = 3
+        document.getElementById("left_margin_a_a5").value = parseFloat(6.0)
+        document.getElementById("left_margin_b_a5").value = parseFloat(14.5)
+        document.getElementById("top_margin_a5").value = parseFloat(9.0)
+        document.getElementById("row_height_a5").value = parseFloat(5.0)
+        document.getElementById("footer_height_a5").value = parseFloat(5.0)
+        document.getElementById("page_breaks_a5").value = ""
+        document.getElementById("col1_a5").value = parseFloat(15.5)
+        document.getElementById("col2_a5").value = parseFloat(12.25)
+        document.getElementById("col3_a5").value = parseFloat(8.25)
+        document.getElementById("col4_a5").value = parseFloat(12.25)
+        document.getElementById("col5_a5").value = parseFloat(8.25)
+        document.getElementById("col6_a5").value = parseFloat(10.0)
+        document.getElementById("col7_a5").value = parseFloat(15.4)
+        document.getElementById("col8_a5").value = parseFloat(12.2)
+        document.getElementById("col9_a5").value = parseFloat(12.2)
+        document.getElementById("col10_a5").value = parseFloat(12.2)
+        document.getElementById("col11_a5").value = parseFloat(12.2)
+        document.getElementById("col12_a5").value = parseFloat(41.86)
+        document.getElementById("col13_a5").value = parseFloat(8.38)
+        document.getElementById("col14_a5").value = parseFloat(8.38)
+        document.getElementById("col15_a5").value = parseFloat(12.2)
+        document.getElementById("col16_a5").value = parseFloat(12.2)
+        document.getElementById("col17_a5").value = parseFloat(12.2)
+        document.getElementById("col18_a5").value = parseFloat(12.2)
+        document.getElementById("col19_a5").value = parseFloat(12.2)
+        document.getElementById("col20_a5").value = parseFloat(12.2)
+        document.getElementById("col21_a5").value = parseFloat(24.2)
+        document.getElementById("col22_a5").value = parseFloat(12.2)
+        document.getElementById("col23_a5").value = parseFloat(78.8)
+    }
 
-function RestoreDefaultsA4() {
-    document.getElementById("logbook_rows_a4").value = 23
-    document.getElementById("fill_a4").value = 3
-    document.getElementById("left_margin_a4").value = parseFloat(10.0)
-    document.getElementById("top_margin_a4").value = parseFloat(30.0)
-    document.getElementById("row_height_a4").value = parseFloat(5.0)
-    document.getElementById("footer_height_a4").value = parseFloat(6.0)
-    document.getElementById("page_breaks_a4").value = ""
-    document.getElementById("col1_a4").value = parseFloat(12.2)
-    document.getElementById("col2_a4").value = parseFloat(8.25)
-    document.getElementById("col3_a4").value = parseFloat(8.25)
-    document.getElementById("col4_a4").value = parseFloat(8.25)
-    document.getElementById("col5_a4").value = parseFloat(8.25)
-    document.getElementById("col6_a4").value = parseFloat(10.0)
-    document.getElementById("col7_a4").value = parseFloat(12.9)
-    document.getElementById("col8_a4").value = parseFloat(11.2)
-    document.getElementById("col9_a4").value = parseFloat(11.2)
-    document.getElementById("col10_a4").value = parseFloat(11.2)
-    document.getElementById("col11_a4").value = parseFloat(11.2)
-    document.getElementById("col12_a4").value = parseFloat(22.86)
-    document.getElementById("col13_a4").value = parseFloat(8.38)
-    document.getElementById("col14_a4").value = parseFloat(8.38)
-    document.getElementById("col15_a4").value = parseFloat(11.2)
-    document.getElementById("col16_a4").value = parseFloat(11.2)
-    document.getElementById("col17_a4").value = parseFloat(11.2)
-    document.getElementById("col18_a4").value = parseFloat(11.2)
-    document.getElementById("col19_a4").value = parseFloat(11.2)
-    document.getElementById("col20_a4").value = parseFloat(11.2)
-    document.getElementById("col21_a4").value = parseFloat(11.2)
-    document.getElementById("col22_a4").value = parseFloat(11.2)
-    document.getElementById("col23_a4").value = parseFloat(33.8)
-}
+    function restoreDefaultsA4() {
+        document.getElementById("logbook_rows_a4").value = 23
+        document.getElementById("fill_a4").value = 3
+        document.getElementById("left_margin_a4").value = parseFloat(10.0)
+        document.getElementById("top_margin_a4").value = parseFloat(30.0)
+        document.getElementById("row_height_a4").value = parseFloat(5.0)
+        document.getElementById("footer_height_a4").value = parseFloat(6.0)
+        document.getElementById("page_breaks_a4").value = ""
+        document.getElementById("col1_a4").value = parseFloat(12.2)
+        document.getElementById("col2_a4").value = parseFloat(8.25)
+        document.getElementById("col3_a4").value = parseFloat(8.25)
+        document.getElementById("col4_a4").value = parseFloat(8.25)
+        document.getElementById("col5_a4").value = parseFloat(8.25)
+        document.getElementById("col6_a4").value = parseFloat(10.0)
+        document.getElementById("col7_a4").value = parseFloat(12.9)
+        document.getElementById("col8_a4").value = parseFloat(11.2)
+        document.getElementById("col9_a4").value = parseFloat(11.2)
+        document.getElementById("col10_a4").value = parseFloat(11.2)
+        document.getElementById("col11_a4").value = parseFloat(11.2)
+        document.getElementById("col12_a4").value = parseFloat(22.86)
+        document.getElementById("col13_a4").value = parseFloat(8.38)
+        document.getElementById("col14_a4").value = parseFloat(8.38)
+        document.getElementById("col15_a4").value = parseFloat(11.2)
+        document.getElementById("col16_a4").value = parseFloat(11.2)
+        document.getElementById("col17_a4").value = parseFloat(11.2)
+        document.getElementById("col18_a4").value = parseFloat(11.2)
+        document.getElementById("col19_a4").value = parseFloat(11.2)
+        document.getElementById("col20_a4").value = parseFloat(11.2)
+        document.getElementById("col21_a4").value = parseFloat(11.2)
+        document.getElementById("col22_a4").value = parseFloat(11.2)
+        document.getElementById("col23_a4").value = parseFloat(33.8)
+    }
 
-function SaveExportA4() {
-    let payload = {
-        export_a4: {
-            logbook_rows: parseInt(document.getElementById("logbook_rows_a4").value),
-            fill: parseInt(document.getElementById("fill_a4").value),
-            left_margin: parseFloat(document.getElementById("left_margin_a4").value),
-            top_margin: parseFloat(document.getElementById("top_margin_a4").value),
-            body_row_height: parseFloat(document.getElementById("row_height_a4").value),
-            footer_row_height: parseFloat(document.getElementById("footer_height_a4").value),
-            page_breaks: document.getElementById("page_breaks_a4").value,
-            replace_sp_time: document.getElementById("replace_sp_time_a4").checked,
-            include_signature: document.getElementById("include_signature_a4").checked,
-            columns: {
-                col1: parseFloat(document.getElementById("col1_a4").value),
-                col2: parseFloat(document.getElementById("col2_a4").value),
-                col3: parseFloat(document.getElementById("col3_a4").value),
-                col4: parseFloat(document.getElementById("col4_a4").value),
-                col5: parseFloat(document.getElementById("col5_a4").value),
-                col6: parseFloat(document.getElementById("col6_a4").value),
-                col7: parseFloat(document.getElementById("col7_a4").value),
-                col8: parseFloat(document.getElementById("col8_a4").value),
-                col9: parseFloat(document.getElementById("col9_a4").value),
-                col10: parseFloat(document.getElementById("col10_a4").value),
-                col11: parseFloat(document.getElementById("col11_a4").value),
-                col12: parseFloat(document.getElementById("col12_a4").value),
-                col13: parseFloat(document.getElementById("col13_a4").value),
-                col14: parseFloat(document.getElementById("col14_a4").value),
-                col15: parseFloat(document.getElementById("col15_a4").value),
-                col16: parseFloat(document.getElementById("col16_a4").value),
-                col17: parseFloat(document.getElementById("col17_a4").value),
-                col18: parseFloat(document.getElementById("col18_a4").value),
-                col19: parseFloat(document.getElementById("col19_a4").value),
-                col20: parseFloat(document.getElementById("col20_a4").value),
-                col21: parseFloat(document.getElementById("col21_a4").value),
-                col22: parseFloat(document.getElementById("col22_a4").value),
-                col23: parseFloat(document.getElementById("col23_a4").value)
-            }
-        }
-    };
-
-    const requestOptions = {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-    };
-
-    fetch("{{$api.Export}}/{{$api.ExportFormatA4}}", requestOptions)
-        .then(response => response.json())
-        .then(function(data) {
-            if (data.ok) {
-                showInfoMessage(data.message);
-                if (typeof data.redirect_url !== 'undefined') {
-                    location.href = data.redirect_url;
+    function saveExportA4() {
+        let payload = {
+            export_a4: {
+                logbook_rows: parseInt(document.getElementById("logbook_rows_a4").value),
+                fill: parseInt(document.getElementById("fill_a4").value),
+                left_margin: parseFloat(document.getElementById("left_margin_a4").value),
+                top_margin: parseFloat(document.getElementById("top_margin_a4").value),
+                body_row_height: parseFloat(document.getElementById("row_height_a4").value),
+                footer_row_height: parseFloat(document.getElementById("footer_height_a4").value),
+                page_breaks: document.getElementById("page_breaks_a4").value,
+                replace_sp_time: document.getElementById("replace_sp_time_a4").checked,
+                include_signature: document.getElementById("include_signature_a4").checked,
+                columns: {
+                    col1: parseFloat(document.getElementById("col1_a4").value),
+                    col2: parseFloat(document.getElementById("col2_a4").value),
+                    col3: parseFloat(document.getElementById("col3_a4").value),
+                    col4: parseFloat(document.getElementById("col4_a4").value),
+                    col5: parseFloat(document.getElementById("col5_a4").value),
+                    col6: parseFloat(document.getElementById("col6_a4").value),
+                    col7: parseFloat(document.getElementById("col7_a4").value),
+                    col8: parseFloat(document.getElementById("col8_a4").value),
+                    col9: parseFloat(document.getElementById("col9_a4").value),
+                    col10: parseFloat(document.getElementById("col10_a4").value),
+                    col11: parseFloat(document.getElementById("col11_a4").value),
+                    col12: parseFloat(document.getElementById("col12_a4").value),
+                    col13: parseFloat(document.getElementById("col13_a4").value),
+                    col14: parseFloat(document.getElementById("col14_a4").value),
+                    col15: parseFloat(document.getElementById("col15_a4").value),
+                    col16: parseFloat(document.getElementById("col16_a4").value),
+                    col17: parseFloat(document.getElementById("col17_a4").value),
+                    col18: parseFloat(document.getElementById("col18_a4").value),
+                    col19: parseFloat(document.getElementById("col19_a4").value),
+                    col20: parseFloat(document.getElementById("col20_a4").value),
+                    col21: parseFloat(document.getElementById("col21_a4").value),
+                    col22: parseFloat(document.getElementById("col22_a4").value),
+                    col23: parseFloat(document.getElementById("col23_a4").value)
                 }
-            } else {
-                showErrorMessage(data.message);
             }
-        });
-}
+        };
 
-function SaveExportA5() {
-    let payload = {
-        export_a5: {
-            logbook_rows: parseInt(document.getElementById("logbook_rows_a5").value),
-            fill: parseInt(document.getElementById("fill_a5").value),
-            left_margin_a: parseFloat(document.getElementById("left_margin_a_a5").value),
-            left_margin_b: parseFloat(document.getElementById("left_margin_b_a5").value),
-            top_margin: parseFloat(document.getElementById("top_margin_a5").value),
-            body_row_height: parseFloat(document.getElementById("row_height_a5").value),
-            footer_row_height: parseFloat(document.getElementById("footer_height_a5").value),
-            page_breaks: document.getElementById("page_breaks_a5").value,
-            replace_sp_time: document.getElementById("replace_sp_time_a5").checked,
-            include_signature: document.getElementById("include_signature_a5").checked,
-            is_extended: document.getElementById("is_extended_a5").checked,
-            columns: {
-                col1: parseFloat(document.getElementById("col1_a5").value),
-                col2: parseFloat(document.getElementById("col2_a5").value),
-                col3: parseFloat(document.getElementById("col3_a5").value),
-                col4: parseFloat(document.getElementById("col4_a5").value),
-                col5: parseFloat(document.getElementById("col5_a5").value),
-                col6: parseFloat(document.getElementById("col6_a5").value),
-                col7: parseFloat(document.getElementById("col7_a5").value),
-                col8: parseFloat(document.getElementById("col8_a5").value),
-                col9: parseFloat(document.getElementById("col9_a5").value),
-                col10: parseFloat(document.getElementById("col10_a5").value),
-                col11: parseFloat(document.getElementById("col11_a5").value),
-                col12: parseFloat(document.getElementById("col12_a5").value),
-                col13: parseFloat(document.getElementById("col13_a5").value),
-                col14: parseFloat(document.getElementById("col14_a5").value),
-                col15: parseFloat(document.getElementById("col15_a5").value),
-                col16: parseFloat(document.getElementById("col16_a5").value),
-                col17: parseFloat(document.getElementById("col17_a5").value),
-                col18: parseFloat(document.getElementById("col18_a5").value),
-                col19: parseFloat(document.getElementById("col19_a5").value),
-                col20: parseFloat(document.getElementById("col20_a5").value),
-                col21: parseFloat(document.getElementById("col21_a5").value),
-                col22: parseFloat(document.getElementById("col22_a5").value),
-                col23: parseFloat(document.getElementById("col23_a5").value)
-            }
-        }
-    };
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        };
 
-    const requestOptions = {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-    };
-
-    fetch("{{$api.Export}}/{{$api.ExportFormatA5}}", requestOptions)
-        .then(response => response.json())
-        .then(function(data) {
-            if (data.ok) {
-                showInfoMessage(data.message);
-                if (typeof data.redirect_url !== 'undefined') {
-                    location.href = data.redirect_url;
+        fetch("{{$api.Export}}/{{$api.ExportFormatA4}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    wlbCommon.showInfoMessage(data.message);
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    wlbCommon.showErrorMessage(data.message);
                 }
-            } else {
-                showErrorMessage(data.message);
-            }
-        });
-}
+            });
+    }
 
-function SaveExportXLS() {
-    let payload = {
-        export_xls: {
-            convert_time: document.getElementById("convert_time_xls").checked
-        }
-    };
-
-    const requestOptions = {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-    };
-
-    fetch("{{$api.Export}}/{{$api.ExportFormatXLS}}", requestOptions)
-        .then(response => response.json())
-        .then(function(data) {
-            if (data.ok) {
-                showInfoMessage(data.message);
-                if (typeof data.redirect_url !== 'undefined') {
-                    location.href = data.redirect_url;
+    function saveExportA5() {
+        let payload = {
+            export_a5: {
+                logbook_rows: parseInt(document.getElementById("logbook_rows_a5").value),
+                fill: parseInt(document.getElementById("fill_a5").value),
+                left_margin_a: parseFloat(document.getElementById("left_margin_a_a5").value),
+                left_margin_b: parseFloat(document.getElementById("left_margin_b_a5").value),
+                top_margin: parseFloat(document.getElementById("top_margin_a5").value),
+                body_row_height: parseFloat(document.getElementById("row_height_a5").value),
+                footer_row_height: parseFloat(document.getElementById("footer_height_a5").value),
+                page_breaks: document.getElementById("page_breaks_a5").value,
+                replace_sp_time: document.getElementById("replace_sp_time_a5").checked,
+                include_signature: document.getElementById("include_signature_a5").checked,
+                is_extended: document.getElementById("is_extended_a5").checked,
+                columns: {
+                    col1: parseFloat(document.getElementById("col1_a5").value),
+                    col2: parseFloat(document.getElementById("col2_a5").value),
+                    col3: parseFloat(document.getElementById("col3_a5").value),
+                    col4: parseFloat(document.getElementById("col4_a5").value),
+                    col5: parseFloat(document.getElementById("col5_a5").value),
+                    col6: parseFloat(document.getElementById("col6_a5").value),
+                    col7: parseFloat(document.getElementById("col7_a5").value),
+                    col8: parseFloat(document.getElementById("col8_a5").value),
+                    col9: parseFloat(document.getElementById("col9_a5").value),
+                    col10: parseFloat(document.getElementById("col10_a5").value),
+                    col11: parseFloat(document.getElementById("col11_a5").value),
+                    col12: parseFloat(document.getElementById("col12_a5").value),
+                    col13: parseFloat(document.getElementById("col13_a5").value),
+                    col14: parseFloat(document.getElementById("col14_a5").value),
+                    col15: parseFloat(document.getElementById("col15_a5").value),
+                    col16: parseFloat(document.getElementById("col16_a5").value),
+                    col17: parseFloat(document.getElementById("col17_a5").value),
+                    col18: parseFloat(document.getElementById("col18_a5").value),
+                    col19: parseFloat(document.getElementById("col19_a5").value),
+                    col20: parseFloat(document.getElementById("col20_a5").value),
+                    col21: parseFloat(document.getElementById("col21_a5").value),
+                    col22: parseFloat(document.getElementById("col22_a5").value),
+                    col23: parseFloat(document.getElementById("col23_a5").value)
                 }
-            } else {
-                showErrorMessage(data.message);
             }
-        });
-}
+        };
 
-function SaveExportCSV() {
-    let payload = {
-        export_csv: {
-            crlf: document.getElementById("crlf_csv").checked,
-            delimeter: document.getElementById("delimeter_csv").value
-        }
-    };
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        };
 
-    const requestOptions = {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-    };
-
-    fetch("{{$api.Export}}/{{$api.ExportFormatCSV}}", requestOptions)
-        .then(response => response.json())
-        .then(function(data) {
-            if (data.ok) {
-                showInfoMessage(data.message);
-                if (typeof data.redirect_url !== 'undefined') {
-                    location.href = data.redirect_url;
+        fetch("{{$api.Export}}/{{$api.ExportFormatA5}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    wlbCommon.showInfoMessage(data.message);
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    wlbCommon.showErrorMessage(data.message);
                 }
-            } else {
-                showErrorMessage(data.message);
-            }
-        });
-}
+            });
+    }
 
+    function saveExportXLS() {
+        let payload = {
+            export_xls: {
+                convert_time: document.getElementById("convert_time_xls").checked
+            }
+        };
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        };
+
+        fetch("{{$api.Export}}/{{$api.ExportFormatXLS}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    wlbCommon.showInfoMessage(data.message);
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    wlbCommon.showErrorMessage(data.message);
+                }
+            });
+    }
+
+    function saveExportCSV() {
+        let payload = {
+            export_csv: {
+                crlf: document.getElementById("crlf_csv").checked,
+                delimeter: document.getElementById("delimeter_csv").value
+            }
+        };
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        };
+
+        fetch("{{$api.Export}}/{{$api.ExportFormatCSV}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    wlbCommon.showInfoMessage(data.message);
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    wlbCommon.showErrorMessage(data.message);
+                }
+            });
+    }
+
+    return {
+        restoreDefaultsA5:restoreDefaultsA5,
+        restoreDefaultsA4:restoreDefaultsA4,
+        saveExportA5:saveExportA5,
+        saveExportA4:saveExportA4,
+        saveExportCSV:saveExportCSV,
+        saveExportXLS:saveExportXLS
+    }
+}();
 </script>
 {{end}}

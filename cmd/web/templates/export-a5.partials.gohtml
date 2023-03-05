@@ -343,8 +343,8 @@
 
 <hr>
 
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="RestoreDefaultsA5()" id="restore_defaults_a5"><i class="bi bi-circle-fill"></i> Restore Defaults</button>
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="SaveExportA5()" id="save_a5"><i class="bi bi-save-fill"></i> Save</button>
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="Export('{{$api.ExportFormatA5}}')" id="export_a5"><i class="bi bi-file-pdf-fill"></i> Export PDF A5</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbExport.restoreDefaultsA5()" id="restore_defaults_a5"><i class="bi bi-circle-fill"></i> Restore Defaults</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbExport.saveExportA5()" id="save_a5"><i class="bi bi-save-fill"></i> Save</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbCommon.runExport('{{$api.ExportFormatA5}}')" id="export_a5"><i class="bi bi-file-pdf-fill"></i> Export PDF A5</button>
 
 {{end}}

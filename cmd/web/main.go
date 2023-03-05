@@ -29,6 +29,7 @@ type application struct {
 	config        config
 	infoLog       *log.Logger
 	errorLog      *log.Logger
+	warningLog    *log.Logger
 	templateCache map[string]*template.Template
 	version       string
 	db            models.DBModel
@@ -77,6 +78,7 @@ func main() {
 
 	infoLog := log.New(multilog, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(multilog, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	warningLog := log.New(multilog, "WARNING\t", log.Ldate|log.Ltime)
 
 	tc := make(map[string]*template.Template)
 
@@ -94,6 +96,7 @@ func main() {
 		config:        cfg,
 		infoLog:       infoLog,
 		errorLog:      errorLog,
+		warningLog:    warningLog,
 		templateCache: tc,
 		version:       version,
 		db:            models.DBModel{DB: conn},
@@ -105,7 +108,7 @@ func main() {
 		if err != nil {
 			app.errorLog.Println(err)
 		}
-		fmt.Println("authentication has been disabled")
+		app.warningLog.Println("authentication has been disabled")
 		os.Exit(0)
 	}
 

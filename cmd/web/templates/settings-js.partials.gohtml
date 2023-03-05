@@ -106,10 +106,10 @@ wlbSettings = function () {
     }
 
     // reload table with aircraft classess
-    function reloadAircraftClassesTable() {
+    async function reloadAircraftClassesTable() {
         $('#aircraft_class').find('tbody').empty();
 
-        var aircrafts = loadJSON("{{index .API "Aircrafts"}}");
+        var aircrafts = await wlbCommon.getJSON("{{index .API "Aircrafts"}}");
         var models_data = [];
         for (var item in aircrafts) {
             if (!models_data.includes(aircrafts[item])){
@@ -117,7 +117,7 @@ wlbSettings = function () {
             }
         }
 
-        var classes_data = loadJSON("{{index .API "SettingsAircraftClasses"}}");
+        var classes_data = await wlbCommon.getJSON("{{index .API "SettingsAircraftClasses"}}");
 
         for (var key of Object.keys(classes_data)) {
             $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", key).replace("TYPE_NAME", classes_data[key]));
@@ -141,13 +141,13 @@ wlbSettings = function () {
     function saveSettings() {
         if (document.getElementById("auth_enabled").checked) {
             if (document.getElementById("login").value === "") {
-                showErrorMessage("Login field is empty");
+                wlbCommon.showErrorMessage("Login field is empty");
                 return;
             }
 
             if (document.getElementById("password").value === "") {
                 if (document.getElementById("previous_auth_value").value == "false") {
-                    showErrorMessage("Password field is empty");
+                    wlbCommon.showErrorMessage("Password field is empty");
                     return;
                 }
             }
@@ -213,20 +213,20 @@ wlbSettings = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    showInfoMessage(data.message);
+                    wlbCommon.showInfoMessage(data.message);
                     reloadAircraftClassesTable();
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    showErrorMessage(data.message);
+                    wlbCommon.showErrorMessage(data.message);
                 }
             });
     }
 
     // update airports database
     function updateAirportsDB() {
-        showInfoMessage("Updating...");
+        wlbCommon.showInfoMessage("Updating...");
 
         const requestOptions = {
             method: 'get',
@@ -241,9 +241,9 @@ wlbSettings = function () {
             .then(function(data) {
                 if (data.ok) {
                     document.getElementById("airports").value = data.message + " airports";
-                    showInfoMessage("Airports DB has been updated");
+                    wlbCommon.showInfoMessage("Airports DB has been updated");
                 } else {
-                    showErrorMessage(data.message);
+                    wlbCommon.showErrorMessage(data.message);
                 }
             });
     }

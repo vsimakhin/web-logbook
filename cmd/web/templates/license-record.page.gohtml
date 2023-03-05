@@ -96,7 +96,7 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
     </div>
     <hr>
 
-    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="validate()" id="save"><i class="bi bi-save-fill"></i> Save</button>
+    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbLicenseRecord.validateFields()" id="save"><i class="bi bi-save-fill"></i> Save</button>
     {{if $lic.DocumentName}}
         <a href='{{$api.LicensingDownload}}{{$lic.UUID}}' target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-cloud-arrow-down-fill"></i> Download</a>
     {{end}}
@@ -120,7 +120,7 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteLicense()"><i class="bi bi-file-x-fill"></i> Delete</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="wlbLicenseRecord.deleteLicense()"><i class="bi bi-file-x-fill"></i> Delete</button>
             </div>
         </div>
     </div>
@@ -138,7 +138,7 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteAttachment()"><i class="bi bi-file-x-fill"></i> Delete</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="wlbLicenseRecord.deleteAttachment()"><i class="bi bi-file-x-fill"></i> Delete</button>
             </div>
         </div>
     </div>
@@ -149,72 +149,4 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
 {{ define "js" }}
 {{ block "common-js" . }}{{ end }}
 {{ block "license-record-js" .}}{{ end }}
-<script>
-window.onload = function() {
-    $(function() {
-        // issued
-        $('input[name="issued"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            locale: {
-                format: 'DD/MM/YYYY',
-            },
-            autoUpdateInput: false,
-            autoApply: true,
-        }, function(start, end, label) {
-            $(this).val(start.format('DD/MM/YYYY'));
-        });
-
-        $('input[name="issued"]').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('DD/MM/YYYY'));
-        });
-
-        $('input[name="issued"]').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-        });
-
-        // valid from
-        $('input[name="valid_from"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            locale: {
-                format: 'DD/MM/YYYY',
-            },
-            autoUpdateInput: false,
-            autoApply: true,
-        }, function(start, end, label) {
-            $(this).val(start.format('DD/MM/YYYY'));
-        });
-
-        $('input[name="valid_from"]').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('DD/MM/YYYY'));
-        });
-
-        $('input[name="valid_from"]').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-        });
-
-        // valid until
-        $('input[name="valid_until"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            locale: {
-                format: 'DD/MM/YYYY',
-            },
-            autoUpdateInput: false,
-            autoApply: true,
-        }, function(start, end, label) {
-            $(this).val(start.format('DD/MM/YYYY'));
-        });
-
-        $('input[name="valid_until"]').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('DD/MM/YYYY'));
-        });
-
-        $('input[name="valid_until"]').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-        });
-    });
-};
-</script>
 {{ end }}

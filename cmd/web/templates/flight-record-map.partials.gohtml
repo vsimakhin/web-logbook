@@ -2,139 +2,136 @@
 <script src="/static/js/ol.js"></script>
 <script>
 
-function DepArrChange() {
-    var departure_place = document.getElementById("departure_place").value
-    var arrival_place = document.getElementById("arrival_place").value
+// WebLogbook wlbFlightMap Namespace
+wlbFlightMap = function () {
 
-    if (departure_place !== "" && arrival_place !== "") {
-        loadMap(departure_place, arrival_place);
-    }
-}
+    function midpoint(lat1, lon1, lat2, lon2) {
 
-function midpoint(lat1, lon1, lat2, lon2) {
+        lat1= deg2rad(lat1);
+        lon1= deg2rad(lon1);
+        lat2= deg2rad(lat2);
+        lon2= deg2rad(lon2);
 
-    lat1= deg2rad(lat1);
-    lon1= deg2rad(lon1);
-    lat2= deg2rad(lat2);
-    lon2= deg2rad(lon2);
+        dlng = lon2 - lon1;
+        Bx = Math.cos(lat2) * Math.cos(dlng);
+        By = Math.cos(lat2) * Math.sin(dlng);
+        lat3 = Math.atan2( Math.sin(lat1)+Math.sin(lat2),
+        Math.sqrt((Math.cos(lat1)+Bx)*(Math.cos(lat1)+Bx) + By*By ));
+        lng3 = lon1 + Math.atan2(By, (Math.cos(lat1) + Bx));
 
-    dlng = lon2 - lon1;
-    Bx = Math.cos(lat2) * Math.cos(dlng);
-    By = Math.cos(lat2) * Math.sin(dlng);
-    lat3 = Math.atan2( Math.sin(lat1)+Math.sin(lat2),
-    Math.sqrt((Math.cos(lat1)+Bx)*(Math.cos(lat1)+Bx) + By*By ));
-    lng3 = lon1 + Math.atan2(By, (Math.cos(lat1) + Bx));
-
-    return (lat3*180)/Math.PI +'|'+ (lng3*180)/Math.PI;
-}
-
-function deg2rad (degrees) {
-    return degrees * Math.PI / 180;
-};
-
-function distance(lat1, lon1, lat2, lon2)
-{
-    var R = 6371; // km
-    var dLat = deg2rad(lat2-lat1);
-    var dLon = deg2rad(lon2-lon1);
-    var lat1 = deg2rad(lat1);
-    var lat2 = deg2rad(lat2);
-
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    var d = R * c;
-
-    return d
-}
-
-function loadMap(departure_place, arrival_place) {
-    document.getElementById("map").innerText = "";
-
-    // load deprature & arrival airports
-    var dep = loadJSON("{{index .API "Airport"}}"+departure_place);
-    var arr = loadJSON("{{index .API "Airport"}}"+arrival_place);
-
-    // calculate center of the map
-    var center = midpoint(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);
-    var dist = distance(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);
-
-    /* generate a map */
-    var map = new ol.Map({
-        target: 'map',
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
-            })
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat([center.split("|")[1], center.split("|")[0]]),
-            zoom: 5
-        }),
-        controls: ol.control.defaults.defaults().extend([
-            new ol.control.FullScreen()
-        ])
-    });
-
-    /* drawing route... */
-    var points = [ [dep["lon"], dep["lat"]], [arr["lon"], arr["lat"]] ];
-
-    for (var i = 0; i < points.length; i++) {
-        points[i] = ol.proj.transform(points[i], 'EPSG:4326', 'EPSG:3857');
+        return (lat3*180)/Math.PI +'|'+ (lng3*180)/Math.PI;
     }
 
-    var featureLine = new ol.Feature({
-        geometry: new ol.geom.LineString(points)
-    });
+    function deg2rad (degrees) {
+        return degrees * Math.PI / 180;
+    };
 
-    var vectorLine = new ol.source.Vector({});
-    vectorLine.addFeature(featureLine);
+    function distance(lat1, lon1, lat2, lon2)
+    {
+        var R = 6371; // km
+        var dLat = deg2rad(lat2-lat1);
+        var dLon = deg2rad(lon2-lon1);
+        var lat1 = deg2rad(lat1);
+        var lat2 = deg2rad(lat2);
 
-    var vectorLineLayer = new ol.layer.Vector({
-        source: vectorLine,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({ color: '#888888', weight: 0.4 }),
-            stroke: new ol.style.Stroke({ color: '#888888', width: 1 })
-        })
-    });
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c;
 
-    /* drawing markers */
-    var points = [];
-    points.push([dep["lon"],dep["lat"]])
-    points.push([arr["lon"],arr["lat"]])
+        return d
+    }
 
-    var vectorMarker = new ol.source.Vector({});
-    var iconStyle = new ol.style.Style({
-        image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
-            src: "/static/favicon.ico"
-        }))
-    })
+    async function loadMap(departure_place, arrival_place) {
+        document.getElementById("map").innerText = "";
 
-    for (var x = 0; x < points.length; x++) {
-        var featureMarker = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.fromLonLat(points[x])),
-            desc: "/static/favicon.ico"
+        // load deprature & arrival airports
+        var dep = await wlbCommon.getJSON("{{index .API "Airport"}}"+departure_place);
+        var arr = await wlbCommon.getJSON("{{index .API "Airport"}}"+arrival_place);
+
+        // calculate center of the map
+        var center = midpoint(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);
+        var dist = distance(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);
+
+        /* generate a map */
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([center.split("|")[1], center.split("|")[0]]),
+                zoom: 5
+            }),
+            controls: ol.control.defaults.defaults().extend([
+                new ol.control.FullScreen()
+            ])
         });
 
-        featureMarker.setStyle(iconStyle);
-        vectorMarker.addFeature(featureMarker);
+        /* drawing route... */
+        var points = [ [dep["lon"], dep["lat"]], [arr["lon"], arr["lat"]] ];
+
+        for (var i = 0; i < points.length; i++) {
+            points[i] = ol.proj.transform(points[i], 'EPSG:4326', 'EPSG:3857');
+        }
+
+        var featureLine = new ol.Feature({
+            geometry: new ol.geom.LineString(points)
+        });
+
+        var vectorLine = new ol.source.Vector({});
+        vectorLine.addFeature(featureLine);
+
+        var vectorLineLayer = new ol.layer.Vector({
+            source: vectorLine,
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({ color: '#888888', weight: 0.4 }),
+                stroke: new ol.style.Stroke({ color: '#888888', width: 1 })
+            })
+        });
+
+        /* drawing markers */
+        var points = [];
+        points.push([dep["lon"],dep["lat"]])
+        points.push([arr["lon"],arr["lat"]])
+
+        var vectorMarker = new ol.source.Vector({});
+        var iconStyle = new ol.style.Style({
+            image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+                src: "/static/favicon.ico"
+            }))
+        })
+
+        for (var x = 0; x < points.length; x++) {
+            var featureMarker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(points[x])),
+                desc: "/static/favicon.ico"
+            });
+
+            featureMarker.setStyle(iconStyle);
+            vectorMarker.addFeature(featureMarker);
+        }
+
+        var vectorMarkerLayer = new ol.layer.Vector({
+            source: vectorMarker,
+        });
+
+        map.addLayer(vectorLineLayer);
+        map.addLayer(vectorMarkerLayer);
+
+        map.renderSync();
+
+        var extent = vectorLineLayer.getSource().getExtent();
+        map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
+
+        document.getElementById("some_stats").innerText = "Distance: " + Math.floor(dist) + " km / " + Math.floor(dist/1.852) + " nm";
     }
 
-    var vectorMarkerLayer = new ol.layer.Vector({
-        source: vectorMarker,
-    });
-
-    map.addLayer(vectorLineLayer);
-    map.addLayer(vectorMarkerLayer);
-
-    map.renderSync();
-
-    var extent = vectorLineLayer.getSource().getExtent();
-    map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
-
-    document.getElementById("some_stats").innerText = "Distance: " + Math.floor(dist) + " km / " + Math.floor(dist/1.852) + " nm";
-}
-
+    return {
+        loadMap:loadMap
+    }
+}();
 </script>
-
 {{end}}

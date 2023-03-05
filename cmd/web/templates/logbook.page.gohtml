@@ -55,106 +55,15 @@
         <i class="bi bi-file-earmark-arrow-down-fill"></i> Export
     </button>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatA4}}')"><i class="bi bi-file-pdf-fill"></i> PDF A4</a></li>
-        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatA5}}')"><i class="bi bi-file-pdf-fill"></i> PDF A5</a></li>
-        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatXLS}}')"><i class="bi bi-file-earmark-spreadsheet-fill"></i> XLS</a></li>
-        <li><a class="dropdown-item" href="#" onclick="Export('{{$api.ExportFormatCSV}}')"><i class="bi bi-file-text-fill"></i> CSV</a></li>
+        <li><a class="dropdown-item" href="#" onclick="wlbCommon.runExport('{{$api.ExportFormatA4}}')"><i class="bi bi-file-pdf-fill"></i> PDF A4</a></li>
+        <li><a class="dropdown-item" href="#" onclick="wlbCommon.runExport('{{$api.ExportFormatA5}}')"><i class="bi bi-file-pdf-fill"></i> PDF A5</a></li>
+        <li><a class="dropdown-item" href="#" onclick="wlbCommon.runExport('{{$api.ExportFormatXLS}}')"><i class="bi bi-file-earmark-spreadsheet-fill"></i> XLS</a></li>
+        <li><a class="dropdown-item" href="#" onclick="wlbCommon.runExport('{{$api.ExportFormatCSV}}')"><i class="bi bi-file-text-fill"></i> CSV</a></li>
     </ul>
 </div>
 {{ end }}
 
 {{ define "js" }}
-{{$api := .API}}
-
-<script type="text/javascript" src="/static/js/datatables.min.js"></script>
-<script>
-var startDate = null
-var endDate = null
-
-// Custom filtering function for datatables
-$.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        if (startDate === null || endDate === null) {
-            return true;
-        }
-
-        var mdate = data[1].split("/");
-        var date = new Date(`${mdate[2]}-${mdate[1]}-${mdate[0]}T00:00:00Z`);
-
-        if (startDate <= date && date <= endDate) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-);
-
-$(document).ready( function () {
-    var table = $('#logbook').DataTable({
-        ordering: false,
-        info:     false,
-        ajax: '{{index .API "LogbookData"}}',
-        lengthMenu: [[15, 50, -1], [15, 50, "All"]],
-        columnDefs: [
-            { targets: [ 0 ], visible: false, searchable: false },
-            { targets: [0,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,22], className: "dt-body-center" },
-            { targets: [1], width: "1%" }, //date
-            { targets: [2,3,4,5], width: "3%" }, //places
-            { targets: [8,9,10,11,15,16,17,18,19,20,22], width: "3%" }, //time
-            { targets: [6,7,21], width: "4%" }, //aircraft
-            { targets: [13,14], width: "3%" }, //landings
-            { targets: [12], width: "9%" }, //pic
-        ],
-        rowCallback: function(row, data, index){
-            $("td:eq(0)", row).html(`<a href="{{$api.Logbook}}/${data[0]}" class="link-primary">${data[1]}</a>`);
-        },
-        initComplete: function () {
-            // daterange field
-            $('.dataTables_filter').each(function () {
-                $(this).append('<input class="form-control form-control-sm" type="text" id="daterange" name="daterange" value="Date filters...">');
-            });
-
-            // daterange logic
-            $('input[name="daterange"]').daterangepicker({
-                opens: 'left',
-                autoUpdateInput: false,
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                    'This Year': [moment().startOf('year'), moment().endOf('year')],
-                    'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
-                },
-                alwaysShowCalendars: true,
-                linkedCalendars: false,
-                locale: {
-                    cancelLabel: 'Clear'
-                }
-            }, function(start, end, label) {
-                startDate = start;
-                endDate = end;
-                table.draw();
-            });
-
-            $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
-            });
-
-            $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
-                $(this).val('Date filters...');
-                startDate = null;
-                endDate = null;
-                table.draw();
-            });
-	    }
-    } );
-});
-
-function Export(format) {
-    window.open("{{$api.Export}}/" + format, "_blank");
-}
-</script>
+{{ block "common-js" . }}{{ end }}
+{{ block "logbook-js" . }}{{ end }}
 {{ end }}
