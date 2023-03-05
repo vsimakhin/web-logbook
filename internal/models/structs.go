@@ -10,6 +10,7 @@ type JSONResponse struct {
 	OK          bool   `json:"ok"`
 	Message     string `json:"message,omitempty"`
 	RedirectURL string `json:"redirect_url,omitempty"`
+	Data        string `json:"data,omitempty"`
 }
 
 // FlightRecord is a type for logbook flight records

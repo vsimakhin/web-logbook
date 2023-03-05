@@ -22,6 +22,10 @@ const APILogbookNight = "/logbook/night"
 const APIExport = "/export"
 const APIExportFormat = APIExport + "/{format}"
 
+const APIImport = "/import"
+const APIImportCreateBackup = "/import/backup/create"
+const APIImportRun = "/import/run"
+
 const APIAircrafts = "/aircrafts/"
 const APIAircraftsFilter = "/aircrafts/{filter}"
 
@@ -90,6 +94,11 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APIExport, app.HandlerExport)
 		server.Get(APIExportFormat, app.HandlerExportLogbook)
 		server.Post(APIExportFormat, app.HandlerExportSettingsSave)
+
+		// import
+		server.Get(APIImport, app.HandlerImport)
+		server.Post(APIImportCreateBackup, app.HandlerImportCreateBackup)
+		server.Post(APIImportRun, app.HandlerImportRun)
 
 		// airports
 		server.Get(APIAirportID, app.HandlerAirportByID)

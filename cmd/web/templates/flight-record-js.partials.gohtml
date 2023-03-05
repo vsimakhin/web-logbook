@@ -178,13 +178,6 @@ function DeleteFlightRecord() {
         })
 }
 
-function formatLandings(value) {
-    if (value === "") {
-        return 0;
-    } else {
-        return parseInt(value);
-    }
-}
 function validateDepArrTime(field) {
     if (field.value !== "") {
         if (field.value.length !== 4) {

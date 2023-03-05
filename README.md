@@ -57,12 +57,16 @@ Currently there are implemented several modules in the logbook app:
   * Map drawing and distance calculation for the flight record
 * Settings
   * Signature and owner name
+  * Signature pad to automatically include signatures to the PDF exports
   * Enable/Disable authentication (in case you need to expose the app to the public internet)
   * Aircraft groups/classes
 * Export
   * Export to EASA PDF format (A4 and A5)
   * Additional export formats (XLSX, CSV)
   * Adjustable settings for each export format
+* Import
+  * CSV support
+  * Automatic WebLogbook profile load
 * Map
   * Filters for routes and airports
 * Licensing & Certification
@@ -130,3 +134,4 @@ In case you'd like to add some other features for the logbook or you found a bug
 * Chart.js https://www.chartjs.org/
 * Date Range Picker https://www.daterangepicker.com/
 * Signature Pad https://github.com/szimek/signature_pad
+* PapaParse https://github.com/mholt/PapaParse
