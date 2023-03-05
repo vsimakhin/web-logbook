@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.14.0] - 05.03.2023
 
 - New: The full new main section `Import`. For now it's limmited for CSV files only. This function is in beta mode. Please use it carefully and don't forget to create the backups.
 - New: Adjusted text and columns with for the main `Logbook` table. Also added `Logbook table font size` paramater to the `Settings` page.
