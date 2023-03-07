@@ -49,7 +49,7 @@
                 <label class="form-check-label" for="filter_noroutes">No Routes</label>
             </div>
             <div class="mb-2">
-                <button class="btn btn-sm btn-outline-secondary float-right" type="button" onclick="Refresh()" id="refresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                <button class="btn btn-sm btn-outline-secondary float-right" type="button" onclick="wlbMap.refresh()" id="refresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
             </div>
         </div>
         <hr>
@@ -69,48 +69,6 @@
 {{ end }}
 
 {{ define "js" }}
-<script src="/static/js/ol.js"></script>
 {{ block "common-js" . }}{{ end }}
 {{ block "map-js" . }}{{ end }}
-
-<script>
-var start = moment().startOf('year');
-var end = moment().endOf('year');
-
-$(document).ready( function () {
-    function setrange (start, end) {
-        $('input[name="daterange"]').val(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
-        Refresh();
-    }
-
-    // daterange logic
-    $('input[name="daterange"]').daterangepicker({
-        opens: 'right',
-        autoUpdateInput: false,
-        ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-            'This Year': [moment().startOf('year'), moment().endOf('year')],
-            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-            'Ever': [moment().subtract(100, 'years'), moment()]
-        },
-        alwaysShowCalendars: true,
-        linkedCalendars: false,
-        startDate: start,
-        endDate: end,
-    });
-
-    setrange(start, end);
-
-    $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-        start = picker.startDate
-        end = picker.endDate
-        setrange(start, end);
-    });
-});
-</script>
 {{ end }}

@@ -44,28 +44,28 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 <div class="col-md-2">
                     <label for="departure_place" class="form-label text-nowrap">Departure</label>
                     <input type="text" class="form-control form-control-sm text-transform: uppercase" id="departure_place" name="departure_place" value="{{$fr.Departure.Place}}"
-                        required="" autocomplete="departure_place" oninput="this.value = this.value.toUpperCase();" onchange="DepArrChange()"
+                        required="" autocomplete="departure_place" oninput="this.value = this.value.toUpperCase();" onchange="wlbFlightRecord.onDepArrChange()"
                         {{if $enable_help}}data-bs-toggle="tooltip" data-bs-placement="bottom" title="Departure Place"{{end}}>
                 </div>
 
                 <div class="col-md-2">
                     <label for="departure_time" class="form-label text-nowrap">Time</label>
                     <input type="text" class="form-control form-control-sm" id="departure_time" name="departure_time" value="{{$fr.Departure.Time}}"
-                        required="" autocomplete="off" placeholder="HHMM" oninput="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
+                        required="" autocomplete="off" placeholder="HHMM" oninput="this.value = this.value.replace(/[^0-9]/g,'');" onchange="wlbFlightRecord.calculateTimes()"
                         {{if $enable_help}}data-bs-toggle="tooltip" data-bs-placement="bottom" title="Departure Time"{{end}}>
                 </div>
 
                 <div class="col-md-2">
                     <label for="arrival_place" class="form-label text-nowrap">Arrival</label>
                     <input type="text" class="form-control form-control-sm" id="arrival_place" name="arrival_place" value="{{$fr.Arrival.Place}}"
-                        required="" autocomplete="arrival_place" oninput="this.value = this.value.toUpperCase();" onchange="DepArrChange()"
+                        required="" autocomplete="arrival_place" oninput="this.value = this.value.toUpperCase();" onchange="wlbFlightRecord.onDepArrChange()"
                         {{if $enable_help}}data-bs-toggle="tooltip" data-bs-placement="bottom" title="Arrival Place"{{end}}>
                 </div>
 
                 <div class="col-md-2">
                     <label for="arrival_time" class="form-label text-nowrap">Time</label>
                     <input type="text" class="form-control form-control-sm" id="arrival_time" name="arrival_time" value="{{$fr.Arrival.Time}}"
-                        required="" autocomplete="off" placeholder="HHMM" oninput="this.value = this.value.replace(/[^0-9]/g,'');" onchange="CalculateTimes()"
+                        required="" autocomplete="off" placeholder="HHMM" oninput="this.value = this.value.replace(/[^0-9]/g,'');" onchange="wlbFlightRecord.calculateTimes()"
                         {{if $enable_help}}data-bs-toggle="tooltip" data-bs-placement="bottom" title="Arrival Time"{{end}}>
                 </div>
 
@@ -103,7 +103,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                 <div class="col-md-3">
                     <label for="aircraft_reg" class="form-label">Registration</label>
                     <input class="form-control form-control-sm" id="aircraft_reg" name="aircraft_reg" value="{{$fr.Aircraft.Reg}}"
-                        required="" autocomplete="aircraft_reg" list="aircraft_reg_options" oninput="this.value = this.value.toUpperCase(); OnRegChange();">
+                        required="" autocomplete="aircraft_reg" list="aircraft_reg_options" oninput="this.value = this.value.toUpperCase(); wlbFlightRecord.onRegChange();">
                     <datalist id="aircraft_reg_options">
                     {{ range $aircraft_regs}}
                     <option value="{{.}}">
@@ -239,7 +239,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
     </div>
     <hr>
 
-    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="validate()" id="save"><i class="bi bi-save-fill"></i> Save</button>
+    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbFlightRecord.validateFields()" id="save"><i class="bi bi-save-fill"></i> Save</button>
     {{if $fr.UUID}}<a id="attach_button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#attachments" href=#><i class="bi bi-paperclip"></i> Attachments</a>{{end}}
     {{if $fr.UUID}}<a id="new_flight_record" class="btn btn-sm btn-outline-secondary" href="{{$api.LogbookNew}}?last_arrival={{$fr.Arrival.Place}}&last_date={{$fr.Date}}"><i class="bi bi-plus-square-fill"></i> Add New Flight Record</a>{{end}}
 
@@ -262,7 +262,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> Cancel</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteFlightRecord()"><i class="bi bi-file-x-fill"></i> Delete</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="wlbFlightRecord.deleteFlightRecord()"><i class="bi bi-file-x-fill"></i> Delete</button>
             </div>
         </div>
     </div>
@@ -281,19 +281,19 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
                     <tbody id="attachments_table">
                         <tr>
                             <td>Attachment</td>
-                            <td id="ask_for_delete_attachment"><button type="button" class="btn-close" onclick="DeleteAttachment('id')"></button></td>
+                            <td id="ask_for_delete_attachment"><button type="button" class="btn-close" onclick="wlbFlightRecord.deleteAttachment('id')"></button></td>
                         </tr>
                     </tbody>
                 </table>
                 <form class="row" method="post" name="flight_record_attachment_form" id="flight_record_attachment_form"
                     autocomplete="off" novalidate="" enctype="multipart/form-data">
                     <div class="col-auto"><input type="file" class="form-control form-control-sm" id="document" name="document"></div>
-                    <div class="col-auto"><button class="btn btn-sm btn-outline-secondary float-right" type="button" onclick="UploadAttachment()" id="upload"><i class="bi bi-cloud-plus-fill"></i> Upload</button></div>
+                    <div class="col-auto"><button class="btn btn-sm btn-outline-secondary float-right" type="button" onclick="wlbFlightRecord.uploadAttachment()" id="upload"><i class="bi bi-cloud-plus-fill"></i> Upload</button></div>
                     <input type="hidden" name="record_id" id="record_id" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="btn_attachment_close" type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" onclick="LoadAttachments()"><i class="bi bi-door-open-fill"></i> Close</button>
+                <button id="btn_attachment_close" type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" onclick="wlbFlightRecord.loadAttachments()"><i class="bi bi-door-open-fill"></i> Close</button>
             </div>
         </div>
     </div>
@@ -301,33 +301,7 @@ Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{en
 {{ end }}
 
 {{ define "js" }}
-{{$fr := index .Data "flightRecord"}}
-
 {{ block "common-js" . }}{{ end }}
 {{ block "flight-record-js" . }}{{ end }}
 {{ block "flight-record-map" . }}{{ end }}
-
-<script>
-let aircrafts;
-
-window.onload = function() {
-    DepArrChange();
-    {{if $fr.UUID}}LoadAttachments(){{end}}
-
-    $(function() {
-        $('input[name="date"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            locale: {
-                format: 'DD/MM/YYYY'
-            },
-            autoApply: true,
-        }, function(start, end, label) {
-            $(this).val(start.format('DD/MM/YYYY'));
-        });
-    });
-
-    aircrafts = loadJSON('{{index .API "Aircrafts"}}');
-};
-</script>
 {{ end }}

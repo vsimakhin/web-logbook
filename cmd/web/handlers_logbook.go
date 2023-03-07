@@ -21,7 +21,7 @@ func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
 
 	data["settings"] = settings
 
-	if err := app.renderTemplate(w, r, "logbook", &templateData{Data: data}); err != nil {
+	if err := app.renderTemplate(w, r, "logbook", &templateData{Data: data}, "common-js", "logbook-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }

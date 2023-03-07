@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Updated: All JavaScript is rewritten to have it in a more readable format with some best practices. No effect on the user interface
+
 ## [2.14.0] - 05.03.2023
 
 - New: The full new main section `Import`. For now it's limited to CSV files only. This function is in beta mode. Please use it carefully and don't forget to create backups.

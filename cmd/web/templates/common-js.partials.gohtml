@@ -1,53 +1,83 @@
 {{define "common-js"}}
+{{$api := .API}}
 <script>
 
-function showErrorMessage(msg) {
-    var infoMsg = document.getElementById("info");
+// WebLogbook Common Namespace
+wlbCommon = function () {
+    const info_msg = document.getElementById("info");
 
-    infoMsg.classList.add("alert-danger");
-    infoMsg.classList.remove("alert-success");
-    infoMsg.classList.remove("d-none");
+    function showErrorMessage(msg) {
 
-    infoMsg.innerText = msg;
-}
+        info_msg.classList.add("alert-danger");
+        info_msg.classList.remove("alert-success");
+        info_msg.classList.remove("d-none");
 
-function showInfoMessage(msg) {
-    var infoMsg = document.getElementById("info");
-
-    infoMsg.classList.remove("alert-danger");
-    infoMsg.classList.add("alert-success");
-    infoMsg.classList.remove("d-none");
-
-    infoMsg.innerText = msg;
-
-    setTimeout(function(){ infoMsg.innerText = ""; infoMsg.classList.add("d-none");}, 5000);
-}
-
-function loadJSON(url) {
-    var json = null;
-    $.ajax({
-        'async': false,
-        'global': false,
-        'url': url,
-        'dataType': "json",
-        'success': function (data) {
-            json = data;
-        }
-    });
-    if (json) {
-        return json;
-    } else {
-        return [];
-    };
-};
-
-function formatLandings(value) {
-    if (value === "") {
-        return 0;
-    } else {
-        return parseInt(value);
+        info_msg.innerText = msg;
     }
-}
 
+    function showInfoMessage(msg, timeout = true) {
+        info_msg.classList.remove("alert-danger");
+        info_msg.classList.add("alert-success");
+        info_msg.classList.remove("d-none");
+
+        info_msg.innerText = msg;
+
+        if (timeout) {
+            setTimeout(function(){ info_msg.innerText = ""; info_msg.classList.add("d-none");}, 5000);
+        }
+    }
+
+    // getJSON send a request and waits for json
+    async function getJSON(url) {
+
+        const res = await fetch(url, {
+            method: "GET",
+            mode: "same-origin",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return {};
+            }
+        }).then((json) => {
+            if (json) {
+                return json;
+            } else {
+                return {};
+            }
+        }).catch((error) => {
+            console.log(`error fetching the ${url} - ${error}`);
+            return {};
+        })
+
+        return res;
+    }
+
+    // helper function to format landings values
+    function formatLandings(value) {
+        if (value === "") {
+            return 0;
+        } else {
+            return parseInt(value);
+        }
+    }
+
+    // executes export, simply opens a link
+    function runExport(format) {
+        window.open("{{$api.Export}}/" + format, "_blank");
+    }
+
+    return {
+        showErrorMessage:showErrorMessage,
+        showInfoMessage:showInfoMessage,
+        getJSON:getJSON,
+        formatLandings:formatLandings,
+        runExport:runExport
+    }
+}();
 </script>
 {{end}}

@@ -21,9 +21,14 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 
 	airport, err := app.db.GetAirportByID(uuid)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot find %s in the database - %s", uuid, err))
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if airport.IATA == "" && airport.ICAO == "" {
+		// looks like there is no such ID in airport database
+		app.warningLog.Printf("cannot find %s in the airport database\n", uuid)
 	}
 
 	err = app.writeJSON(w, http.StatusOK, airport)

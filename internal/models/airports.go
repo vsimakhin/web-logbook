@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"regexp"
 	"strings"
 	"time"
@@ -28,7 +29,9 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 	err := row.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
 		&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
 
-	if err != nil {
+	if err == sql.ErrNoRows {
+		return airport, nil
+	} else if err != nil {
 		return airport, err
 	}
 
