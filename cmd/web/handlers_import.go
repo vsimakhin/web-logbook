@@ -64,19 +64,23 @@ func (app *application) HandlerImportCreateBackup(w http.ResponseWriter, r *http
 // HandlerImportRun runs the import
 func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request) {
 
-	var flightRecords []models.FlightRecord
-	var wrongRecords []models.FlightRecord
+	type ImportData struct {
+		RecalculateNightTime bool                  `json:"recalculate_night_time"`
+		FlightRecords        []models.FlightRecord `json:"data"`
+	}
 
+	var importData ImportData
+	var wrongRecords []models.FlightRecord
 	var response models.JSONResponse
 
-	err := json.NewDecoder(r.Body).Decode(&flightRecords)
+	err := json.NewDecoder(r.Body).Decode(&importData)
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	for _, flightRecord := range flightRecords {
+	for _, flightRecord := range importData.FlightRecords {
 		uuid, err := uuid.NewRandom()
 		if err != nil {
 			app.errorLog.Println(err)
@@ -86,14 +90,32 @@ func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request)
 
 		flightRecord.UUID = uuid.String()
 
+		// recalculate night time?
+		if importData.RecalculateNightTime {
+			route, err := app.calculateNightTime(flightRecord)
+			if err != nil {
+				// nevermind, just let's write some warning message
+				app.warningLog.Printf("cannot calculate night time for %s %s-%s flight - %s",
+					flightRecord.Date, flightRecord.Departure.Place, flightRecord.Arrival.Place, err)
+			} else {
+				nt := route.NightTime()
+				if nt != time.Duration(0) {
+					flightRecord.Time.Night = app.db.DtoA(route.NightTime())
+				}
+			}
+		}
+
 		err = app.db.InsertFlightRecord(flightRecord)
 		if err != nil {
 			wrongRecords = append(wrongRecords, flightRecord)
 		}
 	}
 
-	if len(wrongRecords) != 0 {
-		response.Message = fmt.Sprintf("Imported %d of %d records. %d records failed.", len(flightRecords)-len(wrongRecords), len(flightRecords), len(wrongRecords))
+	lWrongRecords := len(wrongRecords)
+	lFlightRecords := len(importData.FlightRecords)
+
+	if lWrongRecords != 0 {
+		response.Message = fmt.Sprintf("Imported %d of %d records. %d records failed.", lFlightRecords-lWrongRecords, lFlightRecords, lWrongRecords)
 		response.OK = false
 		bData, err := json.Marshal(wrongRecords)
 		if err != nil {
@@ -101,7 +123,7 @@ func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request)
 		}
 		response.Data = string(bData)
 	} else {
-		response.Message = fmt.Sprintf("Imported %d of %d records.", len(flightRecords), len(flightRecords))
+		response.Message = fmt.Sprintf("Imported %d of %d records.", lFlightRecords, lFlightRecords)
 		response.OK = true
 	}
 

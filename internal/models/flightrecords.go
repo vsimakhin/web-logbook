@@ -26,6 +26,11 @@ func atod(value string) time.Duration {
 	return duration
 }
 
+// exported dtoa function
+func (m *DBModel) DtoA(value time.Duration) string {
+	return dtoa(value)
+}
+
 // dtoa converts time.Duration to formatted string
 func dtoa(value time.Duration) string {
 
