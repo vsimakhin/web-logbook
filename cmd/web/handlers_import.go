@@ -88,26 +88,40 @@ func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request)
 			response.Message = err.Error()
 		}
 
-		flightRecord.UUID = uuid.String()
-
-		// recalculate night time?
-		if importData.RecalculateNightTime {
-			route, err := app.calculateNightTime(flightRecord)
-			if err != nil {
-				// nevermind, just let's write some warning message
-				app.warningLog.Printf("cannot calculate night time for %s %s-%s flight - %s",
-					flightRecord.Date, flightRecord.Departure.Place, flightRecord.Arrival.Place, err)
-			} else {
-				nt := route.NightTime()
-				if nt != time.Duration(0) {
-					flightRecord.Time.Night = app.db.DtoA(route.NightTime())
-				}
-			}
+		infoMsg := ""
+		if flightRecord.Departure.Place != "" && flightRecord.Arrival.Place != "" {
+			infoMsg = fmt.Sprintf("flight %s %s-%s", flightRecord.Date, flightRecord.Departure.Place, flightRecord.Arrival.Place)
+		} else {
+			infoMsg = fmt.Sprintf("simulator record %s %s", flightRecord.Date, flightRecord.SIM.Type)
 		}
 
-		err = app.db.InsertFlightRecord(flightRecord)
-		if err != nil {
+		// let's double check if the record alredy exists
+		if app.db.IsFlightRecordExists(flightRecord) {
+			app.warningLog.Printf("%s already exists, skipping", infoMsg)
 			wrongRecords = append(wrongRecords, flightRecord)
+
+		} else {
+			flightRecord.UUID = uuid.String()
+
+			// recalculate night time?
+			if importData.RecalculateNightTime {
+				route, err := app.calculateNightTime(flightRecord)
+				if err != nil {
+					// nevermind, just let's write some warning message
+					app.warningLog.Printf("cannot calculate night time for %s - %s\n", infoMsg, err)
+				} else {
+					nt := route.NightTime()
+					if nt != time.Duration(0) {
+						flightRecord.Time.Night = app.db.DtoA(route.NightTime())
+					}
+				}
+			}
+
+			err = app.db.InsertFlightRecord(flightRecord)
+			if err != nil {
+				app.warningLog.Printf("cannot create a new record for %s - %s", infoMsg, err)
+				wrongRecords = append(wrongRecords, flightRecord)
+			}
 		}
 	}
 
@@ -115,7 +129,8 @@ func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request)
 	lFlightRecords := len(importData.FlightRecords)
 
 	if lWrongRecords != 0 {
-		response.Message = fmt.Sprintf("Imported %d of %d records. %d records failed.", lFlightRecords-lWrongRecords, lFlightRecords, lWrongRecords)
+		response.Message = fmt.Sprintf("Imported %d of %d records. %d records failed, check the logs in the console.",
+			lFlightRecords-lWrongRecords, lFlightRecords, lWrongRecords)
 		response.OK = false
 		bData, err := json.Marshal(wrongRecords)
 		if err != nil {
