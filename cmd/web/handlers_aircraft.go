@@ -10,9 +10,6 @@ import (
 
 // HandlerNightTime is a handler for calculating night time
 func (app *application) HandlerAircrafts(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIAircrafts)
-	}
 
 	var aircrafts map[string]string
 	var err error

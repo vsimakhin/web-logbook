@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: When the app is running in `dev` mode the logs for the web server now are printed by a standard middleware logger instead of custom messages for each handler. Also added a cache header for static files. Mostly no effect on the user interface, might slight speed improvement.
 - Updated: All JavaScript is rewritten to have it in a more readable format with some best practices. No effect on the user interface
 
 ## [2.14.0] - 05.03.2023

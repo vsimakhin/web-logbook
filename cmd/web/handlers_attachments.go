@@ -15,9 +15,6 @@ import (
 // HandlerGetAttachments generates attachments
 func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
-	if app.config.env == "dev" {
-		app.infoLog.Println(strings.ReplaceAll(APILogbookUUIDAttachments, "{uuid}", uuid))
-	}
 
 	attachments, err := app.db.GetAttachments(uuid)
 	if err != nil {
@@ -31,17 +28,10 @@ func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Req
 		app.errorLog.Println(err)
 		return
 	}
-
-	if app.config.env == "dev" {
-		app.infoLog.Printf("%d attachments generated for %s\n", len(attachments), uuid)
-	}
 }
 
 // HandlerUploadAttachment handles attachments upload
 func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogbookAttachmentsUpload)
-	}
 
 	var response models.JSONResponse
 
@@ -95,9 +85,6 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 		response.OK = true
 		response.Message = "Attachment has been uploaded"
 
-		if app.config.env == "dev" {
-			app.infoLog.Printf("attachment %s has been uploaded\n", attachment.UUID)
-		}
 	}
 
 	err = app.writeJSON(w, http.StatusOK, response)
@@ -109,9 +96,6 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 
 // HandlerDeleteAttachment is a handler for removing attachments
 func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogbookAttachmentsDelete)
-	}
 
 	var att models.Attachment
 	var response models.JSONResponse
@@ -131,9 +115,6 @@ func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.R
 	} else {
 		response.OK = true
 
-		if app.config.env == "dev" {
-			app.infoLog.Printf("attachment %s deleted\n", att.UUID)
-		}
 	}
 
 	err = app.writeJSON(w, http.StatusOK, response)
@@ -146,10 +127,6 @@ func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.R
 // HandlerAttachmentDownload is a hadnler for attachment download
 func (app *application) HandlerAttachmentDownload(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
-
-	if app.config.env == "dev" {
-		app.infoLog.Println(strings.ReplaceAll(APILogbookAttachmentsDownloadUUID, "{uuid}", uuid))
-	}
 
 	att, err := app.db.GetAttachmentByID(uuid)
 	if err != nil {

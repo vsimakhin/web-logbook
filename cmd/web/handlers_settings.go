@@ -9,9 +9,6 @@ import (
 
 // HandlerSettings is a handler for Settings page
 func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APISettings)
-	}
 
 	settings, err := app.db.GetSettings()
 	if err != nil {
@@ -39,9 +36,6 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 
 // HandlerSettingsSave serves the POST request for settings update
 func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APISettings)
-	}
 
 	oldsettings, err := app.db.GetSettings()
 	if err != nil {
@@ -74,10 +68,6 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 	} else {
 		response.OK = true
 		response.Message = "Settings have been updated"
-
-		if app.config.env == "dev" {
-			app.infoLog.Println("settings updated")
-		}
 	}
 
 	if app.isAuthEnabled != settings.AuthEnabled && settings.AuthEnabled {
@@ -94,9 +84,6 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 
 // HandlerSettingsAircraftClasses is a handler for aircraft groups/classes
 func (app *application) HandlerSettingsAircraftClasses(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APISettingsAircraftClasses)
-	}
 
 	settings, err := app.db.GetSettings()
 	if err != nil {

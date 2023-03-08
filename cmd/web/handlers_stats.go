@@ -16,14 +16,6 @@ func (app *application) HandlerStatsTotalsByClass(w http.ResponseWriter, r *http
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
 
-	if app.config.env == "dev" {
-		if startDate != "" && endDate != "" {
-			app.infoLog.Printf(fmt.Sprintf("%s/start_date=%s&end_date=%s\n", APIStatsTotalsByClass, startDate, endDate))
-		} else {
-			app.infoLog.Println(APIStatsTotalsByClass)
-		}
-	}
-
 	var tableData models.TableData
 
 	if startDate == "" || endDate == "" {
@@ -63,14 +55,6 @@ func (app *application) HandlerStatsTotalsByType(w http.ResponseWriter, r *http.
 	// get filter parameters
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
-
-	if app.config.env == "dev" {
-		if startDate != "" && endDate != "" {
-			app.infoLog.Printf(fmt.Sprintf("%s/start_date=%s&end_date=%s\n", APIStatsTotalsByType, startDate, endDate))
-		} else {
-			app.infoLog.Println(APIStatsTotalsByType)
-		}
-	}
 
 	var tableData models.TableData
 
@@ -112,14 +96,6 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 	// get filter parameters
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
-
-	if app.config.env == "dev" {
-		if startDate != "" && endDate != "" {
-			app.infoLog.Printf(fmt.Sprintf("%s/start_date=%s&end_date=%s\n", APIStatsTotals, startDate, endDate))
-		} else {
-			app.infoLog.Println(APIStatsTotals)
-		}
-	}
 
 	settings, err := app.db.GetSettings()
 	if err != nil {
@@ -287,10 +263,6 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 // HandlerStatsLimits is a handler for the Flight Time Limitations table source
 func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Request) {
 
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIStatsLimits)
-	}
-
 	var tableData models.TableData
 
 	totals, err := app.getTotalStats("", "")
@@ -318,9 +290,6 @@ func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Reques
 
 // HandlerStats is a handler for Stats page
 func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIStats)
-	}
 
 	data := make(map[string]interface{})
 

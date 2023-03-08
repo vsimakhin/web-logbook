@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -14,10 +13,6 @@ import (
 // HandlerAirportByID returns airport record by ID (ICAO or IATA)
 func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "id")
-
-	if app.config.env == "dev" {
-		app.infoLog.Println(strings.ReplaceAll(APIAirportID, "{id}", uuid))
-	}
 
 	airport, err := app.db.GetAirportByID(uuid)
 	if err != nil {
@@ -40,9 +35,6 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 
 // HandlerAirportUpdate updates the Airports DB
 func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIAirportUpdate)
-	}
 
 	var airportsDB map[string]interface{}
 	var airports []models.Airport
@@ -56,10 +48,6 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	defer resp.Body.Close()
-
-	if app.config.env == "dev" {
-		app.infoLog.Println("new file airports.json downloaded")
-	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -125,9 +113,6 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 		response.OK = true
 		response.Message = fmt.Sprintf("%d", records)
 
-		if app.config.env == "dev" {
-			app.infoLog.Println("airports db updated")
-		}
 	}
 
 	err = app.writeJSON(w, http.StatusOK, response)
