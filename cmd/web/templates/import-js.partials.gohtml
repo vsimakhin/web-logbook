@@ -166,7 +166,7 @@ wlbImport = function () {
 
         for (var i = 1; i < csv_import.data.length-1; i++) {
             var item = {
-                date: getMappedValue("date", csv_import.data[i]),
+                date: getMappedValue("date", csv_import.data[i]).replace(/[.]/g, '/'),
                 departure_place: getMappedValue("departure_place", csv_import.data[i]),
                 departure_time: autoTimeRecog(getMappedValue("departure_time", csv_import.data[i])),
                 arrival_place: getMappedValue("arrival_place", csv_import.data[i]),
