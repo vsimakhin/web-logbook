@@ -26,7 +26,11 @@ func (e *ExportXLS) createFile() {
 	f = excelize.NewFile()
 
 	// Create a new sheet
-	s := f.NewSheet(sheet)
+	s, err := f.NewSheet(sheet)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	f.SetActiveSheet(s)
 
 	f.DeleteSheet("Sheet1")
