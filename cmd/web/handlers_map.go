@@ -11,9 +11,6 @@ import (
 
 // HandlerStatsMap is a handler for Map page
 func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIMap)
-	}
 
 	classes, err := app.db.GetAircraftClasses()
 	if err != nil {
@@ -30,9 +27,6 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 
 // HandlerMapData returs lines and markers for the map page
 func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIMapData)
-	}
 
 	// get filter parameters
 	startDate := r.URL.Query().Get("start_date")
@@ -42,10 +36,6 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 	aircraftClass := r.URL.Query().Get("class")
 	routePlace := r.URL.Query().Get("place")
 	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
-
-	if app.config.env == "dev" {
-		app.infoLog.Printf("%s?%s\n", APIMapData, r.URL.Query().Encode())
-	}
 
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {

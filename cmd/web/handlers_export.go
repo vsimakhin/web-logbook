@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/csvexport"
@@ -21,9 +20,6 @@ const exportXLS = "xls"
 
 // HandlerExport is a handler for /export page
 func (app *application) HandlerExport(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIExport)
-	}
 
 	settings, err := app.db.GetSettings()
 	if err != nil {
@@ -44,10 +40,6 @@ func (app *application) HandlerExport(w http.ResponseWriter, r *http.Request) {
 // HandlerExportLogbook executes the pdf export and returns pdf file
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
-
-	if app.config.env == "dev" {
-		app.infoLog.Println(strings.ReplaceAll(APIExportFormat, "{format}", format))
-	}
 
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {
@@ -119,10 +111,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
 
-	if app.config.env == "dev" {
-		app.infoLog.Println(strings.ReplaceAll(APIExportFormat, "{format}", format))
-	}
-
 	currsettings, err := app.db.GetSettings()
 	if err != nil {
 		app.errorLog.Println(fmt.Errorf("cannot get the export settings - %s", err))
@@ -164,9 +152,6 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 		response.OK = true
 		response.Message = "Export settings have been updated"
 
-		if app.config.env == "dev" {
-			app.infoLog.Println("export settings updated")
-		}
 	}
 
 	err = app.writeJSON(w, http.StatusOK, response)

@@ -14,9 +14,6 @@ import (
 
 // HandlerImport is a handler for /import page
 func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIImport)
-	}
 
 	data := make(map[string]interface{})
 
@@ -28,9 +25,6 @@ func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
 
 // HandlerCreateBackup creates backup of the current db file
 func (app *application) HandlerImportCreateBackup(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogbookDelete)
-	}
 
 	var response models.JSONResponse
 
@@ -69,9 +63,6 @@ func (app *application) HandlerImportCreateBackup(w http.ResponseWriter, r *http
 
 // HandlerImportRun runs the import
 func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APIImportRun)
-	}
 
 	var flightRecords []models.FlightRecord
 	var wrongRecords []models.FlightRecord

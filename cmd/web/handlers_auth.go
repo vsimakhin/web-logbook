@@ -25,10 +25,6 @@ func (app *application) Auth(next http.Handler) http.Handler {
 
 // LoginPage displays the login page
 func (app *application) HandlerLogin(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogin)
-	}
-
 	if err := app.renderTemplate(w, r, "login", &templateData{}); err != nil {
 		app.errorLog.Print(err)
 	}
@@ -36,9 +32,6 @@ func (app *application) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 // LoginPagePost handles the authentication
 func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogin)
-	}
 
 	err := app.session.RenewToken(r.Context())
 	if err != nil {
@@ -85,9 +78,6 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 
 // Logout logs the user out
 func (app *application) HandlerLogout(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogout)
-	}
 
 	err := app.session.Destroy(r.Context())
 	if err != nil {

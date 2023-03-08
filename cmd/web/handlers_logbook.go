@@ -6,9 +6,6 @@ import (
 
 // HandlerLogbook is a handler for /logbook page
 func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogbook)
-	}
 
 	data := make(map[string]interface{})
 
@@ -28,9 +25,6 @@ func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
 
 // HandlerFlightRecordsData generates data for the logbook table at /logbook page
 func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.Request) {
-	if app.config.env == "dev" {
-		app.infoLog.Println(APILogbookData)
-	}
 
 	type TableData struct {
 		Data [][]string `json:"data"`
@@ -65,7 +59,4 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 		return
 	}
 
-	if app.config.env == "dev" {
-		app.infoLog.Printf("%d flight records generated for the table\n", len(tableData.Data))
-	}
 }

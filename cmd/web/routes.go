@@ -5,6 +5,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 const APIRoot = "/"
@@ -68,6 +69,11 @@ var session *scs.SessionManager
 
 func (app *application) routes() *chi.Mux {
 	server := chi.NewRouter()
+
+	if app.config.env == "dev" {
+		server.Use(middleware.Logger)
+	}
+
 	server.Use(SessionLoad)
 
 	server.Route("/", func(server chi.Router) {
@@ -142,7 +148,7 @@ func (app *application) routes() *chi.Mux {
 	server.Get(APILogout, app.HandlerLogout)
 
 	// other stuff
-	server.Handle("/static/*", app.HandlerStatic())
+	server.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
 	server.HandleFunc("/favicon.ico", app.HandlerFavicon)
 	server.NotFound(app.HandlerNotFound)
 	server.MethodNotAllowed(app.HandlerNotAllowed)
