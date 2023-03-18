@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- New: Automatic departure and arrival time format recognition for the `Import`
+- New: Added option to recalculate night time during the import
+- New: Added a check if the flight or simulator record already exists during the import
 - New: When the app is running in `dev` mode the logs for the web server now are printed by a standard middleware logger instead of custom messages for each handler. Also added a cache header for static files. Mostly no effect on the user interface, might slight speed improvement.
 - Updated: All JavaScript is rewritten to have it in a more readable format with some best practices. No effect on the user interface
 

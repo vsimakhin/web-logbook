@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	nighttime "github.com/vsimakhin/go-nighttime"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"golang.org/x/exp/slices"
 )
@@ -182,4 +183,45 @@ func (app *application) getTotalStats(startDate string, endDate string) (map[str
 	}
 
 	return totals, nil
+}
+
+// calculateNightTime returns the nighttime.Route object which later can be called
+// to calculate night time, like obj.NightTime()
+func (app *application) calculateNightTime(fr models.FlightRecord) (nighttime.Route, error) {
+	var route nighttime.Route
+
+	departure_place, err := app.db.GetAirportByID(fr.Departure.Place)
+	if err != nil {
+		return route, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err)
+	}
+
+	departure_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
+	if err != nil {
+		return route, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err)
+	}
+
+	arrival_place, err := app.db.GetAirportByID(fr.Arrival.Place)
+	if err != nil {
+		return route, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err)
+	}
+
+	arrival_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
+	if err != nil {
+		return route, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err)
+	}
+
+	route = nighttime.Route{
+		Departure: nighttime.Place{
+			Lat:  departure_place.Lat,
+			Lon:  departure_place.Lon,
+			Time: departure_time,
+		},
+		Arrival: nighttime.Place{
+			Lat:  arrival_place.Lat,
+			Lon:  arrival_place.Lon,
+			Time: arrival_time,
+		},
+	}
+
+	return route, nil
 }

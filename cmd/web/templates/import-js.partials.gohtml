@@ -153,17 +153,24 @@ wlbImport = function () {
         }
     }
 
+    // function for automatic time format recognition for departures and arrivals
+    function autoTimeRecog(time) {
+        time = time.replace(/[^0-9]/g, '').padStart(4,'0');
+
+        return time;
+    }
+
     // preview data for import table
     function previewImport() {
         table_data = [];
 
         for (var i = 1; i < csv_import.data.length-1; i++) {
             var item = {
-                date: getMappedValue("date", csv_import.data[i]),
+                date: getMappedValue("date", csv_import.data[i]).replace(/[.]/g, '/'),
                 departure_place: getMappedValue("departure_place", csv_import.data[i]),
-                departure_time: getMappedValue("departure_time", csv_import.data[i]),
+                departure_time: autoTimeRecog(getMappedValue("departure_time", csv_import.data[i])),
                 arrival_place: getMappedValue("arrival_place", csv_import.data[i]),
-                arrival_time: getMappedValue("arrival_time", csv_import.data[i]),
+                arrival_time: autoTimeRecog(getMappedValue("arrival_time", csv_import.data[i])),
                 aircraft_model: getMappedValue("aircraft_model", csv_import.data[i]),
                 aircraft_reg: getMappedValue("aircraft_reg", csv_import.data[i]),
                 se_time: getMappedValue("se_time", csv_import.data[i]),
@@ -235,12 +242,17 @@ wlbImport = function () {
 
         startImportStatus();
 
-        payload = [];
+        let frs = [];
 
         for (var i = 0; i < table_data.length; i++) {
             item = table_data[i];
-            payload.push(marshallItem(item));
+            frs.push(marshallItem(item));
         };
+
+        let payload = {
+            recalculate_night_time: document.getElementById("recalculate_night_time").checked,
+            data: frs,
+        }
 
         const requestOptions = {
             method: 'post',

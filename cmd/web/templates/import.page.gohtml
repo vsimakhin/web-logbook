@@ -8,8 +8,8 @@
 {{$api := .API}}
 
 <div class="alert alert-warning row">
-The import function is in beta mode. Please, use it carefully and don't forget to create the backups.<br>
-The current version fully supports WebLogbook CSV format. You can check it at "Export"->"CSV".<br>
+The import function is in beta mode. Please, use it carefully and don't forget to create the backups.
+The current version fully supports WebLogbook CSV format. You can check it at "Export"->"CSV".
 </div>
 
 <div class="row">
@@ -27,6 +27,14 @@ The current version fully supports WebLogbook CSV format. You can check it at "E
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-9">
+        <input type="checkbox" class="form-check-input" id="recalculate_night_time" name="recalculate_night_time">
+        <label for="recalculate_night_time" class="form-label">Recalculate night time during the import (It will take much longer)</label>
+    </div>
+</div>
+<hr>
 
 <table id="import" class="table table-sm table-striped table-bordered nowrap table-fixed">
     <thead>

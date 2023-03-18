@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	nighttime "github.com/vsimakhin/go-nighttime"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
@@ -177,41 +176,10 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	departure_place, err := app.db.GetAirportByID(fr.Departure.Place)
+	route, err := app.calculateNightTime(fr)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err))
+		app.errorLog.Println(err)
 		return
-	}
-
-	departure_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err))
-		return
-	}
-
-	arrival_place, err := app.db.GetAirportByID(fr.Arrival.Place)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err))
-		return
-	}
-
-	arrival_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err))
-		return
-	}
-
-	route := nighttime.Route{
-		Departure: nighttime.Place{
-			Lat:  departure_place.Lat,
-			Lon:  departure_place.Lon,
-			Time: departure_time,
-		},
-		Arrival: nighttime.Place{
-			Lat:  arrival_place.Lat,
-			Lon:  arrival_place.Lon,
-			Time: arrival_time,
-		},
 	}
 
 	response.OK = true

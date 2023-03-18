@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -24,6 +25,11 @@ func atod(value string) time.Duration {
 	}
 
 	return duration
+}
+
+// exported dtoa function
+func (m *DBModel) DtoA(value time.Duration) string {
+	return dtoa(value)
 }
 
 // dtoa converts time.Duration to formatted string
@@ -90,6 +96,39 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
 	}
 
 	return fr, nil
+}
+
+// IsFlightRecordExists checks if the flight record already exists
+func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	n := 0
+	query := ""
+	var row *sql.Row
+
+	if fr.Departure.Place != "" && fr.Arrival.Place != "" {
+		// normal flight
+		query = "SELECT count(uuid) FROM logbook_view " +
+			"WHERE date = ? AND departure_place = ? AND departure_time = ? AND " +
+			"arrival_place = ? and arrival_time = ?"
+		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.Departure.Place, fr.Departure.Time,
+			fr.Arrival.Place, fr.Arrival.Time)
+
+	} else {
+		// simulator record
+		query = "SELECT count(uuid) FROM logbook_view " +
+			"WHERE date = ? AND sim_type = ? AND sim_time = ?"
+		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.SIM.Type, fr.SIM.Time)
+	}
+
+	err := row.Scan(&n)
+
+	if err != nil || n == 0 {
+		return false
+	}
+
+	return true
 }
 
 // UpdateFlightRecord updates the flight records in the logbook table
