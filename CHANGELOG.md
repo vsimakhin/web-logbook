@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.15.0] - 18.03.2023
 
 - New: Automatic departure and arrival time format recognition for the `Import`
 - New: Added option to recalculate night time during the import
