@@ -40,7 +40,7 @@ func (app *application) HandlerStatsTotalsByClass(w http.ResponseWriter, r *http
 	}
 
 	if len(tableData.Data) == 0 {
-		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", ""})
+		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", "", ""})
 	}
 
 	err = app.writeJSON(w, http.StatusOK, tableData)
