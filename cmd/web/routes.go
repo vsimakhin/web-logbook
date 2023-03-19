@@ -50,8 +50,12 @@ const APISettings = "/settings"
 const APISettingsAircraftClasses = "/settings/classes"
 
 const APIAirport = "/airport/"
-const APIAirportID = APIAirport + "{id}"
+const APIAirportID = "/airport/{id}"
 const APIAirportUpdate = "/airport/update"
+const APIAirportStandardData = "/airport/standard/"
+const APIAirportCustomData = "/airport/custom/"
+const APIAirportAddCustom = "/airport/custom/add"
+const APIAirportDeleteCustom = "/airport/custom/delete"
 
 const APIMap = "/map"
 const APIMapData = "/map/data"
@@ -109,6 +113,10 @@ func (app *application) routes() *chi.Mux {
 		// airports
 		server.Get(APIAirportID, app.HandlerAirportByID)
 		server.Get(APIAirportUpdate, app.HandlerAirportUpdate)
+		server.Get(APIAirportStandardData, app.HandlerAirportDBData)
+		server.Get(APIAirportCustomData, app.HandlerAirportCustomData)
+		server.Post(APIAirportAddCustom, app.HandlerAirportAddCustom)
+		server.Post(APIAirportDeleteCustom, app.HandlerAirportDeleteCustom)
 
 		// aircrafts
 		server.Get(APISettingsAircraftClasses, app.HandlerSettingsAircraftClasses)

@@ -52,34 +52,6 @@ func validateDB(db *sql.DB) error {
 		return err
 	}
 
-	// check migration for v2.0.0
-	err = migration200(db)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// migration200 verifies a proper migration to version 2.0.0
-// changelog: added field remarks to the table licensing
-func migration200(db *sql.DB) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	_, err := db.QueryContext(ctx, "SELECT remarks FROM licensing LIMIT 1")
-	if err != nil {
-		// looks like there is no remarks field
-		_, err = db.ExecContext(ctx, "ALTER TABLE licensing ADD COLUMN remarks TEXT")
-		if err != nil {
-			return err
-		}
-		_, err = db.ExecContext(ctx, "UPDATE licensing SET remarks = ''")
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -91,32 +63,11 @@ func checkSettingsTable(db *sql.DB) error {
 	// first let's check we migrate everything from old settings table to the new one
 	var s models.Settings
 
-	_, err := db.QueryContext(ctx, "SELECT owner_name, signature_text, page_breaks FROM settings")
-	if err == nil {
-		// looks like we still have an old table
-		out, err := json.Marshal(s)
-		if err != nil {
-			return err
-		}
-
-		// update new settings table with old values
-		_, err = db.ExecContext(ctx, "INSERT INTO settings2 (id, settings) VALUES (0, ?)", string(out))
-		if err != nil {
-			return err
-		}
-
-		// drop old settings table
-		_, err = db.ExecContext(ctx, "DROP TABLE settings")
-		if err != nil {
-			return err
-		}
-	}
-
 	// check settings table (first app run)
 	var rowsCount int
 	row := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM settings2")
 
-	err = row.Scan(&rowsCount)
+	err := row.Scan(&rowsCount)
 	if err != nil {
 		return err
 	}

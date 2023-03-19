@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- New: New subpage 'Airports' for the 'Settings'
+- New: Added option to add your custom airport which is not in the standard default airports DB
+- New: Added option to list and go through the standard airports database
+
 ## [2.15.0] - 18.03.2023
 
 - New: Automatic departure and arrival time format recognition for the `Import`

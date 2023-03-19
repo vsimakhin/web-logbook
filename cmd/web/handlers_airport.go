@@ -121,3 +121,127 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 		return
 	}
 }
+
+// HandlerAirportAddCustom adds a new custom airport
+func (app *application) HandlerAirportAddCustom(w http.ResponseWriter, r *http.Request) {
+
+	var airport models.Airport
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&airport)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.AddCustomAirport(airport)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("error adding a new custom airport - %s", err))
+		response.OK = false
+		response.Message = err.Error()
+	} else {
+		response.OK = true
+		response.Message = fmt.Sprintf("Custom airport %s has been added", airport.Name)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, response)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+// HandlerAirportDeleteCustom removes a custom airport
+func (app *application) HandlerAirportDeleteCustom(w http.ResponseWriter, r *http.Request) {
+
+	var airport models.Airport
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&airport)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.RemoveCustomAirport(airport.Name)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot remove custom airport - %s", err))
+		response.OK = false
+		response.Message = err.Error()
+	} else {
+		response.OK = true
+		response.Message = fmt.Sprintf("Airport %s has been removed", airport.Name)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, response)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+// HandlerAirportCustomData generates data for the custom airports table
+func (app *application) HandlerAirportCustomData(w http.ResponseWriter, r *http.Request) {
+
+	type TableData struct {
+		Data [][]string `json:"data"`
+	}
+
+	var tableData TableData
+
+	airports, err := app.db.GetCustomAirports()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range airports {
+		tableRow := []string{item.Name, item.City, item.Country,
+			fmt.Sprintf("%d", item.Elevation), fmt.Sprintf("%f", item.Lat), fmt.Sprintf("%f", item.Lon), "",
+		}
+
+		tableData.Data = append(tableData.Data, tableRow)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+}
+
+// HandlerAirportDBData generates data for the standard airports table
+func (app *application) HandlerAirportDBData(w http.ResponseWriter, r *http.Request) {
+
+	type TableData struct {
+		Data [][]string `json:"data"`
+	}
+
+	var tableData TableData
+
+	airports, err := app.db.GetStandardAirports()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range airports {
+		tableRow := []string{item.ICAO, item.IATA, item.Name, item.City, item.Country,
+			fmt.Sprintf("%d", item.Elevation), fmt.Sprintf("%f", item.Lat), fmt.Sprintf("%f", item.Lon), "",
+		}
+
+		tableData.Data = append(tableData.Data, tableRow)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+}
