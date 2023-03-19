@@ -60,6 +60,8 @@ Currently there are implemented several modules in the logbook app:
   * Signature pad to automatically include signatures to the PDF exports
   * Enable/Disable authentication (in case you need to expose the app to the public internet)
   * Aircraft groups/classes
+  * List global airport database
+  * Add your own custom airfields or heliports
 * Export
   * Export to EASA PDF format (A4 and A5)
   * Additional export formats (XLSX, CSV)

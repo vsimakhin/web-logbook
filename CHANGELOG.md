@@ -1,10 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [2.16.0] - 19.03.2023
 
-- New: New subpage 'Airports' for the 'Settings'
+- New: New subpage `Airports` for the `Settings`
 - New: Added option to add your custom airport which is not in the standard default airports DB
 - New: Added option to list and go through the standard airports database
+- Fix: Fixed error for the `Total By Class` when the table is empty
 
 ## [2.15.0] - 18.03.2023
 
