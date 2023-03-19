@@ -1,12 +1,12 @@
 # Web-logbook
 
-This is a simple free EASA style logbook application written in golang.
+This is a simple free EASA-style logbook application written in golang.
 
 You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
 
-Once you start the app it automatically creates a sqlite local db and start listening on a port 4000 by default. So you can open it in your standard web-browser on http://localhost:4000
+Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web-browser on http://localhost:4000
 
-You also can easily export all flight records into EASA style pdf format, print it, sign and use as a usual paper logbook.
+You also can easily export all flight records into EASA style pdf format, print it, sign and use it as a usual paper logbook.
 
 # Changelog
 
@@ -18,15 +18,15 @@ The changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANG
 1. Extract archive to some folder/directory
 1. Run:
   * Windows:
-    * Double click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (need to solve it later), but just run it.
+    * Double-click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (need to solve it later), but just run it.
   * Linux:
     * Open a terminal and navigate to the directory
     * Run `./web-logbook`
   * MacOS:
-    * *I still didn't test it for the MacOS, so in theory should be as same as for linux, but... who knows ¯\\_(ツ)_/¯*
+    * *I still didn't test it for MacOS, so in theory, should be as same as for Linux, but... who knows ¯\\_(ツ)_/¯*
 4. Open your browser and type http://localhost:4000
 5. Go to the [Settings](http://localhost:4000/settings) page and click on the `Update Airport DB` button
-5. Go to the [Export](http://localhost:4000/export) page and click `Restore Defaults` and `Save` for the all export formats (in case the values there are 0)
+5. Go to the [Export](http://localhost:4000/export) page and click `Restore Defaults` and `Save` for all export formats (in case the values there are 0)
 6. Once you finished, use `Ctrl+C` in the terminal window or just close it
 
 ## CLI options
@@ -47,11 +47,11 @@ $ ./web-logbook -h
 
 # Supported operating systems
 
-Since it's written in golang it can run on any system if you compile the sources. For now in the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page there are 3 binaries for linux, macos and windows, all of them are amd64.
+Since it's written in golang it can run on any system if you compile the sources. For now, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are 3 binaries for Linux, MacOS and Windows, all of them are amd64.
 
 # Interface
 
-Currently there are implemented several modules in the logbook app:
+Currently, there are implemented several modules in the logbook app:
 * Logbook itself
   * Attachments for the flight records
   * Map drawing and distance calculation for the flight record
@@ -125,7 +125,7 @@ So in real life the logbook could look like
 
 # New features/Issues
 
-In case you'd like to add some other features for the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix at a reasonable time but at least I can take a look.
+In case you'd like to add some other features to the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix it at a reasonable time but at least I can take a look.
 
 # Used libraries
 
