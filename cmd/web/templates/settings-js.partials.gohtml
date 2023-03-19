@@ -8,6 +8,7 @@
 wlbSettings = function () {
     var airports_custom = null;
     var airports_db = undefined;
+    var airportDBReloaded = false;
 
     // signature pad
     var canvas = document.getElementById("signature-pad");
@@ -230,6 +231,8 @@ wlbSettings = function () {
 
     // update airports database
     function updateAirportsDB() {
+        airportDBReloaded = true;
+
         startUpdateStatus();
         wlbCommon.showInfoMessage("Updating...", false);
 
@@ -452,6 +455,11 @@ wlbSettings = function () {
                     { targets: [4], width: "19%" },
                 ]
             } );
+        }
+
+        if (airportDBReloaded) {
+            airports_db.ajax.reload();
+            airportDBReloaded = false;
         }
 
         airportDBModal.show();
