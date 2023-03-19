@@ -109,6 +109,8 @@ So in real life the logbook could look like
 
 ![Settings](https://github.com/vsimakhin/web-logbook-assets/raw/main/settings.png)
 
+![Settings-Airports](https://github.com/vsimakhin/web-logbook-assets/raw/main/settings-airports.png)
+
 ## Stats
 
 ![Flight stats](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats.png)
