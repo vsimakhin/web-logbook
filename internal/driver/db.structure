@@ -35,7 +35,8 @@ SELECT uuid, date, substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m
  night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_type, sim_time, pic_name, remarks
 FROM logbook;
 
-/* airports table */
+/* airports tables */
+/* standard airports table */
 CREATE TABLE IF NOT EXISTS airports (
     icao TEXT PRIMARY_KEY,
     iata TEXT,
@@ -49,6 +50,25 @@ CREATE TABLE IF NOT EXISTS airports (
 
 CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);
 CREATE INDEX IF NOT EXISTS airports_iata ON airports(iata);
+
+/* custom airports */
+CREATE TABLE IF NOT EXISTS airports_custom (
+    name TEXT,
+    city TEXT,
+    country TEXT,
+    elevation INTEGER,
+    lat REAL,
+    lon REAL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS airports_custom_name ON airports_custom(name);
+
+/* common view to combine airports tables */
+CREATE VIEW IF NOT EXISTS airports_view
+AS
+SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports
+UNION
+SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom;
 
 /* settings table */
 CREATE TABLE IF NOT EXISTS settings2 (

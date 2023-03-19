@@ -95,7 +95,7 @@ func InitSQLMockValues() {
 
 	// GetAirportByID
 	SQLMock["GetAirportByID"] = Mock{
-		Query: "SELECT (.+) FROM airports WHERE",
+		Query: "SELECT (.+) FROM airports_view WHERE",
 		Rows: []string{
 			"icao", "iata", "name", "city", "country", "elevation", "lat", "lon",
 		},
@@ -120,7 +120,7 @@ func InitSQLMockValues() {
 
 	// GetAirports
 	SQLMock["GetAirports"] = Mock{
-		Query: "SELECT (.+) FROM airports",
+		Query: "SELECT (.+) FROM airports_view",
 		Rows: []string{
 			"icao", "iata", "name", "city", "country", "elevation", "lat", "lon",
 		},

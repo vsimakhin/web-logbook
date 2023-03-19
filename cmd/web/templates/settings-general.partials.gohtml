@@ -1,5 +1,4 @@
 {{define "settings-general"}}
-{{$records := index .Data "records"}}
 {{$settings := index .Data "settings"}}
 
 <div class="row">
@@ -43,21 +42,6 @@
 
         <hr>
 
-        <div class="col">
-            <div class="row mb-2">
-                <label for="airports" class="form-label col-md-3 col-form-label">Airport database</label>
-                <div class="col-md-5">
-                    <input type="text" class="form-control form-control-sm col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports"
-                        required="false" readonly>
-                </div>
-                <div class="col-md-4">
-                    <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.updateAirportsDB()" id="update"><i class="bi bi-arrow-clockwise"></i> Update Airport DB</button>
-                </div>
-            </div>
-        </div>
-
-        <hr>
-
         <div class="row mb-2">
             <div class="col">
                 <input type="checkbox" class="form-check-input" id="auth_enabled" name="auth_enabled" {{if $settings.AuthEnabled}}checked{{end}}>
@@ -90,7 +74,7 @@
     <div class="col-md-8">
 
         <div class="card-body">
-            <table id="aircraft_class" class="table-editable table table-bordered table-responsive-md table-striped">
+            <table id="aircraft_class" class="table-editable table table-sm table-bordered table-responsive-md table-striped">
                 <thead>
                     <tr>
                         <th>Class Name</th>

@@ -2,6 +2,8 @@
 
 {{ define "title" }}Settings{{ end }}
 
+{{ define "css" }}<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>{{ end }}
+
 {{ define "content" }}
 {{$api := .API}}
 {{$settings := index .Data "settings"}}
@@ -12,6 +14,7 @@
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-general" type="button" role="tab" aria-controls="nav-general" aria-selected="true">General</button>
+        <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-airports" type="button" role="tab" aria-controls="nav-airports" aria-selected="true">Airports</button>
         <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-misc" type="button" role="tab" aria-controls="nav-misc" aria-selected="true">Misc</button>
     </div>
 </nav>
@@ -19,6 +22,10 @@
 <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
         <br>{{block "settings-general" .}}{{end}}
+    </div>
+
+    <div class="tab-pane fade" id="nav-airports" role="tabpanel" aria-labelledby="nav-airports-tab">
+        <br>{{block "settings-airports" .}}{{end}}
     </div>
 
     <div class="tab-pane fade" id="nav-misc" role="tabpanel" aria-labelledby="nav-misc-tab">
