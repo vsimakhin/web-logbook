@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.17.0] - 24.03.2023
 
 - New: Added HTTPS support. Check [readme](./README.md) for configuration
 
