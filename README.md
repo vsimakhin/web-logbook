@@ -30,19 +30,26 @@ The changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANG
 6. Once you finished, use `Ctrl+C` in the terminal window or just close it
 
 ## CLI options
-```
+```sh
 $ ./web-logbook -h
+  -cert string
+      certificate path (default "certs/localhost.pem")
   -disable-authentication
-    	Disable authentication (in case you forgot login credentials)
+      Disable authentication (in case you forgot login credentials)
   -dsn string
-    	SQLite file name (default "web-logbook.sql")
+      SQLite file name (default "web-logbook.sql")
+  -enable-https
+      Enable TLS/HTTPS
   -env string
-    	Environment {dev|prod} (default "prod")
+      Environment {dev|prod} (default "prod")
+  -key string
+      private key path (default "certs/localhost-key.pem")
   -port int
-    	Server port (default 4000)
+      Server port (default 4000)
+  -url string
+      Server URL (default "localhost")
   -version
-    	Prints current version
-
+      Prints current version
 ```
 
 # Supported operating systems
@@ -122,6 +129,21 @@ So in real life the logbook could look like
 ![Licensing](https://github.com/vsimakhin/web-logbook-assets/raw/main/licensing.png)
 
 ![Licensing record](https://github.com/vsimakhin/web-logbook-assets/raw/main/licensing-record.png)
+
+# HTTPS enable
+
+Since the app is running on `localhost` it's not possible to create a public certificate that would be valid by public CAs. As an option, you can create a self-signed certificate and add it to the root CA in your operating system. For that, you can use [`mkcert` tool](https://github.com/FiloSottile/mkcert).
+
+* Open a terminal/console and navigate to the `web-logbook` directory
+* Create a directory `certs`
+* In this new directory run commands:
+  * `mkcert -instal` - it will create a new local CA
+  * `mkcert localhost` - it will generate a key(`localhost-key.pem`) and a certificate(`localhost.pem`)
+* Now just run the Web Logbook App with the new parameter: `web-logbook --enable-https`
+
+You don't need to install a new local CA in you system, but in this case, browser will always show you a warning message, that certificate is self-signed and not trusted.
+
+Also, you can always generate your own certificate and key and store it in the different directories in your operating system. For that use `--key` and `--cert` parameters to specify the exact location.
 
 # New features/Issues
 

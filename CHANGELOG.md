@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Added HTTPS support. Check [readme](./README.md) for configuration
+
 ## [2.16.0] - 19.03.2023
 
 - New: New subpage `Airports` for the `Settings`
