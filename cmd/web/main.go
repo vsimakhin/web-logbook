@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"html/template"
@@ -18,10 +19,16 @@ import (
 const version = "2.16.0"
 
 type config struct {
+	url  string
 	port int
 	env  string
 	db   struct {
 		dsn string
+	}
+	tls struct {
+		enabled bool
+		key     string
+		crt     string
 	}
 }
 
@@ -39,15 +46,26 @@ type application struct {
 }
 
 func (app *application) serve() error {
+
 	srv := &http.Server{
 		Addr:     fmt.Sprintf(":%d", app.config.port),
 		Handler:  http.Handler(app.routes()),
 		ErrorLog: app.errorLog,
+		TLSConfig: &tls.Config{
+			NextProtos: []string{"h2", "http/1.1"},
+		},
 	}
 
-	app.infoLog.Printf("Web Logbook %s is ready on http://localhost:%d\n", version, app.config.port)
+	msg := fmt.Sprintf("Web Logbook v%s is ready on %s://%s:%d\n", version, "%s", app.config.url, app.config.port)
+	if app.config.tls.enabled {
+		app.infoLog.Printf(msg, "https")
+		return srv.ListenAndServeTLS(app.config.tls.crt, app.config.tls.key)
 
-	return srv.ListenAndServe()
+	} else {
+		app.infoLog.Printf(msg, "http")
+		return srv.ListenAndServe()
+
+	}
 }
 
 func main() {
@@ -56,11 +74,15 @@ func main() {
 	var isPrintVersion bool
 	var disableAuth bool
 
+	flag.StringVar(&cfg.url, "url", "localhost", "Server URL")
 	flag.IntVar(&cfg.port, "port", 4000, "Server port")
 	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "SQLite file name")
 	flag.BoolVar(&isPrintVersion, "version", false, "Prints current version")
 	flag.BoolVar(&disableAuth, "disable-authentication", false, "Disable authentication (in case you forgot login credentials)")
+	flag.BoolVar(&cfg.tls.enabled, "enable-https", false, "Enable TLS/HTTPS")
+	flag.StringVar(&cfg.tls.key, "key", "certs/localhost-key.pem", "private key path")
+	flag.StringVar(&cfg.tls.crt, "cert", "certs/localhost.pem", "certificate path")
 	flag.Parse()
 
 	if isPrintVersion {
@@ -112,13 +134,18 @@ func main() {
 		os.Exit(0)
 	}
 
+	// create distance cache ob background
 	go app.db.CreateDistanceCache()
 	app.isAuthEnabled = app.db.IsAuthEnabled()
 
+	// check for the new version
 	go app.checkNewVersion()
 
+	// main app
 	err = app.serve()
-	if err != nil {
+	if err == http.ErrServerClosed {
+		app.infoLog.Println("Bye! :)")
+	} else {
 		app.errorLog.Fatalln(err)
 	}
 }
