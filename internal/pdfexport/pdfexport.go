@@ -30,48 +30,9 @@ var bodyRowHeight float64
 var footerRowHeight float64
 
 // headers captions
-var header1 = []string{
-	"1",
-	"2",
-	"3",
-	"4",
-	"5",
-	"6",
-	"7",
-	"8",
-	"9",
-	"10",
-	"11",
-	"12",
-}
-var header2 = []string{
-	"DATE",
-	"DEPARTURE",
-	"ARRIVAL",
-	"AIRCRAFT",
-	"SINGLE PILOT TIME", "MULTI PILOT TIME",
-	"TOTAL TIME",
-	"PIC NAME",
-	"LANDINGS",
-	"OPERATIONAL CONDITION TIME",
-	"PILOT FUNCTION TIME",
-	"FSTD SESSION",
-	"REMARKS AND ENDORSEMENTS",
-}
-var header3 = []string{
-	"",
-	"Place", "Time",
-	"Place", "Time",
-	"Type", "Reg",
-	"SE", "ME", "",
-	"",
-	"",
-	"Day", "Night",
-	"Night", "IFR",
-	"PIC", "COP", "DUAL", "INSTR",
-	"Type", "Time",
-	"",
-}
+var header1 = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}
+var header2 []string
+var header3 []string
 
 // colums widths
 var w1 []float64
@@ -155,8 +116,23 @@ func (l *Logbook) init(format string) {
 	isExtended = l.Export.IsExtended
 
 	initWidths(l.Export.Columns)
+	initHeaders(l.Export.Headers)
 }
 
+// initHeaders sets the headers values
+func initHeaders(h models.ColumnsHeader) {
+	header2 = []string{
+		h.Date, h.Departure, h.Arrival, h.Aircraft, h.SPT, h.MCC, h.Total,
+		h.PICName, h.Landings, h.OCT, h.PFT, h.FSTD, h.Remarks,
+	}
+	header3 = []string{
+		"", h.DepPlace, h.DepTime, h.ArrPlace, h.ArrTime, h.Model, h.Reg,
+		h.SE, h.ME, "", "", "", h.LandDay, h.LandNight, h.Night, h.IFR,
+		h.PIC, h.COP, h.Dual, h.Instr, h.SimType, h.SimTime, "",
+	}
+}
+
+// initWidths sets the columns width values
 func initWidths(c models.ColumnsWidth) {
 	w1 = []float64{
 		c.Col1,

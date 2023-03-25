@@ -5,73 +5,6 @@
 // WebLogbook Export Namespace
 wlbExport = function () {
 
-    function restoreDefaultsA5() {
-        document.getElementById("logbook_rows_a5").value = 20
-        document.getElementById("fill_a5").value = 3
-        document.getElementById("left_margin_a_a5").value = parseFloat(6.0)
-        document.getElementById("left_margin_b_a5").value = parseFloat(14.5)
-        document.getElementById("top_margin_a5").value = parseFloat(9.0)
-        document.getElementById("row_height_a5").value = parseFloat(5.0)
-        document.getElementById("footer_height_a5").value = parseFloat(5.0)
-        document.getElementById("page_breaks_a5").value = ""
-        document.getElementById("col1_a5").value = parseFloat(15.5)
-        document.getElementById("col2_a5").value = parseFloat(12.25)
-        document.getElementById("col3_a5").value = parseFloat(8.25)
-        document.getElementById("col4_a5").value = parseFloat(12.25)
-        document.getElementById("col5_a5").value = parseFloat(8.25)
-        document.getElementById("col6_a5").value = parseFloat(10.0)
-        document.getElementById("col7_a5").value = parseFloat(15.4)
-        document.getElementById("col8_a5").value = parseFloat(12.2)
-        document.getElementById("col9_a5").value = parseFloat(12.2)
-        document.getElementById("col10_a5").value = parseFloat(12.2)
-        document.getElementById("col11_a5").value = parseFloat(12.2)
-        document.getElementById("col12_a5").value = parseFloat(41.86)
-        document.getElementById("col13_a5").value = parseFloat(8.38)
-        document.getElementById("col14_a5").value = parseFloat(8.38)
-        document.getElementById("col15_a5").value = parseFloat(12.2)
-        document.getElementById("col16_a5").value = parseFloat(12.2)
-        document.getElementById("col17_a5").value = parseFloat(12.2)
-        document.getElementById("col18_a5").value = parseFloat(12.2)
-        document.getElementById("col19_a5").value = parseFloat(12.2)
-        document.getElementById("col20_a5").value = parseFloat(12.2)
-        document.getElementById("col21_a5").value = parseFloat(24.2)
-        document.getElementById("col22_a5").value = parseFloat(12.2)
-        document.getElementById("col23_a5").value = parseFloat(78.8)
-    }
-
-    function restoreDefaultsA4() {
-        document.getElementById("logbook_rows_a4").value = 23
-        document.getElementById("fill_a4").value = 3
-        document.getElementById("left_margin_a4").value = parseFloat(10.0)
-        document.getElementById("top_margin_a4").value = parseFloat(30.0)
-        document.getElementById("row_height_a4").value = parseFloat(5.0)
-        document.getElementById("footer_height_a4").value = parseFloat(6.0)
-        document.getElementById("page_breaks_a4").value = ""
-        document.getElementById("col1_a4").value = parseFloat(12.2)
-        document.getElementById("col2_a4").value = parseFloat(8.25)
-        document.getElementById("col3_a4").value = parseFloat(8.25)
-        document.getElementById("col4_a4").value = parseFloat(8.25)
-        document.getElementById("col5_a4").value = parseFloat(8.25)
-        document.getElementById("col6_a4").value = parseFloat(10.0)
-        document.getElementById("col7_a4").value = parseFloat(12.9)
-        document.getElementById("col8_a4").value = parseFloat(11.2)
-        document.getElementById("col9_a4").value = parseFloat(11.2)
-        document.getElementById("col10_a4").value = parseFloat(11.2)
-        document.getElementById("col11_a4").value = parseFloat(11.2)
-        document.getElementById("col12_a4").value = parseFloat(22.86)
-        document.getElementById("col13_a4").value = parseFloat(8.38)
-        document.getElementById("col14_a4").value = parseFloat(8.38)
-        document.getElementById("col15_a4").value = parseFloat(11.2)
-        document.getElementById("col16_a4").value = parseFloat(11.2)
-        document.getElementById("col17_a4").value = parseFloat(11.2)
-        document.getElementById("col18_a4").value = parseFloat(11.2)
-        document.getElementById("col19_a4").value = parseFloat(11.2)
-        document.getElementById("col20_a4").value = parseFloat(11.2)
-        document.getElementById("col21_a4").value = parseFloat(11.2)
-        document.getElementById("col22_a4").value = parseFloat(11.2)
-        document.getElementById("col23_a4").value = parseFloat(33.8)
-    }
-
     function saveExportA4() {
         let payload = {
             export_a4: {
@@ -108,6 +41,39 @@ wlbExport = function () {
                     col21: parseFloat(document.getElementById("col21_a4").value),
                     col22: parseFloat(document.getElementById("col22_a4").value),
                     col23: parseFloat(document.getElementById("col23_a4").value)
+                },
+                headers: {
+                    date: document.getElementById("header_date_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    departure: document.getElementById("header_departure_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    arrival: document.getElementById("header_arrival_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    aircraft: document.getElementById("header_aircraft_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    spt: document.getElementById("header_spt_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    mcc: document.getElementById("header_mcc_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    total: document.getElementById("header_total_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    pic_name: document.getElementById("header_pic_name_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    landings: document.getElementById("header_landings_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    oct: document.getElementById("header_oct_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    pft: document.getElementById("header_pft_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    fstd: document.getElementById("header_fstd_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    remarks: document.getElementById("header_remarks_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    dep_place: document.getElementById("header_dep_place_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    dep_time: document.getElementById("header_dep_time_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    arr_place: document.getElementById("header_arr_place_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    arr_time: document.getElementById("header_arr_time_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    model: document.getElementById("header_model_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    reg: document.getElementById("header_reg_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    se: document.getElementById("header_se_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    me: document.getElementById("header_me_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    land_day: document.getElementById("header_land_day_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    land_night: document.getElementById("header_land_night_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    night: document.getElementById("header_night_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    ifr: document.getElementById("header_ifr_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    pic: document.getElementById("header_pic_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    cop: document.getElementById("header_cop_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    dual: document.getElementById("header_dual_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    instr: document.getElementById("header_instr_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    sim_type: document.getElementById("header_sim_type_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    sim_time: document.getElementById("header_sim_time_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
                 }
             }
         };
@@ -173,6 +139,39 @@ wlbExport = function () {
                     col21: parseFloat(document.getElementById("col21_a5").value),
                     col22: parseFloat(document.getElementById("col22_a5").value),
                     col23: parseFloat(document.getElementById("col23_a5").value)
+                },
+                headers: {
+                    date: document.getElementById("header_date_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    departure: document.getElementById("header_departure_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    arrival: document.getElementById("header_arrival_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    aircraft: document.getElementById("header_aircraft_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    spt: document.getElementById("header_spt_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    mcc: document.getElementById("header_mcc_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    total: document.getElementById("header_total_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    pic_name: document.getElementById("header_pic_name_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    landings: document.getElementById("header_landings_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    oct: document.getElementById("header_oct_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    pft: document.getElementById("header_pft_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    fstd: document.getElementById("header_fstd_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    remarks: document.getElementById("header_remarks_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    dep_place: document.getElementById("header_dep_place_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    dep_time: document.getElementById("header_dep_time_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    arr_place: document.getElementById("header_arr_place_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    arr_time: document.getElementById("header_arr_time_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    model: document.getElementById("header_model_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    reg: document.getElementById("header_reg_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    se: document.getElementById("header_se_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    me: document.getElementById("header_me_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    land_day: document.getElementById("header_land_day_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    land_night: document.getElementById("header_land_night_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    night: document.getElementById("header_night_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    ifr: document.getElementById("header_ifr_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    pic: document.getElementById("header_pic_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    cop: document.getElementById("header_cop_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    dual: document.getElementById("header_dual_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    instr: document.getElementById("header_instr_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    sim_type: document.getElementById("header_sim_type_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    sim_time: document.getElementById("header_sim_time_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
                 }
             }
         };
@@ -261,14 +260,56 @@ wlbExport = function () {
             });
     }
 
+    function restoreDefaults(part) {
+        let payload = part;
+
+        const requestOptions = {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        };
+
+        fetch("{{$api.ExportRestoreDefaults}}", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.ok) {
+                    wlbCommon.showInfoMessage(data.message);
+                    if (typeof data.redirect_url !== 'undefined') {
+                        location.href = data.redirect_url;
+                    }
+                } else {
+                    wlbCommon.showErrorMessage(data.message);
+                }
+            });
+    }
+
+    function showTab(param) {
+        if (param) {
+            if (param === "a5headers" || param === "a5common" || param === "a5columns") {
+                $("#nav-export-a5-tab").trigger("click");
+            }
+        }
+    }
+
     return {
-        restoreDefaultsA5:restoreDefaultsA5,
-        restoreDefaultsA4:restoreDefaultsA4,
         saveExportA5:saveExportA5,
         saveExportA4:saveExportA4,
         saveExportCSV:saveExportCSV,
-        saveExportXLS:saveExportXLS
+        saveExportXLS:saveExportXLS,
+        restoreDefaults:restoreDefaults,
+        showTab:showTab
     }
 }();
+
+$(document).ready( function () {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const param = urlParams.get('param');
+
+    wlbExport.showTab(param);
+});
 </script>
 {{end}}

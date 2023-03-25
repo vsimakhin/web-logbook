@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- New: Added option to customize the headers for PDF export formats.
+- New: `Restore defaults` option is now by section (common, headers, columns widths)
 - New: Added option to switch to the next or the previous flight record on the `Flight Record` page
 
 ## [2.17.0] - 24.03.2023

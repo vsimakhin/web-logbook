@@ -134,6 +134,13 @@ func main() {
 		os.Exit(0)
 	}
 
+	// check defaults
+	err = app.db.CheckDefaultValues()
+	if err != nil {
+		app.errorLog.Printf("error checking default values - %s\n", err)
+		// but probably let's continue to run the app...
+	}
+
 	// create distance cache ob background
 	go app.db.CreateDistanceCache()
 	app.isAuthEnabled = app.db.IsAuthEnabled()
