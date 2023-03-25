@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Added option to switch to the next or the previous flight record on the `Flight Record` page
+
 ## [2.17.0] - 24.03.2023
 
 - New: Added HTTPS support. Check [readme](./README.md) for configuration
