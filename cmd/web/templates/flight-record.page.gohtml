@@ -1,8 +1,14 @@
 {{ template "base" .}}
 
 {{ define "title" }}
+{{$api := .API}}
 {{$fr := index .Data "flightRecord"}}
-Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{end}}
+Flight Record {{if $fr.UUID}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}
+<div class="btn-group" role="group">
+  {{if ne $fr.PrevUUID "0"}}<a href="{{$api.Logbook}}/{{$fr.PrevUUID}}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left-square"></i></a>{{end}}
+  {{if ne $fr.NextUUID "0"}}<a href="{{$api.Logbook}}/{{$fr.NextUUID}}" class="btn btn-outline-secondary"><i class="bi bi-arrow-right-square"></i></a>{{end}}
+</div>
+{{end}}
 {{ end }}
 
 {{ define "css" }}

@@ -56,6 +56,8 @@ type FlightRecord struct {
 	Remarks string `json:"remarks"`
 
 	Distance int
+	PrevUUID string
+	NextUUID string
 }
 
 // Airpot is a structure for airport record
