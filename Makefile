@@ -28,6 +28,10 @@ start: build
 	@echo "Starting the app..."
 	@env ./dist/web-logbook -port=${PORT} -env="${ENV}"
 
+start_tls: build
+	@echo "Starting the app with https enabled..."
+	@env ./dist/web-logbook -port=${PORT} -env="${ENV}" -enable-https
+
 build_all: test clean
 	@echo "Building everything..."
 	@for OS in $(XC_OS); do \
