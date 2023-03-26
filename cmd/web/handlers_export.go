@@ -160,3 +160,34 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 		return
 	}
 }
+
+// HandlerRestoreDefaults restores default values
+func (app *application) HandlerExportRestoreDefaults(w http.ResponseWriter, r *http.Request) {
+	var response models.JSONResponse
+
+	param := ""
+	err := json.NewDecoder(r.Body).Decode(&param)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.UpdateDefaults(param)
+
+	if err != nil {
+		app.errorLog.Println(err)
+		response.OK = false
+		response.Message = err.Error()
+	} else {
+		response.OK = true
+		response.Message = "Export settings have been updated"
+		response.RedirectURL = fmt.Sprintf("%s?param=%s", APIExport, param)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, response)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}

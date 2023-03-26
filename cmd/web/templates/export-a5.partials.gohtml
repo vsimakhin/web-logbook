@@ -2,9 +2,8 @@
 {{$settings := index .Data "settings"}}
 {{$api := .API}}
 
-<div class="row"><strong>Page Settings</strong></div>
+<div class="row"><strong>Page Settings <a onclick="wlbExport.restoreDefaults('a5common')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore page defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
 <hr>
-
 <div class="row">
     <div class="col-md-2">
         <div class="row mb-2">
@@ -80,10 +79,53 @@
     </div>
 </div>
 
-<div class="row"><strong>Logbook Columns Width</strong></div>
+<div class="row"><strong>Logbook Columns Header <a onclick="wlbExport.restoreDefaults('a5headers')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore header defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
 <hr>
-<div class="d-flex justify-content-center"><img class="img-fluid rounded" src="/static/img/logbook-header.png"></div><br>
+<div class="row">
+    <table id="logbook" class="table-editable table-responsive-md table table-sm table-bordered table-secondary nowrap table-fixed">
+    <thead>
+        <tr class="align-top text-center">
+            <th rowspan=2 class="text-center" id="header_date_a5" contenteditable>{{$settings.ExportA5.Headers.Date}}</th>
+            <th colspan=2 class="text-center" id="header_departure_a5" contenteditable>{{$settings.ExportA5.Headers.Departure}}</th>
+            <th colspan=2 class="text-center" id="header_arrival_a5" contenteditable>{{$settings.ExportA5.Headers.Arrival}}</th>
+            <th colspan=2 class="text-center" id="header_aircraft_a5" contenteditable>{{$settings.ExportA5.Headers.Aircraft}}</th>
+            <th colspan=2 class="text-center" id="header_spt_a5" contenteditable>{{$settings.ExportA5.Headers.SPT}}</th>
+            <th rowspan=2 class="text-center" id="header_mcc_a5" contenteditable>{{$settings.ExportA5.Headers.MCC}}</th>
+            <th rowspan=2 class="text-center" id="header_total_a5" contenteditable>{{$settings.ExportA5.Headers.Total}}</th>
+            <th rowspan=2 class="text-center" id="header_pic_name_a5" contenteditable>{{$settings.ExportA5.Headers.PICName}}</th>
+            <th colspan=2 class="text-center" id="header_landings_a5" contenteditable>{{$settings.ExportA5.Headers.Landings}}</th>
+            <th colspan=2 class="text-center" id="header_oct_a5" contenteditable>{{$settings.ExportA5.Headers.OCT}}</th>
+            <th colspan=4 class="text-center" id="header_pft_a5" contenteditable>{{$settings.ExportA5.Headers.PFT}}</th>
+            <th colspan=2 class="text-center" id="header_fstd_a5" contenteditable>{{$settings.ExportA5.Headers.FSTD}}</th>
+            <th rowspan=2 class="text-center" id="header_remarks_a5" contenteditable>{{$settings.ExportA5.Headers.Remarks}}</th>
+        </tr>
+        <tr class="text-center">
+            <th class="text-center" id="header_dep_place_a5" contenteditable>{{$settings.ExportA5.Headers.DepPlace}}</th>
+            <th class="text-center" id="header_dep_time_a5" contenteditable>{{$settings.ExportA5.Headers.DepTime}}</th>
+            <th class="text-center" id="header_arr_place_a5" contenteditable>{{$settings.ExportA5.Headers.ArrPlace}}</th>
+            <th class="text-center" id="header_arr_time_a5" contenteditable>{{$settings.ExportA5.Headers.ArrTime}}</th>
+            <th class="text-center" id="header_model_a5" contenteditable>{{$settings.ExportA5.Headers.Model}}</th>
+            <th class="text-center" id="header_reg_a5" contenteditable>{{$settings.ExportA5.Headers.Reg}}</th>
+            <th class="text-center" id="header_se_a5" contenteditable>{{$settings.ExportA5.Headers.SE}}</th>
+            <th class="text-center" id="header_me_a5" contenteditable>{{$settings.ExportA5.Headers.ME}}</th>
+            <th class="text-center" id="header_land_day_a5" contenteditable>{{$settings.ExportA5.Headers.LandDay}}</th>
+            <th class="text-center" id="header_land_night_a5" contenteditable>{{$settings.ExportA5.Headers.LandNight}}</th>
+            <th class="text-center" id="header_night_a5" contenteditable>{{$settings.ExportA5.Headers.Night}}</th>
+            <th class="text-center" id="header_ifr_a5" contenteditable>{{$settings.ExportA5.Headers.IFR}}</th>
+            <th class="text-center" id="header_pic_a5" contenteditable>{{$settings.ExportA5.Headers.PIC}}</th>
+            <th class="text-center" id="header_cop_a5" contenteditable>{{$settings.ExportA5.Headers.COP}}</th>
+            <th class="text-center" id="header_dual_a5" contenteditable>{{$settings.ExportA5.Headers.Dual}}</th>
+            <th class="text-center" id="header_instr_a5" contenteditable>{{$settings.ExportA5.Headers.Instr}}</th>
+            <th class="text-center" id="header_sim_type_a5" contenteditable>{{$settings.ExportA5.Headers.SimType}}</th>
+            <th class="text-center" id="header_sim_time_a5" contenteditable>{{$settings.ExportA5.Headers.SimTime}}</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+</div>
 
+<div class="row"><strong>Logbook Columns Width <a onclick="wlbExport.restoreDefaults('a5columns')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore colums defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
+<hr>
 <div class="row">
     <div class="col-md-2">
         <div class="row mb-2">
@@ -343,7 +385,6 @@
 
 <hr>
 
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbExport.restoreDefaultsA5()" id="restore_defaults_a5"><i class="bi bi-circle-fill"></i> Restore Defaults</button>
 <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbExport.saveExportA5()" id="save_a5"><i class="bi bi-save-fill"></i> Save</button>
 <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbCommon.runExport('{{$api.ExportFormatA5}}')" id="export_a5"><i class="bi bi-file-pdf-fill"></i> Export PDF A5</button>
 

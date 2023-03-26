@@ -98,20 +98,55 @@ type ColumnsWidth struct {
 	Col23 float64 `json:"col23"`
 }
 
+type ColumnsHeader struct {
+	Date      string `json:"date"`
+	Departure string `json:"departure"`
+	Arrival   string `json:"arrival"`
+	Aircraft  string `json:"aircraft"`
+	SPT       string `json:"spt"`
+	MCC       string `json:"mcc"`
+	Total     string `json:"total"`
+	PICName   string `json:"pic_name"`
+	Landings  string `json:"landings"`
+	OCT       string `json:"oct"`
+	PFT       string `json:"pft"`
+	FSTD      string `json:"fstd"`
+	Remarks   string `json:"remarks"`
+	DepPlace  string `json:"dep_place"`
+	DepTime   string `json:"dep_time"`
+	ArrPlace  string `json:"arr_place"`
+	ArrTime   string `json:"arr_time"`
+	Model     string `json:"model"`
+	Reg       string `json:"reg"`
+	SE        string `json:"se"`
+	ME        string `json:"me"`
+	LandDay   string `json:"land_day"`
+	LandNight string `json:"land_night"`
+	Night     string `json:"night"`
+	IFR       string `json:"ifr"`
+	PIC       string `json:"pic"`
+	COP       string `json:"cop"`
+	Dual      string `json:"dual"`
+	Instr     string `json:"instr"`
+	SimType   string `json:"sim_type"`
+	SimTime   string `json:"sim_time"`
+}
+
 type ExportPDF struct {
-	LogbookRows      int          `json:"logbook_rows"`
-	Fill             int          `json:"fill"`
-	LeftMargin       float64      `json:"left_margin"`
-	LeftMarginA      float64      `json:"left_margin_a"`
-	LeftMarginB      float64      `json:"left_margin_b"`
-	TopMargin        float64      `json:"top_margin"`
-	BodyRow          float64      `json:"body_row_height"`
-	FooterRow        float64      `json:"footer_row_height"`
-	PageBreaks       string       `json:"page_breaks"`
-	Columns          ColumnsWidth `json:"columns"`
-	ReplaceSPTime    bool         `json:"replace_sp_time"`
-	IncludeSignature bool         `json:"include_signature"`
-	IsExtended       bool         `json:"is_extended"`
+	LogbookRows      int           `json:"logbook_rows"`
+	Fill             int           `json:"fill"`
+	LeftMargin       float64       `json:"left_margin"`
+	LeftMarginA      float64       `json:"left_margin_a"`
+	LeftMarginB      float64       `json:"left_margin_b"`
+	TopMargin        float64       `json:"top_margin"`
+	BodyRow          float64       `json:"body_row_height"`
+	FooterRow        float64       `json:"footer_row_height"`
+	PageBreaks       string        `json:"page_breaks"`
+	Columns          ColumnsWidth  `json:"columns"`
+	Headers          ColumnsHeader `json:"headers"`
+	ReplaceSPTime    bool          `json:"replace_sp_time"`
+	IncludeSignature bool          `json:"include_signature"`
+	IsExtended       bool          `json:"is_extended"`
 }
 
 type ExportXLS struct {
