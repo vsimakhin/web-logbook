@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: The date filter on the `Map` page didn't work in case of manual change. Now it's ok.
 - New: Added option to customize the headers for PDF export formats.
 - New: `Restore defaults` option is now by section (common, headers, columns widths)
 - New: Added option to switch to the next or the previous flight record on the `Flight Record` page
