@@ -24,8 +24,8 @@ The changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANG
     * Run `./web-logbook`
   * MacOS:
     * *I still didn't test it for MacOS, so in theory, should be as same as for Linux, but... who knows ¯\\_(ツ)_/¯*
-4. Open your browser and type http://localhost:4000
-5. Go to the [Settings](http://localhost:4000/settings) page, `Airports` tab and click on the `Update Airport DB` button
+4. Open your browser, type http://localhost:4000 and the application the ready to use
+5. *(First Run)* Go to the [Settings](http://localhost:4000/settings) page, `Airports` tab and click on the `Update Airport DB` button
 6. To close the application, use `Ctrl+C` in the terminal window or just close it
 
 ## CLI options
