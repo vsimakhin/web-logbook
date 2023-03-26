@@ -206,7 +206,7 @@ wlbMap = function () {
         // daterange logic
         $('input[name="daterange"]').daterangepicker({
             opens: 'right',
-            autoUpdateInput: false,
+            autoUpdateInput: true,
             ranges: {
                 'Today': [moment(), moment()],
                 'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -229,6 +229,12 @@ wlbMap = function () {
             end = picker.endDate
             setrange(start, end);
         });
+
+        $('input[name="daterange"]').on('change', function() {
+            start = $('input[name="daterange"]').data('daterangepicker').startDate
+            end = $('input[name="daterange"]').data('daterangepicker').endDate
+        });
+
     }
 
     return {
