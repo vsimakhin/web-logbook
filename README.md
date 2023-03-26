@@ -4,7 +4,7 @@ This is a simple free EASA-style logbook application written in golang.
 
 You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
 
-Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web-browser on http://localhost:4000
+Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web browser at http://localhost:4000
 
 You also can easily export all flight records into EASA style pdf format, print it, sign and use it as a usual paper logbook.
 
@@ -15,7 +15,7 @@ The changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANG
 # Usage
 
 1. Download the latest release from https://github.com/vsimakhin/web-logbook/releases
-1. Extract archive to some folder/directory
+1. Extract the archive to some folder/directory
 1. Run:
   * Windows:
     * Double-click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (need to solve it later), but just run it.
@@ -25,9 +25,8 @@ The changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANG
   * MacOS:
     * *I still didn't test it for MacOS, so in theory, should be as same as for Linux, but... who knows ¯\\_(ツ)_/¯*
 4. Open your browser and type http://localhost:4000
-5. Go to the [Settings](http://localhost:4000/settings) page and click on the `Update Airport DB` button
-5. Go to the [Export](http://localhost:4000/export) page and click `Restore Defaults` and `Save` for all export formats (in case the values there are 0)
-6. Once you finished, use `Ctrl+C` in the terminal window or just close it
+5. Go to the [Settings](http://localhost:4000/settings) page, `Airports` tab and click on the `Update Airport DB` button
+6. To close the application, use `Ctrl+C` in the terminal window or just close it
 
 ## CLI options
 ```sh
