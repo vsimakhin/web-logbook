@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.18.0] - 26.03.2023
 
 - Fix: The date filter on the `Map` page didn't work in case of manual change. Now it's ok.
 - New: Added option to customize the headers for PDF export formats.
