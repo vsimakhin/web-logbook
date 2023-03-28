@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.18.1] - 28.03.2023
+
+- Fix: The chart layout for `Totals` on the `Stats` was hardcoded and didn't take into account the hidden fields. Now it's fixed.
+
 ## [2.18.0] - 26.03.2023
 
 - Fix: The date filter on the `Map` page didn't work in case of manual change. Now it's ok.

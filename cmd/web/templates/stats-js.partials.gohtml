@@ -47,19 +47,20 @@ wlbStats = function () {
         var rows = tb.rows.length - 1;
 
         if (table_name === "totals") {
-            rows = rows - 2 // correction for this table
-            chart.data.labels = ['Total', 'SE', 'ME', 'MCC', 'Night', 'IFR', 'PIC', 'CoPilot', 'Dual', 'Instr', 'Sim'];
-
-        } else if ((table_name == "totals_by_year") || (table_name == "totals_by_type") || (table_name == "totals_by_class")) {
-            var labels = [];
-            for (var i = 1; i <= rows; i++) {
-                labels.push(tb.rows[i].cells[0].innerText);
-            }
-            chart.data.labels = labels;
-
+            // correction for this table to exclude landings and distance
+            // since these values breaks the chart, especially the distance -
+            // it's too huge comparing to the flight hours
+            rows = rows - 2;
         }
 
+        var labels = [];
+        for (var i = 1; i <= rows; i++) {
+            labels.push(tb.rows[i].cells[0].innerText);
+        }
+        chart.data.labels = labels;
+
         var values = [];
+
         for (var i = 1; i <= rows; i++) {
             values.push(convertTime(tb.rows[i].cells[cl].innerText));
         }
