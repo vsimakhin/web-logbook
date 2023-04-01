@@ -55,6 +55,8 @@ $ ./web-logbook -h
 
 Since it's written in golang it can run on any system if you compile the sources. For now, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are 3 binaries for Linux, MacOS and Windows, all of them are amd64.
 
+The app for Android and IOS is in progress https://github.com/vsimakhin/web-logbook-mobile
+
 # Interface
 
 Currently, there are implemented several modules in the logbook app:
