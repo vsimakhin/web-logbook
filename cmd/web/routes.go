@@ -70,6 +70,10 @@ const APIStatsLimits = "/stats/limits"
 const APILogin = "/login"
 const APILogout = "/logout"
 
+const APISyncData = "/sync/data"
+const APISyncDataDeleted = "/sync/deleted"
+const APISyncDataUpload = "/sync/upload"
+
 var session *scs.SessionManager
 
 func (app *application) routes() *chi.Mux {
@@ -150,6 +154,11 @@ func (app *application) routes() *chi.Mux {
 		server.Post(APILicensingSave, app.HandlerLicensingRecordSave)
 		server.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)
 		server.Post(APILicensingAttachmentDelete, app.HandlerLicensingDeleteAttachment)
+
+		// sync
+		server.Get(APISyncData, app.HandlerSyncData)
+		server.Get(APISyncDataDeleted, app.HandlerSyncDataDeleted)
+		server.Post(APISyncDataUpload, app.HandlerSyncDataUpload)
 	})
 
 	// login & logout

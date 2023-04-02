@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	_ "embed"
@@ -46,8 +47,61 @@ func validateDB(db *sql.DB) error {
 		return err
 	}
 
+	// check sync ready
+	err = checkSyncReady(db)
+	if err != nil {
+		return err
+	}
+
 	// check settings table it's not empty
 	err = checkSettingsTable(db)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// checkSyncReady verifies if the columns for sync are created
+func checkSyncReady(db *sql.DB) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var rowsCount int
+
+	// check main logbook table
+	query := "SELECT COUNT(cid) FROM pragma_table_info('logbook') " +
+		"WHERE name='update_time'"
+	row := db.QueryRowContext(ctx, query)
+	err := row.Scan(&rowsCount)
+	if err != nil {
+		return err
+	}
+
+	if rowsCount == 0 {
+		// no column, let's add it and update a view
+		query = "ALTER TABLE logbook ADD update_time INTEGER"
+		_, err = db.ExecContext(ctx, query)
+		if err != nil {
+			return err
+		}
+
+		query = fmt.Sprintf("UPDATE logbook SET update_time = %d", time.Now().Unix())
+		_, err = db.ExecContext(ctx, query)
+		if err != nil {
+			return err
+		}
+
+		// drop old view
+		query = "DROP VIEW IF EXISTS logbook_view"
+		_, err = db.ExecContext(ctx, query)
+		if err != nil {
+			return err
+		}
+	}
+
+	// run sql from db.structure, it will create a view
+	_, err = db.ExecContext(ctx, structure)
 	if err != nil {
 		return err
 	}

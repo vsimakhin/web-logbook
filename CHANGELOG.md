@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Synchronization with mobile apps. Check [Web Logbook Mobile](https://github.com/vsimakhin/web-logbook-mobile) for more info
+
 ## [2.18.1] - 28.03.2023
 
 - Fix: The chart layout for `Totals` on the `Stats` was hardcoded and didn't take into account the hidden fields. Now it's fixed.

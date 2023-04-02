@@ -16,6 +16,7 @@
         <button class="nav-link active" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-general" type="button" role="tab" aria-controls="nav-general" aria-selected="true">General</button>
         <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-airports" type="button" role="tab" aria-controls="nav-airports" aria-selected="true">Airports</button>
         <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-misc" type="button" role="tab" aria-controls="nav-misc" aria-selected="true">Misc</button>
+        <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-sync" type="button" role="tab" aria-controls="nav-sync" aria-selected="true">Sync</button>
     </div>
 </nav>
 
@@ -30,6 +31,10 @@
 
     <div class="tab-pane fade" id="nav-misc" role="tabpanel" aria-labelledby="nav-misc-tab">
         <br>{{block "settings-misc" .}}{{end}}
+    </div>
+
+    <div class="tab-pane fade" id="nav-sync" role="tabpanel" aria-labelledby="nav-sync-tab">
+        <br>{{block "settings-sync" .}}{{end}}
     </div>
 </div>
 
