@@ -6,6 +6,8 @@
 
 // WebLogbook Stats Namespace
 wlbStats = function () {
+    var distanceColumnClicked = false;
+
     // chart
     var ctx = document.getElementById('myChart').getContext('2d');
     var chart = new Chart(ctx, {
@@ -16,13 +18,43 @@ wlbStats = function () {
                 y: { beginAtZero: true }
             },
             plugins:{
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                if (distanceColumnClicked) {
+                                    // format distance value with spaces
+                                    label += context.parsed.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " nm";
+                                } else {
+                                    label += convertNumberToTime(context.parsed.y);
+                                }
+                            }
+                            return label;
+                        }
+                    }
+                }
             }
         }
     });
 
     // fields
     var range_field = document.getElementById("range_field");
+
+    // func convertNumberToTime converts time in integer format to string
+    function convertNumberToTime(number) {
+        var hours = Math.floor(number);
+        var minutes = Math.round((number - hours) * 60);
+        if (minutes == 0) {
+            minutes = "00";
+        }
+        return hours + ":" + minutes;
+    }
 
     // func convertTime converts time in string format to integer
     function convertTime(time) {
@@ -46,11 +78,26 @@ wlbStats = function () {
         var tb = document.getElementById(table_name);
         var rows = tb.rows.length - 1;
 
+        // check if column name is Distance
+        if (tb.rows[0].cells[cl].innerText === "Distance") {
+            distanceColumnClicked = true;
+        } else {
+            distanceColumnClicked = false;
+        }
+
         if (table_name === "totals") {
             // correction for this table to exclude landings and distance
             // since these values breaks the chart, especially the distance -
             // it's too huge comparing to the flight hours
-            rows = rows - 2;
+
+            // iterate through the table and check if there are Landings or Distance in the rows of the first column
+            for (var i = 1; i <= rows; i++) {
+                if (tb.rows[i].cells[0].innerText === "Landings (day/night)" || tb.rows[i].cells[0].innerText === "Distance") {
+                    // remove the row from the chart
+                    rows--;
+                    i--;
+                }
+            }
         }
 
         var labels = [];
