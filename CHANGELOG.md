@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.19.0] - 06.04.2023
 
 - New: Synchronization with mobile apps. Check [Web Logbook Mobile](https://github.com/vsimakhin/web-logbook-mobile) for more info
 
