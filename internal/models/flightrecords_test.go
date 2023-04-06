@@ -38,6 +38,7 @@ func TestDeleteFlightRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
 	AddMock(mock, "DeleteFlightRecord")
+	AddMock(mock, "InsertDeletedItem")
 
 	err := db.DeleteFlightRecord("uuid")
 	if err != nil {

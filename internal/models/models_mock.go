@@ -180,14 +180,14 @@ func InitSQLMockValues() {
 			"arrival_place", "arrival_time", "aircraft_model", "reg_name",
 			"se_time", "me_time", "mcc_time", "total_time", "day_landings", "night_landings",
 			"night_time", "ifr_time", "pic_time", "co_pilot_time", "dual_time", "instructor_time",
-			"sim_type", "sim_time", "pic_name", "remarks",
+			"sim_type", "sim_time", "pic_name", "remarks", "update_time",
 		},
 		Values: []driver.Value{
 			"uuid", "01/02/2022", "20220201", "XXXX", "1000",
 			"XXXX", "1200", "C152", "OK-XXX",
 			"2:00", "2:00", "2:00", "2:00", 1, 2,
 			"2:00", "2:00", "2:00", "2:00", "2:00", "2:00",
-			"SIM", "2:00", "Self", "Remarks",
+			"SIM", "2:00", "Self", "Remarks", 1234567890,
 		},
 	}
 
@@ -199,14 +199,14 @@ func InitSQLMockValues() {
 			"arrival_place", "arrival_time", "aircraft_model", "reg_name",
 			"se_time", "me_time", "mcc_time", "total_time", "day_landings", "night_landings",
 			"night_time", "ifr_time", "pic_time", "co_pilot_time", "dual_time", "instructor_time",
-			"sim_type", "sim_time", "pic_name", "remarks",
+			"sim_type", "sim_time", "pic_name", "remarks", "update_time",
 		},
 		Values: []driver.Value{
 			"uuid", "01/02/2022", "20220201", "XXXX", "1000",
 			"XXXX", "1200", "C152", "OK-XXX",
 			"2:00", "2:00", "2:00", "2:00", 1, 2,
 			"2:00", "2:00", "2:00", "2:00", "2:00", "2:00",
-			"SIM", "2:00", "Self", "Remarks",
+			"SIM", "2:00", "Self", "Remarks", 1234567890,
 		},
 		Args: []driver.Value{
 			"uuid",
@@ -223,7 +223,7 @@ func InitSQLMockValues() {
 		Query: "INSERT INTO logbook \\(uuid, date, departure_place, departure_time, " +
 			"arrival_place, arrival_time, aircraft_model, reg_name, se_time, me_time, mcc_time, " +
 			"total_time, day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
-			"dual_time, instructor_time, sim_type, sim_time, pic_name, remarks\\)",
+			"dual_time, instructor_time, sim_type, sim_time, pic_name, remarks, update_time\\)",
 	}
 
 	// DeleteFlightRecord
@@ -289,6 +289,11 @@ func InitSQLMockValues() {
 	// DeleteLicenseAttachment
 	SQLMock["DeleteLicenseAttachment"] = Mock{
 		Query: "UPDATE licensing SET document_name",
+	}
+
+	// InsertDeletedItem
+	SQLMock["InsertDeletedItem"] = Mock{
+		Query: "INSERT INTO deleted_items \\(uuid, table_name, delete_time\\)",
 	}
 }
 

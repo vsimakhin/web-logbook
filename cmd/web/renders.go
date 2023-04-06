@@ -16,22 +16,12 @@ type templateData struct {
 }
 
 var functions = template.FuncMap{
-	"formatRemarks":  formatRemarks,
 	"formatLandings": formatLandings,
 	"formatNumber":   formatNumber,
 }
 
 //go:embed templates
 var templateFS embed.FS
-
-// formatRemarks cuts the remark field if it's too long
-func formatRemarks(remarks string) string {
-	if len(remarks) > 13 {
-		return fmt.Sprintf("%.10s...", remarks)
-	} else {
-		return remarks
-	}
-}
 
 func formatLandings(landing int) string {
 	if landing == 0 {

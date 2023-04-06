@@ -148,6 +148,9 @@ func main() {
 	// check for the new version
 	go app.checkNewVersion()
 
+	// and some sync clean up
+	go app.db.SyncCleanUp()
+
 	// main app
 	err = app.serve()
 	if err == http.ErrServerClosed {

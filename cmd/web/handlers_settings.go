@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -27,8 +28,11 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data := make(map[string]interface{})
 	data["settings"] = settings
 	data["records"] = records
+	data["urls"] = app.getServerUrls()
 
-	partials := []string{"common-js", "settings-js", "settings-general", "settings-airports", "settings-misc"}
+	partials := []string{"common-js", "settings-js",
+		"settings-general", "settings-airports", "settings-misc", "settings-sync"}
+
 	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -60,6 +64,7 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 	settings.ExportXLS = oldsettings.ExportXLS
 	settings.ExportCSV = oldsettings.ExportCSV
 
+	fmt.Println(settings.SyncOptions.KeepDeletedRecordsDays)
 	err = app.db.UpdateSettings(settings)
 	if err != nil {
 		app.errorLog.Println(err)

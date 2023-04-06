@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
 // HandlerLogbook is a handler for /logbook page
@@ -26,11 +28,7 @@ func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
 // HandlerFlightRecordsData generates data for the logbook table at /logbook page
 func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.Request) {
 
-	type TableData struct {
-		Data [][]string `json:"data"`
-	}
-
-	var tableData TableData
+	var tableData models.TableData
 
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {
@@ -46,9 +44,9 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 
 		tableRow := []string{item.UUID, item.Date, item.Departure.Place, item.Departure.Time,
 			item.Arrival.Place, item.Arrival.Time, item.Aircraft.Model, item.Aircraft.Reg,
-			item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Total, formatRemarks(item.PIC), formatLandings(item.Landings.Day), formatLandings(item.Landings.Night),
+			item.Time.SE, item.Time.ME, item.Time.MCC, item.Time.Total, item.PIC, formatLandings(item.Landings.Day), formatLandings(item.Landings.Night),
 			item.Time.Night, item.Time.IFR, item.Time.PIC, item.Time.CoPilot, item.Time.Dual, item.Time.Instructor,
-			item.SIM.Type, item.SIM.Time, formatRemarks(item.Remarks)}
+			item.SIM.Type, item.SIM.Time, item.Remarks}
 
 		tableData.Data = append(tableData.Data, tableRow)
 	}

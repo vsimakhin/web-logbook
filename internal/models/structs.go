@@ -58,6 +58,8 @@ type FlightRecord struct {
 	Distance int
 	PrevUUID string
 	NextUUID string
+
+	UpdateTime int64 `json:"update_time"`
 }
 
 // Airpot is a structure for airport record
@@ -175,6 +177,10 @@ type HideFields struct {
 	Distance     bool `json:"hide_distance"`
 }
 
+type SyncOptions struct {
+	KeepDeletedRecordsDays int64 `json:"keep_deleted_records_days"`
+}
+
 // Settings is a type for settings
 type Settings struct {
 	OwnerName               string            `json:"owner_name"`
@@ -195,6 +201,8 @@ type Settings struct {
 	HideStatsFields HideFields `json:"hide_stats_fields"`
 	StatsFontSize   string     `json:"stats_font_size"`
 	LogbookFontSize string     `json:"logbook_font_size"`
+
+	SyncOptions SyncOptions `json:"sync_options"`
 }
 
 // License is a type for licesing
@@ -230,4 +238,10 @@ type Mock struct {
 	Rows   []string
 	Values []driver.Value
 	Args   []driver.Value
+}
+
+type DeletedItem struct {
+	UUID       string `json:"uuid"`
+	TableName  string `json:"table_name"`
+	DeleteTime int    `json:"delete_time"`
 }

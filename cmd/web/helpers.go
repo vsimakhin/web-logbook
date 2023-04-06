@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -224,4 +226,43 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (nighttime.Ro
 	}
 
 	return route, nil
+}
+
+func (app *application) getServerUrls() []string {
+	var urls []string
+	re, _ := regexp.Compile(`^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`)
+
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		return []string{"Cannot retrieve server ip address :("}
+	}
+
+	urlPrefix := "https://"
+	if !app.config.tls.enabled {
+		urlPrefix = "http://"
+	}
+
+	for _, i := range ifaces {
+		addrs, err := i.Addrs()
+		if err != nil {
+			continue
+		}
+
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+
+			// check ip address like it's not ipv6, localhost and docker host one
+			if re.MatchString(ip.String()) && ip.String() != "127.0.0.1" && ip.String() != "172.17.0.1" {
+				urls = append(urls, fmt.Sprintf("%s%s:%d", urlPrefix, ip, app.config.port))
+			}
+		}
+	}
+
+	return urls
 }

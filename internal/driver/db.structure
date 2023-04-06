@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS logbook (
     sim_type TEXT,
     sim_time TEXT,
     pic_name TEXT,
-    remarks TEXT
+    remarks TEXT,
+    update_time INTEGER
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS logbook_uuid ON logbook(uuid);
@@ -32,7 +33,7 @@ CREATE VIEW IF NOT EXISTS logbook_view
 AS
 SELECT uuid, date, substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date, departure_place, departure_time,
  arrival_place, arrival_time, aircraft_model, reg_name, se_time, me_time, mcc_time, total_time, iif(day_landings='',0,day_landings) as day_landings, iif(night_landings='',0,night_landings) as night_landings,
- night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_type, sim_time, pic_name, remarks
+ night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_type, sim_time, pic_name, remarks, update_time
 FROM logbook;
 
 /* airports tables */
@@ -96,6 +97,13 @@ CREATE TABLE IF NOT EXISTS attachments (
     record_id TEXT,
     document_name TEXT,
     document BLOB
+);
+
+/* table to store removed ids for the sync functions */
+CREATE TABLE IF NOT EXISTS deleted_items (
+    uuid TEXT PRIMARY_KEY,
+    table_name TEXT NOT NULL,
+    delete_time TEXT NOT NULL
 );
 
 VACUUM;
