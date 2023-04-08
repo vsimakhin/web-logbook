@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	nighttime "github.com/vsimakhin/go-nighttime"
 	"github.com/vsimakhin/web-logbook/internal/models"
+	"github.com/vsimakhin/web-logbook/internal/nighttime"
 	"golang.org/x/exp/slices"
 )
 
@@ -189,30 +189,30 @@ func (app *application) getTotalStats(startDate string, endDate string) (map[str
 
 // calculateNightTime returns the nighttime.Route object which later can be called
 // to calculate night time, like obj.NightTime()
-func (app *application) calculateNightTime(fr models.FlightRecord) (nighttime.Route, error) {
-	var route nighttime.Route
+func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duration, error) {
+	night := time.Duration(0)
 
 	departure_place, err := app.db.GetAirportByID(fr.Departure.Place)
 	if err != nil {
-		return route, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err)
+		return night, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err)
 	}
 
 	departure_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
 	if err != nil {
-		return route, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err)
+		return night, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err)
 	}
 
 	arrival_place, err := app.db.GetAirportByID(fr.Arrival.Place)
 	if err != nil {
-		return route, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err)
+		return night, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err)
 	}
 
 	arrival_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
 	if err != nil {
-		return route, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err)
+		return night, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err)
 	}
 
-	route = nighttime.Route{
+	route := nighttime.Route{
 		Departure: nighttime.Place{
 			Lat:  departure_place.Lat,
 			Lon:  departure_place.Lon,
@@ -224,8 +224,9 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (nighttime.Ro
 			Time: arrival_time,
 		},
 	}
+	night = route.NightTime()
 
-	return route, nil
+	return night, nil
 }
 
 func (app *application) getServerUrls() []string {

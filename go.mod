@@ -8,8 +8,8 @@ require (
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-pdf/fpdf v0.6.0
 	github.com/google/uuid v1.3.0
+	github.com/nathan-osman/go-sunrise v1.1.0
 	github.com/stretchr/testify v1.8.2
-	github.com/vsimakhin/go-nighttime v1.0.5
 	github.com/xuri/excelize/v2 v2.7.0
 	golang.org/x/crypto v0.7.0
 	golang.org/x/exp v0.0.0-20230307190834-24139beb5833
@@ -23,7 +23,6 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
-	github.com/nathan-osman/go-sunrise v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
