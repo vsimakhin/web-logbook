@@ -57,8 +57,6 @@ github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
-github.com/vsimakhin/go-nighttime v1.0.5 h1:Uwz2PXQolaJSozNf14qgMfQF0+xwZmXnsk1PARKWERg=
-github.com/vsimakhin/go-nighttime v1.0.5/go.mod h1:OW7nN6OZx699TRarBmN1P8U2o2Kj/xw3BD/jAg+bies=
 github.com/xuri/efp v0.0.0-20220603152613-6918739fd470 h1:6932x8ltq1w4utjmfMPVj09jdMlkY0aiA6+Skbtl3/c=
 github.com/xuri/efp v0.0.0-20220603152613-6918739fd470/go.mod h1:ybY/Jr0T0GTCnYjKqmdwxyxn2BQf2RcQIIvex5QldPI=
 github.com/xuri/excelize/v2 v2.7.0 h1:Hri/czwyRCW6f6zrCDWXcXKshlq4xAZNpNOpdfnFhEw=

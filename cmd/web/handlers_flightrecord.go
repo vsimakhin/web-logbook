@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"time"
 
@@ -177,14 +178,14 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	route, err := app.calculateNightTime(fr)
+	night, err := app.calculateNightTime(fr)
 	if err != nil {
 		app.errorLog.Println(err)
 		return
 	}
 
 	response.OK = true
-	response.Message = fmt.Sprintf("%d", int(route.NightTime().Minutes()))
+	response.Message = fmt.Sprintf("%d", int(math.Round(night.Minutes())))
 
 	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {

@@ -105,14 +105,13 @@ func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request)
 
 			// recalculate night time?
 			if importData.RecalculateNightTime {
-				route, err := app.calculateNightTime(flightRecord)
+				night, err := app.calculateNightTime(flightRecord)
 				if err != nil {
 					// nevermind, just let's write some warning message
 					app.warningLog.Printf("cannot calculate night time for %s - %s\n", infoMsg, err)
 				} else {
-					nt := route.NightTime()
-					if nt != time.Duration(0) {
-						flightRecord.Time.Night = app.db.DtoA(route.NightTime())
+					if night != time.Duration(0) {
+						flightRecord.Time.Night = app.db.DtoA(night)
 					}
 				}
 			}
