@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Remarks in the main logbook table are truncated depends on the screen width.
 - Update: New version for the go-nighttime package, which uses a different library for calculating sunrise and sunset. It might not as precise as the previous one (the difference is up to 2 minutes depending on the flight time), but the calculation is much faster (1000 times) and it doesn't need a time zone database, which makes the binary file up to 15MB less.
 - Fix: Show values on the charts (tooltip) in the proper format - HH:MM for time fields, and XXX XXX nm for distance
 
