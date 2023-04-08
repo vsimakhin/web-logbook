@@ -12,6 +12,8 @@ wlbLogbook = function () {
 
     // inits the main table
     function initLogbookTable() {
+        var remarksL = Math.round((document.documentElement.clientWidth - 1500) / 10);
+
         table = $('#logbook').DataTable({
             ordering: false,
             info:     false,
@@ -26,6 +28,15 @@ wlbLogbook = function () {
                 { targets: [6,7,21], width: "4%" }, //aircraft
                 { targets: [13,14], width: "3%" }, //landings
                 { targets: [12], width: "9%" }, //pic
+                { targets: [23], render: function ( data, type, row ) {
+                        if (data.length > remarksL) {
+                            var txt = data.substr( 0, remarksL ) + '…'
+                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${data}">${txt}</span>`;
+                        } else {
+                            return data;
+                        }
+                    }
+                }
             ],
             rowCallback: function(row, data, index){
                 $("td:eq(0)", row).html(`<a href="{{$api.Logbook}}/${data[0]}" class="link-primary">${data[1]}</a>`);
