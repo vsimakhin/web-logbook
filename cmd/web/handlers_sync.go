@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -11,7 +10,7 @@ import (
 // HandlerSyncData generates data for sync with mobile app
 func (app *application) HandlerSyncData(w http.ResponseWriter, r *http.Request) {
 
-	tableData := []map[string]string{}
+	tableData := []map[string]interface{}{}
 
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {
@@ -21,7 +20,7 @@ func (app *application) HandlerSyncData(w http.ResponseWriter, r *http.Request) 
 	}
 
 	for _, item := range flightRecords {
-		tableRow := map[string]string{
+		tableRow := map[string]interface{}{
 			"uuid":            item.UUID,
 			"date":            item.Date,
 			"departure_place": item.Departure.Place,
@@ -34,8 +33,8 @@ func (app *application) HandlerSyncData(w http.ResponseWriter, r *http.Request) 
 			"me_time":         item.Time.ME,
 			"mcc_time":        item.Time.MCC,
 			"total_time":      item.Time.Total,
-			"day_landings":    formatLandings(item.Landings.Day),
-			"night_landings":  formatLandings(item.Landings.Night),
+			"day_landings":    item.Landings.Day,
+			"night_landings":  item.Landings.Night,
 			"night_time":      item.Time.Night,
 			"ifr_time":        item.Time.IFR,
 			"pic_time":        item.Time.PIC,
@@ -46,7 +45,7 @@ func (app *application) HandlerSyncData(w http.ResponseWriter, r *http.Request) 
 			"sim_time":        item.SIM.Time,
 			"pic_name":        item.PIC,
 			"remarks":         item.Remarks,
-			"update_time":     fmt.Sprintf("%d", item.UpdateTime),
+			"update_time":     item.UpdateTime,
 		}
 
 		tableData = append(tableData, tableRow)
@@ -62,7 +61,7 @@ func (app *application) HandlerSyncData(w http.ResponseWriter, r *http.Request) 
 // HandlerSyncDataDeleted generates removed items data for sync with mobile app
 func (app *application) HandlerSyncDataDeleted(w http.ResponseWriter, r *http.Request) {
 
-	tableData := []map[string]string{}
+	tableData := []map[string]interface{}{}
 
 	dis, err := app.db.GetDeletedItems()
 	if err != nil {
@@ -72,10 +71,10 @@ func (app *application) HandlerSyncDataDeleted(w http.ResponseWriter, r *http.Re
 	}
 
 	for _, item := range dis {
-		tableRow := map[string]string{
+		tableRow := map[string]interface{}{
 			"uuid":        item.UUID,
 			"table_name":  item.TableName,
-			"delete_time": fmt.Sprintf("%d", item.DeleteTime),
+			"delete_time": item.DeleteTime,
 		}
 
 		tableData = append(tableData, tableRow)
@@ -126,4 +125,39 @@ func (app *application) HandlerSyncDataUpload(w http.ResponseWriter, r *http.Req
 		app.errorLog.Println(err)
 		return
 	}
+}
+
+// HandlerSyncAirports returns data from the airports view
+func (app *application) HandlerSyncAirports(w http.ResponseWriter, r *http.Request) {
+
+	tableData := []map[string]interface{}{}
+
+	airports, err := app.db.GetStandardAirports()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range airports {
+		tableRow := map[string]interface{}{
+			"icao":      item.ICAO,
+			"iata":      item.IATA,
+			"name":      item.Name,
+			"city":      item.City,
+			"country":   item.Country,
+			"elevation": item.Elevation,
+			"lat":       item.Lat,
+			"lon":       item.Lon,
+		}
+
+		tableData = append(tableData, tableRow)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
 }

@@ -160,6 +160,36 @@ func (m *DBModel) GetAirportCount() (int, error) {
 	return records, nil
 }
 
+// GetAllAirports returns all airports
+func (m *DBModel) GetAllAirports() ([]Airport, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var airports []Airport
+	var airport Airport
+
+	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports_view"
+	rows, err := m.DB.QueryContext(ctx, query)
+
+	if err != nil {
+		return airports, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
+			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
+
+		if err != nil {
+			return airports, err
+		}
+
+		airports = append(airports, airport)
+	}
+
+	return airports, nil
+}
+
 // GetStandardAirports returns a list of Standard Airports
 func (m *DBModel) GetStandardAirports() ([]Airport, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
