@@ -73,6 +73,7 @@ const APILogout = "/logout"
 const APISyncData = "/sync/data"
 const APISyncDataDeleted = "/sync/deleted"
 const APISyncDataUpload = "/sync/upload"
+const APISyncAirports = "/sync/airports"
 
 var session *scs.SessionManager
 
@@ -159,6 +160,7 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APISyncData, app.HandlerSyncData)
 		server.Get(APISyncDataDeleted, app.HandlerSyncDataDeleted)
 		server.Post(APISyncDataUpload, app.HandlerSyncDataUpload)
+		server.Get(APISyncAirports, app.HandlerSyncAirports)
 	})
 
 	// login & logout

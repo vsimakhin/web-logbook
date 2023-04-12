@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Added airport database synchronization with a mobile app.
 - Update: Moved code that calculates a night time from the package to the internal module - easier troubleshooting and it was used as an example for adding the same functionality to the mobile app
 - Fix: Remarks in the main logbook table are truncated depends on the screen width.
 - Update: New version for the go-nighttime package, which uses a different library for calculating sunrise and sunset. It might not as precise as the previous one (the difference is up to 2 minutes depending on the flight time), but the calculation is much faster (1000 times) and it doesn't need a time zone database, which makes the binary file up to 15MB less.
