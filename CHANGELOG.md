@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Slightly updated the `Licensing` table and added a check for the expired or expiring soon licenses. The warning will appear in the left navigation bar, however, there is still an option to disable the badge in the `Settings` page if it's too annoying.
 - New: Added airport database synchronization with a mobile app.
 - Update: Moved code that calculates a night time from the package to the internal module - easier troubleshooting and it was used as an example for adding the same functionality to the mobile app
 - Fix: Remarks in the main logbook table are truncated depends on the screen width.

@@ -175,3 +175,40 @@ func (m *DBModel) DeleteLicenseAttachment(uuid string) error {
 
 	return nil
 }
+
+// CheckLicenseExpiration returns the number of expired and expiring (warning) licenses
+func (m *DBModel) CheckLicenseExpiration() (int, int) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	expired := 0
+	warning := 0
+	date := ""
+	expiredDate := time.Now()
+	warningDate := time.Now().AddDate(0, 1, 0)
+
+	query := "SELECT valid_until FROM licensing where valid_until <> ''"
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return expired, warning
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&date)
+		if err != nil {
+			continue
+		}
+		parsedDate, err := time.Parse("02/01/2006", date)
+		if err != nil {
+			continue
+		}
+		if parsedDate.Before(expiredDate) {
+			expired++
+		} else if parsedDate.Before(warningDate) {
+			warning++
+		}
+	}
+
+	return expired, warning
+}
