@@ -192,6 +192,7 @@ type Settings struct {
 	Password                string            `json:"password"`
 	Hash                    string            `json:"hash"`
 	DisableFlightRecordHelp bool              `json:"disable_flightrecord_help"`
+	DisableLicenseWarning   bool              `json:"disable_license_warning"`
 
 	ExportA4  ExportPDF `json:"export_a4"`
 	ExportA5  ExportPDF `json:"export_a5"`

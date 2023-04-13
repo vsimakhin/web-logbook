@@ -13,6 +13,10 @@ type templateData struct {
 	AuthEnabled bool
 	Version     string
 	NewVersion  bool
+	License     struct {
+		Expired int
+		Warning int
+	}
 }
 
 var functions = template.FuncMap{
@@ -108,6 +112,8 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.AuthEnabled = app.isAuthEnabled
 	td.Version = app.version
 	td.NewVersion = app.isNewVersion
+
+	td.License.Expired, td.License.Warning = app.db.CheckLicenseExpiration()
 
 	return td
 }

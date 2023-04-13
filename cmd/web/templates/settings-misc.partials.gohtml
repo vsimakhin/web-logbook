@@ -10,6 +10,12 @@
                 <label for="disable_flightrecord_help" class="form-label">Disable help messages on the flight record page</label>
             </div>
         </div>
+        <div class="row mb-2">
+            <div class="col">
+                <input type="checkbox" class="form-check-input" id="disable_license_warning" name="disable_license_warning" {{if $settings.DisableLicenseWarning}}checked{{end}}>
+                <label for="disable_license_warning" class="form-label">Disable license warning badge on the navbar</label>
+            </div>
+        </div>
 
         <hr>
         <div class="row mb-2">

@@ -16,7 +16,7 @@ import (
 // HandlerLicensing is a handler for /licensing page
 func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request) {
 
-	if err := app.renderTemplate(w, r, "licensing", nil); err != nil {
+	if err := app.renderTemplate(w, r, "licensing", nil, "common-js", "licensing-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
