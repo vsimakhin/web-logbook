@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Updated validators for the flight record, so it's possible to add the first "empty" flight record with hours from the previous logbook.
 - Fix: table layout on the main `Logbook` page.
 
 ## [2.20.0] - 13.04.2023
