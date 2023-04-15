@@ -21,7 +21,7 @@ wlbFlightRecord = function () {
 
     function validateTime(field) {
         if (field.value !== "") {
-            if (!/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(field.value)) {
+            if (!/^(?:(?<!\d)|[1-9]\d{0,4}):([0-5]\d)$/.test(field.value)) {
                 field.classList.add("is-invalid")
                 return false
             } else {
@@ -37,6 +37,7 @@ wlbFlightRecord = function () {
 
         var isValid = true;
         var errorMessage = "";
+        var errEndMessage = "should be in HH:MM format or empty\r\n";
 
         // validate date field
         var date = document.getElementById("date");
@@ -61,47 +62,47 @@ wlbFlightRecord = function () {
         // validate time fields
         if (!validateTime(document.getElementById("total_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "Total Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `Total Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("se_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "Single Engine Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `Single Engine Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("me_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "Multi Engine Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `Multi Engine Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("mcc_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "MCC Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `MCC Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("night_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "Night Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `Night Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("ifr_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "IFR Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `IFR Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("pic_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "PIC Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `PIC Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("sic_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "CoPilot Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `CoPilot Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("dual_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "Dual Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `Dual Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("instr_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "Instructor Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `Instructor Time ${errEndMessage}`;
         }
         if (!validateTime(document.getElementById("sim_time"))) {
             isValid = false;
-            errorMessage = errorMessage + "Simulator Time should be in HH:MM format or empty\r\n";
+            errorMessage = errorMessage + `Simulator Time ${errEndMessage}`;
         }
 
         if (!isValid) {
