@@ -16,6 +16,7 @@ func TestHandlerLicensing(t *testing.T) {
 
 	app, mock := initTestApplication()
 
+	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetLicenses")
 
 	srv := httptest.NewServer(app.routes())
