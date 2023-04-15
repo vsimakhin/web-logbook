@@ -15,6 +15,7 @@ wlbLogbook = function () {
         var remarksL = Math.round((document.documentElement.clientWidth - 1500) / 10);
 
         table = $('#logbook').DataTable({
+            bAutoWidth: false,
             ordering: false,
             info:     false,
             ajax: '{{index .API "LogbookData"}}',
