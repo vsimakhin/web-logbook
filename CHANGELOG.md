@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Add options to the `Settings` to define the amount of the rows in the `Logbook` and `Licensing` tables
 - Update: Updated validators for the flight record, so it's possible to add the first "empty" flight record with hours from the previous logbook.
 - Fix: table layout on the main `Logbook` page.
 
