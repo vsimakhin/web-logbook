@@ -150,6 +150,10 @@ Also, you can always generate your own certificate and key and store it in the d
 
 In case you'd like to add some other features to the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix it at a reasonable time but at least I can take a look.
 
+# Contributors
+
+* [@Jacopx](https://github.com/Jacopx), [@dimoniet](https://github.com/dimoniet), [@maesteve](https://github.com/maesteve) - bug reports, testing, and new functionality suggestions
+
 # Used libraries
 
 * Bootstrap https://getbootstrap.com/
