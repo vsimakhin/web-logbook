@@ -9,26 +9,28 @@ wlbFlightRecord = function () {
     function validateDepArrTime(field) {
         if (field.value !== "") {
             if (field.value.length !== 4) {
-                field.classList.add("is-invalid")
+                field.classList.add("is-invalid");
                 return false
             } else {
-                field.classList.add("is-valid")
+                field.classList.add("is-valid");
             }
         }
 
+        field.classList.remove("is-invalid");
         return true
     }
 
     function validateTime(field) {
         if (field.value !== "") {
-            if (!/^(?:(?<!\d)|[1-9]\d{0,4}):([0-5]\d)$/.test(field.value)) {
-                field.classList.add("is-invalid")
+            if (!/^(?:(?<!\d)|[1-9]\d{0,4}|0):([0-5]\d)$/.test(field.value)) {
+                field.classList.add("is-invalid");
                 return false
             } else {
-                field.classList.add("is-valid")
+                field.classList.add("is-valid");
             }
         }
 
+        field.classList.remove("is-invalid");
         return true
     }
 
@@ -46,6 +48,7 @@ wlbFlightRecord = function () {
             isValid = false
             errorMessage = errorMessage + "Date cannot be empty\r\n";
         } else {
+            date.classList.remove("is-invalid");
             date.classList.add("is-valid");
         }
 
