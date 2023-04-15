@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: table layout on the main `Logbook` page.
+
 ## [2.20.0] - 13.04.2023
 
 - New: Slightly updated the `Licensing` table and added a check for the expired or expiring soon licenses. The warning will appear in the left navigation bar, however, there is still an option to disable the badge in the `Settings` page if it's too annoying.
