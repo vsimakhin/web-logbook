@@ -1,5 +1,6 @@
 {{define "logbook-js"}}
 {{$api := .API}}
+{{$settings := index .Data "settings"}}
 <script type="text/javascript" src="/static/js/datatables.min.js"></script>
 <script>
 
@@ -19,7 +20,7 @@ wlbLogbook = function () {
             ordering: false,
             info:     false,
             ajax: '{{index .API "LogbookData"}}',
-            lengthMenu: [[15, 50, -1], [15, 50, "All"]],
+            lengthMenu: [[{{if $settings.LogbookRows}}{{$settings.LogbookRows}}{{else}}15{{end}}, -1], [{{if $settings.LogbookRows}}{{$settings.LogbookRows}}{{else}}15{{end}}, "All"]],
             columnDefs: [
                 { targets: [ 0 ], visible: false, searchable: false },
                 { targets: [0,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,22], className: "dt-body-center" },

@@ -202,6 +202,8 @@ type Settings struct {
 	HideStatsFields HideFields `json:"hide_stats_fields"`
 	StatsFontSize   string     `json:"stats_font_size"`
 	LogbookFontSize string     `json:"logbook_font_size"`
+	LogbookRows     string     `json:"logbook_rows"`
+	LicensingRows   string     `json:"licensing_rows"`
 
 	SyncOptions SyncOptions `json:"sync_options"`
 }

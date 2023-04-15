@@ -4,13 +4,13 @@
 <div class="row">
     <div class="col-md-4">
 
-        <div class="row mb-2">
+        <div class="row mb-1">
             <div class="col">
                 <input type="checkbox" class="form-check-input" id="disable_flightrecord_help" name="disable_flightrecord_help" {{if $settings.DisableFlightRecordHelp}}checked{{end}}>
                 <label for="disable_flightrecord_help" class="form-label">Disable help messages on the flight record page</label>
             </div>
         </div>
-        <div class="row mb-2">
+        <div class="row mb-1">
             <div class="col">
                 <input type="checkbox" class="form-check-input" id="disable_license_warning" name="disable_license_warning" {{if $settings.DisableLicenseWarning}}checked{{end}}>
                 <label for="disable_license_warning" class="form-label">Disable license warning badge on the navbar</label>
@@ -85,13 +85,25 @@
         </div>
 
         <hr>
-        <div class="row mb-3">
+        <div class="row mb-1">
+            <label for="logbook_rows" class="col-sm-10 col-form-label">Logbook table rows</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control form-control-sm" id="logbook_rows" name="logbook_rows" value='{{if not $settings.LogbookRows}}15{{else}}{{$settings.LogbookRows}}{{end}}' min="10">
+            </div>
+        </div>
+        <div class="row mb-1">
             <label for="logbook_font" class="col-sm-10 col-form-label">Logbook table font size (%)</label>
             <div class="col-sm-2">
                 <input type="number" class="form-control form-control-sm" id="logbook_font" name="logbook_font" value='{{if not $settings.LogbookFontSize}}100{{else}}{{$settings.LogbookFontSize}}{{end}}' min="50" max="100">
             </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-1">
+            <label for="licensing_rows" class="col-sm-10 col-form-label">Licensing table rows</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control form-control-sm" id="licensing_rows" name="licensing_rows" value='{{if not $settings.LicensingRows}}15{{else}}{{$settings.LicensingRows}}{{end}}' min="10">
+            </div>
+        </div>
+        <div class="row mb-1">
             <label for="stats_font" class="col-sm-10 col-form-label">Stats tables font size (%)</label>
             <div class="col-sm-2">
                 <input type="number" class="form-control form-control-sm" id="stats_font" name="stats_font" value='{{if not $settings.StatsFontSize}}100{{else}}{{$settings.StatsFontSize}}{{end}}' min="50" max="100">
