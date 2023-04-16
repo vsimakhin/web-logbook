@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.20.3] - 16.04.2023
+
+- Fix: The main logbook table pagination was broken due to wrong variable type (string instead of int)
+
 ## [2.20.2] - 15.04.2023
 
 - Fix: last release introduced an error, when validator for the flight record didn't accept time in 0:mm format. Fixed.

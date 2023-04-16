@@ -11,6 +11,7 @@ wlbLicensing = function () {
 
     function initLicensing() {
         var groupColumn = 0;
+        var lengthMenu = {{if $settings.LicensingRows}}{{$settings.LicensingRows}}{{else}}15{{end}};
         table = $('#logbook').DataTable({
             columnDefs: [
                 { visible: false, targets: groupColumn },
@@ -20,7 +21,7 @@ wlbLicensing = function () {
             paging: true,
             info: false,
             ajax: '/licensing/data',
-            lengthMenu: [[{{if $settings.LicensingRows}}{{$settings.LicensingRows}}{{else}}15{{end}}, -1], [{{if $settings.LicensingRows}}{{$settings.LicensingRows}}{{else}}15{{end}}, "All"]],
+            lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             drawCallback: function ( settings ) {
                 var api = this.api();
                 var rows = api.rows( {page:'current'} ).nodes();
