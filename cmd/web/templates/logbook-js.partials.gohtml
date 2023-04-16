@@ -14,13 +14,13 @@ wlbLogbook = function () {
     // inits the main table
     function initLogbookTable() {
         var remarksL = Math.round((document.documentElement.clientWidth - 1500) / 10);
-
+        var lengthMenu = {{if $settings.LogbookRows}}{{$settings.LogbookRows}}{{else}}15{{end}};
         table = $('#logbook').DataTable({
             bAutoWidth: false,
             ordering: false,
             info:     false,
             ajax: '{{index .API "LogbookData"}}',
-            lengthMenu: [[{{if $settings.LogbookRows}}{{$settings.LogbookRows}}{{else}}15{{end}}, -1], [{{if $settings.LogbookRows}}{{$settings.LogbookRows}}{{else}}15{{end}}, "All"]],
+            lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             columnDefs: [
                 { targets: [ 0 ], visible: false, searchable: false },
                 { targets: [0,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,22], className: "dt-body-center" },
