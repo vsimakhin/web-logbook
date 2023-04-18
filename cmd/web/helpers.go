@@ -212,6 +212,11 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duratio
 		return night, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err)
 	}
 
+	// correct arrival time if the flight is through midnight
+	if arrival_time.Before(departure_time) {
+		arrival_time = arrival_time.Add(24 * time.Hour)
+	}
+
 	route := nighttime.Route{
 		Departure: nighttime.Place{
 			Lat:  departure_place.Lat,

@@ -1,6 +1,7 @@
 package nighttime
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -24,7 +25,7 @@ func TestKnownNightTime(t *testing.T) {
 
 	nightTime := route.NightTime()
 
-	assert.Equal(t, int(nightTime.Minutes()), 26)
+	assert.Equal(t, int(math.Round(nightTime.Minutes())), 27)
 
 }
 
@@ -45,7 +46,7 @@ func TestKnownNightTime2(t *testing.T) {
 
 	nightTime := route.NightTime()
 
-	assert.Equal(t, int(nightTime.Minutes()), 395)
+	assert.Equal(t, int(math.Round(nightTime.Minutes())), 393)
 
 }
 
@@ -65,7 +66,7 @@ func TestAllNightTime(t *testing.T) {
 	}
 
 	nightTime := route.NightTime()
-	assert.Equal(t, nightTime, route.FlightTime())
+	assert.Equal(t, int(math.Round(nightTime.Minutes())), int(math.Round(route.FlightTime().Minutes())))
 
 }
 

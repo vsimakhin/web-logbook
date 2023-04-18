@@ -96,78 +96,40 @@ func (place *Place) Sunset() time.Time {
 	return s
 }
 
-// MeetWithSun finds the point on the route where airplane meets with Sun (rised or set)
-func (route *Route) meetWithSun(target string) Place {
-	maxIterations := 20    // max iteratons, in case some error just not to iterate infinite
-	maxDiffSeconds := 30.0 // tolerance in minutes, where we agreed we got the sunset/sunrise
-
-	iter := 0
-
-	var xPoint Place
-	diff := time.Duration(0)
-
-	startPoint := route.Departure
-	endPoint := route.Arrival
-
+func (route *Route) NightTime() time.Duration {
 	speed := route.FlightSpeed()
+	speedPerMinute := speed / 60
 
-	for iter < maxIterations {
-		iter++
+	// assumed we split the route for the segments, not longer then 1 minute of flight
+	milesPerMinute := speed / 60 * 1 // miles per 1 minutes
 
-		xPoint = midpoint(startPoint, endPoint)
-
-		dist := distance(route.Departure, xPoint)
-		flightTime := dist / speed * 60
-
-		xPoint.Time = route.Departure.Time.Add(time.Duration(flightTime*60) * time.Second)
-
-		if target == "sunrise" {
-			diff = xPoint.Time.Sub(xPoint.Sunrise())
-		} else {
-			diff = xPoint.Time.Sub(xPoint.Sunset())
-		}
-
-		if math.Abs(diff.Seconds()) > maxDiffSeconds {
-			if diff.Seconds() > 0 {
-				endPoint = xPoint
-			} else {
-				startPoint = xPoint
-			}
-		} else {
-			break
-		}
-	}
-
-	return xPoint
+	return nightSegment(route.Departure, route.Arrival, milesPerMinute, speedPerMinute)
 }
 
-// NightTime returns a calculated night time
-func (route *Route) NightTime() time.Duration {
-	nightTime := time.Duration(0)
+func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute float64) time.Duration {
+	d := time.Duration(0)
 
-	rdsr, rdss := route.Departure.SunriseSunset()
-	rasr, rass := route.Arrival.SunriseSunset()
+	distance := distance(start, end)
+	if distance > maxDistance {
+		// too long, let's split it again
+		mid := midpoint(start, end)
+		// calculate time at the mid point
+		flightTime := distance / 2 / speedPerMinute
+		mid.Time = start.Time.Add(time.Duration(flightTime) * time.Minute)
 
-	if (route.Departure.Time.After(rdsr) && route.Departure.Time.Before(rdss)) &&
-		(route.Arrival.Time.After(rasr) && route.Arrival.Time.Before(rass)) {
-		// full day flight
-		nightTime = time.Duration(0)
-
-	} else if route.Departure.Time.After(rdsr) && route.Departure.Time.Before(rdss) {
-		// flight from day to night, night landing
-		point := route.meetWithSun("sunset")
-		nightTime = route.Arrival.Time.Sub(point.Time)
-
-	} else if route.Arrival.Time.After(rasr) && route.Arrival.Time.Before(rass) {
-		// flight from night to day, day landing
-		point := route.meetWithSun("sunrise")
-		nightTime = point.Time.Sub(route.Departure.Time)
-
+		d = nightSegment(start, mid, maxDistance, speedPerMinute) + nightSegment(mid, end, maxDistance, speedPerMinute)
 	} else {
-		// full night time
-		nightTime = route.FlightTime()
+		// get sunrise and sunset for the end point
+		// it could be calculated for the middle point again to be more precise,
+		// but it will add few more calculations and the error is not so high
+		sr, ss := end.SunriseSunset()
 
+		if end.Time.After(sr) && end.Time.Before(ss) {
+			d = time.Duration(0)
+		} else {
+			d = time.Duration(distance / speedPerMinute * float64(time.Minute))
+		}
 	}
 
-	return nightTime
+	return d
 }
