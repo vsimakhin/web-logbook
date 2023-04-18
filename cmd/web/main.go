@@ -16,7 +16,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "2.20.3"
+const version = "2.21.0"
 
 type config struct {
 	url  string
