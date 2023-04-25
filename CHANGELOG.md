@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang version update to 1.20.3
+
 ## [2.21.0] - 18.04.2023
 
 - Update: A new algorithm for a night-time calculation. The previous one had a few limitations, such as it couldn't correctly calculate the time if the flight started before sunset and ended after sunrise. Or there was quite a high error if the flight was close to the North or South poles. The new algorithm divides the flight for the segments <1 minute and checks the sunrise/sunset time for each of them, and then summarises the total night time.
