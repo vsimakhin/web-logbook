@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//Authenticate checks the credentials
+// Authenticate checks the credentials
 func (m *DBModel) Authenticate(login, password string) error {
 	settings, err := m.GetSettings()
 	if err != nil {
