@@ -13,8 +13,11 @@ clean:
 	@go clean
 	@echo "Cleaned!"
 
+fmt:
+	@go fmt ./...
+
 ## tests
-test:
+test: fmt
 	@go test -v ./... -coverpkg=./...
 
 ## build: builds the binaty

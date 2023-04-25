@@ -324,9 +324,10 @@ wlbFlightRecord = function () {
         if (data.length) {
             tbody.innerHTML = "";
             for (var x = 0; x < data.length; x++) {
+                var logbookAttachmentsDownloadAPI = {{index .API "LogbookAttachmentsDownload"}};
                 rows = rows +
                     `<tr>
-                        <td><a href="{{index .API "LogbookAttachmentsDownload"}}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
+                        <td><a href="${logbookAttachmentsDownloadAPI}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
                         <td id="ask_${data[x]["uuid"]}"><a onclick="wlbFlightRecord.askForDelete('${data[x]["uuid"]}');"><i class="bi bi-file-x-fill"></i> Delete</a></td>
                     </tr>`;
             }
