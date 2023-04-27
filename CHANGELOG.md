@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.21.1] - 27.04.2023
 
 - Update: Golang version update to 1.20.3
 
