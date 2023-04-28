@@ -41,7 +41,7 @@ wlbLogbook = function () {
                 }
             ],
             rowCallback: function(row, data, index){
-                var logbookAPI = {{$api.Logbook}};
+                var logbookAPI = "{{$api.Logbook}}";
                 $("td:eq(0)", row).html(`<a href="${logbookAPI}/${data[0]}" class="link-primary">${data[1]}</a>`);
             },
             initComplete: function () {

@@ -37,8 +37,8 @@ wlbLicensing = function () {
                 } );
             },
             rowCallback: function(row, data, index){
-                var licensingDownloadAPI = {{$api.LicensingDownload}};
-                var licensingAPI = {{$api.Licensing}};
+                var licensingDownloadAPI = "{{$api.LicensingDownload}}";
+                var licensingAPI = "{{$api.Licensing}}";
 
                 if(data[7] === 'Expired!'){
                     $("td:nth-child(6)", row).addClass("text-danger");
