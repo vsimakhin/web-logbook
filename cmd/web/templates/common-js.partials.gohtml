@@ -71,12 +71,23 @@ wlbCommon = function () {
         window.open("{{$api.Export}}/" + format, "_blank");
     }
 
+    function escapeHtml(unsafe)
+    {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     return {
         showErrorMessage:showErrorMessage,
         showInfoMessage:showInfoMessage,
         getJSON:getJSON,
         formatLandings:formatLandings,
-        runExport:runExport
+        runExport:runExport,
+        escapeHtml:escapeHtml
     }
 }();
 </script>
