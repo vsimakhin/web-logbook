@@ -33,7 +33,7 @@ wlbLogbook = function () {
                 { targets: [23], render: function ( data, type, row ) {
                         if (data.length > remarksL) {
                             var txt = data.substr( 0, remarksL ) + '…'
-                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${data}">${txt}</span>`;
+                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${wlbCommon.escapeHtml(data)}">${wlbCommon.escapeHtml(txt)}</span>`;
                         } else {
                             return data;
                         }
@@ -41,7 +41,7 @@ wlbLogbook = function () {
                 }
             ],
             rowCallback: function(row, data, index){
-                var logbookAPI = {{$api.Logbook}};
+                var logbookAPI = "{{$api.Logbook}}";
                 $("td:eq(0)", row).html(`<a href="${logbookAPI}/${data[0]}" class="link-primary">${data[1]}</a>`);
             },
             initComplete: function () {
