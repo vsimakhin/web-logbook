@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.21.2]
 
 - Fix: added escape function for special html chars when checking for a long remarks field
 
