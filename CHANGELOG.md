@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: added escape function for special html chars when checking for a long remarks field
+
 ## [2.21.1] - 27.04.2023
 
 - Update: Golang version update to 1.20.3
