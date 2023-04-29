@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- New: A popup with airport infromation once you click on the marker on the `Map` page.
+- Update: The Openlayers library upgraded to the version 7.3.0
+
 ## [2.21.2]
 
 - Fix: added escape function for special html chars when checking for a long remarks field
