@@ -7,10 +7,32 @@ wlbMap = function () {
     var start = moment().startOf('year');
     var end = moment().endOf('year');
 
+    // popup overlay
+    const container = document.getElementById('popup');
+    const content = document.getElementById('popup-content');
+    const closer = document.getElementById('popup-closer');
+
+    const overlay = new ol.Overlay({
+        element: container,
+        autoPan: {
+            animation: {
+            duration: 250,
+            },
+        },
+    });
+
+    function closerOnClick() {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+    }
+
+    closer.onclick = closerOnClick;
+
+    // loadMap
     async function loadMap(parameters) {
         document.getElementById("map").innerText = "";
         document.getElementById("some_stats").innerText = "Routes: 0\nAirports: 0";
-        document.getElementById("airport_info").innerHTML = "";
 
         var data = await wlbCommon.getJSON("{{index .API "MapData"}}"+parameters);
 
@@ -25,6 +47,7 @@ wlbMap = function () {
                     source: new ol.source.OSM()
                 })
             ],
+            overlays: [overlay],
             view: new ol.View({
                 center: ol.proj.fromLonLat([14.2588996887, 50.3246994019]),
                 zoom: 5
@@ -88,7 +111,7 @@ wlbMap = function () {
                             offsetY: -12,
                             scale: 1.3,
                             fill: new ol.style.Fill({
-                                color: '#black',
+                                color: '#333',
                             })
                         })
                     })
@@ -101,7 +124,8 @@ wlbMap = function () {
                     civil_name: markers[x]["civil_name"],
                     country: markers[x]["country"],
                     city: markers[x]["city"],
-                    elevation: markers[x]["elevation"]
+                    elevation: markers[x]["elevation"],
+                    coordinates: `${markers[x]["point"][1]}, ${markers[x]["point"][0]}`
                 });
 
                 featureMarker.setStyle(iconStyle);
@@ -135,22 +159,25 @@ wlbMap = function () {
 
             // cliked somewhere on the map
             if (!feature) {
-                document.getElementById("airport_info").innerHTML = "";
+                closerOnClick();
                 return;
             }
 
             // clicked but not on the marker
             if (feature.get("name") === undefined) {
-                document.getElementById("airport_info").innerHTML = "";
+                closerOnClick();
                 return;
             }
 
             // show airport/marker info
-            airport_info = `Airport: ${feature.get("name")}<br>`
-            airport_info += `Name: ${feature.get("civil_name")}<br>`
-            airport_info += `Country: ${feature.get("country")}<br>`;
-            airport_info += `Elevation: ${feature.get("elevation")}<br>`;
-            document.getElementById("airport_info").innerHTML = airport_info;
+            const coordinates = feature.getGeometry().getCoordinates();
+            content.innerHTML =
+                '<strong>Airport:</strong> ' + feature.get('name') + '<br>' +
+                '<strong>Name:</strong> ' + feature.get('civil_name') + '<br>' +
+                '<strong>Country:</strong> ' + feature.get('country') + '<br>' +
+                '<strong>Elevation:</strong> ' + feature.get('elevation') + '<br>' +
+                '<strong>Lat/Lon:</strong> ' + feature.get('coordinates') + '<br>';
+            overlay.setPosition(coordinates);
         });
 
         map.on('pointermove', function (e) {
