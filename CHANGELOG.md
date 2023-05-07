@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Dark mode.
 - New: A popup with airport infromation once you click on the marker on the `Map` page.
 - Update: The Openlayers library upgraded to the version 7.3.0
 

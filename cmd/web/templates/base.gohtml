@@ -18,6 +18,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-icons.css">
         <link rel="stylesheet" type="text/css" href="/static/css/daterangepicker.css" />
     </head>
+    <script type="text/javascript" src="/static/js/theme.js"></script>
     <body>
         <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
             <a class="navbar-brand col-md-3 col-lg-1 me-0 px-3 fs-6" href="/">Web Logbook</a>
@@ -28,7 +29,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-1 d-md-block bg-light sidebar collapse">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-1 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -68,6 +69,32 @@
                             <a class="nav-link" href="https://github.com/vsimakhin/web-logbook"><i class="bi bi-github"></i> v{{.Version}}
                             {{if .NewVersion}}<span class="badge rounded-pill text-bg-info">New</span>{{ end }}</a>
                         </li>
+
+                        <!--theme selector -->
+                        <div class="dropdown position-fixed bottom-0 start-0 mb-3 me-3 bd-mode-toggle">
+                        <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
+                                id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                            <i class="bi bi-circle-half" id="active-theme-i"></i><span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+                            <li>
+                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                <i class="bi bi-sun-fill"><a href=#bi-sun-fill></a></i>&nbsp;Light
+                            </button>
+                            </li>
+                            <li>
+                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                <i class="bi bi-moon-stars-fill"><a href=#bi-moon-stars-fill></a></i>&nbsp;Dark
+                            </button>
+                            </li>
+                            <li>
+                            <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
+                                <i class="bi bi-circle-half"><a href=#bi-circle-half></a></i>&nbsp;Auto
+                            </button>
+                            </li>
+                        </ul>
+                        </div>
+
                     </ul>
                 </div>
             </nav>
