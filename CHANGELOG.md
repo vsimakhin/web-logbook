@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.22.0]
 
 - New: Dark mode.
 - New: A popup with airport infromation once you click on the marker on the `Map` page.
