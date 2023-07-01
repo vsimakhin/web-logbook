@@ -120,7 +120,7 @@ func printA4LogbookBody(record models.FlightRecord, fill bool) {
 	printBodyTimeCell(w3[19], record.Time.Instructor, fill)
 	printBodyTimeCell(w3[20], record.SIM.Type, fill)
 	printBodyTimeCell(w3[21], record.SIM.Time, fill)
-	printBodyTextCell(w3[22], record.Remarks, fill)
+	printBodyRemarksCell(w3[22], record.Remarks, fill)
 
 	pdf.Ln(-1)
 
