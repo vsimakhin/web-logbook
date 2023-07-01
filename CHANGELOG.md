@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.23.0]
 
 - Fix: set smaller font size or even truncate the remarks for PDF exports in case they are too long
 
