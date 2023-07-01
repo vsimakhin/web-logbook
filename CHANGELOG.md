@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: set smaller font size or even truncate the remarks for PDF exports in case they are too long
+
 ## [2.22.0]
 
 - New: Dark mode.

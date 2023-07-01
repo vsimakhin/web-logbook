@@ -218,6 +218,31 @@ func formatLandings(landing int) string {
 	}
 }
 
+func printBodyRemarksCell(w float64, value string, fill bool) {
+
+	wFactored := int(w * 0.9)
+	vL := len(value)
+	longCut := int(1.75 * float64(wFactored))
+
+	if vL > longCut {
+		// too long remark, cut it and set font 5
+		pdf.SetFont(fontRegular, "", 5)
+		value = value[:longCut-3] + "..."
+
+	} else if vL > wFactored*3/2 {
+		// slightly long remark
+		pdf.SetFont(fontRegular, "", 5)
+
+	} else if vL > wFactored {
+		// long remark
+		pdf.SetFont(fontRegular, "", 6)
+
+	}
+
+	pdf.CellFormat(w, bodyRowHeight, value, "1", 0, "L", fill, 0, "")
+	pdf.SetFont(fontRegular, "", 8)
+}
+
 func isFillLine(rowCounter int, fill int) bool {
 	if (rowCounter)%fill == 0 { // fill every "fill" row only
 		return true
