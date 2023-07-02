@@ -246,5 +246,5 @@ type Mock struct {
 type DeletedItem struct {
 	UUID       string `json:"uuid"`
 	TableName  string `json:"table_name"`
-	DeleteTime int    `json:"delete_time"`
+	DeleteTime string `json:"delete_time"`
 }

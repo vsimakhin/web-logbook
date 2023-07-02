@@ -7,8 +7,100 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerSyncData generates data for sync with mobile app
-func (app *application) HandlerSyncData(w http.ResponseWriter, r *http.Request) {
+// HandlerSyncAirports returns data from the airports view
+func (app *application) HandlerSyncAirports(w http.ResponseWriter, r *http.Request) {
+
+	tableData := []map[string]interface{}{}
+
+	airports, err := app.db.GetStandardAirports()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range airports {
+		tableRow := map[string]interface{}{
+			"icao":      item.ICAO,
+			"iata":      item.IATA,
+			"name":      item.Name,
+			"city":      item.City,
+			"country":   item.Country,
+			"elevation": item.Elevation,
+			"lat":       item.Lat,
+			"lon":       item.Lon,
+		}
+
+		tableData = append(tableData, tableRow)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+}
+
+func (app *application) HandlerSyncDeletedGet(w http.ResponseWriter, r *http.Request) {
+
+	tableData := []map[string]interface{}{}
+
+	dis, err := app.db.GetDeletedItems()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range dis {
+		tableRow := map[string]interface{}{
+			"uuid":        item.UUID,
+			"table_name":  item.TableName,
+			"delete_time": item.DeleteTime,
+		}
+
+		tableData = append(tableData, tableRow)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+func (app *application) HandlerSyncDeletedPost(w http.ResponseWriter, r *http.Request) {
+	type Payload struct {
+		DeletedItems []models.DeletedItem `json:"deleted_items"`
+	}
+
+	var payload Payload
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&payload)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.SyncDeletedItems(payload.DeletedItems)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.OK = true
+	err = app.writeJSON(w, http.StatusOK, response)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+func (app *application) HandlerSyncFlightRecordsGet(w http.ResponseWriter, r *http.Request) {
 
 	tableData := []map[string]interface{}{}
 
@@ -58,54 +150,16 @@ func (app *application) HandlerSyncData(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// HandlerSyncDataDeleted generates removed items data for sync with mobile app
-func (app *application) HandlerSyncDataDeleted(w http.ResponseWriter, r *http.Request) {
-
-	tableData := []map[string]interface{}{}
-
-	dis, err := app.db.GetDeletedItems()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for _, item := range dis {
-		tableRow := map[string]interface{}{
-			"uuid":        item.UUID,
-			"table_name":  item.TableName,
-			"delete_time": item.DeleteTime,
-		}
-
-		tableData = append(tableData, tableRow)
-	}
-
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-}
-
-// HandlerSyncDataUpload receivs records and deleted items from mobile app
-func (app *application) HandlerSyncDataUpload(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlerSyncFlightRecordsPost(w http.ResponseWriter, r *http.Request) {
 
 	type Payload struct {
 		FlightRecords []models.FlightRecord `json:"flight_records"`
-		DeletedItems  []models.DeletedItem  `json:"deleted_items"`
 	}
 
 	var payload Payload
 	var response models.JSONResponse
 
 	err := json.NewDecoder(r.Body).Decode(&payload)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = app.db.SyncDeletedItems(payload.DeletedItems)
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -125,39 +179,4 @@ func (app *application) HandlerSyncDataUpload(w http.ResponseWriter, r *http.Req
 		app.errorLog.Println(err)
 		return
 	}
-}
-
-// HandlerSyncAirports returns data from the airports view
-func (app *application) HandlerSyncAirports(w http.ResponseWriter, r *http.Request) {
-
-	tableData := []map[string]interface{}{}
-
-	airports, err := app.db.GetStandardAirports()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for _, item := range airports {
-		tableRow := map[string]interface{}{
-			"icao":      item.ICAO,
-			"iata":      item.IATA,
-			"name":      item.Name,
-			"city":      item.City,
-			"country":   item.Country,
-			"elevation": item.Elevation,
-			"lat":       item.Lat,
-			"lon":       item.Lon,
-		}
-
-		tableData = append(tableData, tableRow)
-	}
-
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
 }
