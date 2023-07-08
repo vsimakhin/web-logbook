@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: the synchronization protocol between the main app and the mobile app slightly changed to implement new features in the feature easily.
+
 ## [2.23.0]
 
 - Fix: set smaller font size or even truncate the remarks for PDF exports in case they are too long
