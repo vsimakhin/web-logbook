@@ -306,13 +306,41 @@ func printFooterLeftBlock(totalName string) {
 	}
 }
 
+// signature block X and Y coordinates in case the format is extended
+var signatureBlockX, signatureBlockY float64
+
 func printFooterSignatureBlock(totalName string) {
 	pdf.SetFont(fontRegular, "", 6)
 
 	if totalName == "TOTAL THIS PAGE" {
-		pdf.CellFormat(w4[17], footerRowHeight, signature, "LTR", 0, "C", true, 0, "")
+		if isExtended {
+			// let's save the coordinates
+			signatureBlockX, signatureBlockY = pdf.GetXY()
+			// and put empty filled box
+			pdf.CellFormat(w4[17], footerRowHeight, "", "LTR", 0, "C", true, 0, "")
+		} else {
+			pdf.CellFormat(w4[17], footerRowHeight, signature, "LTR", 0, "C", true, 0, "")
+		}
 	} else if totalName == "TOTAL FROM PREVIOUS PAGES" {
 		pdf.CellFormat(w4[17], footerRowHeight, "", "LR", 0, "", true, 0, "")
+
+		if isExtended {
+			// in case it's extended format, the remarks field can be too short to
+			// include the signature text, especially for A4 format. In this case
+			// there will be MultiCell function which support new line automatically
+			x, y := pdf.GetXY()
+			rowH := footerRowHeight
+			if len(signature) > int(w4[17]*0.8) {
+				// looks like the signature text is really too long,
+				// so let's fit multiline cell into one normal footerRowHeight
+				rowH = footerRowHeight / 2
+			}
+			pdf.SetXY(signatureBlockX, signatureBlockY)
+			pdf.MultiCell(w4[17], rowH, strings.TrimRight(signature, "\r\n"), "LTR", "C", true)
+			pdf.SetXY(x, y)
+			// empty tiny cell to set the footerRowHeight back
+			pdf.CellFormat(0.01, footerRowHeight, "", "", 0, "", true, 0, "")
+		}
 	} else {
 		pdf.CellFormat(w4[17], footerRowHeight, ownerName, "LBR", 0, "C", true, 0, "")
 		printSignature()
