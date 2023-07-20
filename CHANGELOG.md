@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.24.0]
 
 - New: option for A4 PDF extended format, where Date field is added to the FSTD section
 - Update: the synchronization protocol between the main app and the mobile app slightly changed to implement new features in the feature easily.
