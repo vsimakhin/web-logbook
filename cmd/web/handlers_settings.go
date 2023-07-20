@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -64,7 +63,6 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 	settings.ExportXLS = oldsettings.ExportXLS
 	settings.ExportCSV = oldsettings.ExportCSV
 
-	fmt.Println(settings.SyncOptions.KeepDeletedRecordsDays)
 	err = app.db.UpdateSettings(settings)
 	if err != nil {
 		app.errorLog.Println(err)
