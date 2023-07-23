@@ -135,6 +135,8 @@ func (app *application) HandlerAttachmentDownload(w http.ResponseWriter, r *http
 		return
 	}
 
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", att.DocumentName))
+
 	_, err = w.Write(att.Document)
 	if err != nil {
 		app.errorLog.Println(err)

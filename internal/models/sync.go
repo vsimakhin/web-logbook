@@ -82,6 +82,11 @@ func (m *DBModel) SyncDeletedItems(dis []DeletedItem) error {
 			if err != nil {
 				return err
 			}
+		} else if di.TableName == "attachments" {
+			err := m.DeleteAttachment(di.UUID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
