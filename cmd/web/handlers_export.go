@@ -21,18 +21,8 @@ const exportXLS = "xls"
 // HandlerExport is a handler for /export page
 func (app *application) HandlerExport(w http.ResponseWriter, r *http.Request) {
 
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data := make(map[string]interface{})
-	data["settings"] = settings
-
 	partials := []string{"common-js", "export-js", "export-a4", "export-a5", "export-xls", "export-csv"}
-	if err := app.renderTemplate(w, r, "export", &templateData{Data: data}, partials...); err != nil {
+	if err := app.renderTemplate(w, r, "export", &templateData{}, partials...); err != nil {
 		app.errorLog.Println(err)
 	}
 }

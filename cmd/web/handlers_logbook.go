@@ -8,19 +8,7 @@ import (
 
 // HandlerLogbook is a handler for /logbook page
 func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
-
-	data := make(map[string]interface{})
-
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data["settings"] = settings
-
-	if err := app.renderTemplate(w, r, "logbook", &templateData{Data: data}, "common-js", "logbook-js"); err != nil {
+	if err := app.renderTemplate(w, r, "logbook", &templateData{}, "common-js", "logbook-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }

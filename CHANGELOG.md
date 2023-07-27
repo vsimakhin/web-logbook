@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: the license warning badge wasn't hidden on some pages even it was set so in the Settings
+
 ## [2.24.0]
 
 - New: option for A4 PDF extended format, where Date field is added to the FSTD section

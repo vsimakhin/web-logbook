@@ -300,15 +300,7 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	data["totalsByYear"] = totalsByYear
-	data["settings"] = settings
 
 	partials := []string{"stats-totals", "stats-totals-year", "stats-totals-type", "stats-totals-class", "stats-js", "common-js"}
 

@@ -15,18 +15,7 @@ import (
 
 // HandlerLicensing is a handler for /licensing page
 func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data["settings"] = settings
-
-	if err := app.renderTemplate(w, r, "licensing", &templateData{Data: data}, "common-js", "licensing-js"); err != nil {
+	if err := app.renderTemplate(w, r, "licensing", &templateData{}, "common-js", "licensing-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
