@@ -10,13 +10,6 @@ import (
 // HandlerSettings is a handler for Settings page
 func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
 
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	records, err := app.db.GetAirportCount()
 	if err != nil {
 		app.errorLog.Println(err)
@@ -25,12 +18,13 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	}
 
 	data := make(map[string]interface{})
-	data["settings"] = settings
 	data["records"] = records
 	data["urls"] = app.getServerUrls()
 
-	partials := []string{"common-js", "settings-js",
-		"settings-general", "settings-airports", "settings-misc", "settings-sync"}
+	partials := []string{
+		"common-js", "settings-js", "settings-general",
+		"settings-airports", "settings-misc", "settings-sync",
+	}
 
 	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)

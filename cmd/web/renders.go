@@ -115,6 +115,18 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 
 	td.License.Expired, td.License.Warning = app.db.CheckLicenseExpiration()
 
+	if td.Data == nil {
+		td.Data = make(map[string]interface{})
+	}
+
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		return td
+	}
+
+	td.Data["settings"] = settings
+
 	return td
 }
 
