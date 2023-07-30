@@ -8,11 +8,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
 func TestHandlerNotFound(t *testing.T) {
 
-	app, _ := initTestApplication()
+	app, mock := initTestApplication()
+	models.AddMock(mock, "GetSettings")
+
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
 

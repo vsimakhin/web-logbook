@@ -19,6 +19,7 @@ func TestAuth(t *testing.T) {
 	defer srv.Close()
 
 	models.AddMock(mock, "GetSettings")
+	models.AddMock(mock, "GetSettings")
 
 	// auth enabled
 	app.isAuthEnabled = true
@@ -40,7 +41,9 @@ func TestAuth(t *testing.T) {
 
 func TestHandlerLogin(t *testing.T) {
 
-	app, _ := initTestApplication()
+	app, mock := initTestApplication()
+
+	models.AddMock(mock, "GetSettings")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -55,7 +58,9 @@ func TestHandlerLogin(t *testing.T) {
 
 func TestHandlerLogout(t *testing.T) {
 
-	app, _ := initTestApplication()
+	app, mock := initTestApplication()
+
+	models.AddMock(mock, "GetSettings")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()

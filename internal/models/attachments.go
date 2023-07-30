@@ -102,7 +102,7 @@ func (m *DBModel) DeleteAttachmentsForFlightRecord(uuid string) error {
 	defer cancel()
 
 	query := "SELECT uuid FROM attachments WHERE record_id = ?"
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.QueryContext(ctx, query, uuid)
 
 	if err != nil {
 		return err

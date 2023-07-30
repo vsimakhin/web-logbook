@@ -143,6 +143,19 @@ func InitSQLMockValues() {
 		},
 	}
 
+	SQLMock["GetAttachments2"] = Mock{
+		Query: "SELECT uuid FROM attachments WHERE record_id",
+		Rows: []string{
+			"uuid",
+		},
+		Values: []driver.Value{
+			"UUID",
+		},
+		Args: []driver.Value{
+			"UUID",
+		},
+	}
+
 	// GetAttachmentByID
 	SQLMock["GetAttachmentByID"] = Mock{
 		Query: "SELECT (.+) FROM attachments WHERE uuid",
