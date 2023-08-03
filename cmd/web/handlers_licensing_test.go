@@ -53,6 +53,7 @@ func TestHandlerLicensingRecordByID(t *testing.T) {
 
 	app, mock := initTestApplication()
 
+	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetLicenseRecordByID")
 	models.AddMock(mock, "GetLicensesCategory")
 
@@ -92,6 +93,7 @@ func TestHandlerLicensingRecordNew(t *testing.T) {
 
 	app, mock := initTestApplication()
 
+	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetLicensesCategory")
 
 	srv := httptest.NewServer(app.routes())

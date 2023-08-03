@@ -17,6 +17,7 @@ func TestHandlerFlightRecordNew(t *testing.T) {
 	app, mock := initTestApplication()
 
 	models.AddMock(mock, "GetSettings")
+	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetAircraftsLast")
 
 	srv := httptest.NewServer(app.routes())
@@ -36,6 +37,7 @@ func TestHandlerFlightRecordByID(t *testing.T) {
 
 	app, mock := initTestApplication()
 
+	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetSettings")
 	models.AddMock(mock, "GetAircraftsLast")
 	models.AddMock(mock, "GetFlightRecordByID")

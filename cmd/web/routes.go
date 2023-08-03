@@ -73,6 +73,9 @@ const APILogout = "/logout"
 const APISyncAirports = "/sync/airports"
 const APISyncDeleted = "/sync/deleted"
 const APISyncFlightRecords = "/sync/flightrecords"
+const APISyncAttachmentsAll = "/sync/attachments/all"
+const APISyncAttachments = "/sync/attachments/{uuid}"
+const APISyncAttachmentsUpload = "/sync/attachments/upload"
 
 var session *scs.SessionManager
 
@@ -157,10 +160,16 @@ func (app *application) routes() *chi.Mux {
 
 		// sync
 		server.Get(APISyncAirports, app.HandlerSyncAirports)
+
 		server.Get(APISyncDeleted, app.HandlerSyncDeletedGet)
 		server.Post(APISyncDeleted, app.HandlerSyncDeletedPost)
+
 		server.Get(APISyncFlightRecords, app.HandlerSyncFlightRecordsGet)
 		server.Post(APISyncFlightRecords, app.HandlerSyncFlightRecordsPost)
+
+		server.Get(APISyncAttachmentsAll, app.HandlerSyncAttachmentsAll)
+		server.Get(APISyncAttachments, app.HandlerSyncAttachments)
+		server.Post(APISyncAttachmentsUpload, app.HandlerSyncAttachmentsUpload)
 
 	})
 

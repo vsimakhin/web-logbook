@@ -227,7 +227,7 @@ type Attachment struct {
 	UUID         string `json:"uuid"`
 	RecordID     string `json:"record_id"`
 	DocumentName string `json:"document_name"`
-	Document     []byte
+	Document     []byte `json:"document"`
 }
 
 // TableData is a type for Datatables

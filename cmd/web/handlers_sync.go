@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
@@ -167,6 +169,81 @@ func (app *application) HandlerSyncFlightRecordsPost(w http.ResponseWriter, r *h
 	}
 
 	err = app.db.SyncUploadedFlightRecords(payload.FlightRecords)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.OK = true
+	err = app.writeJSON(w, http.StatusOK, response)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+// returns all attachments without document body
+func (app *application) HandlerSyncAttachmentsAll(w http.ResponseWriter, r *http.Request) {
+
+	tableData := []map[string]interface{}{}
+
+	flightRecords, err := app.db.GetAllAttachments()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range flightRecords {
+		tableRow := map[string]interface{}{
+			"uuid":          item.UUID,
+			"record_id":     item.RecordID,
+			"document_name": item.DocumentName,
+			"document":      []byte{0},
+		}
+
+		tableData = append(tableData, tableRow)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+// returns the attachment records
+func (app *application) HandlerSyncAttachments(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	att, err := app.db.GetAttachmentByID(uuid)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot find the attachment %s - %s", uuid, err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, att)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+func (app *application) HandlerSyncAttachmentsUpload(w http.ResponseWriter, r *http.Request) {
+
+	var attachment models.Attachment
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&attachment)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.InsertAttachmentRecord(attachment)
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

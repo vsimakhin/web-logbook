@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Attachments synchronization support for the mobile application.
+
 ## [2.25.0]
 
 - Fix: the license warning badge wasn't hidden on some pages even it was set so in the Settings

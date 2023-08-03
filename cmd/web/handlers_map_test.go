@@ -16,6 +16,7 @@ func TestHandlerMap(t *testing.T) {
 	app, mock := initTestApplication()
 
 	models.AddMock(mock, "GetSettings")
+	models.AddMock(mock, "GetSettings")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()

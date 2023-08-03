@@ -58,6 +58,7 @@ func TestDeleteAttachment(t *testing.T) {
 	db, mock := initDBModel(t)
 
 	AddMock(mock, "DeleteAttachment")
+	AddMock(mock, "InsertDeletedItem")
 
 	err := db.DeleteAttachment("UUID")
 	if err != nil {
@@ -68,6 +69,7 @@ func TestDeleteAttachment(t *testing.T) {
 func TestDeleteAttachmentForFlightRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
+	AddMock(mock, "GetAttachments2")
 	AddMock(mock, "DeleteAttachmentsForFlightRecord")
 
 	err := db.DeleteAttachmentsForFlightRecord("UUID")
