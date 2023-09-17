@@ -18,7 +18,6 @@ wlbLogbook = function () {
         table = $('#logbook').DataTable({
             bAutoWidth: false,
             ordering: false,
-            info:     false,
             ajax: '{{index .API "LogbookData"}}',
             lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             columnDefs: [

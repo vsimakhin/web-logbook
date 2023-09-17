@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Show the total number of rows for most of the tables (Logbook, Licensing, Airports)
 - New: Date Range Picker first day of the week settings - Sunday or Monday.
 - New: Attachments synchronization support for the mobile application.
 
