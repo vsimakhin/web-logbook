@@ -1,4 +1,5 @@
 {{define "map-js"}}
+{{$settings := index .Data "settings"}}
 <script src="/static/js/ol.js"></script>
 <script>
 
@@ -249,6 +250,9 @@ wlbMap = function () {
             linkedCalendars: false,
             startDate: start,
             endDate: end,
+            locale: {
+                firstDay: parseInt({{if not $settings.DateRangePickerWeek}}"0"{{else}}{{$settings.DateRangePickerWeek}}{{end}})
+            }
         });
 
         $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {

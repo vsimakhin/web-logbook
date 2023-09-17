@@ -1,4 +1,5 @@
 {{define "license-record-js"}}
+{{$settings := index .Data "settings"}}
 <script>
 
 // WebLogbook License Record Namespace
@@ -150,6 +151,7 @@ wlbLicenseRecord = function () {
             showDropdowns: true,
             locale: {
                 format: 'DD/MM/YYYY',
+                firstDay: parseInt({{if not $settings.DateRangePickerWeek}}"0"{{else}}{{$settings.DateRangePickerWeek}}{{end}})
             },
             autoUpdateInput: false,
             autoApply: true,
@@ -171,6 +173,7 @@ wlbLicenseRecord = function () {
             showDropdowns: true,
             locale: {
                 format: 'DD/MM/YYYY',
+                firstDay: parseInt({{if not $settings.DateRangePickerWeek}}"0"{{else}}{{$settings.DateRangePickerWeek}}{{end}})
             },
             autoUpdateInput: false,
             autoApply: true,
@@ -192,6 +195,7 @@ wlbLicenseRecord = function () {
             showDropdowns: true,
             locale: {
                 format: 'DD/MM/YYYY',
+                firstDay: parseInt({{if not $settings.DateRangePickerWeek}}"0"{{else}}{{$settings.DateRangePickerWeek}}{{end}})
             },
             autoUpdateInput: false,
             autoApply: true,

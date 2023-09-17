@@ -109,6 +109,15 @@
                 <input type="number" class="form-control form-control-sm" id="stats_font" name="stats_font" value='{{if not $settings.StatsFontSize}}100{{else}}{{$settings.StatsFontSize}}{{end}}' min="50" max="100">
             </div>
         </div>
+        <div class="row mb-1">
+            <label for="datepicker_week" class="col-sm-9 col-form-label">Date range picker week starts on</label>
+            <div class="col-sm-3">
+                <select class="form-control form-control-sm" id="datepicker_week" name="datepicker_week" value="{{if not $settings.DateRangePickerWeek}}0{{else}}{{$settings.DateRangePickerWeek}}{{end}}">
+                    <option value="0" {{if not $settings.DateRangePickerWeek}}selected{{else}}{{if eq $settings.DateRangePickerWeek "0"}}selected{{end}}{{end}}>Sunday</option>
+                    <option value="1" {{if eq $settings.DateRangePickerWeek "1"}}selected{{end}}>Monday</option>
+                </select>
+            </div>
+        </div>
     </div>
 </div>
 {{end}}

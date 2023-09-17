@@ -1,4 +1,5 @@
 {{define "flight-record-js"}}
+{{$settings := index .Data "settings"}}
 <script>
 
 // WebLogbook FlightRecord Namespace
@@ -398,7 +399,8 @@ wlbFlightRecord = function () {
             singleDatePicker: true,
             showDropdowns: true,
             locale: {
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                firstDay: parseInt({{if not $settings.DateRangePickerWeek}}"0"{{else}}{{$settings.DateRangePickerWeek}}{{end}})
             },
             autoApply: true,
         }, function(start, end, label) {

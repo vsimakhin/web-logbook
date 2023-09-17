@@ -288,7 +288,8 @@ $(document).ready( function () {
         alwaysShowCalendars: true,
         linkedCalendars: false,
         locale: {
-            cancelLabel: 'Clear'
+            cancelLabel: 'Clear',
+            firstDay: parseInt({{if not $settings.DateRangePickerWeek}}"0"{{else}}{{$settings.DateRangePickerWeek}}{{end}})
         }
     }, function(start, end, label) {
         startDate = start;
