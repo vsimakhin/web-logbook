@@ -199,11 +199,12 @@ type Settings struct {
 	ExportXLS ExportXLS `json:"export_xls"`
 	ExportCSV ExportCSV `json:"export_csv"`
 
-	HideStatsFields HideFields `json:"hide_stats_fields"`
-	StatsFontSize   string     `json:"stats_font_size"`
-	LogbookFontSize string     `json:"logbook_font_size"`
-	LogbookRows     string     `json:"logbook_rows"`
-	LicensingRows   string     `json:"licensing_rows"`
+	HideStatsFields     HideFields `json:"hide_stats_fields"`
+	StatsFontSize       string     `json:"stats_font_size"`
+	LogbookFontSize     string     `json:"logbook_font_size"`
+	LogbookRows         string     `json:"logbook_rows"`
+	LicensingRows       string     `json:"licensing_rows"`
+	DateRangePickerWeek string     `json:"datepicker_week"`
 
 	SyncOptions SyncOptions `json:"sync_options"`
 }
