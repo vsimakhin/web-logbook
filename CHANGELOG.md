@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.26.0] - 20.09.2023
 
 - Update: ignore case for filters on the `Map` page
 - Fix: The filter on the `Map` page wasn't working correctly if there was a space in the fields
@@ -8,26 +8,26 @@
 - New: Date Range Picker first day of the week settings - Sunday or Monday.
 - New: Attachments synchronization support for the mobile application.
 
-## [2.25.0]
+## [2.25.0] - 27.07.2023
 
 - Fix: the license warning badge wasn't hidden on some pages even it was set so in the Settings
 
-## [2.24.0]
+## [2.24.0] - 20.07.2023
 
 - New: option for A4 PDF extended format, where Date field is added to the FSTD section
 - Update: the synchronization protocol between the main app and the mobile app slightly changed to implement new features in the feature easily.
 
-## [2.23.0]
+## [2.23.0] - 01.07.2023
 
 - Fix: set smaller font size or even truncate the remarks for PDF exports in case they are too long
 
-## [2.22.0]
+## [2.22.0] - 03.06.2023
 
 - New: Dark mode.
 - New: A popup with airport infromation once you click on the marker on the `Map` page.
 - Update: The Openlayers library upgraded to the version 7.3.0
 
-## [2.21.2]
+## [2.21.2] - 28.04.2023
 
 - Fix: added escape function for special html chars when checking for a long remarks field
 
