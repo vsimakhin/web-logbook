@@ -23,9 +23,17 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	regs, err := app.db.GetAircraftRegs()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	data := make(map[string]interface{})
 	data["classes"] = classes
 	data["models"] = models
+	data["regs"] = regs
 
 	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}, "common-js", "map-js"); err != nil {
 		app.errorLog.Println(err)

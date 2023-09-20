@@ -103,6 +103,16 @@ func InitSQLMockValues() {
 		},
 	}
 
+	SQLMock["GetAircraftsRegs"] = Mock{
+		Query: "SELECT (.+) FROM logbook_view WHERE reg_name <> '' GROUP BY reg_name ORDER BY reg_name",
+		Rows: []string{
+			"reg_name",
+		},
+		Values: []driver.Value{
+			"REG",
+		},
+	}
+
 	// GetAirportByID
 	SQLMock["GetAirportByID"] = Mock{
 		Query: "SELECT (.+) FROM airports_view WHERE",
