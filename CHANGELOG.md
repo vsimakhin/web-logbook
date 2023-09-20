@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: ignore case for filters on the `Map` page
 - Fix: The filter on the `Map` page wasn't working correctly if there was a space in the fields
 - Update: Show the total number of rows for most of the tables (Logbook, Licensing, Airports)
 - New: Date Range Picker first day of the week settings - Sunday or Monday.

@@ -98,13 +98,13 @@ func (app *application) isFlightRecordHelpEnabled() bool {
 	return !settings.DisableFlightRecordHelp
 }
 
-// parameterFilter is some custom string compare function
+// parameterFilter is a custom string case insensetive compare function
 func parameterFilter(s string, substr string) bool {
 	if strings.TrimSpace(s) == "" {
 		return true
 	}
 
-	return strings.Contains(s, substr)
+	return strings.Contains(strings.ToLower(s), strings.ToLower(substr))
 }
 
 func parameterClassFilter(classes map[string]string, model string, filter string) bool {
