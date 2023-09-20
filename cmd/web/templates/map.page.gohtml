@@ -55,6 +55,7 @@
 
 {{ define "content" }}
 {{$classes := index .Data "classes"}}
+{{$models := index .Data "models"}}
 <div class="row">
     <div class="col-md-2">
         <div class="row">
@@ -68,8 +69,13 @@
                     name="filter_registration" autocomplete="off" placeholder="Aircraft Registraton">
             </div>
             <div class="mb-2">
-                <input class="form-control form-control-sm" type="text" id="filter_model"
-                    name="filter_model" autocomplete="off" placeholder="Aircraft Model">
+                <input class="form-select form-select-sm" type="text" id="filter_model"
+                    name="filter_model" autocomplete="off" placeholder="Aircraft Model/Type" list="aircraft_models_options">
+                <datalist id="aircraft_models_options">
+                {{ range $key, $element := $models}}
+                <option value="{{ $element }}">
+                {{ end}}
+                </datalist>
             </div>
             <div class="mb-2">
                 <input class="form-select form-select-sm" type="text" id="filter_class"

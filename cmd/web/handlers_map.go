@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/vsimakhin/web-logbook/internal/maprender"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -17,8 +16,16 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Printf("cannot get aircraft classes - %s", err)
 	}
 
+	models, err := app.db.GetAircraftModels()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	data := make(map[string]interface{})
 	data["classes"] = classes
+	data["models"] = models
 
 	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}, "common-js", "map-js"); err != nil {
 		app.errorLog.Println(err)
@@ -31,10 +38,10 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 	// get filter parameters
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
-	aircraftReg := strings.TrimSpace(r.URL.Query().Get("reg"))
-	aircraftModel := r.URL.Query().Get("model")
-	aircraftClass := r.URL.Query().Get("class")
-	routePlace := r.URL.Query().Get("place")
+	aircraftReg := decodeParameter(r, "reg")
+	aircraftModel := decodeParameter(r, "model")
+	aircraftClass := decodeParameter(r, "class")
+	routePlace := decodeParameter(r, "place")
 	filterNoRoutes, _ := strconv.ParseBool(r.URL.Query().Get("filter_noroutes"))
 
 	flightRecords, err := app.db.GetFlightRecords()

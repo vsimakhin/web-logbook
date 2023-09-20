@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -271,4 +272,14 @@ func (app *application) getServerUrls() []string {
 	}
 
 	return urls
+}
+
+func decodeParameter(r *http.Request, parameter string) string {
+	encoded := r.URL.Query().Get(parameter)
+	decoded, err := url.QueryUnescape(encoded)
+	if err != nil {
+		return encoded
+	}
+
+	return strings.TrimSpace(decoded)
 }
