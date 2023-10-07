@@ -71,6 +71,37 @@ wlbCommon = function () {
         window.open("{{$api.Export}}/" + format, "_blank");
     }
 
+    // func convertNumberToTime converts time in integer format to string
+    function convertNumberToTime(number) {
+        var hours = Math.floor(number);
+        var minutes = Math.round((number - hours) * 60);
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        return hours + ":" + minutes;
+    }
+
+    // func convertTime converts time in string format to nubmber
+    function convertTime(time) {
+        if (typeof time === 'number') {
+            return time
+        }
+
+        if (time === "") {
+            return 0;
+        }
+
+        if (!time.includes(":")) {
+            return parseInt(time.replace(" ","")); // already converted
+        }
+
+        var hoursMinutes = time.split(/[.:]/);
+        var hours = parseInt(hoursMinutes[0], 10);
+        var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+
+        return hours + Math.round(minutes / 60 * 100) / 100;
+    }
+
     function escapeHtml(unsafe)
     {
         return unsafe
@@ -87,7 +118,9 @@ wlbCommon = function () {
         getJSON:getJSON,
         formatLandings:formatLandings,
         runExport:runExport,
-        escapeHtml:escapeHtml
+        escapeHtml:escapeHtml,
+        convertNumberToTime:convertNumberToTime,
+        convertTime:convertTime
     }
 }();
 </script>

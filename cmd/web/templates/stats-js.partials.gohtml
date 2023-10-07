@@ -32,7 +32,7 @@ wlbStats = function () {
                                     // format distance value with spaces
                                     label += context.parsed.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " nm";
                                 } else {
-                                    label += convertNumberToTime(context.parsed.y);
+                                    label += wlbCommon.convertNumberToTime(context.parsed.y);
                                 }
                             }
                             return label;
@@ -45,33 +45,6 @@ wlbStats = function () {
 
     // fields
     var range_field = document.getElementById("range_field");
-
-    // func convertNumberToTime converts time in integer format to string
-    function convertNumberToTime(number) {
-        var hours = Math.floor(number);
-        var minutes = Math.round((number - hours) * 60);
-        if (minutes == 0) {
-            minutes = "00";
-        }
-        return hours + ":" + minutes;
-    }
-
-    // func convertTime converts time in string format to integer
-    function convertTime(time) {
-        if (time === "") {
-            return 0;
-        }
-
-        if (!time.includes(":")) {
-            return time.replace(" ",""); // already converted
-        }
-
-        var hoursMinutes = time.split(/[.:]/);
-        var hours = parseInt(hoursMinutes[0], 10);
-        var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
-
-        return hours + Math.round(minutes / 60 * 100) / 100;
-    }
 
     // func onStatsClick redraw the chart based on the column/stats selection
     function onStatsClick(table_name, cl) {
@@ -109,7 +82,7 @@ wlbStats = function () {
         var values = [];
 
         for (var i = 1; i <= rows; i++) {
-            values.push(convertTime(tb.rows[i].cells[cl].innerText));
+            values.push(wlbCommon.convertTime(tb.rows[i].cells[cl].innerText));
         }
 
         chart.data.datasets = [
@@ -141,7 +114,7 @@ wlbStats = function () {
 
     // func drawProgressBar generates html to show in the stats limit cell
     function drawProgressBar(data, max) {
-        var intData = convertTime(data);
+        var intData = wlbCommon.convertTime(data);
         var percentData = parseInt(intData/max*100);
 
         if (data === "") {

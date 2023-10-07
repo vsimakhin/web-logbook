@@ -43,6 +43,53 @@ wlbLogbook = function () {
                 var logbookAPI = "{{$api.Logbook}}";
                 $("td:eq(0)", row).html(`<a href="${logbookAPI}/${data[0]}" class="link-primary">${data[1]}</a>`);
             },
+            footerCallback: function (row, data, start, end, display) {
+                let api = this.api();
+                let offset = 7;
+
+                let getNumbers = function (i) {
+                    return typeof i === 'string'
+                        ? wlbCommon.convertTime(i)
+                        : typeof i === 'number'
+                        ? i
+                        : 0;
+                };
+         
+                let calculateTotals = function(id, time = true) {
+                    // Total over all pages
+                    total = api
+                        .column(id, {search: 'applied'})
+                        .data().reduce((a, b) => getNumbers(a) + getNumbers(b), 0);
+        
+                    // Total over this page
+                    pageTotal = api
+                        .column(id, {page: 'current'})
+                        .data().reduce((a, b) => getNumbers(a) + getNumbers(b), 0);
+            
+                    // Update footer
+                    if (time) {
+                        $('#logbook tfoot tr').eq(0).find('th').eq(id-offset).html(wlbCommon.convertNumberToTime(pageTotal));
+                        $('#logbook tfoot tr').eq(1).find('th').eq(id-offset).html(wlbCommon.convertNumberToTime(total));
+                    } else {
+                        $('#logbook tfoot tr').eq(0).find('th').eq(id-offset).html(pageTotal);
+                        $('#logbook tfoot tr').eq(1).find('th').eq(id-offset).html(total);
+                    }
+                }
+                
+                calculateTotals(8); // se time
+                calculateTotals(9); // me time
+                calculateTotals(10); // mcc
+                calculateTotals(11); // total time
+                calculateTotals(13, false); // day landings
+                calculateTotals(14, false); // night landings
+                calculateTotals(15); // night
+                calculateTotals(16); // ifr
+                calculateTotals(17); // pic
+                calculateTotals(18); // cop
+                calculateTotals(19); // dual
+                calculateTotals(20); // instr
+                calculateTotals(22); // sim
+            },
             initComplete: function () {
                 // daterange field
                 $('.dataTables_filter').each(function () {
