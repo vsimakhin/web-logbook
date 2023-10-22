@@ -61,7 +61,9 @@ There is an application [Web Logbook Mobile](https://github.com/vsimakhin/web-lo
 
 Currently, there are implemented several modules in the logbook app:
 * Logbook itself
+  * Flight records 
   * Attachments for the flight records
+  * Automatic night-time calculation
   * Map drawing and distance calculation for the flight record
 * Settings
   * Signature and owner name
@@ -69,7 +71,8 @@ Currently, there are implemented several modules in the logbook app:
   * Enable/Disable authentication (in case you need to expose the app to the public internet)
   * Aircraft groups/classes
   * List global airport database
-  * Add your own custom airfields or heliports
+  * Your own custom airfields or heliports
+  * Some interface settings
 * Export
   * Export to EASA PDF format (A4 and A5)
   * Additional export formats (XLSX, CSV)
@@ -79,6 +82,7 @@ Currently, there are implemented several modules in the logbook app:
   * Automatic WebLogbook profile load
 * Map
   * Filters for routes and airports
+  * Filters for the aircraft
 * Licensing & Certification
   * Document attachments and preview
   * Expiration time tracking
