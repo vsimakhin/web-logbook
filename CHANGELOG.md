@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Few changes for the future new mobile [client](https://github.com/vsimakhin/web-logbook-mobile-ionic). No UI changes.
+
 ## [2.27.0] - 07.10.2023
 
 - New: Added rows `Total this page` and `Total all pages` for the main logbook table. The values are updated if you filter the search.
