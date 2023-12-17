@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
@@ -11,6 +12,8 @@ import (
 // Auth checks for user authentication status
 func (app *application) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", strings.Join(r.Header["Origin"], ","))
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		if app.isAuthEnabled {
 			if !app.session.Exists(r.Context(), "token") {
@@ -32,6 +35,8 @@ func (app *application) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 // LoginPagePost handles the authentication
 func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", strings.Join(r.Header["Origin"], ","))
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 	err := app.session.RenewToken(r.Context())
 	if err != nil {

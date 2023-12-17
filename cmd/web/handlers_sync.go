@@ -14,7 +14,7 @@ func (app *application) HandlerSyncAirports(w http.ResponseWriter, r *http.Reque
 
 	tableData := []map[string]interface{}{}
 
-	airports, err := app.db.GetStandardAirports()
+	airports, err := app.db.GetAllAirports()
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
