@@ -37,8 +37,8 @@ func TestGetFlightRecords(t *testing.T) {
 func TestDeleteFlightRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "DeleteFlightRecord")
-	AddMock(mock, "InsertDeletedItem")
+	InitMock(mock, "DeleteFlightRecord")
+	InitMock(mock, "InsertDeletedItemLogbook")
 
 	err := db.DeleteFlightRecord("uuid")
 	if err != nil {
@@ -49,7 +49,7 @@ func TestDeleteFlightRecord(t *testing.T) {
 func TestInsertFlightRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "InsertFlightRecord")
+	InitMock(mock, "InsertFlightRecord")
 
 	var fr FlightRecord
 	fr.UUID = "uuid"
@@ -76,6 +76,7 @@ func TestInsertFlightRecord(t *testing.T) {
 	fr.SIM.Time = "2:00"
 	fr.PIC = "Self"
 	fr.Remarks = "Remarks"
+	fr.UpdateTime = 1000
 
 	err := db.InsertFlightRecord(fr)
 	if err != nil {
@@ -86,7 +87,7 @@ func TestInsertFlightRecord(t *testing.T) {
 func TestUpdateFlightRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "UpdateFlightRecord")
+	InitMock(mock, "UpdateFlightRecord")
 
 	var fr FlightRecord
 	fr.UUID = "uuid"
@@ -113,6 +114,7 @@ func TestUpdateFlightRecord(t *testing.T) {
 	fr.SIM.Time = "2:00"
 	fr.PIC = "Self"
 	fr.Remarks = "Remarks"
+	fr.UpdateTime = 1000
 
 	err := db.UpdateFlightRecord(fr)
 	if err != nil {
