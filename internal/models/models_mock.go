@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql/driver"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 )
@@ -316,7 +317,7 @@ func InitSQLMockValues() {
 
 	// DeleteLicenseRecord
 	SQLMock["DeleteLicenseRecord"] = Mock{
-		Query: "DELETE FROM licensing WHERE uuid",
+		Query: "DELETE FROM licensing WHERE uuid = ?",
 	}
 
 	// DeleteLicenseAttachment
@@ -328,6 +329,69 @@ func InitSQLMockValues() {
 	SQLMock["InsertDeletedItem"] = Mock{
 		Query: "INSERT INTO deleted_items \\(uuid, table_name, delete_time\\)",
 	}
+}
+
+func InitMock(mock sqlmock.Sqlmock, item string) {
+	switch item {
+	case "DeleteLicenseRecord":
+		mock.ExpectExec("DELETE FROM licensing WHERE uuid = ?").
+			WithArgs("uuid").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "UpdateLicenseRecord":
+		mock.ExpectExec("UPDATE licensing SET category = ?").
+			WithArgs("category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "uuid").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "DeleteLicenseAttachment":
+		mock.ExpectExec("UPDATE licensing SET document_name").
+			WithArgs("uuid").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "InsertLicenseRecord":
+		mock.ExpectExec("INSERT INTO licensing").
+			WithArgs("uuid", "category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "document_name", []byte("0")).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "UpdateFlightRecord":
+		mock.ExpectExec("UPDATE logbook SET date").
+			WithArgs("01/02/2022", "LKPR", "1000", "EDDM", "1200", "C152", "OK-XXX", "2:00", "2:00", "2:00", "2:00", 1, 2,
+				"2:00", "2:00", "2:00", "2:00", "2:00", "2:00", "SIM", "2:00", "Self", "Remarks", 1000, "uuid").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "InsertFlightRecord":
+		mock.ExpectExec("INSERT INTO logbook").
+			WithArgs("uuid", "01/02/2022", "LKPR", "1000", "EDDM", "1200", "C152", "OK-XXX", "2:00", "2:00", "2:00", "2:00", 1, 2,
+				"2:00", "2:00", "2:00", "2:00", "2:00", "2:00", "SIM", "2:00", "Self", "Remarks", 1000).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "DeleteFlightRecord":
+		mock.ExpectExec("DELETE FROM logbook WHERE uuid = ?").
+			WithArgs("uuid").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "InsertDeletedItemLogbook":
+		mock.ExpectExec("INSERT INTO deleted_items").
+			WithArgs("uuid", "logbook", time.Now().Unix()).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "DeleteAttachment":
+		mock.ExpectExec("DELETE FROM attachments WHERE uuid").
+			WithArgs("uuid").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "InsertDeletedItemAttachment":
+		mock.ExpectExec("INSERT INTO deleted_items").
+			WithArgs("uuid", "attachments", time.Now().Unix()).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "InsertAttachment":
+		mock.ExpectExec("INSERT INTO attachments").
+			WithArgs("uuid", "record_id", "document_name", []byte("doc")).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	}
+
 }
 
 func AddMock(mock sqlmock.Sqlmock, item string) {

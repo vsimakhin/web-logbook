@@ -39,13 +39,13 @@ func TestGetAttachmentByID(t *testing.T) {
 func TestInsertAttachment(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "InsertAttachment")
+	InitMock(mock, "InsertAttachment")
 
 	att := Attachment{
-		UUID:         "UUID",
-		RecordID:     "RECORDID",
-		DocumentName: "DOCUMENT_NAME",
-		Document:     []byte("DOC"),
+		UUID:         "uuid",
+		RecordID:     "record_id",
+		DocumentName: "document_name",
+		Document:     []byte("doc"),
 	}
 
 	err := db.InsertAttachmentRecord(att)
@@ -57,10 +57,10 @@ func TestInsertAttachment(t *testing.T) {
 func TestDeleteAttachment(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "DeleteAttachment")
-	AddMock(mock, "InsertDeletedItem")
+	InitMock(mock, "DeleteAttachment")
+	InitMock(mock, "InsertDeletedItemAttachment")
 
-	err := db.DeleteAttachment("UUID")
+	err := db.DeleteAttachment("uuid")
 	if err != nil {
 		t.Fatal(err)
 	}

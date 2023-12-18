@@ -108,7 +108,7 @@ func (m *DBModel) UpdateLicenseRecord(lic License) error {
 	} else {
 		query := "UPDATE licensing SET " +
 			"category = ?, name = ?, number = ?, " +
-			"issued = ?, valid_from = ?, valid_until = ?,  remarks = ?" +
+			"issued = ?, valid_from = ?, valid_until = ?, remarks = ? " +
 			"WHERE uuid = ?"
 		_, err = m.DB.ExecContext(ctx, query,
 			lic.Category, lic.Name, lic.Number,

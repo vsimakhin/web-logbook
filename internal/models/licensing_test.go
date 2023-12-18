@@ -52,11 +52,17 @@ func TestGetLicensesCategory(t *testing.T) {
 func TestUpdateLicenseRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "UpdateLicenseRecord")
+	InitMock(mock, "UpdateLicenseRecord")
 
 	var lic License
 	lic.UUID = "uuid"
+	lic.Name = "name"
 	lic.Category = "category"
+	lic.Number = "number"
+	lic.Issued = "issued"
+	lic.ValidFrom = "valid_from"
+	lic.ValidUntil = "valid_until"
+	lic.Remarks = "remarks"
 
 	err := db.UpdateLicenseRecord(lic)
 	if err != nil {
@@ -67,11 +73,19 @@ func TestUpdateLicenseRecord(t *testing.T) {
 func TestInsertLicenseRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "InsertLicenseRecord")
+	InitMock(mock, "InsertLicenseRecord")
 
 	var lic License
 	lic.UUID = "uuid"
+	lic.Name = "name"
 	lic.Category = "category"
+	lic.Number = "number"
+	lic.Issued = "issued"
+	lic.ValidFrom = "valid_from"
+	lic.ValidUntil = "valid_until"
+	lic.Remarks = "remarks"
+	lic.DocumentName = "document_name"
+	lic.Document = []byte("0")
 
 	err := db.InsertLicenseRecord(lic)
 	if err != nil {
@@ -82,7 +96,7 @@ func TestInsertLicenseRecord(t *testing.T) {
 func TestDeleteLicenseRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "DeleteLicenseRecord")
+	InitMock(mock, "DeleteLicenseRecord")
 
 	err := db.DeleteLicenseRecord("uuid")
 	if err != nil {
@@ -93,7 +107,7 @@ func TestDeleteLicenseRecord(t *testing.T) {
 func TestDeleteLicenseAttachment(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "DeleteLicenseAttachment")
+	InitMock(mock, "DeleteLicenseAttachment")
 
 	err := db.DeleteLicenseAttachment("uuid")
 	if err != nil {
