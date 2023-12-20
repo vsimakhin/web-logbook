@@ -48,7 +48,7 @@ type application struct {
 func (app *application) serve() error {
 
 	srv := &http.Server{
-		Addr:     fmt.Sprintf(":%d", app.config.port),
+		Addr:     fmt.Sprintf("%s:%d", app.config.url, app.config.port),
 		Handler:  http.Handler(app.routes()),
 		ErrorLog: app.errorLog,
 		TLSConfig: &tls.Config{
@@ -56,7 +56,11 @@ func (app *application) serve() error {
 		},
 	}
 
-	msg := fmt.Sprintf("Web Logbook v%s is ready on %s://%s:%d\n", version, "%s", app.config.url, app.config.port)
+	url := app.config.url
+	if url == "" {
+		url = "localhost"
+	}
+	msg := fmt.Sprintf("Web Logbook v%s is ready on %s://%s:%d\n", version, "%s", url, app.config.port)
 	if app.config.tls.enabled {
 		app.infoLog.Printf(msg, "https")
 		return srv.ListenAndServeTLS(app.config.tls.crt, app.config.tls.key)
@@ -74,7 +78,7 @@ func main() {
 	var isPrintVersion bool
 	var disableAuth bool
 
-	flag.StringVar(&cfg.url, "url", "localhost", "Server URL")
+	flag.StringVar(&cfg.url, "url", "", "Server URL (default empty - the app will listen on all network interfaces)")
 	flag.IntVar(&cfg.port, "port", 4000, "Server port")
 	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "SQLite file name")
