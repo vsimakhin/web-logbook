@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix: The `-url` parameter was ignored. Now the default value is empty, which means the app will listen on all available network interfaces.
+You can set `-url localhost` and app will listen on `localhost` or `127.0.0.1` only.
 - New: Few changes for the future new mobile [client](https://github.com/vsimakhin/web-logbook-mobile-ionic). No UI changes.
 
 ## [2.27.0] - 07.10.2023
