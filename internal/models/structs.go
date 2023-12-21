@@ -220,7 +220,8 @@ type License struct {
 	ValidUntil   string `json:"valid_until"`
 	Remarks      string `json:"remarks"`
 	DocumentName string `json:"document_name"`
-	Document     []byte
+	Document     []byte `json:"document"`
+	UpdateTime   int64  `json:"update_time"`
 }
 
 // Attachment is a type for attachments

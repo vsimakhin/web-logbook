@@ -70,8 +70,7 @@ func checkSyncReady(db *sql.DB) error {
 	var rowsCount int
 
 	// check main logbook table
-	query := "SELECT COUNT(cid) FROM pragma_table_info('logbook') " +
-		"WHERE name='update_time'"
+	query := "SELECT COUNT(cid) FROM pragma_table_info('logbook') WHERE name='update_time'"
 	row := db.QueryRowContext(ctx, query)
 	err := row.Scan(&rowsCount)
 	if err != nil {
@@ -94,6 +93,29 @@ func checkSyncReady(db *sql.DB) error {
 
 		// drop old view
 		query = "DROP VIEW IF EXISTS logbook_view"
+		_, err = db.ExecContext(ctx, query)
+		if err != nil {
+			return err
+		}
+	}
+
+	// check licensing table, v2.28.0+
+	query = "SELECT COUNT(cid) FROM pragma_table_info('licensing') WHERE name='update_time'"
+	row = db.QueryRowContext(ctx, query)
+	err = row.Scan(&rowsCount)
+	if err != nil {
+		return err
+	}
+
+	if rowsCount == 0 {
+		// no column, let's add it
+		query = "ALTER TABLE licensing ADD update_time INTEGER"
+		_, err = db.ExecContext(ctx, query)
+		if err != nil {
+			return err
+		}
+
+		query = fmt.Sprintf("UPDATE licensing SET update_time = %d", time.Now().Unix())
 		_, err = db.ExecContext(ctx, query)
 		if err != nil {
 			return err
