@@ -14,7 +14,7 @@ func (m *DBModel) GetLicenses() ([]License, error) {
 	var licenses []License
 
 	query := "SELECT uuid, category, name, number, issued, " +
-		"valid_from, valid_until, document_name, update_time " +
+		"valid_from, valid_until, document_name, document, update_time " +
 		"FROM licensing ORDER BY category, name"
 	rows, err := m.DB.QueryContext(ctx, query)
 
@@ -25,7 +25,7 @@ func (m *DBModel) GetLicenses() ([]License, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
-			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.UpdateTime)
+			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.Document, &lic.UpdateTime)
 
 		if err != nil {
 			return licenses, err

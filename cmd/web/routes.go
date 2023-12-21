@@ -73,6 +73,7 @@ const APILogout = "/logout"
 const APISyncAirports = "/sync/airports"
 const APISyncDeleted = "/sync/deleted"
 const APISyncFlightRecords = "/sync/flightrecords"
+const APISyncLicensing = "/sync/licensing"
 const APISyncAttachmentsAll = "/sync/attachments/all"
 const APISyncAttachments = "/sync/attachments/{uuid}"
 const APISyncAttachmentsUpload = "/sync/attachments/upload"
@@ -170,6 +171,8 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APISyncAttachmentsAll, app.HandlerSyncAttachmentsAll)
 		server.Get(APISyncAttachments, app.HandlerSyncAttachments)
 		server.Post(APISyncAttachmentsUpload, app.HandlerSyncAttachmentsUpload)
+
+		server.Get(APISyncLicensing, app.HandlerSyncLicensingGet)
 
 	})
 

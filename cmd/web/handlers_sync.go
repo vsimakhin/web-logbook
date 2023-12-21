@@ -257,3 +257,70 @@ func (app *application) HandlerSyncAttachmentsUpload(w http.ResponseWriter, r *h
 		return
 	}
 }
+
+func (app *application) HandlerSyncLicensingGet(w http.ResponseWriter, r *http.Request) {
+
+	tableData := []map[string]interface{}{}
+
+	licenses, err := app.db.GetLicenses()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, item := range licenses {
+		tableRow := map[string]interface{}{
+			"uuid":          item.UUID,
+			"category":      item.Category,
+			"name":          item.Name,
+			"number":        item.Number,
+			"issued":        item.Issued,
+			"valid_from":    item.ValidFrom,
+			"valid_until":   item.ValidUntil,
+			"document_name": item.DocumentName,
+			"document":      item.Document,
+			"remarks":       item.Remarks,
+			"update_time":   item.UpdateTime,
+		}
+
+		tableData = append(tableData, tableRow)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, tableData)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
+
+func (app *application) HandlerSyncLicensingPost(w http.ResponseWriter, r *http.Request) {
+
+	type Payload struct {
+		Licenses []models.License `json:"licenses"`
+	}
+
+	var payload Payload
+	var response models.JSONResponse
+
+	err := json.NewDecoder(r.Body).Decode(&payload)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = app.db.SyncUploadedLicenses(payload.Licenses)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.OK = true
+	err = app.writeJSON(w, http.StatusOK, response)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+}
