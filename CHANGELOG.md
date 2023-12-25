@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.28.0] - 25.12.2023
 
 - New: Add licensing synchronization with mobile app. No UI changes.
 - Fix: The `-url` parameter was ignored. Now the default value is empty, which means the app will listen on all available network interfaces.
