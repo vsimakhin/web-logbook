@@ -84,6 +84,11 @@ func (m *DBModel) SyncDeletedItems(dis []DeletedItem) error {
 			if err != nil {
 				return err
 			}
+		} else if di.TableName == "licensing" {
+			err := m.DeleteLicenseRecord(di.UUID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -113,4 +118,38 @@ func (m *DBModel) SyncCleanUp() error {
 
 	return nil
 
+}
+
+func (m *DBModel) SyncUploadedLicenses(lics []License) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	for _, lic := range lics {
+		query := "SELECT uuid, update_time FROM licensing WHERE uuid = ?"
+		row := m.DB.QueryRowContext(ctx, query, lic.UUID)
+
+		var currentLic License
+
+		err := row.Scan(&currentLic.UUID, &currentLic.UpdateTime)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				err = m.InsertLicenseRecord(lic)
+				if err != nil {
+					return err
+				}
+
+			} else {
+				return err
+			}
+		} else {
+			if currentLic.UpdateTime < lic.UpdateTime {
+				err = m.UpdateLicenseRecord(lic)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
 }
