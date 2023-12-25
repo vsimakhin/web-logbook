@@ -5,14 +5,14 @@ go 1.20
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/alexedwards/scs/v2 v2.7.0
-	github.com/go-chi/chi/v5 v5.0.10
+	github.com/go-chi/chi/v5 v5.0.11
 	github.com/go-pdf/fpdf v0.9.0
 	github.com/google/uuid v1.5.0
 	github.com/nathan-osman/go-sunrise v1.1.0
 	github.com/stretchr/testify v1.8.4
 	github.com/xuri/excelize/v2 v2.8.0
-	golang.org/x/crypto v0.16.0
-	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611
+	golang.org/x/crypto v0.17.0
+	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
 	modernc.org/sqlite v1.28.0
 )
 
@@ -39,7 +39,7 @@ require (
 	lukechampine.com/uint128 v1.3.0 // indirect
 	modernc.org/cc/v3 v3.41.0 // indirect
 	modernc.org/ccgo/v3 v3.16.15 // indirect
-	modernc.org/libc v1.37.6 // indirect
+	modernc.org/libc v1.38.0 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.7.2 // indirect
 	modernc.org/opt v0.1.3 // indirect
