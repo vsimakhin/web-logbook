@@ -84,6 +84,11 @@ func (m *DBModel) SyncDeletedItems(dis []DeletedItem) error {
 			if err != nil {
 				return err
 			}
+		} else if di.TableName == "licensing" {
+			err := m.DeleteLicenseRecord(di.UUID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -136,13 +141,13 @@ func (m *DBModel) SyncUploadedLicenses(lics []License) error {
 			} else {
 				return err
 			}
-		}
-		if currentLic.UpdateTime < lic.UpdateTime {
-			err = m.UpdateLicenseRecord(lic)
-			if err != nil {
-				return err
+		} else {
+			if currentLic.UpdateTime < lic.UpdateTime {
+				err = m.UpdateLicenseRecord(lic)
+				if err != nil {
+					return err
+				}
 			}
-
 		}
 	}
 

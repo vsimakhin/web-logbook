@@ -270,11 +270,11 @@ func InitSQLMockValues() {
 		Query: "SELECT (.+) FROM licensing ORDER BY category, name",
 		Rows: []string{
 			"uuid", "category", "name", "number", "issued",
-			"valid_from", "valid_until", "document_name",
+			"valid_from", "valid_until", "document_name", "document", "update_time",
 		},
 		Values: []driver.Value{
 			"uuid", "category", "name", "number", "issued",
-			"01/01/2022", "01/01/2022", "document_name",
+			"01/01/2022", "01/01/2022", "document_name", "document", 1000,
 		},
 	}
 
@@ -283,11 +283,11 @@ func InitSQLMockValues() {
 		Query: "SELECT (.+) FROM licensing WHERE uuid",
 		Rows: []string{
 			"uuid", "category", "name", "number", "issued",
-			"valid_from", "valid_until", "remarks", "document_name", "document",
+			"valid_from", "valid_until", "remarks", "document_name", "document", "update_time",
 		},
 		Values: []driver.Value{
 			"uuid", "category", "name", "number", "issued",
-			"01/01/2022", "01/01/2023", "remarks", "document_name", "document",
+			"01/01/2022", "01/01/2023", "remarks", "document_name", "document", 10000,
 		},
 		Args: []driver.Value{
 			"uuid",
@@ -340,17 +340,17 @@ func InitMock(mock sqlmock.Sqlmock, item string) {
 
 	case "UpdateLicenseRecord":
 		mock.ExpectExec("UPDATE licensing SET category = ?").
-			WithArgs("category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "uuid").
+			WithArgs("category", "name", "number", "issued", "valid_from", "valid_until", "remarks", 1000, "uuid").
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "DeleteLicenseAttachment":
 		mock.ExpectExec("UPDATE licensing SET document_name").
-			WithArgs("uuid").
+			WithArgs(time.Now().Unix(), "uuid").
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "InsertLicenseRecord":
 		mock.ExpectExec("INSERT INTO licensing").
-			WithArgs("uuid", "category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "document_name", []byte("0")).
+			WithArgs("uuid", "category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "document_name", []byte("0"), 1000).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "UpdateFlightRecord":
@@ -373,6 +373,11 @@ func InitMock(mock sqlmock.Sqlmock, item string) {
 	case "InsertDeletedItemLogbook":
 		mock.ExpectExec("INSERT INTO deleted_items").
 			WithArgs("uuid", "logbook", time.Now().Unix()).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+	case "InsertDeletedItemLicense":
+		mock.ExpectExec("INSERT INTO deleted_items").
+			WithArgs("uuid", "licensing", time.Now().Unix()).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "DeleteAttachment":

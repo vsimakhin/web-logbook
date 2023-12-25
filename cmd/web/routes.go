@@ -173,7 +173,7 @@ func (app *application) routes() *chi.Mux {
 		server.Post(APISyncAttachmentsUpload, app.HandlerSyncAttachmentsUpload)
 
 		server.Get(APISyncLicensing, app.HandlerSyncLicensingGet)
-
+		server.Post(APISyncLicensing, app.HandlerSyncLicensingPost)
 	})
 
 	// login & logout
