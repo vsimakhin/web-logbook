@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.28.1] - 06.01.2024
+
+- Fix: Cross Country hours in the Stats tables when there are no flights for the time period
+
 ## [2.28.0] - 25.12.2023
 
 - New: Add licensing synchronization with mobile app. No UI changes.

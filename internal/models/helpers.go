@@ -66,5 +66,7 @@ func initZeroFlightRecord() FlightRecord {
 
 	fr.SIM.Time = "0:00"
 
+	fr.Time.CrossCountry = "0:00"
+
 	return fr
 }
