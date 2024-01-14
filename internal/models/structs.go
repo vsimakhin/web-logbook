@@ -207,6 +207,9 @@ type Settings struct {
 	DateRangePickerWeek string     `json:"datepicker_week"`
 
 	SyncOptions SyncOptions `json:"sync_options"`
+
+	AirportDBSource string `json:"airports_db_source"`
+	NoICAOFilter    bool   `json:"no_icao_filter"`
 }
 
 // License is a type for licesing
