@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.29.1] - 15.01.2024
 
 - Fix: time error for totals on the main `Logbook page` due to `round` function. Calculation didn't affect Stats or Logbook exports
 
