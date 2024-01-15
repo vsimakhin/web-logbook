@@ -78,6 +78,10 @@ wlbCommon = function () {
         if (minutes < 10) {
             minutes = "0" + minutes;
         }
+        if (minutes === 60) {
+            hours = hours + 1;
+            minutes = "00";
+        }
         return hours + ":" + minutes;
     }
 
@@ -99,7 +103,7 @@ wlbCommon = function () {
         var hours = parseInt(hoursMinutes[0], 10);
         var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
 
-        return hours + Math.round(minutes / 60 * 100) / 100;
+        return hours + minutes / 60 ;
     }
 
     function escapeHtml(unsafe)
