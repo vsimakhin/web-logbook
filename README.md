@@ -135,6 +135,17 @@ So in real life the logbook could look like
 
 ![Licensing record](https://github.com/vsimakhin/web-logbook-assets/raw/main/licensing-record.png)
 
+# Airports Databases
+
+The app supports 3 sources:
+* https://github.com/mwgg/Airports/raw/master/airports.json - main JSON database of 28k+ airports.
+* (default) https://github.com/vsimakhin/Airports/raw/master/airports.json - my local fork of the main JSON database,  to ensure that the app remains functional even if there are any breaking changes in the upstream.
+* https://davidmegginson.github.io/ourairports-data/airports.csv - an alternate set of airports from https://ourairports.com/, which contains over 78k records, including small airfields and heliports. 
+
+If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
+
+Please make sure to click the `Save` button before updating the database to ensure that all changes are saved.
+
 # HTTPS enable
 
 Since the app is running on `localhost` it's not possible to create a public certificate that would be valid by public CAs. As an option, you can create a self-signed certificate and add it to the root CA in your operating system. For that, you can use [`mkcert` tool](https://github.com/FiloSottile/mkcert).

@@ -73,7 +73,7 @@ func (m *DBModel) GetAirports() (map[string]Airport, error) {
 }
 
 // UpdateAirportDB updates airports table
-func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
+func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int, error) {
 	var err error
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -104,17 +104,21 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 
 	isAlpha := regexp.MustCompile(`^[A-Z]+$`).MatchString
 	for _, airport := range airports {
-		if isAlpha(airport.ICAO) { // check for valid ICAO codes only
-			query := "INSERT INTO airports (icao, iata, name, city, country, elevation, lat, lon) " +
-				"VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-			_, err := tx.ExecContext(ctx, query,
-				airport.ICAO, airport.IATA, airport.Name, airport.City,
-				airport.Country, airport.Elevation, airport.Lat, airport.Lon,
-			)
-
-			if err != nil {
-				return records, err
+		if !no_icao_filter {
+			if !isAlpha(airport.ICAO) { // check for valid ICAO codes only
+				continue
 			}
+		}
+		query := "INSERT INTO airports (icao, iata, name, city, country, elevation, lat, lon) " +
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+		_, err := tx.ExecContext(ctx, query,
+			airport.ICAO, airport.IATA, airport.Name, airport.City,
+			airport.Country, airport.Elevation, airport.Lat, airport.Lon,
+		)
+
+		if err != nil {
+			err = tx.Rollback()
+			return records, err
 		}
 	}
 
@@ -129,6 +133,7 @@ func (m *DBModel) UpdateAirportDB(airports []Airport) (int, error) {
 	if err != nil {
 		return records, err
 	}
+
 	_, err = m.DB.ExecContext(ctx, "CREATE INDEX IF NOT EXISTS airports_iata ON airports(iata);")
 	if err != nil {
 		return records, err

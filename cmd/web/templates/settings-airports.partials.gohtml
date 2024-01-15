@@ -5,6 +5,27 @@
 <div class="row">
     <div class="col-md-8">
         <div class="row mb-2">
+            <label for="airports_db_source" class="form-label col-md-2 col-form-label">Airport DB source</label>
+            <div class="col-md-6">
+                <select class="form-select form-select-sm col-md-6 col-form-label" id="airports_db_source" name="airports_db_source">
+                    <option value="https://github.com/vsimakhin/Airports/raw/master/airports.json" {{if eq $settings.AirportDBSource "https://github.com/vsimakhin/Airports/raw/master/airports.json"}}selected{{end}}>https://github.com/vsimakhin/Airports/raw/master/airports.json</option>
+                    <option value="https://github.com/mwgg/Airports/raw/master/airports.json" {{if eq $settings.AirportDBSource "https://github.com/mwgg/Airports/raw/master/airports.json"}}selected{{end}}>https://github.com/mwgg/Airports/raw/master/airports.json</option>
+                    <option value="https://davidmegginson.github.io/ourairports-data/airports.csv" {{if eq $settings.AirportDBSource "https://davidmegginson.github.io/ourairports-data/airports.csv"}}selected{{end}}>https://davidmegginson.github.io/ourairports-data/airports.csv</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <label for="no_icao_filter" class="form-label col-md-2 col-form-label">No ICAO codes filter</label>
+            <div class="col-md-6">
+                <input class="form-check-input" type="checkbox" id="no_icao_filter" {{if $settings.NoICAOFilter}}checked{{end}}>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="alert alert-info col-md-8">
+                Please check <a href="https://github.com/vsimakhin/web-logbook/#airports-databases">readme</a> for more information about airport databases.
+            </div>
+        </div>
+        <div class="row mb-2">
             <label for="airports" class="form-label col-md-2 col-form-label">Airport database</label>
             <div class="col-md-2">
                 <input type="text" class="form-control form-control-sm col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports"
@@ -23,7 +44,7 @@
 <hr>
 
 <div class="alert alert-warning row">
-You can add custom airports that are not in the standard database and don't have ICAO or IATA codes.
+You can add custom airports that are not in the standard database and do not have ICAO or IATA codes.
 </div>
 
 <div class="row">

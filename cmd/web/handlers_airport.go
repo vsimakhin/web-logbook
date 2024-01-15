@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -33,78 +36,119 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// HandlerAirportUpdate updates the Airports DB
-func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Request) {
-
-	var airportsDB map[string]interface{}
+func (app *application) downloadAirportDB(source string) ([]models.Airport, error) {
 	var airports []models.Airport
-	var response models.JSONResponse
+	var airportsDB map[string]interface{}
 
-	// download the json db from the repo
-	resp, err := http.Get("https://github.com/vsimakhin/Airports/raw/master/airports.json")
+	if source == "" {
+		source = "https://github.com/vsimakhin/Airports/raw/master/airports.json" // default one
+	}
+
+	resp, err := http.Get(source)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return airports, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return airports, err
 	}
 
-	// parse the json
-	err = json.Unmarshal(body, &airportsDB)
+	if strings.Contains(source, "airports.json") {
+		// let's assume it's a standard airport database
+		// however, it's not a good idea to rely on the file name, so might be changed in the future
+
+		// parse the json
+		err = json.Unmarshal(body, &airportsDB)
+		if err != nil {
+			return airports, err
+		}
+
+		for _, item := range airportsDB {
+			airportItem := item.(map[string]interface{})
+
+			var airport models.Airport
+
+			if value, ok := airportItem["icao"].(string); ok {
+				airport.ICAO = value
+			}
+
+			if value, ok := airportItem["iata"].(string); ok {
+				airport.IATA = value
+			}
+
+			if value, ok := airportItem["name"].(string); ok {
+				airport.Name = value
+			}
+
+			if value, ok := airportItem["city"].(string); ok {
+				airport.City = value
+			}
+
+			if value, ok := airportItem["country"].(string); ok {
+				airport.Country = value
+			}
+
+			if value, ok := airportItem["elevation"].(float64); ok {
+				airport.Elevation = int(value)
+			}
+
+			if value, ok := airportItem["lat"].(float64); ok {
+				airport.Lat = value
+			}
+
+			if value, ok := airportItem["lon"].(float64); ok {
+				airport.Lon = value
+			}
+
+			airports = append(airports, airport)
+		}
+	} else {
+		// it's a new csv Ourairports source
+		r := csv.NewReader(strings.NewReader(string(body)))
+		for {
+			record, err := r.Read()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				app.errorLog.Println(err)
+			}
+
+			var airport models.Airport
+
+			airport.ICAO = record[1]
+			airport.IATA = record[13]
+			airport.Name = record[3]
+			airport.City = record[10]
+			airport.Country = record[8]
+			airport.Elevation, _ = strconv.Atoi(record[6])
+			airport.Lat, _ = strconv.ParseFloat(record[4], 64)
+			airport.Lon, _ = strconv.ParseFloat(record[5], 64)
+
+			airports = append(airports, airport)
+		}
+	}
+
+	return airports, nil
+}
+
+// HandlerAirportUpdate updates the Airports DB
+func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Request) {
+
+	var response models.JSONResponse
+
+	settings, err := app.db.GetSettings()
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	for _, item := range airportsDB {
-		airportItem := item.(map[string]interface{})
+	airports, err := app.downloadAirportDB(settings.AirportDBSource)
 
-		var airport models.Airport
-
-		if value, ok := airportItem["icao"].(string); ok {
-			airport.ICAO = value
-		}
-
-		if value, ok := airportItem["iata"].(string); ok {
-			airport.IATA = value
-		}
-
-		if value, ok := airportItem["name"].(string); ok {
-			airport.Name = value
-		}
-
-		if value, ok := airportItem["city"].(string); ok {
-			airport.City = value
-		}
-
-		if value, ok := airportItem["country"].(string); ok {
-			airport.Country = value
-		}
-
-		if value, ok := airportItem["elevation"].(float64); ok {
-			airport.Elevation = int(value)
-		}
-
-		if value, ok := airportItem["lat"].(float64); ok {
-			airport.Lat = value
-		}
-
-		if value, ok := airportItem["lon"].(float64); ok {
-			airport.Lon = value
-		}
-
-		airports = append(airports, airport)
-	}
-
-	records, err := app.db.UpdateAirportDB(airports)
+	records, err := app.db.UpdateAirportDB(airports, settings.NoICAOFilter)
 	if err != nil {
 		app.errorLog.Println(err)
 		response.OK = false
@@ -112,7 +156,6 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 	} else {
 		response.OK = true
 		response.Message = fmt.Sprintf("%d", records)
-
 	}
 
 	err = app.writeJSON(w, http.StatusOK, response)
