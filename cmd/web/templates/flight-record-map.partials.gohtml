@@ -4,6 +4,27 @@
 
 // WebLogbook wlbFlightMap Namespace
 wlbFlightMap = function () {
+    // popup overlay
+    const container = document.getElementById('popup');
+    const content = document.getElementById('popup-content');
+    const closer = document.getElementById('popup-closer');
+
+    const overlay = new ol.Overlay({
+        element: container,
+        autoPan: {
+            animation: {
+            duration: 250,
+            },
+        },
+    });
+
+    function closerOnClick() {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+    }
+
+    closer.onclick = closerOnClick;
 
     function midpoint(lat1, lon1, lat2, lon2) {
 
@@ -61,6 +82,7 @@ wlbFlightMap = function () {
                     source: new ol.source.OSM()
                 })
             ],
+            overlays: [overlay],
             view: new ol.View({
                 center: ol.proj.fromLonLat([center.split("|")[1], center.split("|")[0]]),
                 zoom: 5
@@ -97,17 +119,38 @@ wlbFlightMap = function () {
         points.push([dep["lon"],dep["lat"]])
         points.push([arr["lon"],arr["lat"]])
 
+        var markers = [dep, arr];
+
         var vectorMarker = new ol.source.Vector({});
-        var iconStyle = new ol.style.Style({
-            image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
-                src: "/static/favicon.ico"
-            }))
-        })
 
         for (var x = 0; x < points.length; x++) {
+            var iconStyle = [
+                    new ol.style.Style({
+                        image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+                            src: "/static/favicon.ico"
+                        }))
+                    }),
+                    new ol.style.Style({
+                        text: new ol.style.Text({
+                            text: markers[x]["name"],
+                            offsetY: -12,
+                            scale: 1.3,
+                            fill: new ol.style.Fill({
+                                color: '#333',
+                            })
+                        })
+                    })
+                ]
+
             var featureMarker = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.fromLonLat(points[x])),
-                desc: "/static/favicon.ico"
+                desc: "/static/favicon.ico",
+                name: `${markers[x]["icao"]}/${markers[x]["iata"]}`,
+                civil_name: markers[x]["name"],
+                country: markers[x]["country"],
+                city: markers[x]["city"],
+                elevation: markers[x]["elevation"],
+                coordinates: `${markers[x]["lat"]}, ${markers[x]["lon"]}`,
             });
 
             featureMarker.setStyle(iconStyle);
@@ -127,6 +170,53 @@ wlbFlightMap = function () {
         map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
 
         document.getElementById("some_stats").innerText = "Distance: " + Math.floor(dist) + " km / " + Math.floor(dist/1.852) + " nm";
+
+        map.on('click', function (evt) {
+            const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+                return feature;
+            });
+
+            // cliked somewhere on the map
+            if (!feature) {
+                closerOnClick();
+                return;
+            }
+
+            // clicked but not on the marker
+            if (feature.get("name") === undefined) {
+                closerOnClick();
+                return;
+            }
+
+            // show airport/marker info
+            const coordinates = feature.getGeometry().getCoordinates();
+            content.innerHTML =
+                '<strong>Airport:</strong> ' + feature.get('name') + '<br>' +
+                '<strong>Name:</strong> ' + feature.get('civil_name') + '<br>' +
+                '<strong>Country:</strong> ' + feature.get('country') + '<br>' +
+                '<strong>Elevation:</strong> ' + feature.get('elevation') + '<br>' +
+                '<strong>Lat/Lon:</strong> ' + feature.get('coordinates') + '<br>';
+            overlay.setPosition(coordinates);
+        });
+
+        map.on('pointermove', function (e) {
+            const pixel = map.getEventPixel(e.originalEvent);
+
+            var is_marker = false;
+            features = map.getFeaturesAtPixel(pixel);
+            for (var x = 0; x < features.length; x++) {
+                if (features[x].get("name") !== undefined) {
+                    is_marker = true;
+                }
+            }
+
+            if(is_marker) {
+                const hit = map.hasFeatureAtPixel(pixel);
+                document.getElementById('map').style.cursor = hit ? 'pointer' : '';
+            } else {
+                document.getElementById('map').style.cursor = '';
+            }
+        });
     }
 
     return {
