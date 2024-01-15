@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.29.0] - 15.01.2024
 
 - New: Additional sources for the airport databases. The new option added is from [https://ourairports.com](https://ourairports.com)
 
