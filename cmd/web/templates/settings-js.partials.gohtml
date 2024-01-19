@@ -460,6 +460,15 @@ wlbSettings = function () {
                     { targets: [2], width: "30%" },
                     { targets: [3], width: "10%" },
                     { targets: [4], width: "19%" },
+                    { targets: [0], render: function ( data, type, row ) {
+                        if (data.length > 25) {
+                            var txt = data.substr( 0, 25 ) + '…'
+                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${wlbCommon.escapeHtml(data)}">${wlbCommon.escapeHtml(txt)}</span>`;
+                        } else {
+                            return data;
+                        }
+                    }
+                }
                 ],
                 rowCallback: function(row, data, index){
                     $("td:eq(8)", row).html(`<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy data to Custom Airports"><i class="bi bi-copy" onclick="wlbSettings.copyAirportData('${data[0]}','${data[3]}','${data[4]}','${data[5]}','${data[6]}','${data[7]}');"></i></span>`);
