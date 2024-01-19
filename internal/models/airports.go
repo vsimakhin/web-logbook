@@ -83,13 +83,7 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int,
 
 	// drop index since we completely recreate all records in the table
 	_, err = m.DB.ExecContext(ctx, "DROP INDEX airports_icao;")
-	if err != nil {
-		return records, err
-	}
 	_, err = m.DB.ExecContext(ctx, "DROP INDEX airports_iata;")
-	if err != nil {
-		return records, err
-	}
 
 	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports;")
 	if err != nil {
