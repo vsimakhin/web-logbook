@@ -99,7 +99,7 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int,
 	isAlpha := regexp.MustCompile(`^[A-Z]+$`).MatchString
 	for _, airport := range airports {
 		if !no_icao_filter {
-			if !isAlpha(airport.ICAO) { // check for valid ICAO codes only
+			if !isAlpha(airport.ICAO) || len(airport.ICAO) != 4 { // check for valid ICAO codes only
 				continue
 			}
 		}

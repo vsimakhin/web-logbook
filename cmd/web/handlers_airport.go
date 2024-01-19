@@ -120,6 +120,7 @@ func (app *application) downloadAirportDB(source string) ([]models.Airport, erro
 
 			airport.ICAO = record[12]
 			airport.IATA = record[13]
+
 			// if airfield doesn't have ICAO and IATA codes,
 			// let's make some name from the airfield name and record ID
 			if airport.ICAO == "" && airport.IATA == "" {
