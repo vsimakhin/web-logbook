@@ -460,7 +460,10 @@ wlbSettings = function () {
                     { targets: [2], width: "30%" },
                     { targets: [3], width: "10%" },
                     { targets: [4], width: "19%" },
-                ]
+                ],
+                rowCallback: function(row, data, index){
+                    $("td:eq(8)", row).html(`<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy data to Custom Airports"><i class="bi bi-copy" onclick="wlbSettings.copyAirportData('${data[0]}','${data[3]}','${data[4]}','${data[5]}','${data[6]}','${data[7]}');"></i></span>`);
+                },
             } );
         }
 
@@ -470,6 +473,17 @@ wlbSettings = function () {
         }
 
         airportDBModal.show();
+    }
+
+    function copyAirportData(name, city, country, elevation, lat, lon) {
+        document.getElementById("airport_name").value = name;
+        document.getElementById("airport_city").value = city;
+        document.getElementById("airport_country").value = country;
+        document.getElementById("airport_elevation").value = elevation;
+        document.getElementById("airport_lat").value = lat;
+        document.getElementById("airport_lon").value = lon;
+
+
     }
 
     // export functions
@@ -487,7 +501,8 @@ wlbSettings = function () {
         addCustomAirport:addCustomAirport,
         initCustomAirportsTable:initCustomAirportsTable,
         removeCustomAirport:removeCustomAirport,
-        showAirportsDB:showAirportsDB
+        showAirportsDB:showAirportsDB,
+        copyAirportData:copyAirportData,
     }
 }();
 
