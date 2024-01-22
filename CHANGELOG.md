@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.30.0] - 22.01.2024
 
 - Fix: Map now show a great circle arcs instead of "direct" lines.
 - Fix: Duplicate models in the field of the flight record form. Fixed. Plus added sorting for models and regs.
