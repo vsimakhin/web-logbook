@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Duplicate models in the field of the flight record form. Fixed. Plus added sorting for models and regs.
 - Fix: The ICAO code was not properly set for the airports from ourairports.com source. Changed the algorithm to assign the codes.
 
 ## [2.29.1] - 15.01.2024

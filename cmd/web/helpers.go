@@ -80,9 +80,16 @@ func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftMode
 	}
 
 	for key, val := range lastAircrafts {
-		aircraftRegs = append(aircraftRegs, key)
-		aircraftModels = append(aircraftModels, val)
+		if !slices.Contains(aircraftRegs, key) {
+			aircraftRegs = append(aircraftRegs, key)
+		}
+		if !slices.Contains(aircraftModels, val) {
+			aircraftModels = append(aircraftModels, val)
+		}
 	}
+
+	slices.Sort(aircraftRegs)
+	slices.Sort(aircraftModels)
 
 	return aircraftRegs, aircraftModels
 }
