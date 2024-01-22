@@ -118,8 +118,23 @@ func (app *application) downloadAirportDB(source string) ([]models.Airport, erro
 
 			var airport models.Airport
 
-			airport.ICAO = record[1]
+			airport.ICAO = record[12]
 			airport.IATA = record[13]
+
+			// if airfield doesn't have ICAO and IATA codes,
+			// let's make some name from the airfield name and record ID
+			if airport.ICAO == "" && airport.IATA == "" {
+				if strings.Contains(strings.ToUpper(record[3]), "DUPLICATE") {
+					continue
+				}
+				airport.ICAO = fmt.Sprintf("%s %s", strings.ToUpper(record[3]), record[1])
+			}
+
+			// if it's still empty, let's skip this record
+			if airport.ICAO == "" {
+				continue
+			}
+
 			airport.Name = record[3]
 			airport.City = record[10]
 			airport.Country = record[8]
