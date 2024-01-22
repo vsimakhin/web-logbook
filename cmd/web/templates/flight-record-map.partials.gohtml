@@ -1,5 +1,6 @@
 {{define "flight-record-map"}}
 <script src="/static/js/ol.js"></script>
+<script src="/static/js/arc.js"></script>
 <script>
 
 // WebLogbook wlbFlightMap Namespace
@@ -71,7 +72,6 @@ wlbFlightMap = function () {
         var arr = await wlbCommon.getJSON("{{index .API "Airport"}}"+arrival_place);
 
         // calculate center of the map
-        var center = midpoint(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);
         var dist = distance(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);
 
         /* generate a map */
@@ -84,7 +84,6 @@ wlbFlightMap = function () {
             ],
             overlays: [overlay],
             view: new ol.View({
-                center: ol.proj.fromLonLat([center.split("|")[1], center.split("|")[0]]),
                 zoom: 5
             }),
             controls: ol.control.defaults.defaults().extend([
@@ -93,18 +92,25 @@ wlbFlightMap = function () {
         });
 
         /* drawing route... */
-        var points = [ [dep["lon"], dep["lat"]], [arr["lon"], arr["lat"]] ];
-
-        for (var i = 0; i < points.length; i++) {
-            points[i] = ol.proj.transform(points[i], 'EPSG:4326', 'EPSG:3857');
-        }
-
-        var featureLine = new ol.Feature({
-            geometry: new ol.geom.LineString(points)
-        });
-
         var vectorLine = new ol.source.Vector({});
-        vectorLine.addFeature(featureLine);
+        var center;
+
+        if (!((dep["lon"] === arr["lon"]) && (dep["lat"] === arr["lat"]))) {
+            // departure and arrivals are not the same
+            const arcGenerator = new arc.GreatCircle(
+                {x: dep["lon"], y: dep["lat"]},
+                {x: arr["lon"], y: arr["lat"]}
+            );
+            const arcLine = arcGenerator.Arc(100, {offset: 10});
+            center = ol.proj.transform(arcLine.geometries[0].coords[49], 'EPSG:4326', 'EPSG:3857')
+
+            arcLine.geometries.forEach(function (geometry) {
+                const line = new ol.geom.LineString(geometry.coords);
+                line.transform('EPSG:4326', 'EPSG:3857');
+
+                vectorLine.addFeature( new ol.Feature({ geometry: line }));
+            });
+        }
 
         var vectorLineLayer = new ol.layer.Vector({
             source: vectorLine,
@@ -166,8 +172,12 @@ wlbFlightMap = function () {
 
         map.renderSync();
 
-        var extent = vectorLineLayer.getSource().getExtent();
-        map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [20,20,20,20]});
+        var extent = vectorMarkerLayer.getSource().getExtent();
+        map.getView().fit(extent, {size:map.getSize(), maxZoom:16, padding: [50,50,50,50]});
+
+        if (center) {
+            map.getView().setCenter(center);
+        }
 
         document.getElementById("some_stats").innerText = "Distance: " + Math.floor(dist) + " km / " + Math.floor(dist/1.852) + " nm";
 
