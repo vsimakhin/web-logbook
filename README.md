@@ -181,3 +181,4 @@ In case you'd like to add some other features to the logbook or you found a bug,
 * Date Range Picker https://www.daterangepicker.com/
 * Signature Pad https://github.com/szimek/signature_pad
 * PapaParse https://github.com/mholt/PapaParse
+* arc.js https://github.com/springmeyer/arc.js
