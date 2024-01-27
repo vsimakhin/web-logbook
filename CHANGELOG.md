@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Allow full HH:MM format for flight time, so even 02:15 is valid (previosly it allowed 2:15 only without leading 0)
 - Fix: If the name field in the AirportDB listing is too long, the listing was displayed outside the popup. Fixed.
 
 ## [2.30.0] - 22.01.2024
