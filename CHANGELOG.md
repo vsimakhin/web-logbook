@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Add autoformat for the date field, so it can convert `D/MM/YYYY`, `DD/MM/YYYY` and `D/M/YYYY` to the full `DD/MM/YYYY` format.
 - Fix: Allow full HH:MM format for flight time, so even 02:15 is valid (previosly it allowed 2:15 only without leading 0)
 - Fix: If the name field in the AirportDB listing is too long, the listing was displayed outside the popup. Fixed.
 
