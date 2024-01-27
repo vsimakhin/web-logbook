@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: If the name field in the AirportDB listing is too long, the listing was displayed outside the popup. Fixed.
+
 ## [2.30.0] - 22.01.2024
 
 - Fix: Map now show a great circle arcs instead of "direct" lines.
