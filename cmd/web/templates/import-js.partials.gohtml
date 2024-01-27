@@ -160,13 +160,26 @@ wlbImport = function () {
         return time;
     }
 
+    function convertToDDMMYYYY(dateString) {
+        // Split the input date string
+        const parts = dateString.split('/');
+
+        // Extract day, month, and year from the split parts
+        const day = parts[0].padStart(2, '0'); // Pad with leading zero if needed
+        const month = parts[1].padStart(2, '0'); // Pad with leading zero if needed
+        const year = parts[2];
+
+        // Return the formatted date
+        return `${day}/${month}/${year}`;
+    }
+
     // preview data for import table
     function previewImport() {
         table_data = [];
 
         for (var i = 1; i < csv_import.data.length-1; i++) {
             var item = {
-                date: getMappedValue("date", csv_import.data[i]).replace(/[.]/g, '/'),
+                date: convertToDDMMYYYY(getMappedValue("date", csv_import.data[i]).replace(/[.]/g, '/')),
                 departure_place: getMappedValue("departure_place", csv_import.data[i]),
                 departure_time: autoTimeRecog(getMappedValue("departure_time", csv_import.data[i])),
                 arrival_place: getMappedValue("arrival_place", csv_import.data[i]),
