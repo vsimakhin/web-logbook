@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.31.0] - 27.01.2024
 
 - New: Add autoformat for the date field, so it can convert `D/MM/YYYY`, `DD/MM/YYYY` and `D/M/YYYY` to the full `DD/MM/YYYY` format.
 - Fix: Allow full HH:MM format for flight time, so even 02:15 is valid (previosly it allowed 2:15 only without leading 0)

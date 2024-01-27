@@ -167,7 +167,7 @@ In case you'd like to add some other features to the logbook or you found a bug,
 
 # Contributors
 
-* [@Jacopx](https://github.com/Jacopx), [@dimoniet](https://github.com/dimoniet), [@maesteve](https://github.com/maesteve) - bug reports, testing, and new functionality suggestions
+* [@Jacopx](https://github.com/Jacopx), [@dimoniet](https://github.com/dimoniet), [@maesteve](https://github.com/maesteve), [@ken340](https://github.com/ken340) - bug reports, testing, and new functionality suggestions
 
 # Used libraries
 
