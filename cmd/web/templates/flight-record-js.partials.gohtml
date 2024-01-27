@@ -23,7 +23,7 @@ wlbFlightRecord = function () {
 
     function validateTime(field) {
         if (field.value !== "") {
-            if (!/^(?:(?<!\d)|[1-9]\d{0,4}|0):([0-5]\d)$/.test(field.value)) {
+            if (!/^(?:(?<!\d)|[0-9]\d{0,4}):([0-5]\d)$/.test(field.value)) {
                 field.classList.add("is-invalid");
                 return false
             } else {
