@@ -71,6 +71,7 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 		response.RedirectURL = "/login"
 	}
 	app.isAuthEnabled = settings.AuthEnabled
+	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 
 	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {

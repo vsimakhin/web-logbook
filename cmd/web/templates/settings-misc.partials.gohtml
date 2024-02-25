@@ -118,6 +118,24 @@
                 </select>
             </div>
         </div>
+
+        <hr>
+        <div class="row mb-1">
+            <label for="time_field_format" class="col-sm-8 col-form-label">Time fields autoformat</label>
+            <div class="col-sm-4">
+                <div class="btn-group" role="group" id="time_field_format" name="time_field_format">
+                    <input type="radio" class="btn-check" name="time_field_format_radio" id="time_field_format_radio1" autocomplete="off" {{if eq $settings.TimeFieldsAutoFormat 0}}checked{{end}}>
+                    <label class="btn btn-sm btn-outline-secondary" for="time_field_format_radio1">None</label>
+                
+                    <input type="radio" class="btn-check" name="time_field_format_radio" id="time_field_format_radio2" autocomplete="off" {{if eq $settings.TimeFieldsAutoFormat 1}}checked{{end}}>
+                    <label class="btn btn-sm btn-outline-secondary" for="time_field_format_radio2">HH:MM</label>
+                
+                    <input type="radio" class="btn-check" name="time_field_format_radio" id="time_field_format_radio3" autocomplete="off" {{if eq $settings.TimeFieldsAutoFormat 2}}checked{{end}}>
+                    <label class="btn btn-sm btn-outline-secondary" for="time_field_format_radio3">H:MM</label>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 {{end}}
