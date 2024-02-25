@@ -27,17 +27,6 @@ func (m *DBModel) Authenticate(login, password string) error {
 	return nil
 }
 
-// isAuthEnabled returns auth status
-func (m *DBModel) IsAuthEnabled() bool {
-
-	settings, err := m.GetSettings()
-	if err != nil {
-		return false
-	}
-
-	return settings.AuthEnabled
-}
-
 // DisableAuthorization reset the auth flag in the settings
 func (m *DBModel) DisableAuthorization() error {
 	settings, err := m.GetSettings()

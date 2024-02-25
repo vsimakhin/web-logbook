@@ -135,20 +135,21 @@ type ColumnsHeader struct {
 }
 
 type ExportPDF struct {
-	LogbookRows      int           `json:"logbook_rows"`
-	Fill             int           `json:"fill"`
-	LeftMargin       float64       `json:"left_margin"`
-	LeftMarginA      float64       `json:"left_margin_a"`
-	LeftMarginB      float64       `json:"left_margin_b"`
-	TopMargin        float64       `json:"top_margin"`
-	BodyRow          float64       `json:"body_row_height"`
-	FooterRow        float64       `json:"footer_row_height"`
-	PageBreaks       string        `json:"page_breaks"`
-	Columns          ColumnsWidth  `json:"columns"`
-	Headers          ColumnsHeader `json:"headers"`
-	ReplaceSPTime    bool          `json:"replace_sp_time"`
-	IncludeSignature bool          `json:"include_signature"`
-	IsExtended       bool          `json:"is_extended"`
+	LogbookRows          int           `json:"logbook_rows"`
+	Fill                 int           `json:"fill"`
+	LeftMargin           float64       `json:"left_margin"`
+	LeftMarginA          float64       `json:"left_margin_a"`
+	LeftMarginB          float64       `json:"left_margin_b"`
+	TopMargin            float64       `json:"top_margin"`
+	BodyRow              float64       `json:"body_row_height"`
+	FooterRow            float64       `json:"footer_row_height"`
+	PageBreaks           string        `json:"page_breaks"`
+	Columns              ColumnsWidth  `json:"columns"`
+	Headers              ColumnsHeader `json:"headers"`
+	ReplaceSPTime        bool          `json:"replace_sp_time"`
+	IncludeSignature     bool          `json:"include_signature"`
+	IsExtended           bool          `json:"is_extended"`
+	TimeFieldsAutoFormat byte          `json:"time_fields_auto_format"`
 }
 
 type ExportXLS struct {
@@ -205,6 +206,8 @@ type Settings struct {
 	LogbookRows         string     `json:"logbook_rows"`
 	LicensingRows       string     `json:"licensing_rows"`
 	DateRangePickerWeek string     `json:"datepicker_week"`
+
+	TimeFieldsAutoFormat byte `json:"time_fields_auto_format"`
 
 	SyncOptions SyncOptions `json:"sync_options"`
 

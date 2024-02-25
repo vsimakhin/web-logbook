@@ -177,6 +177,13 @@ wlbSettings = function () {
             signatureImage = signaturePad.toDataURL();
         }
 
+        var time_fields_auto_format = 0;
+        if (document.getElementById("time_field_format_radio2").checked) {
+            time_fields_auto_format = 1;
+        } else if (document.getElementById("time_field_format_radio3").checked) {
+            time_fields_auto_format = 2;
+        }
+
         let payload = {
             owner_name: document.getElementById("owner_name").value,
             signature_text: document.getElementById("signature_text").value,
@@ -207,6 +214,7 @@ wlbSettings = function () {
             logbook_rows: document.getElementById("logbook_rows").value,
             licensing_rows: document.getElementById("licensing_rows").value,
             datepicker_week: document.getElementById("datepicker_week").value,
+            time_fields_auto_format: time_fields_auto_format,
             sync_options: {
                 keep_deleted_records_days: parseInt(document.getElementById("keep_deleted_records_days").value)
             },

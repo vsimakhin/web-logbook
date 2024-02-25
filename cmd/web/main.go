@@ -33,16 +33,17 @@ type config struct {
 }
 
 type application struct {
-	config        config
-	infoLog       *log.Logger
-	errorLog      *log.Logger
-	warningLog    *log.Logger
-	templateCache map[string]*template.Template
-	version       string
-	db            models.DBModel
-	session       *scs.SessionManager
-	isAuthEnabled bool
-	isNewVersion  bool
+	config               config
+	infoLog              *log.Logger
+	errorLog             *log.Logger
+	warningLog           *log.Logger
+	templateCache        map[string]*template.Template
+	version              string
+	db                   models.DBModel
+	session              *scs.SessionManager
+	isAuthEnabled        bool
+	isNewVersion         bool
+	timeFieldsAutoFormat byte
 }
 
 func (app *application) serve() error {
@@ -145,9 +146,17 @@ func main() {
 		// but probably let's continue to run the app...
 	}
 
+	// check settings
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Printf("cannot load settings - %s\n", err)
+		// but probably let's continue to run the app as well...
+	}
+	app.isAuthEnabled = settings.AuthEnabled
+	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
+
 	// create distance cache ob background
 	go app.db.CreateDistanceCache()
-	app.isAuthEnabled = app.db.IsAuthEnabled()
 
 	// check for the new version
 	go app.checkNewVersion()

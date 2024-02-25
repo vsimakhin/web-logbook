@@ -52,6 +52,7 @@ var ownerName string
 var signature string
 var signatureImg string
 var isExtended bool
+var timeFieldsAutoFormat byte
 
 //go:embed font/*
 var content embed.FS
@@ -114,6 +115,7 @@ func (l *Logbook) init(format string) {
 	}
 
 	isExtended = l.Export.IsExtended
+	timeFieldsAutoFormat = l.Export.TimeFieldsAutoFormat
 
 	initWidths(l.Export.Columns)
 	initHeaders(l.Export.Headers)
@@ -398,4 +400,28 @@ func setFontLogbookHeader() {
 // eventually is as same as for headers
 func setFontLogbookFooter() {
 	setFontLogbookHeader()
+}
+
+func formatTimeField(timeField string) string {
+	if timeFieldsAutoFormat == 0 || timeField == "" {
+		return timeField
+	}
+
+	parts := strings.Split(timeField, ":")
+	hours := parts[0]
+	minutes := parts[1]
+
+	if timeFieldsAutoFormat == 1 {
+		// add leading zero if missing
+		if len(hours) == 1 {
+			hours = fmt.Sprintf("0%s", hours)
+		}
+	} else {
+		// Remove leading zero if present
+		if strings.HasPrefix(hours, "0") && len(hours) == 2 {
+			hours = hours[1:]
+		}
+	}
+
+	return hours + ":" + minutes
 }

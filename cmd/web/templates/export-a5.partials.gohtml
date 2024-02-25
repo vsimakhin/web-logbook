@@ -381,6 +381,23 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="row mb-2">
+            <div class="col">
+                <label for="time_field_format_a5" class="col-sm-8 col-form-label">Time fields autoformat</label>
+                <div class="btn-group" role="group" id="time_field_format_a5" name="time_field_format_a5">
+                    <input type="radio" class="btn-check" name="time_field_format_radio_a5" id="time_field_format_radio1_a5" autocomplete="off" {{if eq $settings.ExportA5.TimeFieldsAutoFormat 0}}checked{{end}}>
+                    <label class="btn btn-sm btn-outline-secondary" for="time_field_format_radio1_a5">None</label>
+
+                    <input type="radio" class="btn-check" name="time_field_format_radio_a5" id="time_field_format_radio2_a5" autocomplete="off" {{if eq $settings.ExportA5.TimeFieldsAutoFormat 1}}checked{{end}}>
+                    <label class="btn btn-sm btn-outline-secondary" for="time_field_format_radio2_a5">HH:MM</label>
+
+                    <input type="radio" class="btn-check" name="time_field_format_radio_a5" id="time_field_format_radio3_a5" autocomplete="off" {{if eq $settings.ExportA5.TimeFieldsAutoFormat 2}}checked{{end}}>
+                    <label class="btn btn-sm btn-outline-secondary" for="time_field_format_radio3_a5">H:MM</label>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <hr>

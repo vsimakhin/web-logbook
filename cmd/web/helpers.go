@@ -290,3 +290,27 @@ func decodeParameter(r *http.Request, parameter string) string {
 
 	return strings.TrimSpace(decoded)
 }
+
+func (app *application) formatTimeField(timeField string) string {
+	if app.timeFieldsAutoFormat == 0 || timeField == "" {
+		return timeField
+	}
+
+	parts := strings.Split(timeField, ":")
+	hours := parts[0]
+	minutes := parts[1]
+
+	if app.timeFieldsAutoFormat == 1 {
+		// add leading zero if missing
+		if len(hours) == 1 {
+			hours = fmt.Sprintf("0%s", hours)
+		}
+	} else {
+		// Remove leading zero if present
+		if strings.HasPrefix(hours, "0") && len(hours) == 2 {
+			hours = hours[1:]
+		}
+	}
+
+	return hours + ":" + minutes
+}
