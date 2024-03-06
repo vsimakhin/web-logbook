@@ -408,6 +408,15 @@ func formatTimeField(timeField string) string {
 	}
 
 	parts := strings.Split(timeField, ":")
+
+	if len(parts) != 2 { // probably some wrong value in the field
+		if timeField == "0" {
+			return ""
+		}
+
+		return timeField
+	}
+
 	hours := parts[0]
 	minutes := parts[1]
 
