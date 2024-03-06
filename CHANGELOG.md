@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.32.1] - 06.03.2024
 
 - Fix: Add additional checks for time field autoformat, so app will not crash
 
