@@ -5,6 +5,11 @@
 License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
 {{ end }}
 
+{{ define "header" }}
+{{$lic := index .Data "license"}}
+License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
+{{ end }}
+
 {{ define "css" }}{{ end }}
 
 {{ define "content" }}

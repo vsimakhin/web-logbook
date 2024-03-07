@@ -1,6 +1,11 @@
 {{ template "base" .}}
 
 {{ define "title" }}
+{{$fr := index .Data "flightRecord"}}
+Flight Record {{if $fr.UUID}}{{ if and $fr.Departure.Place $fr.Arrival.Place}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{end}}{{end}}
+{{ end }}
+
+{{ define "header" }}
 {{$api := .API}}
 {{$fr := index .Data "flightRecord"}}
 Flight Record {{if $fr.UUID}}{{ if and $fr.Departure.Place $fr.Arrival.Place}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{end}}
