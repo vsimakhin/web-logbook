@@ -49,6 +49,8 @@ var replace_sp_time bool
 
 var pageBreaks []string
 var ownerName string
+var licenseNumber string
+var address string
 var signature string
 var signatureImg string
 var isExtended bool
@@ -62,6 +64,8 @@ var pdf *fpdf.Fpdf
 
 type Logbook struct {
 	OwnerName      string
+	LicenseNumber  string
+	Address        string
 	Signature      string
 	SignatureImage string
 	Export         models.ExportPDF
@@ -108,6 +112,8 @@ func (l *Logbook) init(format string) {
 	replace_sp_time = l.Export.ReplaceSPTime
 	pageBreaks = strings.Split(l.Export.PageBreaks, ",")
 	ownerName = l.OwnerName
+	licenseNumber = l.LicenseNumber
+	address = l.Address
 	signature = l.Signature
 	signatureImg = l.SignatureImage
 	if !l.Export.IncludeSignature {

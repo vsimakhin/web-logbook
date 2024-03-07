@@ -53,6 +53,8 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 
 		logbook := &pdfexport.Logbook{
 			OwnerName:      settings.OwnerName,
+			LicenseNumber:  settings.LicenseNumber,
+			Address:        settings.Address,
 			Signature:      settings.SignatureText,
 			SignatureImage: settings.SignatureImage,
 		}
