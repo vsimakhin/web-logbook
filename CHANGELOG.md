@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: License Number and Address fields on the `Settings` page. They are printed (if not empty) on the title page for PDF exported logbook.
+
 ## [2.32.1] - 06.03.2024
 
 - Fix: Add additional checks for time field autoformat, so app will not crash
