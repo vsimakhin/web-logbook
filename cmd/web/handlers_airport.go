@@ -162,15 +162,20 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 	}
 
 	airports, err := app.downloadAirportDB(settings.AirportDBSource)
-
-	records, err := app.db.UpdateAirportDB(airports, settings.NoICAOFilter)
 	if err != nil {
 		app.errorLog.Println(err)
 		response.OK = false
 		response.Message = err.Error()
 	} else {
-		response.OK = true
-		response.Message = fmt.Sprintf("%d", records)
+		records, err := app.db.UpdateAirportDB(airports, settings.NoICAOFilter)
+		if err != nil {
+			app.errorLog.Println(err)
+			response.OK = false
+			response.Message = err.Error()
+		} else {
+			response.OK = true
+			response.Message = fmt.Sprintf("%d", records)
+		}
 	}
 
 	err = app.writeJSON(w, http.StatusOK, response)

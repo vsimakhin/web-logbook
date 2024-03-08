@@ -155,6 +155,15 @@ func titlePageA4() {
 	pdf.SetFont(fontRegular, "", 15)
 	pdf.SetXY(65, 150)
 	pdf.MultiCell(160, 2, "HOLDER'S NAME: "+strings.ToUpper(ownerName), "", "C", false)
+
+	if licenseNumber != "" {
+		pdf.SetXY(65, 157)
+		pdf.MultiCell(160, 2, "LICENSE NUMBER: "+strings.ToUpper(licenseNumber), "", "C", false)
+	}
+	if address != "" {
+		pdf.SetXY(65, 164)
+		pdf.MultiCell(160, 2, "ADDRESS: "+strings.ToUpper(address), "", "C", false)
+	}
 }
 
 // logBookRow prints logbook record row

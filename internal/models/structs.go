@@ -185,6 +185,8 @@ type SyncOptions struct {
 // Settings is a type for settings
 type Settings struct {
 	OwnerName               string            `json:"owner_name"`
+	LicenseNumber           string            `json:"license_number"`
+	Address                 string            `json:"address"`
 	SignatureText           string            `json:"signature_text"`
 	SignatureImage          string            `json:"signature_image"`
 	AircraftClasses         map[string]string `json:"aircraft_classes"`
