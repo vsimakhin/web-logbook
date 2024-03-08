@@ -9,7 +9,7 @@ import (
 func TestGetLicenses(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetLicenses")
+	InitMock(mock, "GetLicenses")
 
 	lics, err := db.GetLicenses()
 	if err != nil {
@@ -26,7 +26,7 @@ func TestGetLicenses(t *testing.T) {
 func TestGetLicenseRecordByID(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetLicenseRecordByID")
+	InitMock(mock, "GetLicenseRecordByID")
 
 	lic, err := db.GetLicenseRecordByID("uuid")
 	if err != nil {
@@ -39,7 +39,7 @@ func TestGetLicenseRecordByID(t *testing.T) {
 func TestGetLicensesCategory(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetLicensesCategory")
+	InitMock(mock, "GetLicensesCategory")
 
 	cats, err := db.GetLicensesCategory()
 	if err != nil {

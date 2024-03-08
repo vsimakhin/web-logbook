@@ -15,8 +15,8 @@ func TestHandlerAircrafts(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetAircraftsAll")
-	models.AddMock(mock, "GetAircraftsLast")
+	models.InitMock(mock, "GetAircraftsAll")
+	models.InitMock(mock, "GetAircraftsLast")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()

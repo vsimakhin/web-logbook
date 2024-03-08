@@ -9,8 +9,8 @@ import (
 func TestGetAircrafts(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetAircraftsLast")
-	AddMock(mock, "GetAircraftsAll")
+	InitMock(mock, "GetAircraftsLast")
+	InitMock(mock, "GetAircraftsAll")
 
 	// All aircrafts
 	aircrafts, err := db.GetAircrafts(AllAircrafts)
@@ -32,7 +32,7 @@ func TestGetAircrafts(t *testing.T) {
 func TestGetAircraftClasses(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetSettings")
+	InitMock(mock, "GetSettings")
 
 	classes, err := db.GetAircraftClasses()
 	if err != nil {

@@ -17,25 +17,25 @@ func TestHandlerStats(t *testing.T) {
 
 	// first tab
 	// totals
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// last 28 days
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// last 90 days
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// this months
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// this year
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 
 	// second tab
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetTotalsClassType")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetTotalsClassType")
 
 	// third tab
-	models.AddMock(mock, "GetTotalsClassType")
+	models.InitMock(mock, "GetTotalsClassType")
 
 	// fourth tab
-	models.AddMock(mock, "GetTotalsYear")
+	models.InitMock(mock, "GetTotalsYear")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -61,19 +61,19 @@ func TestHandlerStatsTotals(t *testing.T) {
 	app, mock := initTestApplication()
 
 	// totals
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// last 28 days
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// last 90 days
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// this month
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// last 12 months
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 	// this year
-	models.AddMock(mock, "GetTotals")
+	models.InitMock(mock, "GetTotals")
 
-	models.AddMock(mock, "GetSettings")
+	models.InitMock(mock, "GetSettings")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -88,8 +88,8 @@ func TestHandlerStatsByClass(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetTotalsClassType")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetTotalsClassType")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -104,7 +104,7 @@ func TestHandlerStatsByType(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetTotalsClassType")
+	models.InitMock(mock, "GetTotalsClassType")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
