@@ -1,8 +1,9 @@
 # Changelog
 
-## [Unreleased]
+## [2.33.0] - 08.03.2024
 
 - New: License Number and Address fields on the `Settings` page. They are printed (if not empty) on the title page for PDF exported logbook.
+- Fix: Try to fix a `Map` page layout for Mac OS
 
 ## [2.32.1] - 06.03.2024
 
