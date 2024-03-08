@@ -22,7 +22,7 @@ func TestDtoa(t *testing.T) {
 func TestGetFlightRecords(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetFlightRecords")
+	InitMock(mock, "GetFlightRecords")
 
 	frs, err := db.GetFlightRecords()
 	if err != nil {
@@ -125,7 +125,7 @@ func TestUpdateFlightRecord(t *testing.T) {
 func TestGetFlightRecordsByID(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetFlightRecordByID")
+	InitMock(mock, "GetFlightRecordByID")
 
 	fr, err := db.GetFlightRecordByID("uuid")
 	if err != nil {

@@ -12,8 +12,6 @@ func initDBModel(t *testing.T) (DBModel, sqlmock.Sqlmock) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	InitSQLMockValues()
-
 	// any order of the queries
 	mock.MatchExpectationsInOrder(false)
 

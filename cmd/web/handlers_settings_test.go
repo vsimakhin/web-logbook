@@ -15,8 +15,8 @@ func TestHandlerSettings(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetAirportCount")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetAirportCount")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -38,7 +38,7 @@ func TestHandlerSettingsAircraftClasses(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
+	models.InitMock(mock, "GetSettings")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()

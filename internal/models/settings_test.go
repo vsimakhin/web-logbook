@@ -9,7 +9,7 @@ import (
 func TestGetSettings(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetSettings")
+	InitMock(mock, "GetSettings")
 
 	set, err := db.GetSettings()
 	if err != nil {

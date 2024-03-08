@@ -14,7 +14,7 @@ import (
 func TestHandlerNotFound(t *testing.T) {
 
 	app, mock := initTestApplication()
-	models.AddMock(mock, "GetSettings")
+	models.InitMock(mock, "GetSettings")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()

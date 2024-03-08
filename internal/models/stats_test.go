@@ -9,7 +9,7 @@ import (
 func TestGetTotals(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetTotals")
+	InitMock(mock, "GetTotals")
 
 	fr, err := db.GetTotals("19000101", "30000101")
 	if err != nil {
@@ -22,7 +22,7 @@ func TestGetTotals(t *testing.T) {
 func TestGetTotalsByAicraftType(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetTotalsClassType")
+	InitMock(mock, "GetTotalsClassType")
 
 	fr, err := db.GetTotalsByAircraftType("19000101", "30000101")
 	if err != nil {
@@ -35,8 +35,8 @@ func TestGetTotalsByAicraftType(t *testing.T) {
 func TestGetTotalsByAicraftClass(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetSettings")
-	AddMock(mock, "GetTotalsClassType")
+	InitMock(mock, "GetSettings")
+	InitMock(mock, "GetTotalsClassType")
 
 	fr, err := db.GetTotalsByAircraftClass("19000101", "30000101")
 	if err != nil {
@@ -49,7 +49,7 @@ func TestGetTotalsByAicraftClass(t *testing.T) {
 func TestGetTotalsByYear(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetTotalsYear")
+	InitMock(mock, "GetTotalsYear")
 
 	fr, err := db.GetTotalsByYear()
 	if err != nil {

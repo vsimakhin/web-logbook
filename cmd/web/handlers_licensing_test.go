@@ -16,8 +16,8 @@ func TestHandlerLicensing(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetLicenses")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetLicenses")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -37,7 +37,7 @@ func TestHandlerLicensingRecordsData(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetLicenses")
+	models.InitMock(mock, "GetLicenses")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -53,9 +53,9 @@ func TestHandlerLicensingRecordByID(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetLicenseRecordByID")
-	models.AddMock(mock, "GetLicensesCategory")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetLicenseRecordByID")
+	models.InitMock(mock, "GetLicensesCategory")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -75,7 +75,7 @@ func TestHandlerLicensingDownload(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetLicenseRecordByID")
+	models.InitMock(mock, "GetLicenseRecordByID")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -93,8 +93,8 @@ func TestHandlerLicensingRecordNew(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetLicensesCategory")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetLicensesCategory")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()

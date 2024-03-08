@@ -113,7 +113,6 @@ func (m *DBModel) DeleteAttachmentsForFlightRecord(uuid string) error {
 	for rows.Next() {
 
 		err = rows.Scan(&id)
-
 		if err != nil {
 			return err
 		}

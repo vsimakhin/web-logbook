@@ -9,7 +9,7 @@ import (
 func TestGetAttachments(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetAttachments")
+	InitMock(mock, "GetAttachments")
 
 	atts, err := db.GetAttachments("RECORDID")
 	if err != nil {
@@ -25,7 +25,7 @@ func TestGetAttachments(t *testing.T) {
 func TestGetAttachmentByID(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetAttachmentByID")
+	InitMock(mock, "GetAttachmentByID")
 
 	att, err := db.GetAttachmentByID("UUID")
 	if err != nil {
@@ -69,10 +69,10 @@ func TestDeleteAttachment(t *testing.T) {
 func TestDeleteAttachmentForFlightRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetAttachments2")
-	AddMock(mock, "DeleteAttachmentsForFlightRecord")
+	InitMock(mock, "GetAttachments2")
+	InitMock(mock, "DeleteAttachmentsForFlightRecord")
 
-	err := db.DeleteAttachmentsForFlightRecord("UUID")
+	err := db.DeleteAttachmentsForFlightRecord("uuid")
 	if err != nil {
 		t.Fatal(err)
 	}

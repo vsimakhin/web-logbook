@@ -27,8 +27,6 @@ func initTestApplication() (*application, sqlmock.Sqlmock) {
 		errorLog.Panicf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	models.InitSQLMockValues()
-
 	// any order of the queries
 	mock.MatchExpectationsInOrder(false)
 

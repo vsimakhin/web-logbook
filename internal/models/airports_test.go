@@ -9,7 +9,7 @@ import (
 func TestGetAirportByID(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetAirportByID")
+	InitMock(mock, "GetAirportByID")
 
 	ap, err := db.GetAirportByID("XXXX")
 	if err != nil {
@@ -23,7 +23,7 @@ func TestGetAirportByID(t *testing.T) {
 func TestGetAirports(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetAirports")
+	InitMock(mock, "GetAirports")
 
 	aps, err := db.GetAirports()
 	if err != nil {
@@ -39,7 +39,7 @@ func TestGetAirports(t *testing.T) {
 func TestGetAirportCount(t *testing.T) {
 	db, mock := initDBModel(t)
 
-	AddMock(mock, "GetAirportCount")
+	InitMock(mock, "GetAirportCount")
 
 	c, err := db.GetAirportCount()
 	if err != nil {

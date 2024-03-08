@@ -15,10 +15,10 @@ func TestHandlerMap(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetAircraftsModels")
-	models.AddMock(mock, "GetAircraftsRegs")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetAircraftsModels")
+	models.InitMock(mock, "GetAircraftsRegs")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
@@ -37,9 +37,9 @@ func TestHandlerMapGetData(t *testing.T) {
 
 	app, mock := initTestApplication()
 
-	models.AddMock(mock, "GetSettings")
-	models.AddMock(mock, "GetFlightRecords")
-	models.AddMock(mock, "GetAirports")
+	models.InitMock(mock, "GetSettings")
+	models.InitMock(mock, "GetFlightRecords")
+	models.InitMock(mock, "GetAirports")
 
 	srv := httptest.NewServer(app.routes())
 	defer srv.Close()
