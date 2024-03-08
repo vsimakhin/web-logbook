@@ -3,7 +3,7 @@ module github.com/vsimakhin/web-logbook
 go 1.20
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.1
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/alexedwards/scs/v2 v2.7.0
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/go-pdf/fpdf v0.9.0
