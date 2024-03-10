@@ -10,7 +10,26 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-The changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
+## [Unreleased]
+
+- Update: Update openlayers lib from 7.3.0 to 9.0.0. No UI changes.
+- Update: Update golang from 1.20.3 to 1.21.8. No UI changes.
+- Fix: Finally fixed the unit tests. No UI changes.
+
+## [2.33.0] - 08.03.2024
+
+- New: License Number and Address fields on the `Settings` page. They are printed (if not empty) on the title page for PDF exported logbook.
+- Fix: Try to fix a `Map` page layout for Mac OS
+
+## [2.32.1] - 06.03.2024
+
+- Fix: Add additional checks for time field autoformat, so app will not crash
+
+## [2.32.0] - 25.02.2024
+
+- New: Add autoformat for time fields. You can choose from three options: `None`, `HH:MM` (will add leading 0) and `H:MM` (will remove leading 0). Please note that this feature only affects how the time is displayed in the UI and does not modify the data in the database table. You can find this option in the `Settings`, `Export PDF A4`, and `Export PDF A5` pages.
+
+The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
 # Usage
 

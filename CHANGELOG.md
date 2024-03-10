@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Update openlayers lib from 7.3.0 to 9.0.0. No UI changes.
+- Update: Update golang from 1.20.3 to 1.21.8. No UI changes.
+- Fix: Finally fixed the unit tests. No UI changes.
+
 ## [2.33.0] - 08.03.2024
 
 - New: License Number and Address fields on the `Settings` page. They are printed (if not empty) on the title page for PDF exported logbook.
