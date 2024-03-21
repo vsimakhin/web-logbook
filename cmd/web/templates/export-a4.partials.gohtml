@@ -375,8 +375,10 @@
     </div>
     <div class="col-md-6">
         <div class="row mb-2">
-            <div class="col">
-                <label for="time_field_format_a4" class="col-sm-8 col-form-label">Time fields autoformat</label>
+            <div class="col-sm-8">
+                <label for="time_field_format_a4" class="col-form-label">Time fields autoformat</label>
+            </div>
+            <div class="col-sm-4 text-end">
                 <div class="btn-group" role="group" id="time_field_format_a4" name="time_field_format_a4">
                     <input type="radio" class="btn-check" name="time_field_format_radio_a4" id="time_field_format_radio1_a4" autocomplete="off" {{if eq $settings.ExportA4.TimeFieldsAutoFormat 0}}checked{{end}}>
                     <label class="btn btn-sm btn-outline-secondary" for="time_field_format_radio1_a4">None</label>
@@ -389,6 +391,21 @@
                 </div>
             </div>
         </div>
+        <div class="row mb-2">
+            <div class="col">
+                <label for="custom_title_a4" class="col-sm-4 col-form-label">Custom title page</label>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="file" accept=".pdf" class="form-control form-control-sm" id="custom_title_a4" name="custom_title_a4" />
+
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.deleteCustomTitle('A4');"><i class="bi bi-file-x"></i> Delete</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.previewCustomTitle('A4');"><i class="bi bi-file-pdf"></i> Preview</button>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

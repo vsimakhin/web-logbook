@@ -89,7 +89,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 
 	} else {
 		err = errors.New("unknown export format")
-
 	}
 
 	if err != nil {

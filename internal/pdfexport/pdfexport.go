@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/go-pdf/fpdf"
+	"github.com/go-pdf/fpdf/contrib/gofpdi"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
@@ -439,4 +440,29 @@ func formatTimeField(timeField string) string {
 	}
 
 	return hours + ":" + minutes
+}
+
+func customTitle() {
+	// import first page and determine page sizes
+	imp := gofpdi.NewImporter()
+
+	imp.ImportPage(pdf, "cv.pdf", 1, "/MediaBox")
+	pageSizes := imp.GetPageSizes()
+	nrPages := len(imp.GetPageSizes())
+
+	a4size := fpdf.SizeType{
+		Wd: 210,
+		Ht: 297,
+	}
+	for i := 1; i <= nrPages; i++ {
+		fmt.Println(pageSizes[i]["/MediaBox"])
+		tpl := imp.ImportPage(pdf, "cv.pdf", i, "/MediaBox")
+		if pageSizes[i]["/MediaBox"]["w"] > pageSizes[i]["/MediaBox"]["h"] {
+			pdf.AddPageFormat("L", a4size)
+			imp.UseImportedTemplate(pdf, tpl, 0, -87, 297, 297)
+		} else {
+			pdf.AddPageFormat("P", a4size)
+			imp.UseImportedTemplate(pdf, tpl, 0, 0, 210, 297)
+		}
+	}
 }

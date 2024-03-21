@@ -150,6 +150,7 @@ type ExportPDF struct {
 	IncludeSignature     bool          `json:"include_signature"`
 	IsExtended           bool          `json:"is_extended"`
 	TimeFieldsAutoFormat byte          `json:"time_fields_auto_format"`
+	CustomTitle          string        `json:"custom_title"`
 }
 
 type ExportXLS struct {
