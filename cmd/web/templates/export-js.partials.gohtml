@@ -182,13 +182,15 @@ wlbExport = function () {
         }
     }
 
-    function saveExportA5() {
+    async function saveExportA5() {
         let time_fields_auto_format = 0;
         if (document.getElementById("time_field_format_radio2_a5").checked) {
             time_fields_auto_format = 1;
         } else if (document.getElementById("time_field_format_radio3_a5").checked) {
             time_fields_auto_format = 2;
         }
+
+        let custom_title_a5 = await saveCustomTitle("A5");
 
         let payload = {
             export_a5: {
@@ -204,6 +206,7 @@ wlbExport = function () {
                 include_signature: document.getElementById("include_signature_a5").checked,
                 is_extended: document.getElementById("is_extended_a5").checked,
                 time_fields_auto_format: time_fields_auto_format,
+                custom_title: custom_title_a5,
                 columns: {
                     col1: parseFloat(document.getElementById("col1_a5").value),
                     col2: parseFloat(document.getElementById("col2_a5").value),
@@ -266,26 +269,24 @@ wlbExport = function () {
         };
 
         const requestOptions = {
-            method: 'post',
+            method: "post",
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                "Accept": "application/json",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
         };
 
-        fetch("{{$api.Export}}/{{$api.ExportFormatA5}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    wlbCommon.showErrorMessage(data.message);
-                }
-            });
+        const response = await fetch("{{$api.Export}}/{{$api.ExportFormatA5}}", requestOptions);
+        const data = await response.json();
+        if (data.ok) {
+            wlbCommon.showInfoMessage(data.message);
+            if (typeof data.redirect_url !== "undefined") {
+                location.href = data.redirect_url;
+            }
+        } else {
+            wlbCommon.showErrorMessage(data.message);
+        }
     }
 
     function saveExportXLS() {

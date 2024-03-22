@@ -56,6 +56,7 @@ var signature string
 var signatureImg string
 var isExtended bool
 var timeFieldsAutoFormat byte
+var customTitle []byte
 
 //go:embed font/*
 var content embed.FS
@@ -123,6 +124,7 @@ func (l *Logbook) init(format string) {
 
 	isExtended = l.Export.IsExtended
 	timeFieldsAutoFormat = l.Export.TimeFieldsAutoFormat
+	customTitle = l.Export.CustomTitleBlob
 
 	initWidths(l.Export.Columns)
 	initHeaders(l.Export.Headers)
@@ -442,27 +444,47 @@ func formatTimeField(timeField string) string {
 	return hours + ":" + minutes
 }
 
-func customTitle() {
-	// import first page and determine page sizes
+func printCustomTitle(format string) {
+	// some variables and parameters
+	sizes := map[string]fpdf.SizeType{
+		PDFA4: {Wd: 210, Ht: 297},
+		PDFA5: {Wd: 148, Ht: 210},
+	}
+
+	type pageParams struct{ x, y, w, h float64 }
+	params := map[string]map[string]pageParams{
+		PDFA4: {
+			"P": {x: 0, y: 0, w: 210, h: 297},
+			"L": {x: 0, y: -87, w: 297, h: 297},
+		},
+		PDFA5: {
+			"P": {x: 0, y: 0, w: 148, h: 210},
+			"L": {x: 0, y: -62, w: 210, h: 210},
+		},
+	}
+
 	imp := gofpdi.NewImporter()
 
-	imp.ImportPage(pdf, "cv.pdf", 1, "/MediaBox")
+	readSeeker := io.ReadSeeker(bytes.NewReader(customTitle))
+
+	// import first page and determine page sizes
+	imp.ImportPageFromStream(pdf, &readSeeker, 1, "/MediaBox")
 	pageSizes := imp.GetPageSizes()
 	nrPages := len(imp.GetPageSizes())
 
-	a4size := fpdf.SizeType{
-		Wd: 210,
-		Ht: 297,
-	}
+	// add pages of the attached custom title pdf file
 	for i := 1; i <= nrPages; i++ {
-		fmt.Println(pageSizes[i]["/MediaBox"])
-		tpl := imp.ImportPage(pdf, "cv.pdf", i, "/MediaBox")
+		tpl := imp.ImportPageFromStream(pdf, &readSeeker, i, "/MediaBox")
+
+		orientation := "P"
 		if pageSizes[i]["/MediaBox"]["w"] > pageSizes[i]["/MediaBox"]["h"] {
-			pdf.AddPageFormat("L", a4size)
-			imp.UseImportedTemplate(pdf, tpl, 0, -87, 297, 297)
-		} else {
-			pdf.AddPageFormat("P", a4size)
-			imp.UseImportedTemplate(pdf, tpl, 0, 0, 210, 297)
+			orientation = "L"
 		}
+
+		pdf.AddPageFormat(orientation, sizes[format])
+		imp.UseImportedTemplate(pdf, tpl,
+			params[format][orientation].x, params[format][orientation].y,
+			params[format][orientation].w, params[format][orientation].h,
+		)
 	}
 }

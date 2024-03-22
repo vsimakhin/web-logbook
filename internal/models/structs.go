@@ -151,6 +151,7 @@ type ExportPDF struct {
 	IsExtended           bool          `json:"is_extended"`
 	TimeFieldsAutoFormat byte          `json:"time_fields_auto_format"`
 	CustomTitle          string        `json:"custom_title"`
+	CustomTitleBlob      []byte
 }
 
 type ExportXLS struct {
