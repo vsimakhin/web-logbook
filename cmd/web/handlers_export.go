@@ -69,7 +69,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 			customTitleUUID = settings.ExportA5.CustomTitle
 		}
 
-		fmt.Println(customTitleUUID)
 		att, _ := app.db.GetAttachmentByID(customTitleUUID)
 		logbook.Export.CustomTitleBlob = att.Document
 

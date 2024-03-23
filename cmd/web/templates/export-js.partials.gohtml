@@ -24,15 +24,6 @@ wlbExport = function () {
         }
     }
 
-    async function previewCustomTitle(format) {
-        if (!formatMap[format]) {return;}
-
-        const uuid = await getCustomTitle(format);
-        if (uuid !== "") {
-            window.open("{{$api.LogbookAttachmentsDownload}}"+uuid, "_blank");
-        }
-    }
-
     async function deleteCustomTitle(format) {
         // drop current saved file from attachments
         const attachments_url = "{{index .API "LogbookUUIDAttachments"}}".replace("{uuid}", formatMap[format]);
@@ -44,6 +35,7 @@ wlbExport = function () {
                 const requestOptions = {method: "post", body: JSON.stringify(payload)};
                 await fetch("{{index .API "LogbookAttachmentsDelete"}}", requestOptions)
             }
+            document.getElementById(`${formatMap[format]}_document`).innerHTML = "";
         }
     }
 
@@ -74,6 +66,29 @@ wlbExport = function () {
             const uuid = await getCustomTitle(format);
             return uuid;
         }
+    }
+
+    function showCustomTitleModal(format) {
+        const modal = new bootstrap.Modal(document.getElementById(`${formatMap[format]}_modal`), {});
+
+        getCustomTitle(format).then(uuid => {
+            if (uuid !== "") {
+                const data = "{{$api.LogbookAttachmentsDownload}}"+uuid;
+                fetch(data).then(response => response.blob()).then(blob => {
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        const text = `<object data="${reader.result}" width="100%" height="700px">
+                                <p>Your browser does not support preview of the document</p>
+                            </object>`;
+
+                        document.getElementById(`${formatMap[format]}_document`).innerHTML = text;
+                    };
+                    reader.readAsDataURL(blob);
+                });
+            }
+        });
+
+        modal.show();
     }
 
     async function saveExportA4() {
@@ -391,8 +406,8 @@ wlbExport = function () {
         saveExportXLS:saveExportXLS,
         restoreDefaults:restoreDefaults,
         showTab:showTab,
-        previewCustomTitle:previewCustomTitle,
-        deleteCustomTitle:deleteCustomTitle
+        deleteCustomTitle:deleteCustomTitle,
+        showCustomTitleModal:showCustomTitleModal
     }
 }();
 

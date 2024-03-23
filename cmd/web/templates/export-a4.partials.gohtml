@@ -392,17 +392,11 @@
             </div>
         </div>
         <div class="row mb-2">
-            <div class="col">
-                <label for="custom_title_a4" class="col-sm-4 col-form-label">Custom A4 title page</label>
+            <div class="col-sm-8">
+                <label for="custom_title_a4" class="col-sm-5 col-form-label">Custom A4 title page</label>
             </div>
-            <div class="col">
-                <div class="input-group">
-                    <input type="file" accept=".pdf" class="form-control form-control-sm" id="custom_title_a4" name="custom_title_a4" />
-
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.deleteCustomTitle('A4');"><i class="bi bi-file-x"></i> Delete</button>
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.previewCustomTitle('A4');"><i class="bi bi-file-pdf"></i> Preview</button>
-
-                </div>
+            <div class="col-sm-4 text-end">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.showCustomTitleModal('A4');"><i class="bi bi-file-pdf"></i> Manage...</button>
             </div>
         </div>
     </div>
@@ -413,4 +407,31 @@
 <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbExport.saveExportA4()" id="save_a4"><i class="bi bi-save-fill"></i> Save</button>
 <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbCommon.runExport('{{$api.ExportFormatA4}}')" id="export_a4"><i class="bi bi-file-pdf-fill"></i> Export PDF A4</button>
 
+
+<!-- Modal -->
+<div class="modal fade" id="custom_title_a4_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="custom_title_a4_modal" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="custom_title_a4_modal">Custom title page</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="col">
+                <div class="input-group">
+                    <input type="file" accept=".pdf" class="form-control form-control-sm" id="custom_title_a4" name="custom_title_a4" />
+
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.deleteCustomTitle('A4');"><i class="bi bi-file-x"></i> Delete</button>
+                </div>
+            </div>
+            <br>
+            <div id="custom_title_a4_document"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" onclick="wlbExport.saveExportA4()"><i class="bi bi-save-fill"></i> Save</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> OK</button>
+        </div>
+        </div>
+    </div>
+</div>
 {{end}}
