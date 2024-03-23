@@ -58,12 +58,19 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 			Signature:      settings.SignatureText,
 			SignatureImage: settings.SignatureImage,
 		}
+		var customTitleUUID string
+
 		if format == exportA4 {
 			logbook.Export = settings.ExportA4
+			customTitleUUID = settings.ExportA4.CustomTitle
 
 		} else if format == exportA5 {
 			logbook.Export = settings.ExportA5
+			customTitleUUID = settings.ExportA5.CustomTitle
 		}
+
+		att, _ := app.db.GetAttachmentByID(customTitleUUID)
+		logbook.Export.CustomTitleBlob = att.Document
 
 		err = logbook.ExportPDF(format, flightRecords, w)
 
@@ -89,7 +96,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 
 	} else {
 		err = errors.New("unknown export format")
-
 	}
 
 	if err != nil {

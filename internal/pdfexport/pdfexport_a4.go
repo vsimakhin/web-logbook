@@ -147,22 +147,27 @@ func printA4LogbookBody(record models.FlightRecord, fill bool) {
 
 // titlePageA4 prints title page for A4
 func titlePageA4() {
-	pdf.AddPage()
-	pdf.SetFont(fontBold, "", 20)
-	pdf.SetXY(95, 60)
-	pdf.MultiCell(100, 2, "PILOT LOGBOOK", "", "C", false)
 
-	pdf.SetFont(fontRegular, "", 15)
-	pdf.SetXY(65, 150)
-	pdf.MultiCell(160, 2, "HOLDER'S NAME: "+strings.ToUpper(ownerName), "", "C", false)
+	if len(customTitle) != 0 {
+		printCustomTitle(PDFA4)
+	} else {
+		pdf.AddPage()
+		pdf.SetFont(fontBold, "", 20)
+		pdf.SetXY(95, 60)
+		pdf.MultiCell(100, 2, "PILOT LOGBOOK", "", "C", false)
 
-	if licenseNumber != "" {
-		pdf.SetXY(65, 157)
-		pdf.MultiCell(160, 2, "LICENSE NUMBER: "+strings.ToUpper(licenseNumber), "", "C", false)
-	}
-	if address != "" {
-		pdf.SetXY(65, 164)
-		pdf.MultiCell(160, 2, "ADDRESS: "+strings.ToUpper(address), "", "C", false)
+		pdf.SetFont(fontRegular, "", 15)
+		pdf.SetXY(65, 150)
+		pdf.MultiCell(160, 2, "HOLDER'S NAME: "+strings.ToUpper(ownerName), "", "C", false)
+
+		if licenseNumber != "" {
+			pdf.SetXY(65, 157)
+			pdf.MultiCell(160, 2, "LICENSE NUMBER: "+strings.ToUpper(licenseNumber), "", "C", false)
+		}
+		if address != "" {
+			pdf.SetXY(65, 164)
+			pdf.MultiCell(160, 2, "ADDRESS: "+strings.ToUpper(address), "", "C", false)
+		}
 	}
 }
 
