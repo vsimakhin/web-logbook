@@ -12,6 +12,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Add support for a custom title page for PDF A4/A5 exports.
 - Update: Update openlayers lib from 7.3.0 to 9.0.0. No UI changes.
 - Update: Update golang from 1.20.3 to 1.21.8. No UI changes.
 - Fix: Finally fixed the unit tests. No UI changes.
