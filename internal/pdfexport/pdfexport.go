@@ -59,10 +59,12 @@ var BodyText = NewColor(0, 0, 0)
 
 // Constants for font sizes
 const (
-	HeaderFontSize     float64 = 8
-	BodyFontSize       float64 = 8
-	SignatureFontSize  float64 = 6
-	PageNumberFontSize float64 = 6
+	HeaderFontSize        float64 = 8
+	BodyFontSize          float64 = 8
+	SignatureFontSize     float64 = 6
+	PageNumberFontSize    float64 = 6
+	TitlePageMainFontSize float64 = 20
+	TitlePageInfoFontSize float64 = 15
 )
 
 const CheckSymbol string = "✓"
@@ -335,11 +337,11 @@ func (p *PDFExporter) titlePage() {
 	}
 
 	p.pdf.AddPage()
-	p.pdf.SetFont(fontBold, "", 20)
+	p.pdf.SetFont(fontBold, "", TitlePageMainFontSize)
 	p.pdf.SetXY(coord[p.Format][Title].x, coord[p.Format][Title].y)
 	p.pdf.MultiCell(100, 2, Title, "", "C", false)
 
-	p.pdf.SetFont(fontRegular, "", 15)
+	p.pdf.SetFont(fontRegular, "", TitlePageInfoFontSize)
 
 	info := map[string]string{
 		Name:    fmt.Sprintf("%s %s", Name, strings.ToUpper(p.OwnerName)),
@@ -444,11 +446,11 @@ func (p *PDFExporter) printFooterCell(w float64, value string) {
 func (p *PDFExporter) printSinglePilotTime(w float64, value string, fill bool) {
 	if p.Export.ReplaceSPTime && value != "" {
 		// set new font with symbol support
-		p.pdf.SetFont(fontB612, "", 8)
+		p.pdf.SetFont(fontB612, "", BodyFontSize)
 		// put check symbol
 		p.printBodyTimeCell(w, CheckSymbol, fill)
 		// set back the regular font
-		p.pdf.SetFont(fontRegular, "", 8)
+		p.pdf.SetFont(fontRegular, "", BodyFontSize)
 	} else {
 		p.printBodyTimeCell(w, value, fill)
 	}
