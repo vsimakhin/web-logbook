@@ -45,34 +45,41 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if format == exportA4 || format == exportA5 {
-		// export to PDF
-
+	if format == exportA4 {
 		w.Header().Set("Content-Type", "application/pdf")
 		w.Header().Set("Content-Disposition", "attachment; filename=logbook.pdf")
 
-		logbook := &pdfexport.Logbook{
-			OwnerName:      settings.OwnerName,
-			LicenseNumber:  settings.LicenseNumber,
-			Address:        settings.Address,
-			Signature:      settings.SignatureText,
-			SignatureImage: settings.SignatureImage,
-		}
-		var customTitleUUID string
-
-		if format == exportA4 {
-			logbook.Export = settings.ExportA4
-			customTitleUUID = settings.ExportA4.CustomTitle
-
-		} else if format == exportA5 {
-			logbook.Export = settings.ExportA5
-			customTitleUUID = settings.ExportA5.CustomTitle
-		}
-
+		customTitleUUID := settings.ExportA4.CustomTitle
 		att, _ := app.db.GetAttachmentByID(customTitleUUID)
-		logbook.Export.CustomTitleBlob = att.Document
+		settings.ExportA4.CustomTitleBlob = att.Document
 
-		err = logbook.ExportPDF(format, flightRecords, w)
+		pdfExporter, err := pdfexport.NewPDFExporter(exportA4,
+			settings.OwnerName, settings.LicenseNumber, settings.Address,
+			settings.SignatureText, settings.SignatureImage, settings.ExportA4)
+
+		if err != nil {
+			app.errorLog.Println(err)
+		}
+
+		pdfExporter.ExportA4(flightRecords, w)
+
+	} else if format == exportA5 {
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", "attachment; filename=logbook.pdf")
+
+		customTitleUUID := settings.ExportA5.CustomTitle
+		att, _ := app.db.GetAttachmentByID(customTitleUUID)
+		settings.ExportA5.CustomTitleBlob = att.Document
+
+		pdfExporter, err := pdfexport.NewPDFExporter(exportA5,
+			settings.OwnerName, settings.LicenseNumber, settings.Address,
+			settings.SignatureText, settings.SignatureImage, settings.ExportA5)
+
+		if err != nil {
+			app.errorLog.Println(err)
+		}
+
+		pdfExporter.ExportA5(flightRecords, w)
 
 	} else if format == exportCSV {
 		// export to CSV format
