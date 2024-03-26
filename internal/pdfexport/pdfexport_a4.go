@@ -129,46 +129,45 @@ func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 // printA4LogbookBody prints the logbook body
 func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	fill := p.isFillLine()
-	w3 := p.columns.w3
 
 	p.setFontLogbookBody()
 
 	// 	Data
 	p.pdf.SetX(p.Export.LeftMargin)
 	if p.Export.IsExtended && record.SIM.Type != "" {
-		p.printBodyTimeCell(w3[0], "", fill)
+		p.printBodyTimeCell(p.columns.w3[0], "", fill)
 	} else {
-		p.printBodyTimeCell(w3[0], record.Date, fill)
+		p.printBodyTimeCell(p.columns.w3[0], record.Date, fill)
 	}
-	p.printBodyTimeCell(w3[1], record.Departure.Place, fill)
-	p.printBodyTimeCell(w3[2], record.Departure.Time, fill)
-	p.printBodyTimeCell(w3[3], record.Arrival.Place, fill)
-	p.printBodyTimeCell(w3[4], record.Arrival.Time, fill)
-	p.printBodyTimeCell(w3[5], record.Aircraft.Model, fill)
-	p.printBodyTimeCell(w3[6], record.Aircraft.Reg, fill)
-	p.printSinglePilotTime(w3[7], p.formatTimeField(record.Time.SE), fill)
-	p.printSinglePilotTime(w3[8], p.formatTimeField(record.Time.ME), fill)
-	p.printBodyTimeCell(w3[9], p.formatTimeField(record.Time.MCC), fill)
-	p.printBodyTimeCell(w3[10], p.formatTimeField(record.Time.Total), fill)
-	p.printBodyTextCell(w3[11], record.PIC, fill)
-	p.printBodyTimeCell(w3[12], formatLandings(record.Landings.Day), fill)
-	p.printBodyTimeCell(w3[12], formatLandings(record.Landings.Night), fill)
-	p.printBodyTimeCell(w3[14], p.formatTimeField(record.Time.Night), fill)
-	p.printBodyTimeCell(w3[15], p.formatTimeField(record.Time.IFR), fill)
-	p.printBodyTimeCell(w3[16], p.formatTimeField(record.Time.PIC), fill)
-	p.printBodyTimeCell(w3[17], p.formatTimeField(record.Time.CoPilot), fill)
-	p.printBodyTimeCell(w3[18], p.formatTimeField(record.Time.Dual), fill)
-	p.printBodyTimeCell(w3[19], p.formatTimeField(record.Time.Instructor), fill)
+	p.printBodyTimeCell(p.columns.w3[1], record.Departure.Place, fill)
+	p.printBodyTimeCell(p.columns.w3[2], record.Departure.Time, fill)
+	p.printBodyTimeCell(p.columns.w3[3], record.Arrival.Place, fill)
+	p.printBodyTimeCell(p.columns.w3[4], record.Arrival.Time, fill)
+	p.printBodyTimeCell(p.columns.w3[5], record.Aircraft.Model, fill)
+	p.printBodyTimeCell(p.columns.w3[6], record.Aircraft.Reg, fill)
+	p.printSinglePilotTime(p.columns.w3[7], p.formatTimeField(record.Time.SE), fill)
+	p.printSinglePilotTime(p.columns.w3[8], p.formatTimeField(record.Time.ME), fill)
+	p.printBodyTimeCell(p.columns.w3[9], p.formatTimeField(record.Time.MCC), fill)
+	p.printBodyTimeCell(p.columns.w3[10], p.formatTimeField(record.Time.Total), fill)
+	p.printBodyTextCell(p.columns.w3[11], record.PIC, fill)
+	p.printBodyTimeCell(p.columns.w3[12], formatLandings(record.Landings.Day), fill)
+	p.printBodyTimeCell(p.columns.w3[12], formatLandings(record.Landings.Night), fill)
+	p.printBodyTimeCell(p.columns.w3[14], p.formatTimeField(record.Time.Night), fill)
+	p.printBodyTimeCell(p.columns.w3[15], p.formatTimeField(record.Time.IFR), fill)
+	p.printBodyTimeCell(p.columns.w3[16], p.formatTimeField(record.Time.PIC), fill)
+	p.printBodyTimeCell(p.columns.w3[17], p.formatTimeField(record.Time.CoPilot), fill)
+	p.printBodyTimeCell(p.columns.w3[18], p.formatTimeField(record.Time.Dual), fill)
+	p.printBodyTimeCell(p.columns.w3[19], p.formatTimeField(record.Time.Instructor), fill)
 	if p.Export.IsExtended {
 		if record.SIM.Type != "" {
-			p.printBodyTimeCell(w3[0], record.Date, fill)
+			p.printBodyTimeCell(p.columns.w3[0], record.Date, fill)
 		} else {
-			p.printBodyTimeCell(w3[0], "", fill)
+			p.printBodyTimeCell(p.columns.w3[0], "", fill)
 		}
 	}
-	p.printBodyTimeCell(w3[20], record.SIM.Type, fill)
-	p.printBodyTimeCell(w3[21], p.formatTimeField(record.SIM.Time), fill)
-	p.printBodyRemarksCell(w3[22], record.Remarks, fill)
+	p.printBodyTimeCell(p.columns.w3[20], record.SIM.Type, fill)
+	p.printBodyTimeCell(p.columns.w3[21], p.formatTimeField(record.SIM.Time), fill)
+	p.printBodyRemarksCell(p.columns.w3[22], record.Remarks, fill)
 
 	p.pdf.Ln(-1)
 	p.pdf.SetX(p.Export.LeftMargin)
