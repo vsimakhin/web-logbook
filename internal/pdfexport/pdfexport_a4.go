@@ -7,6 +7,8 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
+// this file contains the A4 format specific functions
+
 // exportA4 creates A4 pdf with logbook in EASA format
 func (p *PDFExporter) ExportA4(flightRecords []models.FlightRecord, w io.Writer) error {
 	err := p.initPDF()
@@ -38,6 +40,7 @@ func (p *PDFExporter) ExportA4(flightRecords []models.FlightRecord, w io.Writer)
 	return err
 }
 
+// printA4LogbookHeader prints the logbook header
 func (p *PDFExporter) printA4LogbookHeader() {
 	p.pdf.AddPage()
 	p.setFontLogbookHeader()
@@ -93,6 +96,7 @@ func (p *PDFExporter) printA4LogbookHeader() {
 	p.pdf.SetY(y)
 }
 
+// logBookRow prints the logbook row
 func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 	p.rowCounter += 1
 
@@ -122,6 +126,7 @@ func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 	}
 }
 
+// printA4LogbookBody prints the logbook body
 func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	fill := p.isFillLine()
 	w3 := p.columns.w3
@@ -169,12 +174,14 @@ func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	p.pdf.SetX(p.Export.LeftMargin)
 }
 
+// printA4LogbookFooter prints the logbook footer
 func (p *PDFExporter) printA4LogbookFooter() {
 	p.printA4Total(FooterThisPage, p.totalPage)
 	p.printA4Total(FooterPreviousPage, p.totalPrevious)
 	p.printA4Total(FooterTotalTime, p.totalTime)
 }
 
+// printA4Total prints the logbook total
 func (p *PDFExporter) printA4Total(totalName string, total models.FlightRecord) {
 	p.setFontLogbookFooter()
 

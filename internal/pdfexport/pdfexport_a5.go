@@ -7,12 +7,16 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
+// this file contains the A5 format specific functions
+
+// Constants for the A5 format to split the headers between two pages
 const (
 	header1_div int = 8
 	header2_div int = 9
 	header3_div int = 14
 )
 
+// ExportA5 creates A5 pdf with logbook in EASA format
 func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer) error {
 	err := p.initPDF()
 	if err != nil {
@@ -88,6 +92,7 @@ func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer)
 	return err
 }
 
+// printA5LogbookHeaderA prints the logbook header for the left page
 func (p *PDFExporter) printA5LogbookHeaderA() {
 
 	p.setFontLogbookHeader()
@@ -137,6 +142,7 @@ func (p *PDFExporter) printA5LogbookHeaderA() {
 	p.pdf.SetY(y)
 }
 
+// printA5LogbookHeaderB prints the logbook header for the right page
 func (p *PDFExporter) printA5LogbookHeaderB() {
 
 	p.setFontLogbookHeader()
@@ -193,18 +199,21 @@ func (p *PDFExporter) printA5LogbookHeaderB() {
 	p.pdf.SetY(y)
 }
 
+// printA5LogbookFooterA prints the logbook footer for the left page
 func (p *PDFExporter) printA5LogbookFooterA() {
 	p.printA5TotalA(FooterThisPage, p.totalPage)
 	p.printA5TotalA(FooterPreviousPage, p.totalPrevious)
 	p.printA5TotalA(FooterTotalTime, p.totalTime)
 }
 
+// printA5LogbookFooterB prints the logbook footer for the right page
 func (p *PDFExporter) printA5LogbookFooterB() {
 	p.printA5TotalB(FooterThisPage, p.totalPage)
 	p.printA5TotalB(FooterPreviousPage, p.totalPrevious)
 	p.printA5TotalB(FooterTotalTime, p.totalTime)
 }
 
+// printA5TotalA prints the totals for the left page
 func (p *PDFExporter) printA5TotalA(totalName string, total models.FlightRecord) {
 	p.setFontLogbookFooter()
 
@@ -223,6 +232,7 @@ func (p *PDFExporter) printA5TotalA(totalName string, total models.FlightRecord)
 	p.pdf.Ln(-1)
 }
 
+// printA5TotalB prints the totals for the right page
 func (p *PDFExporter) printA5TotalB(totalName string, total models.FlightRecord) {
 	p.setFontLogbookFooter()
 
@@ -241,6 +251,7 @@ func (p *PDFExporter) printA5TotalB(totalName string, total models.FlightRecord)
 	p.pdf.Ln(-1)
 }
 
+// logBookRowA prints logbook record row for the left page
 func (p *PDFExporter) logBookRowA(record models.FlightRecord) bool {
 	p.rowCounter += 1
 
@@ -273,6 +284,7 @@ func (p *PDFExporter) logBookRowB(record models.FlightRecord) {
 	}
 }
 
+// printA5LogbookBodyA prints the logbook body for the left page
 func (p *PDFExporter) printA5LogbookBodyA(record models.FlightRecord, fill bool) {
 	p.setFontLogbookBody()
 
@@ -302,11 +314,11 @@ func (p *PDFExporter) printA5LogbookBodyA(record models.FlightRecord, fill bool)
 	p.pdf.SetX(p.Export.LeftMarginA)
 }
 
+// printA5LogbookBodyB prints the logbook body for the right page
 func (p *PDFExporter) printA5LogbookBodyB(record models.FlightRecord, fill bool) {
 
 	p.setFontLogbookBody()
 
-	// 	Data
 	p.pdf.SetX(p.Export.LeftMarginB)
 	p.printBodyTimeCell(p.columns.w3[14], p.formatTimeField(record.Time.Night), fill)
 	p.printBodyTimeCell(p.columns.w3[15], p.formatTimeField(record.Time.IFR), fill)
