@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -27,7 +26,7 @@ func (app *application) HandlerExport(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// HandlerExportLogbook executes the pdf export and returns pdf file
+// HandlerExportLogbook serves the GET request for logbook export
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
 
@@ -45,63 +44,70 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if format == exportA4 || format == exportA5 {
-		// export to PDF
+	var contentType, fileName string
+	var exportFunc func() error
 
-		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", "attachment; filename=logbook.pdf")
+	switch format {
+	case exportA4, exportA5:
+		contentType = "application/pdf"
+		fileName = "logbook.pdf"
 
-		logbook := &pdfexport.Logbook{
-			OwnerName:      settings.OwnerName,
-			LicenseNumber:  settings.LicenseNumber,
-			Address:        settings.Address,
-			Signature:      settings.SignatureText,
-			SignatureImage: settings.SignatureImage,
-		}
-		var customTitleUUID string
+		var exportSettings models.ExportPDF
 
 		if format == exportA4 {
-			logbook.Export = settings.ExportA4
-			customTitleUUID = settings.ExportA4.CustomTitle
-
-		} else if format == exportA5 {
-			logbook.Export = settings.ExportA5
-			customTitleUUID = settings.ExportA5.CustomTitle
+			exportSettings = settings.ExportA4
+		} else {
+			exportSettings = settings.ExportA5
 		}
 
-		att, _ := app.db.GetAttachmentByID(customTitleUUID)
-		logbook.Export.CustomTitleBlob = att.Document
+		if exportSettings.CustomTitle != "" {
+			att, _ := app.db.GetAttachmentByID(exportSettings.CustomTitle)
+			exportSettings.CustomTitleBlob = att.Document
+		}
 
-		err = logbook.ExportPDF(format, flightRecords, w)
+		pdfExporter, err := pdfexport.NewPDFExporter(format,
+			settings.OwnerName, settings.LicenseNumber, settings.Address,
+			settings.SignatureText, settings.SignatureImage, exportSettings)
 
-	} else if format == exportCSV {
-		// export to CSV format
-		w.Header().Set("Content-Type", "text/csv")
-		w.Header().Set("Content-Disposition", "attachment; filename=logbook.csv")
+		if err != nil {
+			app.errorLog.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
+		exportFunc = func() error {
+			if format == exportA4 {
+				return pdfExporter.ExportA4(flightRecords, w)
+			}
+			return pdfExporter.ExportA5(flightRecords, w)
+		}
+
+	case exportCSV:
+		contentType = "text/csv"
+		fileName = "logbook.csv"
 		var e csvexport.ExportCSV
 		e.ExportCSV = settings.ExportCSV
-		err = e.Export(flightRecords, w)
+		exportFunc = func() error {
+			return e.Export(flightRecords, w)
+		}
 
-	} else if format == exportXLS {
-		// export to XLS format
-
-		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-		w.Header().Set("Content-Disposition", "attachment; filename=logbook.xlsx")
-
+	case exportXLS:
+		contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+		fileName = "logbook.xlsx"
 		var xls xlsexport.ExportXLS
 		xls.ExportXLS = settings.ExportXLS
-
-		err = xls.Export(flightRecords, w)
-
-	} else {
-		err = errors.New("unknown export format")
+		exportFunc = func() error {
+			return xls.Export(flightRecords, w)
+		}
 	}
 
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
+
+	err = exportFunc()
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
 
