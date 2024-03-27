@@ -116,7 +116,7 @@ func setupLogger() (*os.File, *log.Logger, *log.Logger, *log.Logger, error) {
 }
 
 func createDBConnection(engine string, dsn string) (*sql.DB, error) {
-	conn, err := driver.OpenDB(dsn)
+	conn, err := driver.OpenDB(engine, dsn)
 	if err != nil {
 		return nil, err
 	}

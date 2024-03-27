@@ -7,6 +7,7 @@ require (
 	github.com/alexedwards/scs/v2 v2.7.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-pdf/fpdf v0.9.0
+	github.com/go-sql-driver/mysql v1.8.1
 	github.com/google/uuid v1.6.0
 	github.com/nathan-osman/go-sunrise v1.1.0
 	github.com/stretchr/testify v1.9.0
@@ -17,6 +18,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
