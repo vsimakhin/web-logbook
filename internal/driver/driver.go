@@ -4,17 +4,22 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	_ "embed"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	_ "modernc.org/sqlite"
 )
 
-func OpenDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", dsn)
+const (
+	DefaultOwnerName     = "Owner Name"
+	DefaultSignatureText = "I certify that the entries in this log are true."
+)
+
+func OpenDB(engine string, dsn string) (*sql.DB, error) {
+	db, err := sql.Open(engine, dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +29,7 @@ func OpenDB(dsn string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	err = validateDB(db)
+	err = validateDB(db, engine)
 	if err != nil {
 		return nil, err
 	}
@@ -32,98 +37,29 @@ func OpenDB(dsn string) (*sql.DB, error) {
 	return db, nil
 }
 
-//go:embed db.structure
-var structure string
-
 // validateDB creates db structure in case it's a first run and the schema is empty
-func validateDB(db *sql.DB) error {
-	var err error
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// run sql from db.structure
-	_, err = db.ExecContext(ctx, structure)
-	if err != nil {
-		return err
+func validateDB(db *sql.DB, engine string) error {
+	// check tables
+	tables := []*Table{logbookTable, airportsTable, customAirportsTable,
+		settingsTable, licensingTable, attachmentsTable, deletedItemsTable,
 	}
 
-	// check sync ready
-	err = checkSyncReady(db)
-	if err != nil {
-		return err
+	for _, table := range tables {
+		if err := table.initTable(db, engine); err != nil {
+			return err
+		}
+	}
+
+	// check views
+	views := []*View{logbookView, airportsView}
+	for _, view := range views {
+		if err := view.initView(db, engine); err != nil {
+			return err
+		}
 	}
 
 	// check settings table it's not empty
-	err = checkSettingsTable(db)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// checkSyncReady verifies if the columns for sync are created
-func checkSyncReady(db *sql.DB) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	var rowsCount int
-
-	// check main logbook table
-	query := "SELECT COUNT(cid) FROM pragma_table_info('logbook') WHERE name='update_time'"
-	row := db.QueryRowContext(ctx, query)
-	err := row.Scan(&rowsCount)
-	if err != nil {
-		return err
-	}
-
-	if rowsCount == 0 {
-		// no column, let's add it and update a view
-		query = "ALTER TABLE logbook ADD update_time INTEGER"
-		_, err = db.ExecContext(ctx, query)
-		if err != nil {
-			return err
-		}
-
-		query = fmt.Sprintf("UPDATE logbook SET update_time = %d", time.Now().Unix())
-		_, err = db.ExecContext(ctx, query)
-		if err != nil {
-			return err
-		}
-
-		// drop old view
-		query = "DROP VIEW IF EXISTS logbook_view"
-		_, err = db.ExecContext(ctx, query)
-		if err != nil {
-			return err
-		}
-	}
-
-	// check licensing table, v2.28.0+
-	query = "SELECT COUNT(cid) FROM pragma_table_info('licensing') WHERE name='update_time'"
-	row = db.QueryRowContext(ctx, query)
-	err = row.Scan(&rowsCount)
-	if err != nil {
-		return err
-	}
-
-	if rowsCount == 0 {
-		// no column, let's add it
-		query = "ALTER TABLE licensing ADD update_time INTEGER"
-		_, err = db.ExecContext(ctx, query)
-		if err != nil {
-			return err
-		}
-
-		query = fmt.Sprintf("UPDATE licensing SET update_time = %d", time.Now().Unix())
-		_, err = db.ExecContext(ctx, query)
-		if err != nil {
-			return err
-		}
-	}
-
-	// run sql from db.structure, it will create a view
-	_, err = db.ExecContext(ctx, structure)
+	err := checkSettingsTable(db)
 	if err != nil {
 		return err
 	}
@@ -142,15 +78,14 @@ func checkSettingsTable(db *sql.DB) error {
 	var rowsCount int
 	row := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM settings2")
 
-	err := row.Scan(&rowsCount)
-	if err != nil {
+	if err := row.Scan(&rowsCount); err != nil {
 		return err
 	}
 
 	if rowsCount == 0 {
 		// default values
-		s.OwnerName = "Owner Name"
-		s.SignatureText = "I certify that the entries in this log are true."
+		s.OwnerName = DefaultOwnerName
+		s.SignatureText = DefaultSignatureText
 
 		out, err := json.Marshal(s)
 		if err != nil {
@@ -158,9 +93,7 @@ func checkSettingsTable(db *sql.DB) error {
 		}
 
 		_, err = db.ExecContext(ctx, "INSERT INTO settings2 (id, settings) VALUES (0, ?)", string(out))
-		if err != nil {
-			return err
-		}
+		return err
 	}
 
 	return nil
