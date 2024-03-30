@@ -15,6 +15,9 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/vsimakhin/web-logbook/internal/driver"
 	"github.com/vsimakhin/web-logbook/internal/models"
+
+	_ "github.com/doug-martin/goqu/v9/dialect/mysql"
+	_ "github.com/doug-martin/goqu/v9/dialect/sqlite3"
 )
 
 const (

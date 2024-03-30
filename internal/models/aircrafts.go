@@ -17,9 +17,10 @@ func (m *DBModel) GetAircrafts(condition int) (map[string]string, error) {
 	var regName string
 
 	if condition == LastAircrafts {
-		query = "SELECT aircraft_model, reg_name FROM " +
-			"(SELECT aircraft_model, reg_name FROM logbook_view WHERE aircraft_model <> '' ORDER BY m_date DESC LIMIT 100) " +
-			"GROUP BY aircraft_model, reg_name ORDER BY aircraft_model "
+		query = "SELECT DISTINCT aircraft_model, reg_name FROM " +
+			"(SELECT aircraft_model, reg_name FROM logbook_view " +
+			"WHERE aircraft_model <> '' ORDER BY m_date DESC LIMIT 100) AS T1 " +
+			"ORDER BY aircraft_model "
 	} else {
 		query = "SELECT aircraft_model, reg_name FROM logbook_view WHERE aircraft_model <> '' " +
 			"GROUP BY aircraft_model, reg_name ORDER BY aircraft_model"

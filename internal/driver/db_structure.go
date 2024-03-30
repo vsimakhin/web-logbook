@@ -1,98 +1,120 @@
 package driver
 
-var logbookTable = NewTable("logbook", "uuid", ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"},
+var (
+	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
+	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}
+	SmallText = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}
+	BigText   = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(512)"}
+	FullText  = ColumnType{SQLite: "TEXT", MySQL: "TEXT"}
+	SmallInt  = ColumnType{SQLite: "INTEGER", MySQL: "SMALLINT"}
+	Int       = ColumnType{SQLite: "INTEGER", MySQL: "INT"}
+	Real      = ColumnType{SQLite: "REAL", MySQL: "FLOAT"}
+	Blob      = ColumnType{SQLite: "BLOB", MySQL: "LONGBLOB"}
+)
+
+var logbookTable = NewTable("logbook", "uuid", UUID,
 	[]Column{
-		{Name: "date", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}, Properties: "NOT NULL"},
-		{Name: "departure_place", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "departure_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(4)"}},
-		{Name: "arrival_place", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "arrival_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(4)"}},
-		{Name: "aircraft_model", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "reg_name", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "se_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "me_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "mcc_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "total_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "day_landings", Type: ColumnType{SQLite: "INTEGER", MySQL: "SMALLINT"}},
-		{Name: "night_landings", Type: ColumnType{SQLite: "INTEGER", MySQL: "SMALLINT"}},
-		{Name: "night_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "ifr_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "pic_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "co_pilot_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "dual_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "instructor_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "sim_type", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "sim_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "pic_name", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "remarks", Type: ColumnType{SQLite: "TEXT", MySQL: "TEXT"}},
-		{Name: "update_time", Type: ColumnType{SQLite: "INTEGER", MySQL: "INT"}},
+		{Name: "date", Type: DateTime, Properties: "NOT NULL"},
+		{Name: "departure_place", Type: SmallText},
+		{Name: "departure_time", Type: DateTime},
+		{Name: "arrival_place", Type: SmallText},
+		{Name: "arrival_time", Type: DateTime},
+		{Name: "aircraft_model", Type: SmallText},
+		{Name: "reg_name", Type: SmallText},
+		{Name: "se_time", Type: DateTime},
+		{Name: "me_time", Type: DateTime},
+		{Name: "mcc_time", Type: DateTime},
+		{Name: "total_time", Type: DateTime},
+		{Name: "day_landings", Type: SmallInt},
+		{Name: "night_landings", Type: SmallInt},
+		{Name: "night_time", Type: DateTime},
+		{Name: "ifr_time", Type: DateTime},
+		{Name: "pic_time", Type: DateTime},
+		{Name: "co_pilot_time", Type: DateTime},
+		{Name: "dual_time", Type: DateTime},
+		{Name: "instructor_time", Type: DateTime},
+		{Name: "sim_type", Type: SmallText},
+		{Name: "sim_time", Type: DateTime},
+		{Name: "pic_name", Type: SmallText},
+		{Name: "remarks", Type: FullText},
+		{Name: "update_time", Type: Int},
 	})
 
-var airportsTable = NewTable("airports", "icao", ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"},
+var airportsTable = NewTable("airports", "icao", SmallText,
 	[]Column{
-		{Name: "icao", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}, Properties: "NOT NULL"},
-		{Name: "iata", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}, Index: true},
-		{Name: "name", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "city", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "country", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "elevation", Type: ColumnType{SQLite: "INTEGER", MySQL: "SMALLINT"}},
-		{Name: "lat", Type: ColumnType{SQLite: "REAL", MySQL: "FLOAT"}},
-		{Name: "lon", Type: ColumnType{SQLite: "REAL", MySQL: "FLOAT"}},
+		{Name: "icao", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "iata", Type: SmallText, Index: true},
+		{Name: "name", Type: SmallText},
+		{Name: "city", Type: SmallText},
+		{Name: "country", Type: SmallText},
+		{Name: "elevation", Type: SmallInt},
+		{Name: "lat", Type: Real},
+		{Name: "lon", Type: Real},
 	})
 
-var customAirportsTable = NewTable("airports_custom", "name", ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"},
+var customAirportsTable = NewTable("airports_custom", "name", SmallText,
 	[]Column{
-		{Name: "city", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "country", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "elevation", Type: ColumnType{SQLite: "INTEGER", MySQL: "SMALLINT"}},
-		{Name: "lat", Type: ColumnType{SQLite: "REAL", MySQL: "FLOAT"}},
-		{Name: "lon", Type: ColumnType{SQLite: "REAL", MySQL: "FLOAT"}},
+		{Name: "city", Type: SmallText},
+		{Name: "country", Type: SmallText},
+		{Name: "elevation", Type: SmallInt},
+		{Name: "lat", Type: Real},
+		{Name: "lon", Type: Real},
 	})
 
-var settingsTable = NewTable("settings2", "id", ColumnType{SQLite: "INTEGER", MySQL: "SMALLINT"},
+var settingsTable = NewTable("settings2", "id", SmallInt,
 	[]Column{
-		{Name: "settings", Type: ColumnType{SQLite: "TEXT", MySQL: "TEXT"}},
+		{Name: "settings", Type: FullText},
 	})
 
-var licensingTable = NewTable("licensing", "uuid", ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"},
+var licensingTable = NewTable("licensing", "uuid", UUID,
 	[]Column{
-		{Name: "category", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "name", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "number", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}},
-		{Name: "issued", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "valid_from", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "valid_until", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}},
-		{Name: "document_name", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(512)"}},
-		{Name: "document", Type: ColumnType{SQLite: "BLOB", MySQL: "BLOB"}},
-		{Name: "remarks", Type: ColumnType{SQLite: "TEXT", MySQL: "TEXT"}},
-		{Name: "update_time", Type: ColumnType{SQLite: "INTEGER", MySQL: "INT"}},
+		{Name: "category", Type: SmallText},
+		{Name: "name", Type: SmallText},
+		{Name: "number", Type: SmallText},
+		{Name: "issued", Type: DateTime},
+		{Name: "valid_from", Type: DateTime},
+		{Name: "valid_until", Type: DateTime},
+		{Name: "document_name", Type: BigText},
+		{Name: "document", Type: Blob},
+		{Name: "remarks", Type: FullText},
+		{Name: "update_time", Type: Int},
 	})
 
-var attachmentsTable = NewTable("attachments", "uuid", ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"},
+var attachmentsTable = NewTable("attachments", "uuid", UUID,
 	[]Column{
-		{Name: "record_id", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}},
-		{Name: "document_name", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(512)"}},
-		{Name: "document", Type: ColumnType{SQLite: "BLOB", MySQL: "BLOB"}},
+		{Name: "record_id", Type: UUID},
+		{Name: "document_name", Type: BigText},
+		{Name: "document", Type: Blob},
 	})
 
-var deletedItemsTable = NewTable("deleted_items", "uuid", ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"},
+var deletedItemsTable = NewTable("deleted_items", "uuid", UUID,
 	[]Column{
-		{Name: "table_name", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(64)"}, Properties: "NOT NULL"},
-		{Name: "delete_time", Type: ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}, Properties: "NOT NULL"},
+		{Name: "table_name", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "delete_time", Type: DateTime, Properties: "NOT NULL"},
 	})
 
 var logbookView = NewView("logbook_view",
 	SQLQuery{
 		SQLite: `
-			SELECT uuid, date, substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date, departure_place, departure_time,
-				arrival_place, arrival_time, aircraft_model, reg_name, se_time, me_time, mcc_time, total_time, iif(day_landings='',0,day_landings) as day_landings, iif(night_landings='',0,night_landings) as night_landings,
-				night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_type, sim_time, pic_name, remarks, update_time
+			SELECT uuid, date, 
+				substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date, 
+				departure_place, departure_time, arrival_place, arrival_time, 
+				aircraft_model, reg_name, se_time, me_time, mcc_time, total_time, 
+				iif(day_landings='',0,day_landings) as day_landings, 
+				iif(night_landings='',0,night_landings) as night_landings,
+				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
+				instructor_time, sim_type, sim_time, pic_name, remarks, update_time
 			FROM logbook;
 			`,
 		MySQL: `
-			SELECT uuid, date, CONCAT(SUBSTRING(date,7,4), SUBSTRING(date,4,2), SUBSTRING(date,1,2)) as m_date, departure_place, departure_time,
-				arrival_place, arrival_time, aircraft_model, reg_name, se_time, me_time, mcc_time, total_time, IF(day_landings='',0,day_landings) as day_landings, IF(night_landings='',0,night_landings) as night_landings,
-				night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_type, sim_time, pic_name, remarks, update_time
+			SELECT uuid, date, 
+				CONCAT(SUBSTRING(date,7,4), SUBSTRING(date,4,2), SUBSTRING(date,1,2)) as m_date, 
+				departure_place, departure_time, arrival_place, arrival_time, 
+				aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
+				IF(day_landings='',0,day_landings) as day_landings, 
+				IF(night_landings='',0,night_landings) as night_landings,
+				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
+				instructor_time, sim_type, sim_time, pic_name, remarks, update_time
 			FROM logbook;
 		`,
 	},
