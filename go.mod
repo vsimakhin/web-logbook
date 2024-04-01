@@ -5,7 +5,6 @@ go 1.21
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/alexedwards/scs/v2 v2.7.0
-	github.com/doug-martin/goqu/v9 v9.19.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-pdf/fpdf v0.9.0
 	github.com/go-sql-driver/mysql v1.8.1

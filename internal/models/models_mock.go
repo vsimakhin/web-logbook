@@ -208,7 +208,7 @@ func InitMock(mock sqlmock.Sqlmock, item string) {
 					"2:00", "2:00", "2:00", "ZZZZ", "XXXX"))
 
 	case "GetTotalsYear":
-		mock.ExpectQuery("SELECT SUBSTR(.+) FROM logbook_view ORDER BY m_date").
+		mock.ExpectQuery("SELECT (.+) FROM logbook_view ORDER BY m_date").
 			WillReturnRows(mock.NewRows([]string{
 				"m_date", "se_time", "me_time", "mcc_time", "total_time",
 				"day_landings", "night_landings",

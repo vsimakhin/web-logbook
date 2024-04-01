@@ -128,7 +128,7 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 	var fr FlightRecord
 	totals := make(map[string]FlightRecord)
 
-	query := "SELECT SUBSTR(m_date,0,5), se_time, me_time, mcc_time, total_time, " +
+	query := "SELECT m_date, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
 		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
 		"FROM logbook_view ORDER BY m_date"
@@ -144,6 +144,8 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
 			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
+
+		fr.MDate = fr.MDate[:4] //take just a year part
 
 		if err != nil {
 			return totals, err
