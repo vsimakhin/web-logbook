@@ -81,10 +81,6 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int,
 
 	records := 0
 
-	// drop index since we completely recreate all records in the table
-	m.DB.ExecContext(ctx, "DROP INDEX airports_icao;")
-	m.DB.ExecContext(ctx, "DROP INDEX airports_iata;")
-
 	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports;")
 	if err != nil {
 		return records, err
@@ -118,17 +114,6 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int,
 
 	// commit transaction
 	err = tx.Commit()
-	if err != nil {
-		return records, err
-	}
-
-	// finally new fresh index
-	_, err = m.DB.ExecContext(ctx, "CREATE UNIQUE INDEX IF NOT EXISTS airports_icao ON airports(icao);")
-	if err != nil {
-		return records, err
-	}
-
-	_, err = m.DB.ExecContext(ctx, "CREATE INDEX IF NOT EXISTS airports_iata ON airports(iata);")
 	if err != nil {
 		return records, err
 	}
