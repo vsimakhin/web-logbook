@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [2.34.0] - 03.04.2024
 
-- New: Add support for MySQL database.
+- New: Add support for MySQL database. Check [readme](https://github.com/vsimakhin/web-logbook?tab=readme-ov-file#mysql-database) for more details.
 - Update: Refactored PDF export package. No UI changes.
 - New: Add support for a custom title page for PDF A4/A5 exports.
 - Update: Update openlayers lib from 7.3.0 to 9.0.0. No UI changes.
