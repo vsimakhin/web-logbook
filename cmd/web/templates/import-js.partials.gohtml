@@ -155,8 +155,10 @@ wlbImport = function () {
 
     // function for automatic time format recognition for departures and arrivals
     function autoTimeRecog(time) {
+        if (time === "") {
+            return "";
+        }
         time = time.replace(/[^0-9]/g, '').padStart(4,'0');
-
         return time;
     }
 
