@@ -1,9 +1,23 @@
 package models
 
-import "database/sql/driver"
+import (
+	"database/sql"
+	"database/sql/driver"
+)
 
 const AllAircrafts = 0
 const LastAircrafts = 1
+
+// DBModel is a type for database connections
+type DBModel struct {
+	DB *sql.DB
+}
+
+// cache for calculated distance
+var dcache = make(map[string]int)
+
+// cache for airports
+var acache = make(map[string]Airport)
 
 // jsonResponse is a type for post data handlers response
 type JSONResponse struct {

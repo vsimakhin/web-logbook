@@ -18,7 +18,18 @@ wlbLogbook = function () {
         table = $('#logbook').DataTable({
             bAutoWidth: false,
             ordering: false,
-            ajax: '{{index .API "LogbookData"}}',
+            ajax: {
+                url: '{{index .API "LogbookData"}}',
+                dataSrc: function (json) {
+                    if (json.data === null) {
+                        // Set a custom message for this case
+                        $('#logbook').dataTable().fnSettings().oLanguage.sEmptyTable = "No flight records";
+                        return [];
+                    } else {
+                        return json.data;
+                    }
+                }
+            },
             lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             columnDefs: [
                 { targets: [ 0 ], visible: false, searchable: false },

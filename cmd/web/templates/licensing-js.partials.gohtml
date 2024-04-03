@@ -12,14 +12,25 @@ wlbLicensing = function () {
     function initLicensing() {
         var groupColumn = 0;
         var lengthMenu = {{if $settings.LicensingRows}}{{$settings.LicensingRows}}{{else}}15{{end}};
-        table = $('#logbook').DataTable({
+        table = $('#licensing').DataTable({
             columnDefs: [
                 { visible: false, targets: groupColumn },
                 { targets: [1], visible: false, searchable: false }
             ],
             ordering: false,
             paging: true,
-            ajax: '/licensing/data',
+            ajax: {
+                url: '{{index .API "LicensingData"}}',
+                dataSrc: function (json) {
+                    if (json.data === null) {
+                        // Set a custom message for this case
+                        $('#licensing').dataTable().fnSettings().oLanguage.sEmptyTable = "No records";
+                        return [];
+                    } else {
+                        return json.data;
+                    }
+                }
+            },
             lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             drawCallback: function ( settings ) {
                 var api = this.api();

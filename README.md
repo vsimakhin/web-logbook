@@ -12,6 +12,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Add support for MySQL database.
 - Update: Refactored PDF export package. No UI changes.
 - New: Add support for a custom title page for PDF A4/A5 exports.
 - Update: Update openlayers lib from 7.3.0 to 9.0.0. No UI changes.
@@ -57,9 +58,11 @@ $ ./web-logbook -h
   -disable-authentication
       Disable authentication (in case you forgot login credentials)
   -dsn string
-      SQLite file name (default "web-logbook.sql")
+      Data source name {sqlite: file path|mysql: user:password@protocol(address)/dbname?param=value} (default "web-logbook.sql")
   -enable-https
       Enable TLS/HTTPS
+  -engine string
+      Database engine {sqlite|mysql} (default "sqlite")
   -env string
       Environment {dev|prod} (default "prod")
   -key string
@@ -67,7 +70,7 @@ $ ./web-logbook -h
   -port int
       Server port (default 4000)
   -url string
-      Server URL (default "localhost")
+      Server URL (default empty - the app will listen on all network interfaces)
   -version
       Prints current version
 ```
@@ -167,7 +170,8 @@ If you enable the `No ICAO codes filter` option, the app will ignore ICAO airpor
 
 Please make sure to click the `Save` button before updating the database to ensure that all changes are saved.
 
-# HTTPS enable
+# Advanced configuration
+## HTTPS enable
 
 Since the app is running on `localhost` it's not possible to create a public certificate that would be valid by public CAs. As an option, you can create a self-signed certificate and add it to the root CA in your operating system. For that, you can use [`mkcert` tool](https://github.com/FiloSottile/mkcert).
 
@@ -181,6 +185,20 @@ Since the app is running on `localhost` it's not possible to create a public cer
 You don't need to install a new local CA in you system, but in this case, browser will always show you a warning message, that certificate is self-signed and not trusted.
 
 Also, you can always generate your own certificate and key and store it in the different directories in your operating system. For that use `--key` and `--cert` parameters to specify the exact location.
+
+## MySQL database
+
+To store all data, you can use MySQL database. To get started, create a database and a user with access to it. On the first run, the application will create all necessary tables and views. If you want to migrate your data from SQLite to MySQL, you can use the export to CSV function first and then import from CSV.
+
+The DSN format for MySQL connections 
+```
+user:password@protocol(address)/dbname?param=value
+```
+
+For example, 
+```
+./web-logbook -engine mysql -dsn "web-logbook-user:pwd@tcp(192.168.0.222)/web-logbook
+```
 
 # New features/Issues
 

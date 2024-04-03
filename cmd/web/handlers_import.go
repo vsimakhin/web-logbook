@@ -25,8 +25,17 @@ func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
 
 // HandlerCreateBackup creates backup of the current db file
 func (app *application) HandlerImportCreateBackup(w http.ResponseWriter, r *http.Request) {
-
 	var response models.JSONResponse
+
+	if app.config.db.engine != "sqlite" {
+		response.Message = "backup is available only for sqlite3 database"
+		response.OK = false
+		err := app.writeJSON(w, http.StatusOK, response)
+		if err != nil {
+			app.errorLog.Println(err)
+		}
+		return
+	}
 
 	source, err := os.Open(app.config.db.dsn)
 	if err != nil {

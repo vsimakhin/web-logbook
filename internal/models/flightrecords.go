@@ -157,8 +157,8 @@ func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
 	} else {
 		// simulator record
 		query = "SELECT count(uuid) FROM logbook_view " +
-			"WHERE date = ? AND sim_type = ? AND sim_time = ?"
-		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.SIM.Type, fr.SIM.Time)
+			"WHERE date = ? AND sim_type = ? AND sim_time = ? AND remarks = ?"
+		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.SIM.Type, fr.SIM.Time, fr.Remarks)
 	}
 
 	err := row.Scan(&n)

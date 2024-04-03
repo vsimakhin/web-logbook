@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"database/sql"
 	"flag"
 	"fmt"
 	"html/template"
@@ -16,14 +17,21 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const version = "2.33.0"
+const (
+	version = "2.33.0"
+
+	infoLogPrefix    = "INFO\t"
+	errorLogPrefix   = "ERROR\t"
+	warningLogPrefix = "WARNING\t"
+)
 
 type config struct {
 	url  string
 	port int
 	env  string
 	db   struct {
-		dsn string
+		engine string
+		dsn    string
 	}
 	tls struct {
 		enabled bool
@@ -73,16 +81,16 @@ func (app *application) serve() error {
 	}
 }
 
-func main() {
+func parseFlags() (config, bool, bool) {
 	var cfg config
-	var err error
 	var isPrintVersion bool
 	var disableAuth bool
 
 	flag.StringVar(&cfg.url, "url", "", "Server URL (default empty - the app will listen on all network interfaces)")
 	flag.IntVar(&cfg.port, "port", 4000, "Server port")
 	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
-	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "SQLite file name")
+	flag.StringVar(&cfg.db.engine, "engine", "sqlite", "Database engine {sqlite|mysql}")
+	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "Data source name {sqlite: file path|mysql: user:password@protocol(address)/dbname?param=value}")
 	flag.BoolVar(&isPrintVersion, "version", false, "Prints current version")
 	flag.BoolVar(&disableAuth, "disable-authentication", false, "Disable authentication (in case you forgot login credentials)")
 	flag.BoolVar(&cfg.tls.enabled, "enable-https", false, "Enable TLS/HTTPS")
@@ -90,26 +98,53 @@ func main() {
 	flag.StringVar(&cfg.tls.crt, "cert", "certs/localhost.pem", "certificate path")
 	flag.Parse()
 
+	return cfg, isPrintVersion, disableAuth
+}
+
+func setupLogger() (*os.File, *log.Logger, *log.Logger, *log.Logger, error) {
+	logf, err := os.OpenFile("weblogbook-output.log", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	if err != nil {
+		return nil, nil, nil, nil, fmt.Errorf("error opening file: %v", err)
+	}
+	multilog := io.MultiWriter(logf, os.Stdout)
+
+	infoLog := log.New(multilog, infoLogPrefix, log.Ldate|log.Ltime)
+	errorLog := log.New(multilog, errorLogPrefix, log.Ldate|log.Ltime|log.Lshortfile)
+	warningLog := log.New(multilog, warningLogPrefix, log.Ldate|log.Ltime)
+
+	return logf, infoLog, errorLog, warningLog, nil
+}
+
+func createDBConnection(engine string, dsn string) (*sql.DB, error) {
+	conn, err := driver.OpenDB(engine, dsn)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
+func main() {
+	var err error
+
+	cfg, isPrintVersion, disableAuth := parseFlags()
+
 	if isPrintVersion {
 		fmt.Printf("Web-logbook Version %s\n", version)
 		os.Exit(0)
 	}
 
-	// create multilog writer
-	logf, err := os.OpenFile("weblogbook-output.log", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	// configure logging
+	logf, infoLog, errorLog, warningLog, err := setupLogger()
 	if err != nil {
-		fmt.Printf("error opening file: %v\n", err)
+		fmt.Printf("Failed to setup logger: %v\n", err)
+		os.Exit(1)
 	}
 	defer logf.Close()
-	multilog := io.MultiWriter(logf, os.Stdout)
-
-	infoLog := log.New(multilog, "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(multilog, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
-	warningLog := log.New(multilog, "WARNING\t", log.Ldate|log.Ltime)
 
 	tc := make(map[string]*template.Template)
 
-	conn, err := driver.OpenDB(cfg.db.dsn)
+	// create db connection
+	conn, err := createDBConnection(cfg.db.engine, cfg.db.dsn)
 	if err != nil {
 		errorLog.Fatalln(err)
 	}
@@ -130,6 +165,7 @@ func main() {
 		session:       session,
 	}
 
+	// check if we need to disable authentication
 	if disableAuth {
 		err := app.db.DisableAuthorization()
 		if err != nil {
