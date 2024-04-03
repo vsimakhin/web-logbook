@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Add support for MySQL database.
 - Update: Refactored PDF export package. No UI changes.
 - New: Add support for a custom title page for PDF A4/A5 exports.
 - Update: Update openlayers lib from 7.3.0 to 9.0.0. No UI changes.

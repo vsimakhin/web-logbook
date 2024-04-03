@@ -90,7 +90,7 @@ func parseFlags() (config, bool, bool) {
 	flag.IntVar(&cfg.port, "port", 4000, "Server port")
 	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
 	flag.StringVar(&cfg.db.engine, "engine", "sqlite", "Database engine {sqlite|mysql}")
-	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "SQLite file name")
+	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "Data source name {sqlite: file path|mysql: user:password@protocol(address)/dbname?param=value}")
 	flag.BoolVar(&isPrintVersion, "version", false, "Prints current version")
 	flag.BoolVar(&disableAuth, "disable-authentication", false, "Disable authentication (in case you forgot login credentials)")
 	flag.BoolVar(&cfg.tls.enabled, "enable-https", false, "Enable TLS/HTTPS")
