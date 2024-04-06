@@ -64,28 +64,14 @@
                             <a class="nav-link" href="https://github.com/vsimakhin/web-logbook"><i class="bi bi-github"></i> v{{.Version}}
                             {{if .NewVersion}}<span class="badge rounded-pill text-bg-info">New</span>{{ end }}</a>
                         </li>
+                        
                         <!--theme selector -->
                         <div class="dropdown position-fixed bottom-0 start-0 mb-3 me-3 bd-mode-toggle">
-                            <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
-                                id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-                            <i class="bi bi-circle-half" id="active-theme-i"></i><span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-                            </button>
+                            <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)"><i class="bi bi-circle-half" id="active-theme-i"></i><span class="visually-hidden" id="bd-theme-text">Toggle theme</span></button>
                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
-                                <li>
-                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-                                    <i class="bi bi-sun-fill"><a href=#bi-sun-fill></a></i>&nbsp;Light
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-                                    <i class="bi bi-moon-stars-fill"><a href=#bi-moon-stars-fill></a></i>&nbsp;Dark
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-                                    <i class="bi bi-circle-half"><a href=#bi-circle-half></a></i>&nbsp;Auto
-                                    </button>
-                                </li>
+                                <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false"><i class="bi bi-sun-fill"><a href=#bi-sun-fill></a></i>&nbsp;Light</button></li>
+                                <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false"><i class="bi bi-moon-stars-fill"><a href=#bi-moon-stars-fill></a></i>&nbsp;Dark</button></li>
+                                <li><button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true"><i class="bi bi-circle-half"><a href=#bi-circle-half></a></i>&nbsp;Auto</button></li>
                             </ul>
                         </div>
                     </ul>
@@ -103,7 +89,19 @@
     <script type="text/javascript" src="/static/js/jquery-3.6.1.min.js"></script>
     <script type="text/javascript" src="/static/js/moment.min.js"></script>
     <script type="text/javascript" src="/static/js/daterangepicker.js"></script>
+    <script type="text/javascript" src="/static/js/wlb-common.js"></script>
     {{ block "js" . }}{{ end }}
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="/favicon.ico" class="rounded me-2">
+                <strong class="me-auto">Logbook</strong><div id="toast-type" class="text-danger">Info</div>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message"></div>
+        </div>
+    </div>
 </body>
 </html>
 
