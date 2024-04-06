@@ -114,7 +114,7 @@ wlbSettings = function () {
     async function reloadAircraftClassesTable() {
         $('#aircraft_class').find('tbody').empty();
 
-        var aircrafts = await wlbCommon.getJSON("{{index .API "Aircrafts"}}");
+        var aircrafts = await commonUtils.fetchJSON("{{index .API "Aircrafts"}}");
         var models_data = [];
         for (var item in aircrafts) {
             if (!models_data.includes(aircrafts[item])){
@@ -122,7 +122,7 @@ wlbSettings = function () {
             }
         }
 
-        var classes_data = await wlbCommon.getJSON("{{index .API "SettingsAircraftClasses"}}");
+        var classes_data = await commonUtils.fetchJSON("{{index .API "SettingsAircraftClasses"}}");
 
         for (var key of Object.keys(classes_data)) {
             $('#aircraft_class').find('tbody').append(rowBody.replace("CLASS_NAME", key).replace("TYPE_NAME", classes_data[key]));
@@ -473,7 +473,7 @@ wlbSettings = function () {
                     { targets: [0,2], render: function ( data, type, row ) {
                         if (data.length > 25) {
                             var txt = data.substr( 0, 25 ) + '…'
-                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${wlbCommon.escapeHtml(data)}">${wlbCommon.escapeHtml(txt)}</span>`;
+                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${commonUtils.escapeHtml(data)}">${commonUtils.escapeHtml(txt)}</span>`;
                         } else {
                             return data;
                         }

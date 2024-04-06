@@ -22,7 +22,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data["urls"] = app.getServerUrls()
 
 	partials := []string{
-		"common-js", "settings-js", "settings-general",
+		"settings-js", "settings-general",
 		"settings-airports", "settings-misc", "settings-sync",
 	}
 

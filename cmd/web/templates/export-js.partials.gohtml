@@ -16,7 +16,7 @@ wlbExport = function () {
         if (!formatMap[format]) {return;}
 
         const url = attachments_url.replace("{uuid}", formatMap[format]);
-        const data = await wlbCommon.getJSON(url);
+        const data = await commonUtils.fetchJSON(url);
         if (data.length > 0) {
             return data[0].uuid;
         } else {
@@ -27,7 +27,7 @@ wlbExport = function () {
     async function deleteCustomTitle(format) {
         // drop current saved file from attachments
         const attachments_url = "{{index .API "LogbookUUIDAttachments"}}".replace("{uuid}", formatMap[format]);
-        const data = await wlbCommon.getJSON(attachments_url);
+        const data = await commonUtils.fetchJSON(attachments_url);
 
         if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
@@ -56,7 +56,7 @@ wlbExport = function () {
 
             // update uuid in settings
             const attachments_url = "{{index .API "LogbookUUIDAttachments"}}".replace("{uuid}", formatMap[format]);
-            const data = await wlbCommon.getJSON(attachments_url);
+            const data = await commonUtils.fetchJSON(attachments_url);
             if (data.length > 0) {
                 return data[0].uuid;
             } else {

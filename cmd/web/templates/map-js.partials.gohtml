@@ -36,7 +36,7 @@ wlbMap = function () {
         document.getElementById("map").innerText = "";
         document.getElementById("some_stats").innerText = "Routes: 0\nAirports: 0";
 
-        var data = await wlbCommon.getJSON("{{index .API "MapData"}}"+parameters);
+        var data = await commonUtils.fetchJSON("{{index .API "MapData"}}"+parameters);
 
         var lines = data["lines"];
         var markers = data["markers"];

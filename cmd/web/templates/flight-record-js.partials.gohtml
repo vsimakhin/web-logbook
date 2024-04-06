@@ -149,8 +149,8 @@ wlbFlightRecord = function () {
                 instructor_time: document.getElementById("instr_time").value
             },
             landings: {
-                day: wlbCommon.formatLandings(document.getElementById("landings_day").value),
-                night: wlbCommon.formatLandings(document.getElementById("landings_night").value)
+                day: commonUtils.formatLandings(document.getElementById("landings_day").value),
+                night: commonUtils.formatLandings(document.getElementById("landings_night").value)
             },
             sim: {
                 type: document.getElementById("sim_type").value,
@@ -320,7 +320,7 @@ wlbFlightRecord = function () {
         var rows = "";
 
         logbook_attachments_url = "{{index .API "LogbookUUIDAttachments"}}";
-        data = await wlbCommon.getJSON(logbook_attachments_url.replace("{uuid}", uuid));
+        data = await commonUtils.fetchJSON(logbook_attachments_url.replace("{uuid}", uuid));
 
         if (data.length) {
             tbody.innerHTML = "";
@@ -409,7 +409,7 @@ wlbFlightRecord = function () {
     }
 
     async function initAircraftsList() {
-        aircrafts = await wlbCommon.getJSON('{{index .API "Aircrafts"}}');
+        aircrafts = await commonUtils.fetchJSON('{{index .API "Aircrafts"}}');
     }
 
     return {

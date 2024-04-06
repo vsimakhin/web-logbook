@@ -32,7 +32,7 @@ wlbStats = function () {
                                     // format distance value with spaces
                                     label += context.parsed.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " nm";
                                 } else {
-                                    label += wlbCommon.convertNumberToTime(context.parsed.y);
+                                    label += commonUtils.convertNumberToTime(context.parsed.y);
                                 }
                             }
                             return label;
@@ -82,7 +82,7 @@ wlbStats = function () {
         var values = [];
 
         for (var i = 1; i <= rows; i++) {
-            values.push(wlbCommon.convertTime(tb.rows[i].cells[cl].innerText));
+            values.push(commonUtils.convertTime(tb.rows[i].cells[cl].innerText));
         }
 
         chart.data.datasets = [
@@ -114,7 +114,7 @@ wlbStats = function () {
 
     // func drawProgressBar generates html to show in the stats limit cell
     function drawProgressBar(data, max) {
-        var intData = wlbCommon.convertTime(data);
+        var intData = commonUtils.convertTime(data);
         var percentData = parseInt(intData/max*100);
 
         if (data === "") {

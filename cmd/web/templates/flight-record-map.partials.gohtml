@@ -68,8 +68,8 @@ wlbFlightMap = function () {
         document.getElementById("map").innerText = "";
 
         // load deprature & arrival airports
-        var dep = await wlbCommon.getJSON("{{index .API "Airport"}}"+departure_place);
-        var arr = await wlbCommon.getJSON("{{index .API "Airport"}}"+arrival_place);
+        var dep = await commonUtils.fetchJSON("{{index .API "Airport"}}"+departure_place);
+        var arr = await commonUtils.fetchJSON("{{index .API "Airport"}}"+arrival_place);
 
         // calculate center of the map
         var dist = distance(dep["lat"], dep["lon"], arr["lat"], arr["lon"]);

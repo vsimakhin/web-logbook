@@ -43,7 +43,7 @@ wlbLogbook = function () {
                 { targets: [23], render: function ( data, type, row ) {
                         if (data.length > remarksL) {
                             var txt = data.substr( 0, remarksL ) + '…'
-                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${wlbCommon.escapeHtml(data)}">${wlbCommon.escapeHtml(txt)}</span>`;
+                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${commonUtils.escapeHtml(data)}">${commonUtils.escapeHtml(txt)}</span>`;
                         } else {
                             return data;
                         }
@@ -60,7 +60,7 @@ wlbLogbook = function () {
 
                 let getNumbers = function (i) {
                     return typeof i === 'string'
-                        ? wlbCommon.convertTime(i)
+                        ? commonUtils.convertTime(i)
                         : typeof i === 'number'
                         ? i
                         : 0;
@@ -79,8 +79,8 @@ wlbLogbook = function () {
             
                     // Update footer
                     if (time) {
-                        $('#logbook tfoot tr').eq(0).find('th').eq(id-offset).html(wlbCommon.convertNumberToTime(pageTotal));
-                        $('#logbook tfoot tr').eq(1).find('th').eq(id-offset).html(wlbCommon.convertNumberToTime(total));
+                        $('#logbook tfoot tr').eq(0).find('th').eq(id-offset).html(commonUtils.convertNumberToTime(pageTotal));
+                        $('#logbook tfoot tr').eq(1).find('th').eq(id-offset).html(commonUtils.convertNumberToTime(total));
                     } else {
                         $('#logbook tfoot tr').eq(0).find('th').eq(id-offset).html(pageTotal);
                         $('#logbook tfoot tr').eq(1).find('th').eq(id-offset).html(total);

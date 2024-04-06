@@ -15,7 +15,7 @@ import (
 
 // HandlerLicensing is a handler for /licensing page
 func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "licensing", &templateData{}, "common-js", "licensing-js"); err != nil {
+	if err := app.renderTemplate(w, r, "licensing", &templateData{}, "licensing-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -93,7 +93,7 @@ func (app *application) HandlerLicensingRecordByID(w http.ResponseWriter, r *htt
 	data["license"] = license
 	data["categories"] = categories
 
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "common-js", "license-record-js"); err != nil {
+	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "license-record-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -131,7 +131,7 @@ func (app *application) HandlerLicensingRecordNew(w http.ResponseWriter, r *http
 	data["license"] = license
 	data["categories"] = categories
 
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "common-js", "license-record-js"); err != nil {
+	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "license-record-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }

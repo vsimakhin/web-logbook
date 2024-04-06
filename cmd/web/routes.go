@@ -1,82 +1,128 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-const APIRoot = "/"
+const (
+	APIRoot                           = "/"
+	APIGetApi                         = "/api/{api}"
+	APILogbook                        = "/logbook"
+	APILogbookUUID                    = "/logbook/{uuid}"
+	APILogbookData                    = "/logbook/data"
+	APILogbookNew                     = "/logbook/new"
+	APILogbookSave                    = "/logbook/save"
+	APILogbookDelete                  = "/logbook/delete"
+	APILogbookNight                   = "/logbook/night"
+	APIExport                         = "/export"
+	APIExportFormat                   = "/export/{format}"
+	APIExportRestoreDefaults          = "/export/restore"
+	APIImport                         = "/import"
+	APIImportCreateBackup             = "/import/backup/create"
+	APIImportRun                      = "/import/run"
+	APIAircrafts                      = "/aircrafts/"
+	APIAircraftsFilter                = "/aircrafts/{filter}"
+	APILogbookUUIDAttachments         = "/logbook/{uuid}/attachments"
+	APILogbookAttachmentsDelete       = "/logbook/attachments/delete"
+	APILogbookAttachmentsUpload       = "/logbook/attachments/upload"
+	APILogbookAttachmentsDownload     = "/logbook/attachments/download/"
+	APILogbookAttachmentsDownloadUUID = APILogbookAttachmentsDownload + "{uuid}"
+	APILicensing                      = "/licensing"
+	APILicensingData                  = "/licensing/data"
+	APILicensingUUID                  = "/licensing/{uuid}"
+	APILicensingNew                   = "/licensing/new"
+	APILicensingSave                  = "/licensing/save"
+	APILicensingDelete                = "/licensing/delete"
+	APILicensingAttachmentDelete      = "/licensing/attachment/delete"
+	APILicensingDownload              = "/licensing/download/"
+	APILicensingDownloadUUID          = APILicensingDownload + "{uuid}"
+	APISettings                       = "/settings"
+	APISettingsAircraftClasses        = "/settings/classes"
+	APIAirport                        = "/airport/"
+	APIAirportID                      = "/airport/{id}"
+	APIAirportUpdate                  = "/airport/update"
+	APIAirportStandardData            = "/airport/standard/"
+	APIAirportCustomData              = "/airport/custom/"
+	APIAirportAddCustom               = "/airport/custom/add"
+	APIAirportDeleteCustom            = "/airport/custom/delete"
+	APIMap                            = "/map"
+	APIMapData                        = "/map/data"
+	APIStats                          = "/stats"
+	APIStatsTotals                    = "/stats/totals"
+	APIStatsTotalsByType              = "/stats/totals-by-type"
+	APIStatsTotalsByClass             = "/stats/totals-by-class"
+	APIStatsLimits                    = "/stats/limits"
+	APILogin                          = "/login"
+	APILogout                         = "/logout"
+	APISyncAirports                   = "/sync/airports"
+	APISyncDeleted                    = "/sync/deleted"
+	APISyncFlightRecords              = "/sync/flightrecords"
+	APISyncLicensing                  = "/sync/licensing"
+	APISyncAttachmentsAll             = "/sync/attachments/all"
+	APISyncAttachments                = "/sync/attachments/{uuid}"
+	APISyncAttachmentsUpload          = "/sync/attachments/upload"
+)
 
-const APILogbook = "/logbook"
-const APILogbookUUID = "/logbook/{uuid}"
-const APILogbookData = "/logbook/data"
-
-const APILogbookNew = "/logbook/new"
-const APILogbookSave = "/logbook/save"
-const APILogbookDelete = "/logbook/delete"
-
-const APILogbookNight = "/logbook/night"
-
-const APIExport = "/export"
-const APIExportFormat = "/export/{format}"
-const APIExportRestoreDefaults = "/export/restore"
-
-const APIImport = "/import"
-const APIImportCreateBackup = "/import/backup/create"
-const APIImportRun = "/import/run"
-
-const APIAircrafts = "/aircrafts/"
-const APIAircraftsFilter = "/aircrafts/{filter}"
-
-const APILogbookUUIDAttachments = "/logbook/{uuid}/attachments"
-const APILogbookAttachmentsDelete = "/logbook/attachments/delete"
-const APILogbookAttachmentsUpload = "/logbook/attachments/upload"
-const APILogbookAttachmentsDownload = "/logbook/attachments/download/"
-const APILogbookAttachmentsDownloadUUID = APILogbookAttachmentsDownload + "{uuid}"
-
-const APILicensing = "/licensing"
-const APILicensingData = "/licensing/data"
-const APILicensingUUID = "/licensing/{uuid}"
-const APILicensingNew = "/licensing/new"
-const APILicensingSave = "/licensing/save"
-const APILicensingDelete = "/licensing/delete"
-const APILicensingAttachmentDelete = "/licensing/attachment/delete"
-const APILicensingDownload = "/licensing/download/"
-const APILicensingDownloadUUID = APILicensingDownload + "{uuid}"
-
-const APISettings = "/settings"
-const APISettingsAircraftClasses = "/settings/classes"
-
-const APIAirport = "/airport/"
-const APIAirportID = "/airport/{id}"
-const APIAirportUpdate = "/airport/update"
-const APIAirportStandardData = "/airport/standard/"
-const APIAirportCustomData = "/airport/custom/"
-const APIAirportAddCustom = "/airport/custom/add"
-const APIAirportDeleteCustom = "/airport/custom/delete"
-
-const APIMap = "/map"
-const APIMapData = "/map/data"
-
-const APIStats = "/stats"
-const APIStatsTotals = "/stats/totals"
-const APIStatsTotalsByType = "/stats/totals-by-type"
-const APIStatsTotalsByClass = "/stats/totals-by-class"
-const APIStatsLimits = "/stats/limits"
-
-const APILogin = "/login"
-const APILogout = "/logout"
-
-const APISyncAirports = "/sync/airports"
-const APISyncDeleted = "/sync/deleted"
-const APISyncFlightRecords = "/sync/flightrecords"
-const APISyncLicensing = "/sync/licensing"
-const APISyncAttachmentsAll = "/sync/attachments/all"
-const APISyncAttachments = "/sync/attachments/{uuid}"
-const APISyncAttachmentsUpload = "/sync/attachments/upload"
+var apiMap = map[string]string{
+	"Root":                           APIRoot,
+	"Logbook":                        APILogbook,
+	"LogbookData":                    APILogbookData,
+	"LogbookUUID":                    APILogbookUUID,
+	"LogbookNew":                     APILogbookNew,
+	"LogbookSave":                    APILogbookSave,
+	"LogbookDelete":                  APILogbookDelete,
+	"LogbookNight":                   APILogbookNight,
+	"Aircrafts":                      APIAircrafts,
+	"AircraftsFilter":                APIAircraftsFilter,
+	"LogbookUUIDAttachments":         APILogbookUUIDAttachments,
+	"LogbookAttachmentsUpload":       APILogbookAttachmentsUpload,
+	"LogbookAttachmentsDelete":       APILogbookAttachmentsDelete,
+	"LogbookAttachmentsDownload":     APILogbookAttachmentsDownload,
+	"LogbookAttachmentsDownloadUUID": APILogbookAttachmentsDownloadUUID,
+	"Export":                         APIExport,
+	"ExportFormat":                   APIExportFormat,
+	"ExportRestoreDefaults":          APIExportRestoreDefaults,
+	"Import":                         APIImport,
+	"ImportCreateBackup":             APIImportCreateBackup,
+	"ImportRun":                      APIImportRun,
+	"Airport":                        APIAirport,
+	"AirportID":                      APIAirportID,
+	"AirportUpdate":                  APIAirportUpdate,
+	"AirportStandardData":            APIAirportStandardData,
+	"AirportCustomData":              APIAirportCustomData,
+	"AirportAddCustom":               APIAirportAddCustom,
+	"AirportDeleteCustom":            APIAirportDeleteCustom,
+	"Settings":                       APISettings,
+	"SettingsAircraftClasses":        APISettingsAircraftClasses,
+	"Stats":                          APIStats,
+	"StatsTotals":                    APIStatsTotals,
+	"StatsTotalsByType":              APIStatsTotalsByType,
+	"StatsTotalsByClass":             APIStatsTotalsByClass,
+	"StatsLimits":                    APIStatsLimits,
+	"Map":                            APIMap,
+	"MapData":                        APIMapData,
+	"Licensing":                      APILicensing,
+	"LicensingData":                  APILicensingData,
+	"LicensingUUID":                  APILicensingUUID,
+	"LicensingNew":                   APILicensingNew,
+	"LicensingDownload":              APILicensingDownload,
+	"LicensingDownloadUUID":          APILicensingDownloadUUID,
+	"LicensingSave":                  APILicensingSave,
+	"LicensingDelete":                APILicensingDelete,
+	"LicensingAttachmentDelete":      APILicensingAttachmentDelete,
+	"Login":                          APILogin,
+	"Logout":                         APILogout,
+	"ExportFormatA4":                 exportA4,
+	"ExportFormatA5":                 exportA5,
+	"ExportFormatCSV":                exportCSV,
+	"ExportFormatXLS":                exportXLS,
+}
 
 var session *scs.SessionManager
 
@@ -174,6 +220,9 @@ func (app *application) routes() *chi.Mux {
 
 		server.Get(APISyncLicensing, app.HandlerSyncLicensingGet)
 		server.Post(APISyncLicensing, app.HandlerSyncLicensingPost)
+
+		// api
+		server.Get(APIGetApi, app.HandlerGetApi)
 	})
 
 	// login & logout
@@ -193,4 +242,26 @@ func (app *application) routes() *chi.Mux {
 // SessionLoad peforms the load and save of a session, per request
 func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
+}
+
+func (app *application) HandlerGetApi(w http.ResponseWriter, r *http.Request) {
+	api := chi.URLParam(r, "api")
+
+	// check if api is in mapAPI
+	item, ok := apiMap[api]
+	if !ok {
+		app.errorLog.Println("api not found")
+		http.Error(w, "api not found", http.StatusNotFound)
+		return
+	}
+
+	var response models.JSONResponse
+	response.Data = item
+	response.OK = true
+
+	err := app.writeJSON(w, http.StatusOK, response)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
+		return
+	}
 }

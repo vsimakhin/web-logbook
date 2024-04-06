@@ -53,62 +53,7 @@ func formatNumber(n int) string {
 
 // addDefaultData adds default values/consts to all templates
 func (app *application) addDefaultData(td *templateData, req *http.Request) *templateData {
-	td.API = make(map[string]string)
-	td.API["URL"] = fmt.Sprintf("http://localhost:%d", app.config.port)
-	td.API["Root"] = APIRoot
-	td.API["Logbook"] = APILogbook
-	td.API["LogbookData"] = APILogbookData
-	td.API["LogbookUUID"] = APILogbookUUID
-	td.API["LogbookNew"] = APILogbookNew
-	td.API["LogbookSave"] = APILogbookSave
-	td.API["LogbookDelete"] = APILogbookDelete
-	td.API["LogbookNight"] = APILogbookNight
-	td.API["Aircrafts"] = APIAircrafts
-	td.API["AircraftsFilter"] = APIAircraftsFilter
-	td.API["LogbookUUIDAttachments"] = APILogbookUUIDAttachments
-	td.API["LogbookAttachmentsUpload"] = APILogbookAttachmentsUpload
-	td.API["LogbookAttachmentsDelete"] = APILogbookAttachmentsDelete
-	td.API["LogbookAttachmentsDownload"] = APILogbookAttachmentsDownload
-	td.API["LogbookAttachmentsDownloadUUID"] = APILogbookAttachmentsDownloadUUID
-	td.API["Export"] = APIExport
-	td.API["ExportFormat"] = APIExportFormat
-	td.API["ExportRestoreDefaults"] = APIExportRestoreDefaults
-	td.API["Import"] = APIImport
-	td.API["ImportCreateBackup"] = APIImportCreateBackup
-	td.API["ImportRun"] = APIImportRun
-	td.API["Airport"] = APIAirport
-	td.API["AirportID"] = APIAirportID
-	td.API["AirportUpdate"] = APIAirportUpdate
-	td.API["AirportStandardData"] = APIAirportStandardData
-	td.API["AirportCustomData"] = APIAirportCustomData
-	td.API["AirportAddCustom"] = APIAirportAddCustom
-	td.API["AirportDeleteCustom"] = APIAirportDeleteCustom
-	td.API["Settings"] = APISettings
-	td.API["SettingsAircraftClasses"] = APISettingsAircraftClasses
-	td.API["Stats"] = APIStats
-	td.API["StatsTotals"] = APIStatsTotals
-	td.API["StatsTotalsByType"] = APIStatsTotalsByType
-	td.API["StatsTotalsByClass"] = APIStatsTotalsByClass
-	td.API["StatsLimits"] = APIStatsLimits
-	td.API["Map"] = APIMap
-	td.API["MapData"] = APIMapData
-	td.API["Licensing"] = APILicensing
-	td.API["LicensingData"] = APILicensingData
-	td.API["LicensingUUID"] = APILicensingUUID
-	td.API["LicensingNew"] = APILicensingNew
-	td.API["LicensingDownload"] = APILicensingDownload
-	td.API["LicensingDownloadUUID"] = APILicensingDownloadUUID
-	td.API["LicensingSave"] = APILicensingSave
-	td.API["LicensingDelete"] = APILicensingDelete
-	td.API["LicensingAttachmentDelete"] = APILicensingAttachmentDelete
-	td.API["Login"] = APILogin
-	td.API["Logout"] = APILogout
-
-	td.API["ExportFormatA4"] = exportA4
-	td.API["ExportFormatA5"] = exportA5
-	td.API["ExportFormatCSV"] = exportCSV
-	td.API["ExportFormatXLS"] = exportXLS
-
+	td.API = apiMap
 	td.AuthEnabled = app.isAuthEnabled
 	td.Version = app.version
 	td.NewVersion = app.isNewVersion
