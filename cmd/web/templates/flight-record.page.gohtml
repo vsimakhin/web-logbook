@@ -241,12 +241,7 @@ Flight Record {{if $fr.UUID}}{{ if and $fr.Departure.Place $fr.Arrival.Place}}{{
             </div>
         </div>
     </div>
-    <div class="mb-2 row">
-        <input type="hidden" name="uuid" id="uuid" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
-        <div class="col">
-            <div class="alert alert-danger text-center d-none" id="info" role="alert"></div>
-        </div>
-    </div>
+    <input type="hidden" name="uuid" id="uuid" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
     <hr>
 
     <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbFlightRecord.validateFields()" id="save"><i class="bi bi-save-fill"></i> Save</button>

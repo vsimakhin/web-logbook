@@ -110,11 +110,11 @@ wlbFlightRecord = function () {
         }
 
         if (!isValid) {
-            wlbCommon.showErrorMessage(errorMessage);
+            commonUtils.showErrorMessage(errorMessage);
             return;
         }
 
-        wlbCommon.showInfoMessage("OK!");
+        commonUtils.showInfoMessage("OK!");
 
         saveFlightRecord();
     }
@@ -173,12 +173,12 @@ wlbFlightRecord = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
     }
@@ -201,12 +201,12 @@ wlbFlightRecord = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
     }
@@ -302,9 +302,9 @@ wlbFlightRecord = function () {
             .then(function(data) {
                 if (data.ok) {
                     loadAttachments();
-                    wlbCommon.showInfoMessage("Attachment deleted");
+                    commonUtils.showInfoMessage("Attachment deleted");
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
     };
@@ -358,10 +358,10 @@ wlbFlightRecord = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     loadAttachments();
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
 

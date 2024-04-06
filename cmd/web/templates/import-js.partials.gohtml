@@ -40,7 +40,7 @@ wlbImport = function () {
         Papa.parse(file, {
             complete: function(results) {
                 if ( results.errors.length ) {
-                    wlbCommon.showErrorMessage('csv parsing error: '+ results.errors[0].message);
+                    commonUtils.showErrorMessage('csv parsing error: '+ results.errors[0].message);
                 }
                 else {
                     fillSelectOptions(results.data[0]);
@@ -212,7 +212,7 @@ wlbImport = function () {
         table.clear();
         table.rows.add(table_data).draw();
 
-        wlbCommon.showInfoMessage(`Loaded ${table_data.length} rows`);
+        commonUtils.showInfoMessage(`Loaded ${table_data.length} rows`);
     }
 
     // clear table
@@ -221,7 +221,7 @@ wlbImport = function () {
         table.clear();
         table.rows.add(table_data).draw();
 
-        wlbCommon.showInfoMessage(`Table cleared`);
+        commonUtils.showInfoMessage(`Table cleared`);
     }
 
     // create backup
@@ -241,9 +241,9 @@ wlbImport = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
     }
@@ -251,7 +251,7 @@ wlbImport = function () {
     // run import
     function importData() {
         if (table_data.length === 0) {
-            wlbCommon.showInfoMessage("Nothing to import");
+            commonUtils.showInfoMessage("Nothing to import");
             return;
         }
 
@@ -283,7 +283,7 @@ wlbImport = function () {
             .then(function(data) {
                 if (data.ok) {
                     clearTable();
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                 } else {
                     var err_data = JSON.parse(data.data);
 
@@ -295,7 +295,7 @@ wlbImport = function () {
                     table.clear();
                     table.rows.add(table_data).draw();
 
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
 
                 stopImportStatus();

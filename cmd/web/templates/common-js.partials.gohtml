@@ -4,29 +4,6 @@
 
 // WebLogbook Common Namespace
 wlbCommon = function () {
-    const info_msg = document.getElementById("info");
-
-    function showErrorMessage(msg) {
-
-        info_msg.classList.add("alert-danger");
-        info_msg.classList.remove("alert-success");
-        info_msg.classList.remove("d-none");
-
-        info_msg.innerText = msg;
-    }
-
-    function showInfoMessage(msg, timeout = true) {
-        info_msg.classList.remove("alert-danger");
-        info_msg.classList.add("alert-success");
-        info_msg.classList.remove("d-none");
-
-        info_msg.innerText = msg;
-
-        if (timeout) {
-            setTimeout(function(){ info_msg.innerText = ""; info_msg.classList.add("d-none");}, 5000);
-        }
-    }
-
     // getJSON send a request and waits for json
     async function getJSON(url) {
 
@@ -117,8 +94,6 @@ wlbCommon = function () {
     }
 
     return {
-        showErrorMessage:showErrorMessage,
-        showInfoMessage:showInfoMessage,
         getJSON:getJSON,
         formatLandings:formatLandings,
         runExport:runExport,

@@ -57,11 +57,11 @@ wlbLicenseRecord = function () {
         }
 
         if (!isValid) {
-            wlbCommon.showErrorMessage(errorMessage);
+            commonUtils.showErrorMessage(errorMessage);
             return;
         }
 
-        wlbCommon.showInfoMessage("OK!");
+        commonUtils.showInfoMessage("OK!");
 
         savelicense();
     }
@@ -78,12 +78,12 @@ wlbLicenseRecord = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
     }
@@ -106,12 +106,12 @@ wlbLicenseRecord = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
     }
@@ -134,12 +134,12 @@ wlbLicenseRecord = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             })
     }

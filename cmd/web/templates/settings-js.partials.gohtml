@@ -146,13 +146,13 @@ wlbSettings = function () {
     function saveSettings() {
         if (document.getElementById("auth_enabled").checked) {
             if (document.getElementById("login").value === "") {
-                wlbCommon.showErrorMessage("Login field is empty");
+                commonUtils.showErrorMessage("Login field is empty");
                 return;
             }
 
             if (document.getElementById("password").value === "") {
                 if (document.getElementById("previous_auth_value").value == "false") {
-                    wlbCommon.showErrorMessage("Password field is empty");
+                    commonUtils.showErrorMessage("Password field is empty");
                     return;
                 }
             }
@@ -237,13 +237,13 @@ wlbSettings = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     reloadAircraftClassesTable();
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             });
     }
@@ -253,7 +253,7 @@ wlbSettings = function () {
         airportDBReloaded = true;
 
         startUpdateStatus();
-        wlbCommon.showInfoMessage("Updating...", false);
+        commonUtils.showInfoMessage("Updating...", false);
 
         const requestOptions = {
             method: 'get',
@@ -268,9 +268,9 @@ wlbSettings = function () {
             .then(function(data) {
                 if (data.ok) {
                     document.getElementById("airports").value = data.message + " airports";
-                    wlbCommon.showInfoMessage("Airports DB has been updated");
+                    commonUtils.showInfoMessage("Airports DB has been updated");
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
 
                 stopUpdateStatus();
@@ -291,7 +291,7 @@ wlbSettings = function () {
     function validateAirportFieldsS(field) {
         if (field.value.trim() === "") {
             field.classList.add("is-invalid");
-            wlbCommon.showErrorMessage(`${field.placeholder} cannot be empty`);
+            commonUtils.showErrorMessage(`${field.placeholder} cannot be empty`);
             return false;
         } else {
             field.classList.remove("is-invalid");
@@ -303,7 +303,7 @@ wlbSettings = function () {
     function validateAirportFieldsN(field) {
         if (isNaN(field.value)) {
             field.classList.add("is-invalid");
-            wlbCommon.showErrorMessage(`${field.placeholder} should be a number`);
+            commonUtils.showErrorMessage(`${field.placeholder} should be a number`);
             return false;
         } else {
             field.classList.remove("is-invalid");
@@ -357,12 +357,12 @@ wlbSettings = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     // reload the table and clear the fields
                     reloadCustomAirports();
                     clearCustomAirportFields();
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             });
     }
@@ -445,11 +445,11 @@ wlbSettings = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     // reload the table
                     reloadCustomAirports();
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             });
     }

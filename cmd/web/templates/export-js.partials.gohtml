@@ -188,12 +188,12 @@ wlbExport = function () {
         const response = await fetch("{{$api.Export}}/{{$api.ExportFormatA4}}", requestOptions);
         const data = await response.json();
         if (data.ok) {
-            wlbCommon.showInfoMessage(data.message);
+            commonUtils.showInfoMessage(data.message);
             if (typeof data.redirect_url !== "undefined") {
                 location.href = data.redirect_url;
             }
         } else {
-            wlbCommon.showErrorMessage(data.message);
+            commonUtils.showErrorMessage(data.message);
         }
     }
 
@@ -295,12 +295,12 @@ wlbExport = function () {
         const response = await fetch("{{$api.Export}}/{{$api.ExportFormatA5}}", requestOptions);
         const data = await response.json();
         if (data.ok) {
-            wlbCommon.showInfoMessage(data.message);
+            commonUtils.showInfoMessage(data.message);
             if (typeof data.redirect_url !== "undefined") {
                 location.href = data.redirect_url;
             }
         } else {
-            wlbCommon.showErrorMessage(data.message);
+            commonUtils.showErrorMessage(data.message);
         }
     }
 
@@ -324,12 +324,12 @@ wlbExport = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             });
     }
@@ -355,12 +355,12 @@ wlbExport = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             });
     }
@@ -381,12 +381,12 @@ wlbExport = function () {
             .then(response => response.json())
             .then(function(data) {
                 if (data.ok) {
-                    wlbCommon.showInfoMessage(data.message);
+                    commonUtils.showInfoMessage(data.message);
                     if (typeof data.redirect_url !== 'undefined') {
                         location.href = data.redirect_url;
                     }
                 } else {
-                    wlbCommon.showErrorMessage(data.message);
+                    commonUtils.showErrorMessage(data.message);
                 }
             });
     }

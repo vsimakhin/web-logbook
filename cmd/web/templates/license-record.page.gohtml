@@ -94,11 +94,6 @@ License & Certification record {{if $lic.UUID}}- {{$lic.Name}}{{end}}
     </div>
 
     <input type="hidden" name="uuid" id="uuid" value="{{if $lic.UUID}}{{$lic.UUID}}{{end}}">
-    <div class="mb-3 row">
-        <div class="col">
-            <div class="alert alert-danger text-center d-none" id="info" role="alert"></div>
-        </div>
-    </div>
     <hr>
 
     <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbLicenseRecord.validateFields()" id="save"><i class="bi bi-save-fill"></i> Save</button>
