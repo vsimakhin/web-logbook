@@ -1,32 +1,27 @@
 {{ define "base" }}
 {{$api := .API}}
 {{$settings := index .Data "settings"}}
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-        <meta name="generator" content="Hugo 0.98.0">
-        <meta name="author" content="github.com/vsimakhin/" />
-        <title>{{ block "title" . }}{{ end }}</title>
-        {{ block "css" . }}{{ end }}
-        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/dashboard.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-icons.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/daterangepicker.css" />
-    </head>
-    <script type="text/javascript" src="/static/js/theme.js"></script>
-    <body>
-        <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-md-3 col-lg-1 me-0 px-3 fs-6" href="/">Web Logbook</a>
-            <div class="navbar-nav">
-                <div class="nav-item text-nowrap">{{if .AuthEnabled}}<a class="nav-link px-3" href="{{$api.Logout}}">Sign out</a>{{end}}</div>
-            </div>
-        </header>
-
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="github.com/vsimakhin/" />
+    <title>{{ block "title" . }}{{ end }}</title>
+    {{ block "css" . }}{{ end }}
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/daterangepicker.css" />
+</head>
+<script type="text/javascript" src="/static/js/theme.js"></script>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-1 me-0 px-3 fs-6" href="/">Web Logbook</a>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">{{if .AuthEnabled}}<a class="nav-link px-3" href="{{$api.Logout}}">Sign out</a>{{end}}</div>
+        </div>
+    </header>
     <div class="container-fluid">
         <div class="row">
             <nav id="sidebarMenu" class="col-md-3 col-lg-1 d-md-block sidebar collapse">
@@ -38,13 +33,13 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{$api.Licensing}}"><i class="bi bi-file-medical-fill"></i> Licensing
                             {{if not $settings.DisableLicenseWarning}}{{if .License.Expired}}
-                                {{ if .License.Warning}}
-                                <span class="badge rounded-pill text-bg-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{.License.Warning}} expire(s) soon, {{.License.Expired}} expired">{{.License.Warning}}/{{.License.Expired}}</span>
-                                {{ else }}
-                                <span class="badge rounded-pill text-bg-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{.License.Expired}} expired">{{.License.Expired}}</span>
-                                {{ end }}
+                            {{ if .License.Warning}}
+                            <span class="badge rounded-pill text-bg-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{.License.Warning}} expire(s) soon, {{.License.Expired}} expired">{{.License.Warning}}/{{.License.Expired}}</span>
+                            {{ else }}
+                            <span class="badge rounded-pill text-bg-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{.License.Expired}} expired">{{.License.Expired}}</span>
+                            {{ end }}
                             {{ else if .License.Warning}}
-                                <span class="badge rounded-pill text-bg-info"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{.License.Warning}} expire(s) soon">{{.License.Warning}}</span>
+                            <span class="badge rounded-pill text-bg-info"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{.License.Warning}} expire(s) soon">{{.License.Warning}}</span>
                             {{ end }}{{end}}</a>
                         </li>
                         <li class="nav-item">
@@ -69,52 +64,47 @@
                             <a class="nav-link" href="https://github.com/vsimakhin/web-logbook"><i class="bi bi-github"></i> v{{.Version}}
                             {{if .NewVersion}}<span class="badge rounded-pill text-bg-info">New</span>{{ end }}</a>
                         </li>
-
                         <!--theme selector -->
                         <div class="dropdown position-fixed bottom-0 start-0 mb-3 me-3 bd-mode-toggle">
-                        <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
+                            <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
                                 id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
                             <i class="bi bi-circle-half" id="active-theme-i"></i><span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
-                            <li>
-                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-                                <i class="bi bi-sun-fill"><a href=#bi-sun-fill></a></i>&nbsp;Light
                             </button>
-                            </li>
-                            <li>
-                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-                                <i class="bi bi-moon-stars-fill"><a href=#bi-moon-stars-fill></a></i>&nbsp;Dark
-                            </button>
-                            </li>
-                            <li>
-                            <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-                                <i class="bi bi-circle-half"><a href=#bi-circle-half></a></i>&nbsp;Auto
-                            </button>
-                            </li>
-                        </ul>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="bi bi-sun-fill"><a href=#bi-sun-fill></a></i>&nbsp;Light
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                    <i class="bi bi-moon-stars-fill"><a href=#bi-moon-stars-fill></a></i>&nbsp;Dark
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
+                                    <i class="bi bi-circle-half"><a href=#bi-circle-half></a></i>&nbsp;Auto
+                                    </button>
+                                </li>
+                            </ul>
                         </div>
-
                     </ul>
                 </div>
             </nav>
-
             <main class="col-md-9 ms-sm-auto col-lg-11 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h3">{{ block "header" . }}{{ end }}</h3>
+                    <h1 class="h3">{{ block "header" . }}{{ end }}</h1>
                 </div>
-                <div class="card-body">
-                {{ block "content" . }}{{ end }}
-                </div>
+                <div class="card-body">{{ block "content" . }}{{ end }}</div>
             </main>
         </div>
     </div>
-
     <script type="text/javascript" src="/static/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="/static/js/jquery-3.6.1.min.js"></script>
     <script type="text/javascript" src="/static/js/moment.min.js"></script>
     <script type="text/javascript" src="/static/js/daterangepicker.js"></script>
     {{ block "js" . }}{{ end }}
-  </body>
+</body>
 </html>
+
 {{ end }}
