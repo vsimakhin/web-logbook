@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
 const (
 	APIRoot                           = "/"
 	APIGetApi                         = "/api/{api}"
+	APIPreferences                    = "/preferences"
 	APILogbook                        = "/logbook"
 	APILogbookUUID                    = "/logbook/{uuid}"
 	APILogbookData                    = "/logbook/data"
@@ -71,6 +70,7 @@ const (
 
 var apiMap = map[string]string{
 	"Root":                           APIRoot,
+	"Preferences":                    APIPreferences,
 	"Logbook":                        APILogbook,
 	"LogbookData":                    APILogbookData,
 	"LogbookUUID":                    APILogbookUUID,
@@ -221,8 +221,9 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APISyncLicensing, app.HandlerSyncLicensingGet)
 		server.Post(APISyncLicensing, app.HandlerSyncLicensingPost)
 
-		// api
+		// api & parameters
 		server.Get(APIGetApi, app.HandlerGetApi)
+		server.Get(APIPreferences, app.HandlerPreferences)
 	})
 
 	// login & logout
@@ -242,26 +243,4 @@ func (app *application) routes() *chi.Mux {
 // SessionLoad peforms the load and save of a session, per request
 func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
-}
-
-func (app *application) HandlerGetApi(w http.ResponseWriter, r *http.Request) {
-	api := chi.URLParam(r, "api")
-
-	// check if api is in mapAPI
-	item, ok := apiMap[api]
-	if !ok {
-		app.errorLog.Println("api not found")
-		http.Error(w, "api not found", http.StatusNotFound)
-		return
-	}
-
-	var response models.JSONResponse
-	response.Data = item
-	response.OK = true
-
-	err := app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
-		return
-	}
 }

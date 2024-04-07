@@ -2,6 +2,7 @@
 
 const commonUtils = function () {
     let api = {};
+    let preferences = {};
 
     /**
      * Fetches data from the API and caches it for future use.
@@ -10,14 +11,32 @@ const commonUtils = function () {
      */
     const getApi = async (apiItem) => {
         if (!api.hasOwnProperty(apiItem)) {
-            const json = await fetchJSON(`/api/${apiItem}`);
-            if (!json || !json.hasOwnProperty("data")) {
+            const result = await fetchJSON(`/api/${apiItem}`);
+            if (!result) {
                 console.error(`Error fetching API ${apiItem}.`);
                 return "";
             }
-            api[apiItem] = json.data;
+            api[apiItem] = result;
         }
         return api[apiItem];
+    }
+
+    /**
+     * Retrieves the preferences/settings for the app.
+     * @param {string} item - The preference item to retrieve.
+     * @returns {Promise<any>} - A promise that resolves to the value of the preference item, or null if it fails.
+     */
+    const getPreferences = async (item) => {
+        if (!preferences.hasOwnProperty(item)) {
+            try {
+                const api = await getApi("Preferences");
+                preferences = await fetchJSON(api);
+            } catch (error) {
+                console.error(`Failed to get preferences: ${error}`);
+                return null;
+            }
+        }
+        return preferences[item] || null;
     }
 
     /**
@@ -178,9 +197,89 @@ const commonUtils = function () {
         return hours + minutes / 60;
     }
 
+    /**
+     * Retrieves the value of an element with the specified ID.
+     * @param {string} elementId - The ID of the element to retrieve the value from.
+     * @returns {string} The value of the element, or an empty string if the element is not found.
+     */
+    const getElementValue = (elementId) => {
+        const element = document.getElementById(elementId);
+        if (!element) {
+            console.error(`Element with ID ${elementId} not found.`);
+            return "";
+        }
+        return element.value;
+    }
+
+    /**
+     * Sets the value of an element with the specified ID.
+     * @param {string} elementId - The ID of the element.
+     * @param {string} value - The value to set.
+     */
+    const setElementValue = (elementId, value) => {
+        const element = document.getElementById(elementId);
+        if (!element) {
+            console.error(`Element with ID ${elementId} not found.`);
+            return;
+        }
+        element.value = value;
+    }
+
+    /**
+     * Returns standard request options for a POST request with the given payload.
+     * @param {Object} payload - The payload to be sent with the request.
+     * @returns {Object} - The options object for the POST request.
+     */
+    const getRequestOption = (payload) => {
+        return {
+            method: "post",
+            mode: "same-origin",
+            credentials: "same-origin",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        }
+    }
+
+    /**
+     * Sends a POST request to the specified URL with the given payload.
+     * @param {string} url - The URL to send the request to.
+     * @param {object} payload - The payload to include in the request body.
+     * @returns {Promise<object>} - A promise that resolves to the JSON response from the server.
+     */
+    const postRequest = async (url, payload) => {
+        const options = {
+            method: "POST",
+            mode: "same-origin",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        };
+
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                console.error(`HTTP error! status: ${response.status}`);
+                return {};
+            }
+            const json = await response.json();
+            return json || {};
+        } catch (error) {
+            console.error(`Error fetching ${url} - ${error}`);
+            return {};
+        }
+    }
+
     return {
-        fetchJSON, getApi,
+        fetchJSON, getApi, getPreferences,
         showMessage, showInfoMessage, showErrorMessage,
-        runExport, escapeHtml, formatLandings, convertNumberToTime, convertTime
+        runExport, escapeHtml, formatLandings, convertNumberToTime, convertTime,
+        getElementValue, setElementValue,
+        getRequestOption, postRequest
     };
+
 }();

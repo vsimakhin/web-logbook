@@ -31,7 +31,7 @@ func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.R
 	data["aircraftModels"] = aircraftModels
 	data["enableHelpMessages"] = app.isFlightRecordHelpEnabled()
 
-	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}, "flight-record-js", "flight-record-map"); err != nil {
+	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -65,7 +65,7 @@ func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Re
 	data["aircraftModels"] = aircraftModels
 	data["enableHelpMessages"] = app.isFlightRecordHelpEnabled()
 
-	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}, "flight-record-js", "flight-record-map"); err != nil {
+	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -185,7 +185,7 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 	}
 
 	response.OK = true
-	response.Message = fmt.Sprintf("%d", int(math.Round(night.Minutes())))
+	response.Data = fmt.Sprintf("%d", int(math.Round(night.Minutes())))
 
 	err = app.writeJSON(w, http.StatusOK, response)
 	if err != nil {
