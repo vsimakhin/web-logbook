@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"io/fs"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -17,7 +18,13 @@ func (app *application) HandlerStatic() http.Handler {
 }
 
 func (app *application) HandlerFavicon(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/static/favicon.ico", http.StatusMovedPermanently)
+	data, err := fs.ReadFile(staticFS, "static/favicon.ico")
+	if err != nil {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Cache-Control", "private, max-age=3600, must-revalidate")
+	w.Write(data)
 }
 
 func (app *application) HandlerNotFound(w http.ResponseWriter, r *http.Request) {
