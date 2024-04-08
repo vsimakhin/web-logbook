@@ -56,7 +56,7 @@ func (app *application) HandlerGetApi(w http.ResponseWriter, r *http.Request) {
 
 	err := app.writeJSON(w, http.StatusOK, item)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
+		app.errorLog.Println(err)
 		return
 	}
 }
@@ -72,11 +72,12 @@ func (app *application) HandlerPreferences(w http.ResponseWriter, r *http.Reques
 	data := map[string]interface{}{
 		"enable_flightrecord_tooltips": !settings.DisableFlightRecordHelp,
 		"daterange_picker_first_day":   settings.DateRangePickerWeek,
+		"licensing_rows":               settings.LicensingRows,
 	}
 
 	err = app.writeJSON(w, http.StatusOK, data)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
+		app.errorLog.Println(err)
 		return
 	}
 }

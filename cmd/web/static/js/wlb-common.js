@@ -29,8 +29,7 @@ const commonUtils = function () {
     const getPreferences = async (item) => {
         if (!preferences.hasOwnProperty(item)) {
             try {
-                const api = await getApi("Preferences");
-                preferences = await fetchJSON(api);
+                preferences = await fetchJSON("/preferences");
             } catch (error) {
                 console.error(`Failed to get preferences: ${error}`);
                 return null;
@@ -274,12 +273,80 @@ const commonUtils = function () {
         }
     }
 
+    /**
+     * Updates the validity state of a field element and applies corresponding CSS classes.
+     * @param {HTMLElement} field - The field element to update.
+     * @param {boolean} isValid - The validity state of the field.
+     * @returns {boolean} - The updated validity state of the field.
+     */
+    const updateFieldValidity = (field, isValid) => {
+        field.classList.remove(isValid ? "is-invalid" : "is-valid");
+        field.classList.add(isValid ? "is-valid" : "is-invalid");
+        return isValid;
+    }
+
+    /**
+     * Validates a field using a custom validator function and returns an error message if validation fails.
+     * @param {string} fieldId - The ID of the field to validate.
+     * @param {function} validator - The validator function to use for validation.
+     * @param {string} errorMessage - The error message to return if validation fails.
+     * @returns {string} - The error message if validation fails, otherwise an empty string.
+     */
+    const validateField = (fieldId, validator, errorMessage) => {
+        const field = document.getElementById(fieldId);
+        if (!validator(field)) {
+            return errorMessage;
+        }
+        return "";
+    }
+
+    /**
+     * Validates an array of fields.
+     * @param {Array} fields - The array of fields to validate.
+     * @example 
+     * const fields = [
+     *   { name: "category", validator: commonUtils.validateRequiredField, error: "Category cannot be empty\r\n" },
+     *   { name: "name", validator: commonUtils.validateRequiredField, error: "Name cannot be empty\r\n" },
+     * ]
+     * @returns {string} - The error message if any of the fields fail validation, otherwise an empty string.
+     */
+    const validateFields = (fields) => {
+        let errorMessage = "";
+        fields.forEach(field => {
+            errorMessage += commonUtils.validateField(field.name, field.validator, field.error);
+        });
+        return errorMessage;
+    }
+
+    /**
+     * Capitalizes the first letter of each word in a string.
+     * @param {string} str - The input string.
+     * @returns {string} The modified string with capitalized words.
+     */
+    const capitalizeWords = (str) => {
+        return str.replace('_', ' ').split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    }
+
+    /**
+     * Validates a required field.
+     * @param {HTMLInputElement} field - The input field to validate.
+     * @returns {boolean} - Returns true if the field is valid, false otherwise.
+     */
+    const validateRequiredField = (field) => {
+        if (!field.value) {
+            return updateFieldValidity(field, false);
+        }
+        return updateFieldValidity(field, true);
+    }
+
     return {
         fetchJSON, getApi, getPreferences,
         showMessage, showInfoMessage, showErrorMessage,
         runExport, escapeHtml, formatLandings, convertNumberToTime, convertTime,
         getElementValue, setElementValue,
-        getRequestOption, postRequest
+        getRequestOption, postRequest,
+        updateFieldValidity, validateField, capitalizeWords, validateRequiredField, validateFields
     };
 
 }();

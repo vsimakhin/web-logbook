@@ -89,7 +89,6 @@ const flightRecordUtils = function () {
         }
     }
 
-
     /**
      * Converts the value of the target element to uppercase.
      * @param {Event} e - The event object.
@@ -97,7 +96,6 @@ const flightRecordUtils = function () {
     const convertToUpperCaseHandler = (e) => {
         e.currentTarget.value = e.currentTarget.value.toUpperCase();
     }
-
 
     /**
      * Handles the input event to skip letters and only allow numbers.
@@ -256,19 +254,6 @@ const flightRecordUtils = function () {
     }
 
     // validators
-
-    /**
-     * Updates the validity state of a field element and applies corresponding CSS classes.
-     * @param {HTMLElement} field - The field element to update.
-     * @param {boolean} isValid - The validity state of the field.
-     * @returns {boolean} - The updated validity state of the field.
-     */
-    const updateFieldValidity = (field, isValid) => {
-        field.classList.remove(isValid ? "is-invalid" : "is-valid");
-        field.classList.add(isValid ? "is-valid" : "is-invalid");
-        return isValid;
-    }
-
     /**
      * Validates the departure or arrival time field.
      * @param {HTMLInputElement} field - The input field to validate.
@@ -276,9 +261,9 @@ const flightRecordUtils = function () {
      */
     const validateDepArrTime = (field) => {
         if (field.value !== "" && field.value.length !== 4) {
-            return updateFieldValidity(field, false);
+            return commonUtils.updateFieldValidity(field, false);
         }
-        return updateFieldValidity(field, true);
+        return commonUtils.updateFieldValidity(field, true);
     }
 
     /**
@@ -288,24 +273,9 @@ const flightRecordUtils = function () {
      */
     const validateTime = (field) => {
         if (field.value !== "" && !/^(?:(?<!\d)|[0-9]\d{0,4}):([0-5]\d)$/.test(field.value)) {
-            return updateFieldValidity(field, false);
+            return commonUtils.updateFieldValidity(field, false);
         }
-        return updateFieldValidity(field, true);
-    }
-
-    /**
-     * Validates a field using a custom validator function and returns an error message if validation fails.
-     * @param {string} fieldId - The ID of the field to validate.
-     * @param {function} validator - The validator function to use for validation.
-     * @param {string} errorMessage - The error message to return if validation fails.
-     * @returns {string} - The error message if validation fails, otherwise an empty string.
-     */
-    const validateField = (fieldId, validator, errorMessage) => {
-        const field = document.getElementById(fieldId);
-        if (!validator(field)) {
-            return errorMessage;
-        }
-        return "";
+        return commonUtils.updateFieldValidity(field, true);
     }
 
     /**
@@ -313,42 +283,28 @@ const flightRecordUtils = function () {
      * @returns {boolean} Returns true if all fields are valid, otherwise false.
      */
     const validateFields = () => {
+        const fields = [
+            { name: "date", validator: commonUtils.validateRequiredField, error: "Date cannot be empty\r\n" },
+            { name: "departure_time", validator: validateDepArrTime, error: "Departure Time should be in HHMM format or empty\r\n" },
+            { name: "arrival_time", validator: validateDepArrTime, error: "Arrival Time should be in HHMM format or empty\r\n" },
+            { name: "total_time", validator: validateTime, error: "Total Time should be in HH:MM format or empty\r\n" },
+            { name: "se_time", validator: validateTime, error: "Single Engine Time should be in HH:MM format or empty\r\n" },
+            { name: "me_time", validator: validateTime, error: "Multi Engine Time should be in HH:MM format or empty\r\n" },
+            { name: "mcc_time", validator: validateTime, error: "MCC Time should be in HH:MM format or empty\r\n" },
+            { name: "night_time", validator: validateTime, error: "Night Time should be in HH:MM format or empty\r\n" },
+            { name: "ifr_time", validator: validateTime, error: "IFR Time should be in HH:MM format or empty\r\n" },
+            { name: "pic_time", validator: validateTime, error: "PIC Time should be in HH:MM format or empty\r\n" },
+            { name: "sic_time", validator: validateTime, error: "Co-Pilot Time should be in HH:MM format or empty\r\n" },
+            { name: "dual_time", validator: validateTime, error: "Dual Time should be in HH:MM format or empty\r\n" },
+            { name: "instr_time", validator: validateTime, error: "Instructor Time should be in HH:MM format or empty\r\n" },
+            { name: "sim_time", validator: validateTime, error: "Simulator Time should be in HH:MM format or empty\r\n" },
+        ]
+        const errorMessage = commonUtils.validateFields(fields);
 
-        let isValid = true;
-        let errorMessage = "";
-
-        function capitalizeWords(str) {
-            return str.split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join(' ');
-        }
-
-        // validate date field
-        const date = document.getElementById("date");
-        if (!date.value) {
-            isValid = updateFieldValidity(date, false);
-            errorMessage = errorMessage + "Date cannot be empty\r\n";
-        } else {
-            updateFieldValidity(date, true);
-        }
-
-        // validate departure and arrival time if they are not empty
-        const depArrFields = ['departure_time', 'arrival_time'];
-        depArrFields.forEach(fieldId => {
-            errorMessage += validateField(fieldId, validateDepArrTime, `${capitalizeWords(fieldId.replace('_', ' '))} should be in HHMM format or empty\r\n`);
-        });
-
-        // validate time fields
-        const timeFields = ['total_time', 'se_time', 'me_time', 'mcc_time', 'night_time', 'ifr_time', 'pic_time', 'sic_time', 'dual_time', 'instr_time', 'sim_time'];
-        timeFields.forEach(fieldId => {
-            errorMessage += validateField(fieldId, validateTime, `${capitalizeWords(fieldId.replace('_', ' '))} should be in HH:MM format or empty\r\n`);
-        });
-
+        const isValid = errorMessage === "";
         if (!isValid) {
             commonUtils.showErrorMessage(errorMessage);
         }
-        commonUtils.showInfoMessage("OK!");
-
         return isValid;
     }
 
@@ -548,12 +504,12 @@ const flightRecordUtils = function () {
     /**
      * Initializes the page by assigning event listeners, enabling tooltips, and triggering the onDepArrChange function.
      */
-    const initPage = () => {
+    const initPage = async () => {
         assignEventListeners();
-        enableTooltips();
-        onDepArrChange();
-        initDateRangePicker();
-        loadAttachments();
+        await enableTooltips();
+        await onDepArrChange();
+        await initDateRangePicker();
+        await loadAttachments();
     }
 
     document.addEventListener("DOMContentLoaded", initPage);
