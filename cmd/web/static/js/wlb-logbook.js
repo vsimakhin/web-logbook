@@ -1,29 +1,25 @@
-{{define "logbook-js"}}
-{{$api := .API}}
-{{$settings := index .Data "settings"}}
-<script type="text/javascript" src="/static/js/datatables.min.js"></script>
-<script>
+'use strict';
 
-// WebLogbook Logbook Namespace
-wlbLogbook = function () {
-    var table = null;
-
-    var startDate = null
-    var endDate = null
+const logbookUtils = function () {
+    let startDate = null
+    let endDate = null
 
     // inits the main table
-    function initLogbookTable() {
-        var remarksL = Math.round((document.documentElement.clientWidth - 1500) / 10);
-        var lengthMenu = {{if $settings.LogbookRows}}{{$settings.LogbookRows}}{{else}}15{{end}};
-        table = $('#logbook').DataTable({
+    const initLogbookTable = async () => {
+        const remarksL = Math.round((document.documentElement.clientWidth - 1500) / 10);
+        const lengthMenu = await commonUtils.getPreferences("logbook_rows") || 15;
+        const url = await commonUtils.getApi("LogbookData");
+        const logbookAPI = await commonUtils.getApi("Logbook");
+        const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
+
+        const table = $('#logbook').DataTable({
             bAutoWidth: false,
             ordering: false,
             ajax: {
-                url: '{{index .API "LogbookData"}}',
+                url: url,
                 dataSrc: function (json) {
                     if (json.data === null) {
-                        // Set a custom message for this case
-                        $('#logbook').dataTable().fnSettings().oLanguage.sEmptyTable = "No flight records";
+                        $("#logbook").dataTable().fnSettings().oLanguage.sEmptyTable = "No flight records";
                         return [];
                     } else {
                         return json.data;
@@ -32,17 +28,18 @@ wlbLogbook = function () {
             },
             lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             columnDefs: [
-                { targets: [ 0 ], visible: false, searchable: false },
-                { targets: [0,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,22], className: "dt-body-center" },
+                { targets: [0], visible: false, searchable: false },
+                { targets: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 22], className: "dt-body-center" },
                 { targets: [1], width: "1%" }, //date
-                { targets: [2,3,4,5], width: "3%" }, //places
-                { targets: [8,9,10,11,15,16,17,18,19,20,22], width: "3%" }, //time
-                { targets: [6,7,21], width: "4%" }, //aircraft
-                { targets: [13,14], width: "3%" }, //landings
+                { targets: [2, 3, 4, 5], width: "3%" }, //places
+                { targets: [8, 9, 10, 11, 15, 16, 17, 18, 19, 20, 22], width: "3%" }, //time
+                { targets: [6, 7, 21], width: "4%" }, //aircraft
+                { targets: [13, 14], width: "3%" }, //landings
                 { targets: [12], width: "9%" }, //pic
-                { targets: [23], render: function ( data, type, row ) {
+                {
+                    targets: [23], render: function (data, type, row) {
                         if (data.length > remarksL) {
-                            var txt = data.substr( 0, remarksL ) + '…'
+                            var txt = data.substr(0, remarksL) + '…'
                             return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${commonUtils.escapeHtml(data)}">${commonUtils.escapeHtml(txt)}</span>`;
                         } else {
                             return data;
@@ -50,8 +47,7 @@ wlbLogbook = function () {
                     }
                 }
             ],
-            rowCallback: function(row, data, index){
-                var logbookAPI = "{{$api.Logbook}}";
+            rowCallback: function (row, data, index) {
                 $("td:eq(0)", row).html(`<a href="${logbookAPI}/${data[0]}" class="link-primary">${data[1]}</a>`);
             },
             footerCallback: function (row, data, start, end, display) {
@@ -62,31 +58,31 @@ wlbLogbook = function () {
                     return typeof i === 'string'
                         ? commonUtils.convertTime(i)
                         : typeof i === 'number'
-                        ? i
-                        : 0;
+                            ? i
+                            : 0;
                 };
-         
-                let calculateTotals = function(id, time = true) {
+
+                const calculateTotals = function (id, time = true) {
                     // Total over all pages
-                    total = api
-                        .column(id, {search: 'applied'})
+                    const total = api
+                        .column(id, { search: 'applied' })
                         .data().reduce((a, b) => getNumbers(a) + getNumbers(b), 0);
-        
+
                     // Total over this page
-                    pageTotal = api
-                        .column(id, {page: 'current'})
+                    const pageTotal = api
+                        .column(id, { page: 'current' })
                         .data().reduce((a, b) => getNumbers(a) + getNumbers(b), 0);
-            
+
                     // Update footer
                     if (time) {
-                        $('#logbook tfoot tr').eq(0).find('th').eq(id-offset).html(commonUtils.convertNumberToTime(pageTotal));
-                        $('#logbook tfoot tr').eq(1).find('th').eq(id-offset).html(commonUtils.convertNumberToTime(total));
+                        $('#logbook tfoot tr').eq(0).find('th').eq(id - offset).html(commonUtils.convertNumberToTime(pageTotal));
+                        $('#logbook tfoot tr').eq(1).find('th').eq(id - offset).html(commonUtils.convertNumberToTime(total));
                     } else {
-                        $('#logbook tfoot tr').eq(0).find('th').eq(id-offset).html(pageTotal);
-                        $('#logbook tfoot tr').eq(1).find('th').eq(id-offset).html(total);
+                        $('#logbook tfoot tr').eq(0).find('th').eq(id - offset).html(pageTotal);
+                        $('#logbook tfoot tr').eq(1).find('th').eq(id - offset).html(total);
                     }
                 }
-                
+
                 calculateTotals(8); // se time
                 calculateTotals(9); // me time
                 calculateTotals(10); // mcc
@@ -125,30 +121,30 @@ wlbLogbook = function () {
                     linkedCalendars: false,
                     locale: {
                         cancelLabel: 'Clear',
-                        firstDay: parseInt({{if not $settings.DateRangePickerWeek}}"0"{{else}}{{$settings.DateRangePickerWeek}}{{end}})
+                        firstDay: firstDay
                     }
-                }, function(start, end, label) {
+                }, function (start, end, label) {
                     startDate = start;
                     endDate = end;
                     table.draw();
                 });
 
-                $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+                $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
                     $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
                 });
 
-                $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
+                $('input[name="daterange"]').on('cancel.daterangepicker', function (ev, picker) {
                     $(this).val('Date filters...');
                     startDate = null;
                     endDate = null;
                     table.draw();
                 });
             }
-        } );
+        });
 
         // Custom filtering function for datatables
         $.fn.dataTable.ext.search.push(
-            function( settings, data, dataIndex ) {
+            function (settings, data, dataIndex) {
                 if (startDate === null || endDate === null) {
                     return true;
                 }
@@ -165,13 +161,5 @@ wlbLogbook = function () {
         );
     }
 
-    return {
-        initLogbookTable:initLogbookTable
-    }
+    document.addEventListener("DOMContentLoaded", initLogbookTable);
 }();
-
-$(document).ready( function () {
-    wlbLogbook.initLogbookTable();
-});
-</script>
-{{end}}

@@ -73,6 +73,7 @@ func (app *application) HandlerPreferences(w http.ResponseWriter, r *http.Reques
 		"enable_flightrecord_tooltips": !settings.DisableFlightRecordHelp,
 		"daterange_picker_first_day":   settings.DateRangePickerWeek,
 		"licensing_rows":               settings.LicensingRows,
+		"logbook_rows":                 settings.LogbookRows,
 	}
 
 	err = app.writeJSON(w, http.StatusOK, data)
