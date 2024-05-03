@@ -6,20 +6,20 @@
     <thead>
         <tr class="align-top text-center">
             <th>Year</th>
-            {{if not $settings.HideStatsFields.SE}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>SE</a></th>{{end}}
-            {{if not $settings.HideStatsFields.ME}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>ME</a></th>{{end}}
-            {{if not $settings.HideStatsFields.MCC}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>MCC</a></th>{{end}}
-            {{if not $settings.HideStatsFields.Night}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Night</a></th>{{end}}
-            {{if not $settings.HideStatsFields.IFR}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>IFR</a></th>{{end}}
-            {{if not $settings.HideStatsFields.PIC}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>PIC</a></th>{{end}}
-            {{if not $settings.HideStatsFields.CoPilot}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>CoP</a></th>{{end}}
-            {{if not $settings.HideStatsFields.Dual}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Dual</a></th>{{end}}
-            {{if not $settings.HideStatsFields.Instructor}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Instr</a></th>{{end}}
-            {{if not $settings.HideStatsFields.Sim}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Sim</a></th>{{end}}
-            {{if not $settings.HideStatsFields.CrossCountry}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>CC</a></th>{{end}}
+            {{if not $settings.HideStatsFields.SE}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>SE</a></th>{{end}}
+            {{if not $settings.HideStatsFields.ME}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>ME</a></th>{{end}}
+            {{if not $settings.HideStatsFields.MCC}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>MCC</a></th>{{end}}
+            {{if not $settings.HideStatsFields.Night}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Night</a></th>{{end}}
+            {{if not $settings.HideStatsFields.IFR}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>IFR</a></th>{{end}}
+            {{if not $settings.HideStatsFields.PIC}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>PIC</a></th>{{end}}
+            {{if not $settings.HideStatsFields.CoPilot}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>CoP</a></th>{{end}}
+            {{if not $settings.HideStatsFields.Dual}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Dual</a></th>{{end}}
+            {{if not $settings.HideStatsFields.Instructor}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Instr</a></th>{{end}}
+            {{if not $settings.HideStatsFields.Sim}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Sim</a></th>{{end}}
+            {{if not $settings.HideStatsFields.CrossCountry}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>CC</a></th>{{end}}
             {{if not $settings.HideStatsFields.Landings}}<th>Landings</th>{{end}}
-            {{if not $settings.HideStatsFields.Distance}}<th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Distance</a></th>{{end}}
-            <th onclick="wlbStats.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Total</a></th>
+            {{if not $settings.HideStatsFields.Distance}}<th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Distance</a></th>{{end}}
+            <th onclick="statsUtils.onStatsClick('totals_by_year', this.cellIndex);"><a class="nav-link th-hover" href=#>Total</a></th>
         </tr>
     </thead>
     <tbody>
