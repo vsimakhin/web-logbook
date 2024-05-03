@@ -26,27 +26,21 @@
                 <input class="form-select form-select-sm" type="text" id="filter_registration"
                     name="filter_registration" autocomplete="off" placeholder="Aircraft Registraton" list="aircraft_regs_options">
                 <datalist id="aircraft_regs_options">
-                {{ range $key, $element := $regs}}
-                <option value="{{ $element }}">
-                {{ end}}
+                {{ range $key, $element := $regs }}<option value="{{ $element }}">{{ end }}
                 </datalist>
             </div>
             <div class="mb-2">
                 <input class="form-select form-select-sm" type="text" id="filter_model"
                     name="filter_model" autocomplete="off" placeholder="Aircraft Model/Type" list="aircraft_models_options">
                 <datalist id="aircraft_models_options">
-                {{ range $key, $element := $models}}
-                <option value="{{ $element }}">
-                {{ end}}
+                {{ range $key, $element := $models }}<option value="{{ $element }}">{{ end }}
                 </datalist>
             </div>
             <div class="mb-2">
                 <input class="form-select form-select-sm" type="text" id="filter_class"
                     name="filter_class" autocomplete="off" placeholder="Aircraft Class" list="aircraft_classes_options">
                 <datalist id="aircraft_classes_options">
-                {{ range $key, $element := $classes}}
-                <option value="{{ $key }}">
-                {{ end}}
+                {{ range $key, $element := $classes }}<option value="{{ $key }}">{{ end }}
                 </datalist>
             </div>
             <div class="mb-2">
@@ -59,7 +53,7 @@
                 <label class="form-check-label" for="filter_noroutes">No Routes</label>
             </div>
             <div class="mb-2">
-                <button class="btn btn-sm btn-outline-secondary float-right" type="button" onclick="wlbMap.refresh()" id="refresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                <button class="btn btn-sm btn-outline-secondary float-right" type="button" id="refresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
             </div>
         </div>
         <hr>
@@ -82,5 +76,8 @@
 {{ end }}
 
 {{ define "js" }}
-{{ block "map-js" . }}{{ end }}
+<script src="/static/js/ol.js"></script>
+<script src="/static/js/arc.js"></script>
+<script type="text/javascript" src="/static/js/wlb-map-popup-overlay.js"></script>
+<script type="text/javascript" src="/static/js/wlb-map.js"></script>
 {{ end }}

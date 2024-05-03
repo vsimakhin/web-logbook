@@ -35,7 +35,7 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 	data["models"] = models
 	data["regs"] = regs
 
-	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}, "map-js"); err != nil {
+	if err := app.renderTemplate(w, r, "map", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
