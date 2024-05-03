@@ -7,8 +7,6 @@
 {{ define "css" }}{{ end }}
 
 {{ define "content" }}
-{{$api := .API}}
-
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-export-a4-tab" data-bs-toggle="tab" data-bs-target="#nav-export-a4" type="button" role="tab" aria-controls="nav-export-a4" aria-selected="false">PDF A4</button>
@@ -38,5 +36,5 @@
 {{ end }}
 
 {{ define "js" }}
-{{ block "export-js" . }}{{ end }}
+<script type="text/javascript" src="/static/js/wlb-export.js"></script>
 {{ end }}

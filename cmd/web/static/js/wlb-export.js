@@ -1,47 +1,56 @@
-{{define "export-js"}}
-{{$api := .API}}
-<script>
+'use strict';
 
-// WebLogbook Export Namespace
-wlbExport = function () {
+const exportUtils = function () {
 
     const formatMap = {
         "A4": "custom_title_a4",
         "A5": "custom_title_a5"
     };
 
-    async function getCustomTitle(format) {
-        const attachments_url = "{{index .API "LogbookUUIDAttachments"}}";
+    /**
+     * Retrieves the custom title based on the specified format.
+     * @param {string} format - The format of the custom title.
+     * @returns {Promise<string>} - A promise that resolves to the custom title.
+     */
+    const getCustomTitle = async (format) => {
+        if (!formatMap[format]) { return; }
 
-        if (!formatMap[format]) {return;}
-
-        const url = attachments_url.replace("{uuid}", formatMap[format]);
+        const api = await commonUtils.getApi("LogbookUUIDAttachments");
+        const url = api.replace("{uuid}", formatMap[format]);
         const data = await commonUtils.fetchJSON(url);
-        if (data.length > 0) {
-            return data[0].uuid;
-        } else {
-            return ""
-        }
+        return data.length > 0 ? data[0].uuid : "";
     }
 
-    async function deleteCustomTitle(format) {
+    /**
+     * Deletes the custom title for a given format.
+     * @param {string} format - The format for which the custom title needs to be deleted.
+     */
+    const deleteCustomTitle = async (format) => {
         // drop current saved file from attachments
-        const attachments_url = "{{index .API "LogbookUUIDAttachments"}}".replace("{uuid}", formatMap[format]);
-        const data = await commonUtils.fetchJSON(attachments_url);
+        const api = await commonUtils.getApi("LogbookUUIDAttachments");
+        const url = api.replace("{uuid}", formatMap[format]);
+        const data = await commonUtils.fetchJSON(url);
 
         if (data.length > 0) {
+            const requestUrl = await commonUtils.getApi("LogbookAttachmentsDelete");
+
             for (let i = 0; i < data.length; i++) {
-                const payload = {uuid: data[i].uuid}
-                const requestOptions = {method: "post", body: JSON.stringify(payload)};
-                await fetch("{{index .API "LogbookAttachmentsDelete"}}", requestOptions)
+                const payload = { uuid: data[i].uuid }
+                const requestOptions = { method: "post", body: JSON.stringify(payload) };
+                await fetch(requestUrl, requestOptions);
             }
             document.getElementById(`${formatMap[format]}_document`).innerHTML = "";
         }
     }
 
-    async function saveCustomTitle(format) {
-        const custom_title_element = document.getElementById(formatMap[format]);
-        const file = custom_title_element.files[0];
+    /**
+     * Saves a custom title for a given format.
+     * @param {string} format - The format for which the custom title is being saved.
+     * @returns {Promise<string>} - A Promise that resolves to the UUID of the saved custom title.
+     */
+    const saveCustomTitle = async (format) => {
+        const customTitleElement = document.getElementById(formatMap[format]);
+        const file = customTitleElement.files[0];
 
         if (file) {
             await deleteCustomTitle(format);
@@ -51,47 +60,47 @@ wlbExport = function () {
             payload.append("document", file);
             payload.append("record_id", formatMap[format]);
 
-            const requestOptions = {method: "post", body: payload};
-            await fetch("{{index .API "LogbookAttachmentsUpload"}}", requestOptions)
-
-            // update uuid in settings
-            const attachments_url = "{{index .API "LogbookUUIDAttachments"}}".replace("{uuid}", formatMap[format]);
-            const data = await commonUtils.fetchJSON(attachments_url);
-            if (data.length > 0) {
-                return data[0].uuid;
-            } else {
-                return ""
-            }
-        } else {
-            const uuid = await getCustomTitle(format);
-            return uuid;
+            const requestOptions = { method: "post", body: payload };
+            const requestUrl = await commonUtils.getApi("LogbookAttachmentsUpload");
+            await fetch(requestUrl, requestOptions)
         }
+
+        const uuid = await getCustomTitle(format);
+        return uuid;
     }
 
-    function showCustomTitleModal(format) {
+    /**
+     * Shows a custom title modal for the specified format.
+     * @param {string} format - The format of the custom title modal to show.
+     */
+    const showCustomTitleModal = async (format) => {
         const modal = new bootstrap.Modal(document.getElementById(`${formatMap[format]}_modal`), {});
 
-        getCustomTitle(format).then(uuid => {
-            if (uuid !== "") {
-                const data = "{{$api.LogbookAttachmentsDownload}}"+uuid;
-                fetch(data).then(response => response.blob()).then(blob => {
-                    const reader = new FileReader();
-                    reader.onload = function() {
-                        const text = `<object data="${reader.result}" width="100%" height="700px">
-                                <p>Your browser does not support preview of the document</p>
-                            </object>`;
+        const uuid = await getCustomTitle(format);
+        if (uuid !== "") {
+            const api = await commonUtils.getApi("LogbookAttachmentsDownload");
+            const data = `${api}${uuid}`;
+            const response = await fetch(data);
+            if (response) {
+                const blob = await response.blob();
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const text = `<object data="${reader.result}" width="100%" height="700px">
+                        <p>Your browser does not support preview of the document</p></object>`;
 
-                        document.getElementById(`${formatMap[format]}_document`).innerHTML = text;
-                    };
-                    reader.readAsDataURL(blob);
-                });
+                    document.getElementById(`${formatMap[format]}_document`).innerHTML = text;
+                };
+                reader.readAsDataURL(blob);
             }
-        });
+        }
 
         modal.show();
     }
 
-    async function saveExportA4() {
+    /**
+     * Saves A4 format settings.
+     */
+    const saveExportA4 = async () => {
         let time_fields_auto_format = 0;
         if (document.getElementById("time_field_format_radio2_a4").checked) {
             time_fields_auto_format = 1;
@@ -99,9 +108,8 @@ wlbExport = function () {
             time_fields_auto_format = 2;
         }
 
-        let custom_title_a4 = await saveCustomTitle("A4");
-
-        let payload = {
+        const custom_title_a4 = await saveCustomTitle("A4");
+        const payload = {
             export_a4: {
                 logbook_rows: parseInt(document.getElementById("logbook_rows_a4").value),
                 fill: parseInt(document.getElementById("fill_a4").value),
@@ -176,20 +184,13 @@ wlbExport = function () {
             }
         };
 
-        const requestOptions = {
-            method: "post",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-        };
-
-        const response = await fetch("{{$api.Export}}/{{$api.ExportFormatA4}}", requestOptions);
-        const data = await response.json();
+        const api = await commonUtils.getApi("Export");
+        const formatA4 = await commonUtils.getApi("ExportFormatA4");
+        const fullUrl = `${api}/${formatA4}`;
+        const data = await commonUtils.postRequest(fullUrl, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
-            if (typeof data.redirect_url !== "undefined") {
+            if (typeof data.redirect_url !== 'undefined') {
                 location.href = data.redirect_url;
             }
         } else {
@@ -197,7 +198,10 @@ wlbExport = function () {
         }
     }
 
-    async function saveExportA5() {
+    /**
+     * Saves A5 format settings.
+     */
+    const saveExportA5 = async () => {
         let time_fields_auto_format = 0;
         if (document.getElementById("time_field_format_radio2_a5").checked) {
             time_fields_auto_format = 1;
@@ -205,9 +209,8 @@ wlbExport = function () {
             time_fields_auto_format = 2;
         }
 
-        let custom_title_a5 = await saveCustomTitle("A5");
-
-        let payload = {
+        const custom_title_a5 = await saveCustomTitle("A5");
+        const payload = {
             export_a5: {
                 logbook_rows: parseInt(document.getElementById("logbook_rows_a5").value),
                 fill: parseInt(document.getElementById("fill_a5").value),
@@ -283,20 +286,13 @@ wlbExport = function () {
             }
         };
 
-        const requestOptions = {
-            method: "post",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-        };
-
-        const response = await fetch("{{$api.Export}}/{{$api.ExportFormatA5}}", requestOptions);
-        const data = await response.json();
+        const api = await commonUtils.getApi("Export");
+        const formatA5 = await commonUtils.getApi("ExportFormatA5");
+        const fullUrl = `${api}/${formatA5}`;
+        const data = await commonUtils.postRequest(fullUrl, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
-            if (typeof data.redirect_url !== "undefined") {
+            if (typeof data.redirect_url !== 'undefined') {
                 location.href = data.redirect_url;
             }
         } else {
@@ -304,119 +300,155 @@ wlbExport = function () {
         }
     }
 
-    function saveExportXLS() {
-        let payload = {
-            export_xls: {
-                convert_time: document.getElementById("convert_time_xls").checked
-            }
-        };
-
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        };
-
-        fetch("{{$api.Export}}/{{$api.ExportFormatXLS}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    commonUtils.showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    commonUtils.showErrorMessage(data.message);
-                }
-            });
-    }
-
-    function saveExportCSV() {
-        let payload = {
+    /**
+     * Saves the export settings for CSV format.
+    */
+    const saveExportCSV = async () => {
+        const payload = {
             export_csv: {
                 crlf: document.getElementById("crlf_csv").checked,
                 delimeter: document.getElementById("delimeter_csv").value
             }
         };
 
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        };
-
-        fetch("{{$api.Export}}/{{$api.ExportFormatCSV}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    commonUtils.showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    commonUtils.showErrorMessage(data.message);
-                }
-            });
-    }
-
-    function restoreDefaults(part) {
-        let payload = part;
-
-        const requestOptions = {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        };
-
-        fetch("{{$api.ExportRestoreDefaults}}", requestOptions)
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.ok) {
-                    commonUtils.showInfoMessage(data.message);
-                    if (typeof data.redirect_url !== 'undefined') {
-                        location.href = data.redirect_url;
-                    }
-                } else {
-                    commonUtils.showErrorMessage(data.message);
-                }
-            });
-    }
-
-    function showTab(param) {
-        if (param) {
-            if (param === "a5headers" || param === "a5common" || param === "a5columns") {
-                $("#nav-export-a5-tab").trigger("click");
+        const api = await commonUtils.getApi("Export");
+        const formatCSV = await commonUtils.getApi("ExportFormatCSV");
+        const fullUrl = `${api}/${formatCSV}`;
+        const data = await commonUtils.postRequest(fullUrl, payload);
+        if (data.ok) {
+            commonUtils.showInfoMessage(data.message);
+            if (typeof data.redirect_url !== 'undefined') {
+                location.href = data.redirect_url;
             }
+        } else {
+            commonUtils.showErrorMessage(data.message);
         }
     }
 
-    return {
-        saveExportA5:saveExportA5,
-        saveExportA4:saveExportA4,
-        saveExportCSV:saveExportCSV,
-        saveExportXLS:saveExportXLS,
-        restoreDefaults:restoreDefaults,
-        showTab:showTab,
-        deleteCustomTitle:deleteCustomTitle,
-        showCustomTitleModal:showCustomTitleModal
+    /**
+    * Saves the export settings for XLS format.
+    */
+    const saveExportXLS = async () => {
+        const payload = {
+            export_xls: {
+                convert_time: document.getElementById("convert_time_xls").checked
+            }
+        };
+
+        const api = await commonUtils.getApi("Export");
+        const formatXLS = await commonUtils.getApi("ExportFormatXLS");
+        const fullUrl = `${api}/${formatXLS}`;
+        const data = await commonUtils.postRequest(fullUrl, payload);
+        if (data.ok) {
+            commonUtils.showInfoMessage(data.message);
+            if (typeof data.redirect_url !== 'undefined') {
+                location.href = data.redirect_url;
+            }
+        } else {
+            commonUtils.showErrorMessage(data.message);
+        }
     }
+
+    /**
+     * Runs the export process for A4 format.
+     */
+    const runExportA4 = async () => {
+        const formatA4 = await commonUtils.getApi("ExportFormatA4");
+        commonUtils.runExport(formatA4);
+    }
+
+    /**
+     * Runs the export process for A5 format.
+     */
+    const runExportA5 = async () => {
+        const formatA5 = await commonUtils.getApi("ExportFormatA5");
+        commonUtils.runExport(formatA5);
+    }
+
+    /**
+     * Runs the export process for CSV format.
+     */
+    const runExportCSV = async () => {
+        const formatCSV = await commonUtils.getApi("ExportFormatCSV");
+        commonUtils.runExport(formatCSV);
+    }
+
+    /**
+     * Runs the export process for XLS format.
+     */
+    const runExportXLS = async () => {
+        const formatXLS = await commonUtils.getApi("ExportFormatXLS");
+        commonUtils.runExport(formatXLS);
+    }
+
+    /**
+     * Restores the default settings for a specific part of the export.
+     * @param {string} part - The part of the export to restore defaults for.
+     */
+    const restoreDefaults = async (part) => {
+        const api = await commonUtils.getApi("ExportRestoreDefaults");
+        const data = await commonUtils.postRequest(api, part);
+        if (data.ok) {
+            commonUtils.showInfoMessage(data.message);
+            if (typeof data.redirect_url !== 'undefined') {
+                location.href = data.redirect_url;
+            }
+        } else {
+            commonUtils.showErrorMessage(data.message);
+        }
+    }
+
+    /**
+     * Shows the export tab based on the value of the 'param' query string parameter.
+     */
+    const showTab = () => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const param = urlParams.get('param');
+
+        const validParams = ["a5headers", "a5common", "a5columns"];
+
+        if (param && validParams.includes(param)) {
+            $("#nav-export-a5-tab").trigger("click");
+        }
+    }
+
+    /**
+     * Assigns event listeners to various elements in the document.
+     */
+    const assignEventListeners = () => {
+        document.getElementById("show_custom_title_modal_a4").addEventListener("click", () => { showCustomTitleModal("A4"); });
+        document.getElementById("save_a4").addEventListener("click", saveExportA4);
+        document.getElementById("modal_save_a4").addEventListener("click", saveExportA4);
+        document.getElementById("modal_delete_custom_a4").addEventListener("click", () => { deleteCustomTitle("A4"); });
+        document.getElementById("export_a4").addEventListener("click", runExportA4);
+        document.getElementById("restore_defaults_a4_common").addEventListener("click", () => { restoreDefaults("a4common"); });
+        document.getElementById("restore_defaults_a4_headers").addEventListener("click", () => { restoreDefaults("a4headers"); });
+        document.getElementById("restore_defaults_a4_columns").addEventListener("click", () => { restoreDefaults("a4columns"); });
+
+        document.getElementById("show_custom_title_modal_a5").addEventListener("click", () => { showCustomTitleModal("A5"); });
+        document.getElementById("save_a5").addEventListener("click", saveExportA5);
+        document.getElementById("modal_save_a5").addEventListener("click", saveExportA5);
+        document.getElementById("modal_delete_custom_a5").addEventListener("click", () => { deleteCustomTitle("A5"); });
+        document.getElementById("export_a5").addEventListener("click", runExportA5);
+        document.getElementById("restore_defaults_a5_common").addEventListener("click", () => { restoreDefaults("a5common"); });
+        document.getElementById("restore_defaults_a5_headers").addEventListener("click", () => { restoreDefaults("a5headers"); });
+        document.getElementById("restore_defaults_a5_columns").addEventListener("click", () => { restoreDefaults("a5columns"); });
+
+        document.getElementById("save_csv").addEventListener("click", saveExportCSV);
+        document.getElementById("export_csv").addEventListener("click", runExportCSV);
+
+        document.getElementById("save_xls").addEventListener("click", saveExportXLS);
+        document.getElementById("export_xls").addEventListener("click", runExportXLS);
+    }
+
+    /**
+     * Initializes the page.
+     */
+    const initPage = async () => {
+        assignEventListeners();
+        showTab();
+    }
+
+    document.addEventListener("DOMContentLoaded", initPage);
 }();
-
-$(document).ready( function () {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const param = urlParams.get('param');
-
-    wlbExport.showTab(param);
-});
-</script>
-{{end}}
