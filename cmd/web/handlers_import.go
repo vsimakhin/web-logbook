@@ -17,8 +17,7 @@ func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 
-	partials := []string{"import-js", "import-mapfields-modal"}
-	if err := app.renderTemplate(w, r, "import", &templateData{Data: data}, partials...); err != nil {
+	if err := app.renderTemplate(w, r, "import", &templateData{Data: data}, "import-mapfields-modal"); err != nil {
 		app.errorLog.Println(err)
 	}
 }

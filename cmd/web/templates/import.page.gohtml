@@ -18,13 +18,13 @@ The current version fully supports WebLogbook CSV format. You can check it at "E
     <div class="col-md-9">
         <div class="row mb-2 gap-2">
             <label for="csv_file" class="btn btn-sm btn-outline-secondary col-md-2"><i class="bi bi-view-list"></i> Select CSV and Preview</label>
-            <input type="file" class="form-control form-control-sm" id="csv_file" name="csv_file" accept="text/csv" style="display:none" onchange="wlbImport.parseCSV();">
+            <input type="file" class="form-control form-control-sm" id="csv_file" name="csv_file" accept="text/csv" style="display:none">
 
-            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" onclick="wlbImport.clearTable();"><i class="bi bi-eraser-fill"></i> Clear Table</button>
+            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" id="btn_clear_table"><i class="bi bi-eraser-fill"></i> Clear Table</button>
 
-            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" onclick="wlbImport.createBackup();"><i class="bi bi-back"></i> Create Backup</button>
+            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" id="btn_create_backup"><i class="bi bi-back"></i> Create Backup</button>
 
-            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" onclick="wlbImport.importData();" id="btn_import" name="btn_import"><i class="bi bi-file-earmark-arrow-up-fill"></i>  Run Import</button>
+            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" id="btn_import" name="btn_import"><i class="bi bi-file-earmark-arrow-up-fill"></i>  Run Import</button>
             <div class="spinner-border text-secondary d-none" id="spinner" name="spinner" role="status"><span class="visually-hidden">Loading...</span></div>
         </div>
     </div>
@@ -81,5 +81,7 @@ The current version fully supports WebLogbook CSV format. You can check it at "E
 {{ end }}
 
 {{ define "js" }}
-{{ block "import-js" . }}{{ end }}
+<script src="/static/js/papaparse.js"></script>
+<script type="text/javascript" src="/static/js/datatables.min.js"></script>
+<script type="text/javascript" src="/static/js/wlb-import.js"></script>
 {{ end }}
