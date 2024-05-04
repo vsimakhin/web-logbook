@@ -11,7 +11,7 @@
 {{$settings := index .Data "settings"}}
 {{$records := index .Data "records"}}
 
-<form action="{{$api.Settings}}" method="post" name="settings" id="settings" class="d-block" autocomplete="off" novalidate="">
+<form method="post" name="settings" id="settings" class="d-block" autocomplete="off" novalidate="">
 
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -41,10 +41,12 @@
 </div>
 
 <hr>
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.saveSettings()" id="save"><i class="bi bi-save-fill"></i> Save</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" id="btn_save_settings"><i class="bi bi-save-fill"></i> Save</button>
 
 </form>
 {{ end }}
 {{ define "js" }}
-{{ block "settings-js" . }}{{ end }}
+<script src="/static/js/signature_pad.umd.js"></script>
+<script type="text/javascript" src="/static/js/datatables.min.js"></script>
+<script type="text/javascript" src="/static/js/wlb-settings.js"></script>
 {{ end }}

@@ -21,10 +21,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data["records"] = records
 	data["urls"] = app.getServerUrls()
 
-	partials := []string{
-		"settings-js", "settings-general",
-		"settings-airports", "settings-misc", "settings-sync",
-	}
+	partials := []string{"settings-general", "settings-airports", "settings-misc", "settings-sync"}
 
 	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)

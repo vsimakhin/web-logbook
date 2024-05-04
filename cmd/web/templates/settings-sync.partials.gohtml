@@ -9,9 +9,7 @@
         <div class="row mb-2">
             <div class="col">
                 <ul class="list-group" data-bs-toggle="tooltip" data-bs-placement="bottom" title="The list shows all available network interfaces and does not reflect `-url` parameter">Possible Server addresses for synchronization
-                {{ range $urls}}
-                    <li class="list-group-item">{{.}}</li>
-                {{ end}}
+                {{ range $urls}}<li class="list-group-item">{{.}}</li>{{ end}}
                 </ul>
             </div>
         </div>

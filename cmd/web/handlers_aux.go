@@ -87,6 +87,7 @@ func (app *application) HandlerPreferences(w http.ResponseWriter, r *http.Reques
 		"hide_stats_crosscountry":      settings.HideStatsFields.CrossCountry,
 		"hide_stats_landings":          settings.HideStatsFields.Landings,
 		"hide_stats_distance":          settings.HideStatsFields.Distance,
+		"signature_image":              settings.SignatureImage,
 	}
 
 	err = app.writeJSON(w, http.StatusOK, data)

@@ -7,45 +7,40 @@
             <div class="row mb-2">
                 <label for="owner_name" class="form-label col-md-3 col-form-label">Owner Name</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control form-control-sm" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}"
-                        autocomplete="off" placeholder="Owner Name">
+                    <input type="text" class="form-control form-control-sm" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}" autocomplete="off" placeholder="Owner Name">
                 </div>
             </div>
             <div class="row mb-2">
                 <label for="license_number" class="form-label col-md-3 col-form-label">License Number</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control form-control-sm" id="license_number" name="license_number" value="{{$settings.LicenseNumber}}"
-                        autocomplete="off" placeholder="License Number">
+                    <input type="text" class="form-control form-control-sm" id="license_number" name="license_number" value="{{$settings.LicenseNumber}}" autocomplete="off" placeholder="License Number">
                 </div>
             </div>
             <div class="row mb-2">
                 <label for="address" class="form-label col-md-3 col-form-label">Address</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control form-control-sm" id="address" name="address" value="{{$settings.Address}}"
-                        autocomplete="off" placeholder="Address">
+                    <input type="text" class="form-control form-control-sm" id="address" name="address" value="{{$settings.Address}}" autocomplete="off" placeholder="Address">
                 </div>
             </div>
             <div class="row mb-2">
                 <label for="signature_text" class="form-label col-md-3 col-form-label">Signature text</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control form-control-sm" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}"
-                        autocomplete="off" placeholder="Signature text">
+                    <input type="text" class="form-control form-control-sm" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}" autocomplete="off" placeholder="Signature text">
                 </div>
             </div>
 
-
             <label for="signature_doc" class="form-label">Signature</label>
-            <input type=file onchange="wlbSettings.uploadSignature();" id="signature_file" name="signature_file" hidden accept="image/png">
+            <input type=file  id="signature_file" name="signature_file" hidden accept="image/png">
             <div class="row border border-secondary-subtle">
                 <canvas id="signature-pad" width="100%" height="200"></canvas>
             </div>
 
             <div class="row mb-2">
-                <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="$('#signature_file').click();" id="upload_signature"><i class="bi bi-cloud-arrow-up-fill"></i> Upload</button>
-                <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.clearSignature();" id="clear_signature"><i class="bi bi-arrow-counterclockwise"></i> Clear</button>
-                <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.pickSignatureColor();" id="pick_color"><i class="bi bi-brush-fill"></i> Color</button>
+                <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" id="upload_signature"><i class="bi bi-cloud-arrow-up-fill"></i> Upload</button>
+                <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" id="clear_signature"><i class="bi bi-arrow-counterclockwise"></i> Clear</button>
+                <button class="col-md-3 btn btn-sm btn-outline-secondary" type="button" id="pick_color"><i class="bi bi-brush-fill"></i> Color</button>
 
-                <input type="color" id="signature_color" name="signature_color" onchange="wlbSettings.changeSignatureColor();" hidden>
+                <input type="color" id="signature_color" name="signature_color" hidden>
             </div>
 
             <hr>
@@ -61,23 +56,20 @@
             <div class="row mb-2">
                 <label for="login" class="form-label col-md-3 col-form-label">Login</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control form-control-sm" id="login" name="login" type="login" value="{{$settings.Login}}"
-                        autocomplete="off" placeholder="Login Name">
+                    <input class="form-control form-control-sm" id="login" name="login" type="login" value="{{$settings.Login}}" autocomplete="off" placeholder="Login Name">
                 </div>
             </div>
 
             <div class="row mb-2">
                 <label for="password" class="form-label col-md-3 col-form-label">Password</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control form-control-sm" id="password" name="password" type="password"
-                        autocomplete="off" placeholder="Password">
+                    <input class="form-control form-control-sm" id="password" name="password" type="password" autocomplete="off" placeholder="Password">
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-md-8">
-
         <div class="card-body">
             <table id="aircraft_class" class="table-editable table table-sm table-bordered table-responsive-md table-striped">
                 <thead>
@@ -89,11 +81,9 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <button class="btn-sm btn-outline-secondary" type="button" id="add_row" onclick="wlbSettings.addNewClassesRow();"><i class="bi bi-plus-square-fill"></i></button>
+            <button class="btn-sm btn-outline-secondary" type="button" id="add_row"><i class="bi bi-plus-square-fill"></i></button>
             <div id="without_classes"></div>
         </div>
-
     </div>
-
 </div>
 {{end}}
