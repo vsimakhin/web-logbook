@@ -54,11 +54,7 @@ func (app *application) HandlerGetApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := app.writeJSON(w, http.StatusOK, item)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, item)
 }
 
 func (app *application) HandlerPreferences(w http.ResponseWriter, r *http.Request) {
@@ -90,9 +86,5 @@ func (app *application) HandlerPreferences(w http.ResponseWriter, r *http.Reques
 		"signature_image":              settings.SignatureImage,
 	}
 
-	err = app.writeJSON(w, http.StatusOK, data)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, data)
 }

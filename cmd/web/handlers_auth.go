@@ -60,10 +60,7 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 
 			response.OK = false
 			response.Message = "Too many failed login attempts"
-			err := app.writeJSON(w, http.StatusForbidden, response)
-			if err != nil {
-				app.errorLog.Println(err)
-			}
+			app.writeJSON(w, http.StatusForbidden, response)
 			return
 		}
 	}
@@ -97,10 +94,7 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 		response.OK = false
 		response.Message = err.Error()
 
-		err = app.writeJSON(w, http.StatusForbidden, response)
-		if err != nil {
-			app.errorLog.Println(err)
-		}
+		app.writeJSON(w, http.StatusForbidden, response)
 	} else {
 		// reset failed attempts
 		loginAttempts[ip] = LoginAttempts{0, time.Now().Unix()}
@@ -108,10 +102,7 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 		app.session.Put(r.Context(), "token", app.session.Token(r.Context()))
 		response.OK = true
 		response.RedirectURL = "/logbook"
-		err = app.writeJSON(w, http.StatusOK, response)
-		if err != nil {
-			app.errorLog.Println(err)
-		}
+		app.writeJSON(w, http.StatusOK, response)
 	}
 }
 

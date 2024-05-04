@@ -65,12 +65,7 @@ func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *ht
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // HandlerLicensingRecordByID is handler for a license record
@@ -161,11 +156,7 @@ func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *h
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, r *http.Request) {
@@ -192,11 +183,7 @@ func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, 
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerLicensingRecordSave is a handler for creating or updating license record
@@ -280,9 +267,5 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		}
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }

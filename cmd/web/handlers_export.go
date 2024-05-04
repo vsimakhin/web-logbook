@@ -158,11 +158,7 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerRestoreDefaults restores default values
@@ -189,9 +185,5 @@ func (app *application) HandlerExportRestoreDefaults(w http.ResponseWriter, r *h
 		response.RedirectURL = fmt.Sprintf("%s?param=%s", APIExport, param)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }

@@ -23,11 +23,7 @@ func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, attachments)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, attachments)
 }
 
 // HandlerUploadAttachment handles attachments upload
@@ -87,11 +83,7 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerDeleteAttachment is a handler for removing attachments
@@ -117,11 +109,7 @@ func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.R
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerAttachmentDownload is a hadnler for attachment download

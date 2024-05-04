@@ -41,10 +41,5 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
+	app.writeJSON(w, http.StatusOK, tableData)
 }

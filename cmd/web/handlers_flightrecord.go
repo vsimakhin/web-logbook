@@ -100,11 +100,7 @@ func (app *application) HandlerFlightRecordDelete(w http.ResponseWriter, r *http
 		app.errorLog.Println(err)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerFlightRecordSave updates the flight record or create a new one
@@ -158,11 +154,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 		}
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerNightTime is a handler for calculating night time
@@ -187,9 +179,5 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 	response.OK = true
 	response.Data = fmt.Sprintf("%d", int(math.Round(night.Minutes())))
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error calculating night time - %s", err))
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }

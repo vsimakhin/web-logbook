@@ -104,9 +104,5 @@ func (app *application) HandlerMapData(w http.ResponseWriter, r *http.Request) {
 	data["lines"] = render.Lines
 	data["markers"] = render.Markers
 
-	err = app.writeJSON(w, http.StatusOK, data)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, data)
 }
