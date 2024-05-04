@@ -2,7 +2,10 @@
 
 ## [Unreleased]
 
-- Update: Code optimization. Migrated all javascript code to a js files instead of keeping them in gohtml templates. This significantly reduces amouunt of typo and errors. Plus some html code optimization. As a result, the final size of the application binary file is reduced by 10 MB to ~18MB.
+- Update: Code optimization. Includes:
+    - Migrated all javascript code to a js files instead of keeping them in gohtml templates, plus some html code optimization. This significantly reduces amouunt of typo and errors. 
+    - Removed map data for css and js files for standard libraries. As a result, the final size of the application binary file is reduced by ~10 MB to ~18MB.
+    - Added simple brutforce protection for login page.
 
 ## [2.34.0] - 03.04.2024
 
