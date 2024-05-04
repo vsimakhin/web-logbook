@@ -274,8 +274,16 @@ const statsUtils = function () {
         });
     }
 
+    const assignEventListeners = () => {
+        document.getElementById("nav-totals-tab").addEventListener("click", () => { onStatsTabChange('totals'); showRangeField(true); });
+        document.getElementById("nav-totals-by-year-tab").addEventListener("click", () => { onStatsTabChange('totals_by_year'); showRangeField(false); });
+        document.getElementById("nav-totals-by-type-tab").addEventListener("click", () => { onStatsTabChange('totals_by_type'); showRangeField(true); });
+        document.getElementById("nav-totals-by-class-tab").addEventListener("click", () => { onStatsTabChange('totals_by_class'); showRangeField(true); });
+
+    }
+
     const initPage = async () => {
-        // assignEventListeners();
+        assignEventListeners();
         await initTablesAndDateRangePickers();
     }
 

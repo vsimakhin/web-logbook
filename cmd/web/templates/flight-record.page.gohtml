@@ -223,12 +223,12 @@ Flight Record {{if $fr.UUID}}{{ if and $fr.Departure.Place $fr.Arrival.Place}}{{
                 </table>
                 <form class="row" method="post" name="flight_record_attachment_form" id="flight_record_attachment_form" autocomplete="off" novalidate="" enctype="multipart/form-data">
                     <div class="col-auto"><input type="file" class="form-control form-control-sm" id="document" name="document"></div>
-                    <div class="col-auto"><button class="btn btn-sm btn-outline-secondary float-right" type="button" onclick="flightRecordUtils.uploadAttachment()" id="upload"><i class="bi bi-cloud-plus-fill"></i> Upload</button></div>
+                    <div class="col-auto"><button class="btn btn-sm btn-outline-secondary float-right" type="button" id="upload"><i class="bi bi-cloud-plus-fill"></i> Upload</button></div>
                     <input type="hidden" name="record_id" id="record_id" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="btn_attachment_close" type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" onclick="flightRecordUtils.loadAttachments()"><i class="bi bi-door-open-fill"></i> Close</button>
+                <button id="btn_attachment_close" type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-door-open-fill"></i> Close</button>
             </div>
         </div>
     </div>

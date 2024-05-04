@@ -231,6 +231,8 @@ const flightRecordUtils = function () {
         if (document.getElementById("ask_delete_flight_record_btn")) { document.getElementById("ask_delete_flight_record_btn").addEventListener("click", askForDeleteFlightRecord); }
         if (document.getElementById("delete_flight_record_btn")) { document.getElementById("delete_flight_record_btn").addEventListener("click", deleteFlightRecord); }
         if (document.getElementById("attach_button")) { document.getElementById("attach_button").addEventListener("click", openUploadAttachemnts); }
+
+        document.getElementById("upload").addEventListener("click", uploadAttachment);
     }
 
     /**
