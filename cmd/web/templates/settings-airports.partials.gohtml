@@ -28,15 +28,14 @@
         <div class="row mb-2">
             <label for="airports" class="form-label col-md-2 col-form-label">Airport database</label>
             <div class="col-md-2">
-                <input type="text" class="form-control form-control-sm col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports"
-                    required="false" readonly>
+                <input type="text" class="form-control form-control-sm col-md-8 col-form-label" id="airports" name="airports" value="{{$records}} airports" required="false" readonly>
             </div>
             <div class="spinner-border text-secondary col-md-1 d-none" id="spinner" name="spinner" role="status"><span class="visually-hidden">Loading...</span></div>
             <div class="col-md-2">
-                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.updateAirportsDB()" id="btn_update"><i class="bi bi-arrow-clockwise"></i> Update Airport DB</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="btn_update"><i class="bi bi-arrow-clockwise"></i> Update Airport DB</button>
             </div>
             <div class="col-md-2">
-                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.showAirportsDB()" id="btn_show_db"><i class="bi bi-arrow-clockwise"></i> Open Airport DB</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="btn_show_db"><i class="bi bi-arrow-clockwise"></i> Open Airport DB</button>
             </div>
         </div>
     </div>
@@ -52,48 +51,41 @@ You can add custom airports that are not in the standard database and do not hav
         <div class="row mb-2">
             <label for="airport_name" class="form-label col-md-4 col-form-label">Name</label>
             <div class="col-md-8">
-                <input type="text" class="form-control form-control-sm" id="airport_name" name="airport_name"
-                    autocomplete="off" placeholder="Airport Name/ID">
+                <input type="text" class="form-control form-control-sm" id="airport_name" name="airport_name" autocomplete="off" placeholder="Airport Name/ID">
             </div>
         </div>
         <div class="row mb-2">
             <label for="airport_city" class="form-label col-md-4 col-form-label">City</label>
             <div class="col-md-8">
-                <input type="text" class="form-control form-control-sm" id="airport_city" name="airport_city"
-                    autocomplete="off" placeholder="City/Location">
+                <input type="text" class="form-control form-control-sm" id="airport_city" name="airport_city" autocomplete="off" placeholder="City/Location">
             </div>
         </div>
         <div class="row mb-2">
             <label for="airport_country" class="form-label col-md-4 col-form-label">Country</label>
             <div class="col-md-8">
-                <input type="text" class="form-control form-control-sm" id="airport_country" name="airport_country"
-                    autocomplete="off" placeholder="Country">
+                <input type="text" class="form-control form-control-sm" id="airport_country" name="airport_country" autocomplete="off" placeholder="Country">
             </div>
         </div>
         <div class="row mb-2">
             <label for="airport_elevation" class="form-label col-md-4 col-form-label">Elevation</label>
             <div class="col-md-8">
-                <input type="text" class="form-control form-control-sm" id="airport_elevation" name="airport_elevation"
-                    autocomplete="off" placeholder="Elevation">
+                <input type="text" class="form-control form-control-sm" id="airport_elevation" name="airport_elevation" autocomplete="off" placeholder="Elevation">
             </div>
         </div>
         <div class="row mb-2">
             <label for="airport_lat" class="form-label col-md-4 col-form-label">Lat</label>
             <div class="col-md-8">
-                <input type="text" class="form-control form-control-sm" id="airport_lat" name="airport_lat"
-                    autocomplete="off" placeholder="Latitude">
+                <input type="text" class="form-control form-control-sm" id="airport_lat" name="airport_lat" autocomplete="off" placeholder="Latitude">
             </div>
         </div>
         <div class="row mb-2">
             <label for="airport_lon" class="form-label col-md-4 col-form-label">Lon</label>
             <div class="col-md-8">
-                <input type="text" class="form-control form-control-sm" id="airport_lon" name="airport_lon"
-                    autocomplete="off" placeholder="Longtitude">
+                <input type="text" class="form-control form-control-sm" id="airport_lon" name="airport_lon" autocomplete="off" placeholder="Longtitude">
             </div>
         </div>
 
-        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbSettings.addCustomAirport()" id="btn_add_airport"><i class="bi bi-plus-square-fill"></i> Add Airport</button>
-
+        <button class="btn btn-sm btn-outline-secondary" type="button" id="btn_add_airport"><i class="bi bi-plus-square-fill"></i> Add Airport</button>
     </div>
 
     <div class="col-md-6">
@@ -113,7 +105,6 @@ You can add custom airports that are not in the standard database and do not hav
         </table>
     </div>
 </div>
-
 
 <!-- Modal -->
 <div class="modal fade" id="airportDB" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="airportDB" aria-hidden="true">

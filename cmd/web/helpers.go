@@ -17,11 +17,11 @@ import (
 )
 
 // writeJSON writes arbitrary data out as JSON
-func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
+func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) {
 	out, err := json.Marshal(data)
 	if err != nil {
+		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
 	}
 
 	if len(headers) > 0 {
@@ -34,10 +34,8 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	w.WriteHeader(status)
 	_, err = w.Write(out)
 	if err != nil {
-		return err
+		app.errorLog.Println(err)
 	}
-
-	return nil
 }
 
 // checkNewVersion checks if the new version released on github

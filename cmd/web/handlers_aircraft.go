@@ -25,9 +25,5 @@ func (app *application) HandlerAircrafts(w http.ResponseWriter, r *http.Request)
 		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
 	}
 
-	err = app.writeJSON(w, http.StatusOK, aircrafts)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
-		return
-	}
+	app.writeJSON(w, http.StatusOK, aircrafts)
 }

@@ -29,11 +29,7 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 		app.warningLog.Printf("cannot find %s in the airport database\n", uuid)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, airport)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, airport)
 }
 
 func (app *application) downloadAirportDB(source string) ([]models.Airport, error) {
@@ -178,11 +174,7 @@ func (app *application) HandlerAirportUpdate(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerAirportAddCustom adds a new custom airport
@@ -208,11 +200,7 @@ func (app *application) HandlerAirportAddCustom(w http.ResponseWriter, r *http.R
 		response.Message = fmt.Sprintf("Custom airport %s has been added", airport.Name)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerAirportDeleteCustom removes a custom airport
@@ -238,11 +226,7 @@ func (app *application) HandlerAirportDeleteCustom(w http.ResponseWriter, r *htt
 		response.Message = fmt.Sprintf("Airport %s has been removed", airport.Name)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerAirportCustomData generates data for the custom airports table
@@ -269,12 +253,7 @@ func (app *application) HandlerAirportCustomData(w http.ResponseWriter, r *http.
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // HandlerAirportDBData generates data for the standard airports table
@@ -301,10 +280,5 @@ func (app *application) HandlerAirportDBData(w http.ResponseWriter, r *http.Requ
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
+	app.writeJSON(w, http.StatusOK, tableData)
 }

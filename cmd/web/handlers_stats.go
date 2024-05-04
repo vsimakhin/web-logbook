@@ -43,11 +43,7 @@ func (app *application) HandlerStatsTotalsByClass(w http.ResponseWriter, r *http
 		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", "", ""})
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // HandlerStatsTotalsByType is a handler for the Totals By Type table source
@@ -83,11 +79,7 @@ func (app *application) HandlerStatsTotalsByType(w http.ResponseWriter, r *http.
 		tableData.Data = append(tableData.Data, []string{"", "", "", "", "", "", "", "", "", "", "", "", "", "", ""})
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // HandlerStatsTotals is a handler for the Totals table source
@@ -253,11 +245,7 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 		})
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // HandlerStatsLimits is a handler for the Flight Time Limitations table source
@@ -281,11 +269,7 @@ func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Reques
 			totals["Year"].Time.Total,
 		})
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // HandlerStats is a handler for Stats page
@@ -302,7 +286,7 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 
 	data["totalsByYear"] = totalsByYear
 
-	partials := []string{"stats-totals", "stats-totals-year", "stats-totals-type", "stats-totals-class", "stats-js", "common-js"}
+	partials := []string{"stats-totals", "stats-totals-year", "stats-totals-type", "stats-totals-class"}
 
 	if err := app.renderTemplate(w, r, "stats", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)

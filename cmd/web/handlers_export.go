@@ -20,7 +20,7 @@ const exportXLS = "xls"
 // HandlerExport is a handler for /export page
 func (app *application) HandlerExport(w http.ResponseWriter, r *http.Request) {
 
-	partials := []string{"common-js", "export-js", "export-a4", "export-a5", "export-xls", "export-csv"}
+	partials := []string{"export-a4", "export-a5", "export-xls", "export-csv"}
 	if err := app.renderTemplate(w, r, "export", &templateData{}, partials...); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -158,11 +158,7 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerRestoreDefaults restores default values
@@ -189,9 +185,5 @@ func (app *application) HandlerExportRestoreDefaults(w http.ResponseWriter, r *h
 		response.RedirectURL = fmt.Sprintf("%s?param=%s", APIExport, param)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }

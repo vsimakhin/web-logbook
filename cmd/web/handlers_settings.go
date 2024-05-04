@@ -21,10 +21,7 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 	data["records"] = records
 	data["urls"] = app.getServerUrls()
 
-	partials := []string{
-		"common-js", "settings-js", "settings-general",
-		"settings-airports", "settings-misc", "settings-sync",
-	}
+	partials := []string{"settings-general", "settings-airports", "settings-misc", "settings-sync"}
 
 	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, partials...); err != nil {
 		app.errorLog.Println(err)
@@ -73,11 +70,7 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 	app.isAuthEnabled = settings.AuthEnabled
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerSettingsAircraftClasses is a handler for aircraft groups/classes
@@ -90,9 +83,5 @@ func (app *application) HandlerSettingsAircraftClasses(w http.ResponseWriter, r 
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, settings.AircraftClasses)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, settings.AircraftClasses)
 }

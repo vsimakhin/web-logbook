@@ -36,12 +36,7 @@ func (app *application) HandlerSyncAirports(w http.ResponseWriter, r *http.Reque
 		tableData = append(tableData, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 func (app *application) HandlerSyncDeletedGet(w http.ResponseWriter, r *http.Request) {
@@ -65,11 +60,7 @@ func (app *application) HandlerSyncDeletedGet(w http.ResponseWriter, r *http.Req
 		tableData = append(tableData, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 func (app *application) HandlerSyncDeletedPost(w http.ResponseWriter, r *http.Request) {
@@ -95,11 +86,7 @@ func (app *application) HandlerSyncDeletedPost(w http.ResponseWriter, r *http.Re
 	}
 
 	response.OK = true
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 func (app *application) HandlerSyncFlightRecordsGet(w http.ResponseWriter, r *http.Request) {
@@ -145,11 +132,7 @@ func (app *application) HandlerSyncFlightRecordsGet(w http.ResponseWriter, r *ht
 		tableData = append(tableData, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 func (app *application) HandlerSyncFlightRecordsPost(w http.ResponseWriter, r *http.Request) {
@@ -176,11 +159,7 @@ func (app *application) HandlerSyncFlightRecordsPost(w http.ResponseWriter, r *h
 	}
 
 	response.OK = true
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // returns all attachments without document body
@@ -206,11 +185,7 @@ func (app *application) HandlerSyncAttachmentsAll(w http.ResponseWriter, r *http
 		tableData = append(tableData, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // returns the attachment records
@@ -224,11 +199,7 @@ func (app *application) HandlerSyncAttachments(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, att)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, att)
 }
 
 func (app *application) HandlerSyncAttachmentsUpload(w http.ResponseWriter, r *http.Request) {
@@ -251,11 +222,7 @@ func (app *application) HandlerSyncAttachmentsUpload(w http.ResponseWriter, r *h
 	}
 
 	response.OK = true
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 func (app *application) HandlerSyncLicensingGet(w http.ResponseWriter, r *http.Request) {
@@ -287,11 +254,7 @@ func (app *application) HandlerSyncLicensingGet(w http.ResponseWriter, r *http.R
 		tableData = append(tableData, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 func (app *application) HandlerSyncLicensingPost(w http.ResponseWriter, r *http.Request) {
@@ -318,9 +281,5 @@ func (app *application) HandlerSyncLicensingPost(w http.ResponseWriter, r *http.
 	}
 
 	response.OK = true
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }

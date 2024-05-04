@@ -17,8 +17,7 @@ func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 
-	partials := []string{"common-js", "import-js", "import-mapfields-modal"}
-	if err := app.renderTemplate(w, r, "import", &templateData{Data: data}, partials...); err != nil {
+	if err := app.renderTemplate(w, r, "import", &templateData{Data: data}, "import-mapfields-modal"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -30,10 +29,7 @@ func (app *application) HandlerImportCreateBackup(w http.ResponseWriter, r *http
 	if app.config.db.engine != "sqlite" {
 		response.Message = "backup is available only for sqlite3 database"
 		response.OK = false
-		err := app.writeJSON(w, http.StatusOK, response)
-		if err != nil {
-			app.errorLog.Println(err)
-		}
+		app.writeJSON(w, http.StatusOK, response)
 		return
 	}
 
@@ -63,11 +59,7 @@ func (app *application) HandlerImportCreateBackup(w http.ResponseWriter, r *http
 
 	response.Message = fmt.Sprintf("new backup %s is created", bckpFileName)
 	response.OK = true
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerImportRun runs the import
@@ -150,9 +142,5 @@ func (app *application) HandlerImportRun(w http.ResponseWriter, r *http.Request)
 		response.OK = true
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }

@@ -25,11 +25,11 @@
     <tbody></tbody>
 </table>
 <br>
-<a id="new-license" href="{{$api.LicensingNew}}" class="btn btn-sm btn-outline-secondary" onclick=""><i class="bi bi-plus-square-fill"></i> Add New License</a>
+<a id="new-license" href="{{$api.LicensingNew}}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-square-fill"></i> Add New License</a>
 <br>
 {{ end }}
 
 {{ define "js" }}
-{{ block "common-js" . }}{{ end }}
-{{ block "licensing-js" . }}{{ end }}
+<script type="text/javascript" src="/static/js/datatables.min.js"></script>
+<script type="text/javascript" src="/static/js/wlb-licensing.js"></script>
 {{ end }}

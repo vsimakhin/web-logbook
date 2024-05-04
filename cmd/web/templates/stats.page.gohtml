@@ -9,10 +9,10 @@
     <div class="col-md-7">
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <button onclick="wlbStats.onStatsTabChange('totals');wlbStats.showRangeField(true);" class="nav-link active" id="nav-totals-tab" data-bs-toggle="tab" data-bs-target="#nav-totals" type="button" role="tab" aria-controls="nav-totals" aria-selected="true">Totals</button>
-                <button onclick="wlbStats.onStatsTabChange('totals_by_year');wlbStats.showRangeField(false);" class="nav-link" id="nav-totals-by-year-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-year" type="button" role="tab" aria-controls="nav-totals-by-year" aria-selected="false">Totals by Year</button>
-                <button onclick="wlbStats.onStatsTabChange('totals_by_type');wlbStats.showRangeField(true);" class="nav-link" id="nav-totals-by-type-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-type" type="button" role="tab" aria-controls="nav-totals-by-type" aria-selected="false">Totals by Aircraft Type</button>
-                <button onclick="wlbStats.onStatsTabChange('totals_by_class');wlbStats.showRangeField(true);" class="nav-link" id="nav-totals-by-class-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-class" type="button" role="tab" aria-controls="nav-totals-by-class" aria-selected="false">Totals by Aircraft Class</button>
+                <button class="nav-link active" id="nav-totals-tab" data-bs-toggle="tab" data-bs-target="#nav-totals" type="button" role="tab" aria-controls="nav-totals" aria-selected="true">Totals</button>
+                <button class="nav-link" id="nav-totals-by-year-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-year" type="button" role="tab" aria-controls="nav-totals-by-year" aria-selected="false">Totals by Year</button>
+                <button class="nav-link" id="nav-totals-by-type-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-type" type="button" role="tab" aria-controls="nav-totals-by-type" aria-selected="false">Totals by Aircraft Type</button>
+                <button class="nav-link" id="nav-totals-by-class-tab" data-bs-toggle="tab" data-bs-target="#nav-totals-by-class" type="button" role="tab" aria-controls="nav-totals-by-class" aria-selected="false">Totals by Aircraft Class</button>
                 <div class="row nav-item p-2 flex-grow-1 justify-content-end" id="range_field" name="range_field">
                     <label for="daterange" class="col-sm-3 col-form-label text-nowrap"></label>
                     <div class="col-sm-9">
@@ -46,6 +46,6 @@
 
 {{ define "js" }}
 <script type="text/javascript" src="/static/js/datatables.min.js"></script>
-{{ block "common-js" . }}{{ end }}
-{{ block "stats-js" . }}{{ end }}
+<script type="text/javascript" src="/static/js/chart.min.js"></script>
+<script type="text/javascript" src="/static/js/wlb-stats.js"></script>
 {{ end }}

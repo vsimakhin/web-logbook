@@ -1,16 +1,14 @@
 {{define "export-a5"}}
 {{$settings := index .Data "settings"}}
-{{$api := .API}}
 
-<div class="row"><strong>Page Settings <a onclick="wlbExport.restoreDefaults('a5common')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore page defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
+<div class="row"><strong>Page Settings <a id="restore_defaults_a5_common" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore page defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
 <hr>
 <div class="row">
     <div class="col-md-2">
         <div class="row mb-2">
             <label for="logbook_rows_a5" class="form-label col-md-8 col-form-label">Logbook Rows</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="logbook_rows_a5" name="logbook_rows_a5" value="{{$settings.ExportA5.LogbookRows}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="logbook_rows_a5" name="logbook_rows_a5" value="{{$settings.ExportA5.LogbookRows}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -18,8 +16,7 @@
         <div class="row mb-2">
             <label for="fill_a5" class="form-label col-md-8 col-form-label">Fill Row</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="fill_a5" name="fill_a5" value="{{$settings.ExportA5.Fill}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="fill_a5" name="fill_a5" value="{{$settings.ExportA5.Fill}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -27,8 +24,7 @@
         <div class="row mb-2">
             <label for="left_margin_a_a5" class="form-label col-md-8 col-form-label">Left Margin (left page)</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="left_margin_a_a5" name="left_margin_a_a5" value="{{$settings.ExportA5.LeftMarginA}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="left_margin_a_a5" name="left_margin_a_a5" value="{{$settings.ExportA5.LeftMarginA}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -36,8 +32,7 @@
         <div class="row mb-2">
             <label for="left_margin_b_a5" class="form-label col-md-8 col-form-label">Left Margin (right page)</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="left_margin_b_a5" name="left_margin_b_a5" value="{{$settings.ExportA5.LeftMarginB}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="left_margin_b_a5" name="left_margin_b_a5" value="{{$settings.ExportA5.LeftMarginB}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -45,8 +40,7 @@
         <div class="row mb-2">
             <label for="top_margin_a5" class="form-label col-md-8 col-form-label">Top Margin</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="top_margin_a5" name="top_margin_a5" value="{{$settings.ExportA5.TopMargin}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="top_margin_a5" name="top_margin_a5" value="{{$settings.ExportA5.TopMargin}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -54,8 +48,7 @@
         <div class="row mb-2">
             <label for="row_height_a5" class="form-label col-md-8 col-form-label">Row Height</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="row_height_a5" name="row_height_a5" value="{{$settings.ExportA5.BodyRow}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="row_height_a5" name="row_height_a5" value="{{$settings.ExportA5.BodyRow}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -63,8 +56,7 @@
         <div class="row mb-2">
             <label for="footer_height_a5" class="form-label col-md-8 col-form-label">Footer Row Height</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="footer_height_a5" name="footer_height_a5" value="{{$settings.ExportA5.FooterRow}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="footer_height_a5" name="footer_height_a5" value="{{$settings.ExportA5.FooterRow}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -72,14 +64,13 @@
         <div class="row mb-2">
             <label for="page_breaks_a5" class="form-label col-md-8 col-form-label">Page Breaks</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="page_breaks_a5" name="page_breaks_a5" value="{{$settings.ExportA5.PageBreaks}}"
-                    required="true" autocomplete="off" placeholder="X,Y...,Z">
+                <input type="text" class="form-control form-control-sm" id="page_breaks_a5" name="page_breaks_a5" value="{{$settings.ExportA5.PageBreaks}}" required="true" autocomplete="off" placeholder="X,Y...,Z">
             </div>
         </div>
     </div>
 </div>
 
-<div class="row"><strong>Logbook Columns Header <a onclick="wlbExport.restoreDefaults('a5headers')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore header defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
+<div class="row"><strong>Logbook Columns Header <a id="restore_defaults_a5_headers" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore header defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
 <hr>
 <div class="row">
     <table id="logbook" class="table-editable table-responsive-md table table-sm table-bordered table-active nowrap table-fixed">
@@ -124,15 +115,14 @@
 </table>
 </div>
 
-<div class="row"><strong>Logbook Columns Width <a onclick="wlbExport.restoreDefaults('a5columns')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore colums defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
+<div class="row"><strong>Logbook Columns Width <a id="restore_defaults_a5_columns" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore colums defaults"><i class="bi bi-arrow-counterclockwise"></i></a></strong></div>
 <hr>
 <div class="row">
     <div class="col-md-2">
         <div class="row mb-2">
             <label for="col1_a5" class="form-label col-md-8 col-form-label">Date</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col1_a5" name="col1_a5" value="{{$settings.ExportA5.Columns.Col1}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col1_a5" name="col1_a5" value="{{$settings.ExportA5.Columns.Col1}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -141,8 +131,7 @@
         <div class="row mb-2">
             <label for="col2_a5" class="form-label col-md-8 col-form-label">Departure Place</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col2_a5" name="col2_a5" value="{{$settings.ExportA5.Columns.Col2}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col2_a5" name="col2_a5" value="{{$settings.ExportA5.Columns.Col2}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -151,8 +140,7 @@
         <div class="row mb-2">
             <label for="col3_a5" class="form-label col-md-8 col-form-label">Departure Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col3_a5" name="col3_a5" value="{{$settings.ExportA5.Columns.Col3}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col3_a5" name="col3_a5" value="{{$settings.ExportA5.Columns.Col3}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -161,8 +149,7 @@
         <div class="row mb-2">
             <label for="col4_a5" class="form-label col-md-8 col-form-label">Arrival Place</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col4_a5" name="col4_a5" value="{{$settings.ExportA5.Columns.Col4}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col4_a5" name="col4_a5" value="{{$settings.ExportA5.Columns.Col4}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -171,8 +158,7 @@
         <div class="row mb-2">
             <label for="col5_a5" class="form-label col-md-8 col-form-label">Arrival Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col5_a5" name="col5_a5" value="{{$settings.ExportA5.Columns.Col5}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col5_a5" name="col5_a5" value="{{$settings.ExportA5.Columns.Col5}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -181,8 +167,7 @@
         <div class="row mb-2">
             <label for="col6_a5" class="form-label col-md-8 col-form-label">Aircraft Type</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col6_a5" name="col6_a5" value="{{$settings.ExportA5.Columns.Col6}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col6_a5" name="col6_a5" value="{{$settings.ExportA5.Columns.Col6}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -191,8 +176,7 @@
         <div class="row mb-2">
             <label for="col7_a5" class="form-label col-md-8 col-form-label">Arrival Reg</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col7_a5" name="col7_a5" value="{{$settings.ExportA5.Columns.Col7}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col7_a5" name="col7_a5" value="{{$settings.ExportA5.Columns.Col7}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -201,8 +185,7 @@
         <div class="row mb-2">
             <label for="col8_a5" class="form-label col-md-8 col-form-label">SE Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col8_a5" name="col8_a5" value="{{$settings.ExportA5.Columns.Col8}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col8_a5" name="col8_a5" value="{{$settings.ExportA5.Columns.Col8}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -211,18 +194,16 @@
         <div class="row mb-2">
             <label for="col9_a5" class="form-label col-md-8 col-form-label">ME Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col9_a5" name="col9_a5" value="{{$settings.ExportA5.Columns.Col9}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col9_a5" name="col9_a5" value="{{$settings.ExportA5.Columns.Col9}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
 
     <div class="col-md-2">
         <div class="row mb-2">
-            <label for="col10_a5" class="form-label col-md-8 col-form-label">MultiPilot Time</label>
+            <label for="col10_a5" class="form-label col-md-8 col-form-label">Multi Pilot Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col10_a5" name="col10_a5" value="{{$settings.ExportA5.Columns.Col10}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col10_a5" name="col10_a5" value="{{$settings.ExportA5.Columns.Col10}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -231,8 +212,7 @@
         <div class="row mb-2">
             <label for="col11_a5" class="form-label col-md-8 col-form-label">Total Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col11_a5" name="col11_a5" value="{{$settings.ExportA5.Columns.Col11}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col11_a5" name="col11_a5" value="{{$settings.ExportA5.Columns.Col11}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -241,8 +221,7 @@
         <div class="row mb-2">
             <label for="col12_a5" class="form-label col-md-8 col-form-label">PIC Name</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col12_a5" name="col12_a5" value="{{$settings.ExportA5.Columns.Col12}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col12_a5" name="col12_a5" value="{{$settings.ExportA5.Columns.Col12}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -251,8 +230,7 @@
         <div class="row mb-2">
             <label for="col13_a5" class="form-label col-md-8 col-form-label">Day Landings</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col13_a5" name="col13_a5" value="{{$settings.ExportA5.Columns.Col13}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col13_a5" name="col13_a5" value="{{$settings.ExportA5.Columns.Col13}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -261,8 +239,7 @@
         <div class="row mb-2">
             <label for="col14_a5" class="form-label col-md-8 col-form-label">Night Landings</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col14_a5" name="col14_a5" value="{{$settings.ExportA5.Columns.Col14}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col14_a5" name="col14_a5" value="{{$settings.ExportA5.Columns.Col14}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -271,8 +248,7 @@
         <div class="row mb-2">
             <label for="col15_a5" class="form-label col-md-8 col-form-label">Night Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col15_a5" name="col15_a5" value="{{$settings.ExportA5.Columns.Col15}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col15_a5" name="col15_a5" value="{{$settings.ExportA5.Columns.Col15}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -281,8 +257,7 @@
         <div class="row mb-2">
             <label for="col16_a5" class="form-label col-md-8 col-form-label">IFR Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col16_a5" name="col16_a5" value="{{$settings.ExportA5.Columns.Col16}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col16_a5" name="col16_a5" value="{{$settings.ExportA5.Columns.Col16}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -291,8 +266,7 @@
         <div class="row mb-2">
             <label for="col17_a5" class="form-label col-md-8 col-form-label">PIC Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col17_a5" name="col17_a5" value="{{$settings.ExportA5.Columns.Col17}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col17_a5" name="col17_a5" value="{{$settings.ExportA5.Columns.Col17}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -301,8 +275,7 @@
         <div class="row mb-2">
             <label for="col18_a5" class="form-label col-md-8 col-form-label">Co Pilot Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col18_a5" name="col18_a5" value="{{$settings.ExportA5.Columns.Col18}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col18_a5" name="col18_a5" value="{{$settings.ExportA5.Columns.Col18}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -311,8 +284,7 @@
         <div class="row mb-2">
             <label for="col19_a5" class="form-label col-md-8 col-form-label">Dual Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col19_a5" name="col19_a5" value="{{$settings.ExportA5.Columns.Col19}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col19_a5" name="col19_a5" value="{{$settings.ExportA5.Columns.Col19}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -321,8 +293,7 @@
         <div class="row mb-2">
             <label for="col20_a5" class="form-label col-md-8 col-form-label">Instructor Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col20_a5" name="col20_a5" value="{{$settings.ExportA5.Columns.Col20}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col20_a5" name="col20_a5" value="{{$settings.ExportA5.Columns.Col20}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -331,8 +302,7 @@
         <div class="row mb-2">
             <label for="col21_a5" class="form-label col-md-8 col-form-label">FSTD Type</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col21_a5" name="col21_a5" value="{{$settings.ExportA5.Columns.Col21}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col21_a5" name="col21_a5" value="{{$settings.ExportA5.Columns.Col21}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -341,8 +311,7 @@
         <div class="row mb-2">
             <label for="col22_a5" class="form-label col-md-8 col-form-label">FSTD Time</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col22_a5" name="col22_a5" value="{{$settings.ExportA5.Columns.Col22}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col22_a5" name="col22_a5" value="{{$settings.ExportA5.Columns.Col22}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -351,8 +320,7 @@
         <div class="row mb-2">
             <label for="col23_a5" class="form-label col-md-8 col-form-label">Remarks</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="col23_a5" name="col23_a5" value="{{$settings.ExportA5.Columns.Col23}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="col23_a5" name="col23_a5" value="{{$settings.ExportA5.Columns.Col23}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
@@ -404,7 +372,7 @@
                 <label for="custom_title_a5" class="col-sm-5 col-form-label">Custom A5 title page</label>
             </div>
             <div class="col-sm-4 text-end">
-                <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.showCustomTitleModal('A5');"><i class="bi bi-file-pdf"></i> Manage...</button>
+                <button id="show_custom_title_modal_a5" type="button" class="btn btn-sm btn-secondary"><i class="bi bi-file-pdf"></i> Manage...</button>
             </div>
         </div>
     </div>
@@ -412,8 +380,8 @@
 
 <hr>
 
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbExport.saveExportA5()" id="save_a5"><i class="bi bi-save-fill"></i> Save</button>
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbCommon.runExport('{{$api.ExportFormatA5}}')" id="export_a5"><i class="bi bi-file-pdf-fill"></i> Export PDF A5</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" id="save_a5"><i class="bi bi-save-fill"></i> Save</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" id="export_a5"><i class="bi bi-file-pdf-fill"></i> Export PDF A5</button>
 
 <!-- Modal -->
 <div class="modal fade" id="custom_title_a5_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="custom_title_a5_modal" aria-hidden="true">
@@ -427,15 +395,14 @@
             <div class="col">
                 <div class="input-group">
                     <input type="file" accept=".pdf" class="form-control form-control-sm" id="custom_title_a5" name="custom_title_a5" />
-
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="wlbExport.deleteCustomTitle('A5');"><i class="bi bi-file-x"></i> Delete</button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="modal_delete_custom_a5"><i class="bi bi-file-x"></i> Delete</button>
                 </div>
             </div>
             <br>
             <div id="custom_title_a5_document"></div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" onclick="wlbExport.saveExportA5()"><i class="bi bi-save-fill"></i> Save</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" id="modal_save_a5"><i class="bi bi-save-fill"></i> Save</button>
             <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> OK</button>
         </div>
         </div>

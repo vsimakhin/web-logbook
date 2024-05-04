@@ -15,7 +15,7 @@ import (
 
 // HandlerLicensing is a handler for /licensing page
 func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "licensing", &templateData{}, "common-js", "licensing-js"); err != nil {
+	if err := app.renderTemplate(w, r, "licensing", &templateData{}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -65,12 +65,7 @@ func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *ht
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
+	app.writeJSON(w, http.StatusOK, tableData)
 }
 
 // HandlerLicensingRecordByID is handler for a license record
@@ -93,7 +88,7 @@ func (app *application) HandlerLicensingRecordByID(w http.ResponseWriter, r *htt
 	data["license"] = license
 	data["categories"] = categories
 
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "common-js", "license-record-js"); err != nil {
+	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -131,7 +126,7 @@ func (app *application) HandlerLicensingRecordNew(w http.ResponseWriter, r *http
 	data["license"] = license
 	data["categories"] = categories
 
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}, "common-js", "license-record-js"); err != nil {
+	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -161,11 +156,7 @@ func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *h
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, r *http.Request) {
@@ -192,11 +183,7 @@ func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, 
 
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }
 
 // HandlerLicensingRecordSave is a handler for creating or updating license record
@@ -280,9 +267,5 @@ func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *htt
 		}
 	}
 
-	err = app.writeJSON(w, http.StatusOK, response)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
+	app.writeJSON(w, http.StatusOK, response)
 }

@@ -1,6 +1,5 @@
 {{define "export-csv"}}
 {{$settings := index .Data "settings"}}
-{{$api := .API}}
 
 <div class="row">
     <div class="col-md-3">
@@ -15,15 +14,13 @@
         <div class="row mb-2">
             <label for="delimeter_csv" class="form-label col-md-8 col-form-label">Field Delimeter (default is ',')</label>
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" id="delimeter_csv" name="delimeter_csv" value="{{$settings.ExportCSV.Delimeter}}"
-                    required="true" autocomplete="off">
+                <input type="text" class="form-control form-control-sm" id="delimeter_csv" name="delimeter_csv" value="{{$settings.ExportCSV.Delimeter}}" required="true" autocomplete="off">
             </div>
         </div>
     </div>
 </div>
 <hr>
 
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbExport.saveExportCSV()" id="save_csv"><i class="bi bi-save-fill"></i> Save</button>
-<button class="btn btn-sm btn-outline-secondary" type="button" onclick="wlbCommon.runExport('{{$api.ExportFormatCSV}}')" id="export_csv"><i class="bi bi-file-text-fill"></i> Export CSV</button>
-
+<button class="btn btn-sm btn-outline-secondary" type="button" id="save_csv"><i class="bi bi-save-fill"></i> Save</button>
+<button class="btn btn-sm btn-outline-secondary" type="button" id="export_csv"><i class="bi bi-file-text-fill"></i> Export CSV</button>
 {{end}}

@@ -8,7 +8,7 @@ import (
 
 // HandlerLogbook is a handler for /logbook page
 func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "logbook", &templateData{}, "common-js", "logbook-js"); err != nil {
+	if err := app.renderTemplate(w, r, "logbook", &templateData{}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -41,10 +41,5 @@ func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.
 		tableData.Data = append(tableData.Data, tableRow)
 	}
 
-	err = app.writeJSON(w, http.StatusOK, tableData)
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-
+	app.writeJSON(w, http.StatusOK, tableData)
 }
