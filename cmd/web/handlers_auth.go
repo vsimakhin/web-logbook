@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
@@ -33,10 +34,39 @@ func (app *application) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type LoginAttempts struct {
+	failedAttempts int
+	nextAttempt    int64
+}
+
+var loginAttempts = make(map[string]LoginAttempts)
+
 // LoginPagePost handles the authentication
 func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request) {
+	var response models.JSONResponse
+
 	w.Header().Set("Access-Control-Allow-Origin", strings.Join(r.Header["Origin"], ","))
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// check if ip already in the loginAttempts
+	ip := strings.Split(r.RemoteAddr, ":")[0]
+	if _, ok := loginAttempts[ip]; !ok {
+		loginAttempts[ip] = LoginAttempts{0, time.Now().Unix()}
+	}
+
+	if loginAttempts[ip].failedAttempts >= 5 {
+		if time.Now().Unix() < loginAttempts[ip].nextAttempt {
+			app.warningLog.Printf("There were to many failed login attempts from %s, declining requests", ip)
+
+			response.OK = false
+			response.Message = "Too many failed login attempts"
+			err := app.writeJSON(w, http.StatusForbidden, response)
+			if err != nil {
+				app.errorLog.Println(err)
+			}
+			return
+		}
+	}
 
 	err := app.session.RenewToken(r.Context())
 	if err != nil {
@@ -48,7 +78,6 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 		Login    string `json:"login"`
 		Password string `json:"password"`
 	}
-	var response models.JSONResponse
 
 	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -59,6 +88,11 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 
 	err = app.db.Authenticate(user.Login, user.Password)
 	if err != nil {
+		loginAttempts[ip] = LoginAttempts{
+			loginAttempts[ip].failedAttempts + 1,
+			time.Now().Unix() + int64(loginAttempts[ip].failedAttempts*10),
+		}
+
 		app.errorLog.Println(err)
 		response.OK = false
 		response.Message = err.Error()
@@ -66,9 +100,10 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 		err = app.writeJSON(w, http.StatusForbidden, response)
 		if err != nil {
 			app.errorLog.Println(err)
-			return
 		}
 	} else {
+		// reset failed attempts
+		loginAttempts[ip] = LoginAttempts{0, time.Now().Unix()}
 
 		app.session.Put(r.Context(), "token", app.session.Token(r.Context()))
 		response.OK = true
@@ -76,7 +111,6 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 		err = app.writeJSON(w, http.StatusOK, response)
 		if err != nil {
 			app.errorLog.Println(err)
-			return
 		}
 	}
 }
