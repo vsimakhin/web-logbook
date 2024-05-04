@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Code optimization. Migrated all javascript code to a js files instead of keeping them in gohtml templates. This significantly reduces amouunt of typo and errors. Plus some html code optimization. As a result, the final size of the application binary file is reduced by 10 MB to ~18MB.
+
 ## [2.34.0] - 03.04.2024
 
 - New: Add support for MySQL database. Check [readme](https://github.com/vsimakhin/web-logbook?tab=readme-ov-file#mysql-database) for more details.
