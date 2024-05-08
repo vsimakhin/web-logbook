@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: rename cmd/web directory to app, just internal change.
 - Update: Code optimization. No UI change. Includes:
     - Migrated all javascript code to a js files instead of keeping them in gohtml templates, plus some html code optimization. This significantly reduces amouunt of typo and errors. 
     - Removed map data for css and js files for standard libraries. As a result, the final size of the application binary file is reduced by ~10 MB to ~18MB.

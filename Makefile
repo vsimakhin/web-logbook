@@ -23,7 +23,7 @@ test: fmt
 ## build: builds the binaty
 build: clean
 	@echo "Building..."
-	@go build -ldflags="-s -w" -o dist/web-logbook ./cmd/web
+	@go build -ldflags="-s -w" -o dist/web-logbook ./app
 	@echo "Web-logbook built!"
 
 ## start: starts the web-logbook
@@ -46,7 +46,7 @@ build_all: test clean
 			GOOS=$$OS \
 			GOARCH=$$ARCH \
 			go build -ldflags="-s -w" -trimpath \
-			-o=$(BIN)/$(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) ./cmd/web; \
+			-o=$(BIN)/$(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) ./app; \
 			[ $$OS = "windows" ] && (cd $(BIN); mv $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME).exe; zip -r $(BINARY_NAME)-$$OS-$$ARCH.zip $(BINARY_NAME)-$$OS-$$ARCH; cd ../) \
 				|| (cd $(BIN); tar czf $(BINARY_NAME)-$$OS-$$ARCH.tar.gz $(BINARY_NAME)-$$OS-$$ARCH; cd ../) ;\
 		done ; \
