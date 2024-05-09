@@ -120,6 +120,74 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 
 }
 
+func (m *DBModel) GenerateFlightRecordMap(start time.Time, groupByMonth bool) map[string]FlightRecord {
+	totals := make(map[string]FlightRecord)
+	var increment func(time.Time) time.Time
+	var timeFormat string
+	end := time.Now().UTC()
+
+	if groupByMonth {
+		timeFormat = "01/2006"
+		increment = func(d time.Time) time.Time { return d.AddDate(0, 1, 0) }
+	} else {
+		timeFormat = "02/01/2006"
+		increment = func(d time.Time) time.Time { return d.AddDate(0, 0, 1) }
+	}
+
+	for d := start; d.Before(end) || d.Equal(end); d = increment(d) {
+		totals[d.Format(timeFormat)] = initZeroFlightRecord()
+	}
+
+	return totals
+}
+
+func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMonth bool, totals map[string]FlightRecord) (map[string]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	detailedTotals := make(map[string]string)
+
+	sqlQuery := "SELECT date, m_date, se_time, me_time, mcc_time, total_time, " +
+		"day_landings, night_landings, " +
+		"night_time, ifr_time, pic_time, co_pilot_time, " +
+		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
+		"FROM logbook_view"
+
+	rows, err := m.DB.QueryContext(ctx, sqlQuery)
+
+	if err != nil {
+		return detailedTotals, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var fr FlightRecord
+		err := rows.Scan(&fr.Date, &fr.MDate, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+			&fr.Landings.Day, &fr.Landings.Night,
+			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
+			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
+
+		if err != nil {
+			return detailedTotals, err
+		}
+
+		if (startDate <= fr.MDate) && (fr.MDate <= endDate) {
+			m.processFlightrecord(&fr)
+			key := fr.Date
+			if groupByMonth {
+				key = fr.Date[3:]
+			}
+			totals[key] = CalculateTotals(totals[key], fr)
+		}
+	}
+
+	for k, v := range totals {
+		detailedTotals[k] = v.Time.Total
+	}
+
+	return detailedTotals, nil
+}
+
 // GetTotalsByYear calculates totals by year
 func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

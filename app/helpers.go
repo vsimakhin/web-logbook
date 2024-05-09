@@ -135,58 +135,66 @@ func parameterClassFilter(classes map[string]string, model string, filter string
 
 // func getTotalStats returns set of flight statistics which is used by stats handlers
 func (app *application) getTotalStats(startDate string, endDate string) (map[string]models.FlightRecord, error) {
-	var err error
 	totals := make(map[string]models.FlightRecord)
 
 	now := time.Now().UTC()
 	minus12m := now.AddDate(0, -11, 0).UTC()
 
-	days28 := now.AddDate(0, 0, -27).UTC().Format("20060102")
-	days90 := now.AddDate(0, 0, -89).UTC().Format("20060102")
-	months12 := time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC).Format("20060102")
-	beginningOfMonth := now.AddDate(0, 0, -now.Day()+1).Format("20060102")
-	endOfMonth := now.AddDate(0, 1, -now.Day()).Format("20060102")
-	beginningOfYear := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC).Format("20060102")
-	endOfYear := time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, time.UTC).Format("20060102")
+	dates := map[string][]string{
+		"Totals":  {startDate, endDate},
+		"Last28":  {now.AddDate(0, 0, -27).UTC().Format("20060102"), farFuture},
+		"Last90":  {now.AddDate(0, 0, -89).UTC().Format("20060102"), farFuture},
+		"Month":   {now.AddDate(0, 0, -now.Day()+1).Format("20060102"), now.AddDate(0, 1, -now.Day()).Format("20060102")},
+		"Last12M": {time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC).Format("20060102"), farFuture},
+		"Year":    {time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC).Format("20060102"), time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, time.UTC).Format("20060102")},
+	}
 
 	if startDate == "" || endDate == "" {
-		startDate = farPast
-		endDate = farFuture
+		dates["Totals"] = []string{farPast, farFuture}
 	}
 
-	// range totals
-	totals["Totals"], err = app.db.GetTotals(startDate, endDate)
-	if err != nil {
+	for key, dateRange := range dates {
+		total, err := app.db.GetTotals(dateRange[0], dateRange[1])
+		if err != nil {
+			return nil, err
+		}
+		totals[key] = total
+	}
+
+	return totals, nil
+}
+
+// getDetailedLimitsStats retrieves detailed limit statistics for different time periods.
+// It returns a map of limit statistics, where the keys represent the time periods and the values represent the statistics.
+// It returns the map of limit statistics and an error if any occurred during the retrieval process.
+func (app *application) getDetailedLimitsStats() (map[string]map[string]string, error) {
+	totals := make(map[string]map[string]string)
+
+	now := time.Now().UTC()
+	minus12m := now.AddDate(0, -11, 0).UTC()
+
+	getData := func(key string, startDate time.Time, groupByMonth bool) error {
+		total, err := app.db.GetDetailedTotals(
+			startDate.Format("20060102"), farFuture,
+			groupByMonth, app.db.GenerateFlightRecordMap(startDate, groupByMonth),
+		)
+		if err != nil {
+			return err
+		}
+		totals[key] = total
+		return nil
+	}
+
+	if err := getData("Last28", now.AddDate(0, 0, -27), false); err != nil {
 		return nil, err
 	}
-
-	// last 28 days
-	totals["Last28"], err = app.db.GetTotals(days28, farFuture)
-	if err != nil {
+	if err := getData("Last90", now.AddDate(0, 0, -89), false); err != nil {
 		return nil, err
 	}
-
-	// last 90 days
-	totals["Last90"], err = app.db.GetTotals(days90, farFuture)
-	if err != nil {
+	if err := getData("Last12m", time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC), true); err != nil {
 		return nil, err
 	}
-
-	// this months
-	totals["Month"], err = app.db.GetTotals(beginningOfMonth, endOfMonth)
-	if err != nil {
-		return nil, err
-	}
-
-	// last 12 calendar months
-	totals["Last12M"], err = app.db.GetTotals(months12, farFuture)
-	if err != nil {
-		return nil, err
-	}
-
-	// this years
-	totals["Year"], err = app.db.GetTotals(beginningOfYear, endOfYear)
-	if err != nil {
+	if err := getData("Last1y", time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC), true); err != nil {
 		return nil, err
 	}
 

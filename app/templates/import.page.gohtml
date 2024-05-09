@@ -1,81 +1,85 @@
 {{ template "base" .}}
-
 {{ define "title" }}Import{{ end }}
-
 {{ define "header" }}Import{{ end }}
-
 {{ define "css" }}<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>{{ end }}
-
 {{ define "content" }}
 {{$api := .API}}
 
-<div class="alert alert-warning row">
-The import function is in beta mode. Please, use it carefully and do not forget to create the backups.
-The current version fully supports WebLogbook CSV format. You can check it at "Export"->"CSV".
-</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header pt-1"></div>
+        <div class="card-body pt-1">
 
-<div class="row">
-    <div class="col-md-9">
-        <div class="row mb-2 gap-2">
-            <label for="csv_file" class="btn btn-sm btn-outline-secondary col-md-2"><i class="bi bi-view-list"></i> Select CSV and Preview</label>
-            <input type="file" class="form-control form-control-sm" id="csv_file" name="csv_file" accept="text/csv" style="display:none">
+            <div class="alert alert-warning row">
+            The import function is in beta mode. Please, use it carefully and do not forget to create the backups.
+            The current version fully supports WebLogbook CSV format. You can check it at "Export"->"CSV".
+            </div>
 
-            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" id="btn_clear_table"><i class="bi bi-eraser-fill"></i> Clear Table</button>
+            <div class="row">
+                <div class="col">
+                    <div class="row mb-2 gap-1">
+                        <label for="csv_file" class="btn btn-outline-secondary col-md-2"><i class="bi bi-view-list"></i> Select CSV and Preview</label>
+                        <input type="file" class="form-control form-control-sm" id="csv_file" name="csv_file" accept="text/csv" style="display:none">
 
-            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" id="btn_create_backup"><i class="bi bi-back"></i> Create Backup</button>
+                        <button class="btn btn-outline-secondary col-md-2" type="button" id="btn_clear_table"><i class="bi bi-eraser"></i> Clear Table</button>
 
-            <button class="btn btn-sm btn-outline-secondary col-md-2" type="button" id="btn_import" name="btn_import"><i class="bi bi-file-earmark-arrow-up-fill"></i>  Run Import</button>
-            <div class="spinner-border text-secondary d-none" id="spinner" name="spinner" role="status"><span class="visually-hidden">Loading...</span></div>
+                        <button class="btn btn-outline-secondary col-md-2" type="button" id="btn_create_backup"><i class="bi bi-back"></i> Create Backup</button>
+
+                        <button class="btn btn-outline-secondary col-md-2" type="button" id="btn_import" name="btn_import"><i class="bi bi-file-earmark-arrow-up"></i>  Run Import</button>
+                        <div class="spinner-border text-secondary d-none" id="spinner" name="spinner" role="status"><span class="visually-hidden">Loading...</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                    <input type="checkbox" class="form-check-input" id="recalculate_night_time" name="recalculate_night_time">
+                    <label for="recalculate_night_time" class="form-label">Recalculate night time during the import (It will take much longer)</label>
+                </div>
+            </div>
+            <hr>
+
+            <table id="import" class="table table-sm table-striped table-bordered nowrap table-fixed">
+                <thead>
+                    <tr class="align-top text-center">
+                        <th rowspan=2 class="text-center">Date</th>
+                        <th colspan=2 class="text-center">Departure</th>
+                        <th colspan=2 class="text-center">Arrival</th>
+                        <th colspan=2 class="text-center">Aircraft</th>
+                        <th colspan=10 class="text-center">Time</th>
+                        <th colspan=2 class="text-center">Landings</th>
+                        <th colspan=2 class="text-center">FSTD<br>Session</th>
+                        <th rowspan=2 class="text-center">PIC Name</th>
+                        <th rowspan=2 class="text-center">Remarks</th>
+                    </tr>
+                    <tr class="text-center">
+                        <th class="text-center">Place</th>
+                        <th class="text-center">Time</th>
+                        <th class="text-center">Place</th>
+                        <th class="text-center">Time</th>
+                        <th class="text-center">Type</th>
+                        <th class="text-nowrap text-center">Reg</th>
+                        <th class="text-center">SE</th>
+                        <th class="text-center">ME</th>
+                        <th class="text-center">MCC</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Night</th>
+                        <th class="text-center">IFR</th>
+                        <th class="text-center">PIC</th>
+                        <th class="text-center">COP</th>
+                        <th class="text-center">Dual</th>
+                        <th class="text-center">Instr</th>
+                        <th class="text-center">Day</th>
+                        <th class="text-center">Night</th>
+                        <th class="text-center">Type</th>
+                        <th class="text-center">Time</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 </div>
-
-<div class="row">
-    <div class="col-md-9">
-        <input type="checkbox" class="form-check-input" id="recalculate_night_time" name="recalculate_night_time">
-        <label for="recalculate_night_time" class="form-label">Recalculate night time during the import (It will take much longer)</label>
-    </div>
-</div>
-<hr>
-
-<table id="import" class="table table-sm table-striped table-bordered nowrap table-fixed">
-    <thead>
-        <tr class="align-top text-center">
-            <th rowspan=2 class="text-center">Date</th>
-            <th colspan=2 class="text-center">Departure</th>
-            <th colspan=2 class="text-center">Arrival</th>
-            <th colspan=2 class="text-center">Aircraft</th>
-            <th colspan=10 class="text-center">Time</th>
-            <th colspan=2 class="text-center">Landings</th>
-            <th colspan=2 class="text-center">FSTD<br>Session</th>
-            <th rowspan=2 class="text-center">PIC Name</th>
-            <th rowspan=2 class="text-center">Remarks</th>
-        </tr>
-        <tr class="text-center">
-            <th class="text-center">Place</th>
-            <th class="text-center">Time</th>
-            <th class="text-center">Place</th>
-            <th class="text-center">Time</th>
-            <th class="text-center">Type</th>
-            <th class="text-nowrap text-center">Reg</th>
-            <th class="text-center">SE</th>
-            <th class="text-center">ME</th>
-            <th class="text-center">MCC</th>
-            <th class="text-center">Total</th>
-            <th class="text-center">Night</th>
-            <th class="text-center">IFR</th>
-            <th class="text-center">PIC</th>
-            <th class="text-center">COP</th>
-            <th class="text-center">Dual</th>
-            <th class="text-center">Instr</th>
-            <th class="text-center">Day</th>
-            <th class="text-center">Night</th>
-            <th class="text-center">Type</th>
-            <th class="text-center">Time</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
 
 {{block "import-mapfields-modal" .}}{{end}}
 {{ end }}

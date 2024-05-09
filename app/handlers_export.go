@@ -17,11 +17,23 @@ const exportA5 = "A5"
 const exportCSV = "csv"
 const exportXLS = "xls"
 
-// HandlerExport is a handler for /export page
-func (app *application) HandlerExport(w http.ResponseWriter, r *http.Request) {
+// HandlerExportPDFA4Page is a handler for /export-pdf-a4 page
+func (app *application) HandlerExportPDFA4Page(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(w, r, "export-pdf-a4", &templateData{}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
 
-	partials := []string{"export-a4", "export-a5", "export-xls", "export-csv"}
-	if err := app.renderTemplate(w, r, "export", &templateData{}, partials...); err != nil {
+// HandlerExportPDFA5Page is a handler for /export-pdf-a5 page
+func (app *application) HandlerExportPDFA5Page(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(w, r, "export-pdf-a5", &templateData{}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
+// HandlerExportPDFA5Page is a handler for /export-pdf-a5 page
+func (app *application) HandlerExportCSVXLSPage(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(w, r, "export-csv-xls", &templateData{}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -181,8 +193,7 @@ func (app *application) HandlerExportRestoreDefaults(w http.ResponseWriter, r *h
 		response.Message = err.Error()
 	} else {
 		response.OK = true
-		response.Message = "Export settings have been updated"
-		response.RedirectURL = fmt.Sprintf("%s?param=%s", APIExport, param)
+		response.Message = "Export settings have been restored. Refresh the page to see the changes."
 	}
 
 	app.writeJSON(w, http.StatusOK, response)

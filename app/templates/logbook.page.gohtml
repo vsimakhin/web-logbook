@@ -1,107 +1,111 @@
 {{ template "base" .}}
-
 {{ define "title" }}Logbook{{ end }}
-
 {{ define "header" }}Logbook{{ end }}
-
 {{ define "css" }}<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>{{ end }}
-
 {{ define "content" }}
 {{$api := .API}}
 {{$settings := index .Data "settings"}}
-<table id="logbook" class="table table-sm table-striped table-bordered nowrap table-fixed" {{if $settings.LogbookFontSize}}style="font-size:{{$settings.LogbookFontSize}}%"{{end}}>
-    <thead>
-        <tr class="align-top text-center">
-            <th rowspan=2 class="text-center">ID</th>
-            <th rowspan=2 class="text-center">Date</th>
-            <th colspan=2 class="text-center">Departure</th>
-            <th colspan=2 class="text-center">Arrival</th>
-            <th colspan=2 class="text-center">Aircraft</th>
-            <th colspan=2 class="text-center">Single Pilot<br>Time</th>
-            <th rowspan=2 class="text-center">MCC</th>
-            <th rowspan=2 class="text-center">Total<br>Time</th>
-            <th rowspan=2 class="text-center">PIC Name</th>
-            <th colspan=2 class="text-center">Landings</th>
-            <th colspan=2 class="text-center">Operational<br>Condition Time</th>
-            <th colspan=4 class="text-center">Pilot Function Time</th>
-            <th colspan=2 class="text-center">FSTD<br>Session</th>
-            <th rowspan=2 class="text-center">Remarks</th>
-        </tr>
-        <tr class="text-center">
-            <th class="text-center">Place</th>
-            <th class="text-center">Time</th>
-            <th class="text-center">Place</th>
-            <th class="text-center">Time</th>
-            <th class="text-center">Type</th>
-            <th class="text-nowrap text-center">Reg</th>
-            <th class="text-center">SE</th>
-            <th class="text-center">ME</th>
-            <th class="text-center">Day</th>
-            <th class="text-center">Night</th>
-            <th class="text-center">Night</th>
-            <th class="text-center">IFR</th>
-            <th class="text-center">PIC</th>
-            <th class="text-center">COP</th>
-            <th class="text-center">Dual</th>
-            <th class="text-center">Instr</th>
-            <th class="text-center">Type</th>
-            <th class="text-center">Time</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-    <tfoot>
-        <tr>
-            <th colspan=8 class="text-end">Total this page:</th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-        </tr>
-        <tr>
-            <th colspan=8 class="text-end">Total all pages:</th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-            <th class="text-center"></th>
-        </tr>
-    </tfoot>
-</table>
-<br>
-<a id="new-flight-record" href="{{$api.LogbookNew}}" class="btn btn-sm btn-outline-secondary" onclick=""><i class="bi bi-plus-square-fill"></i> Add New Flight Record</a>
-<div class="btn-group dropend">
-    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-file-earmark-arrow-down-fill"></i> Export
-    </button>
-    <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatA4}}')"><i class="bi bi-file-pdf-fill"></i> PDF A4</a></li>
-        <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatA5}}')"><i class="bi bi-file-pdf-fill"></i> PDF A5</a></li>
-        <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatXLS}}')"><i class="bi bi-file-earmark-spreadsheet-fill"></i> XLS</a></li>
-        <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatCSV}}')"><i class="bi bi-file-text-fill"></i> CSV</a></li>
-    </ul>
+<div class="col-12">
+    <div class="card" id="logbook_card">
+        <div class="card-header pt-1"></div>
+        <div class="card-body pt-1">
+
+        <table id="logbook" class="table table-sm table-striped table-bordered nowrap table-fixed md-0" {{if $settings.LogbookFontSize}}style="font-size:{{$settings.LogbookFontSize}}%"{{end}}>
+            <thead>
+                <tr class="align-top text-center">
+                    <th rowspan=2 class="text-center">ID</th>
+                    <th rowspan=2 class="text-center">Date</th>
+                    <th colspan=2 class="text-center">Departure</th>
+                    <th colspan=2 class="text-center">Arrival</th>
+                    <th colspan=2 class="text-center">Aircraft</th>
+                    <th colspan=2 class="text-center">Single Pilot<br>Time</th>
+                    <th rowspan=2 class="text-center">MCC</th>
+                    <th rowspan=2 class="text-center">Total<br>Time</th>
+                    <th rowspan=2 class="text-center">PIC Name</th>
+                    <th colspan=2 class="text-center">Landings</th>
+                    <th colspan=2 class="text-center">Operational<br>Condition Time</th>
+                    <th colspan=4 class="text-center">Pilot Function Time</th>
+                    <th colspan=2 class="text-center">FSTD<br>Session</th>
+                    <th rowspan=2 class="text-center">Remarks</th>
+                </tr>
+                <tr class="text-center">
+                    <th class="text-center">Place</th>
+                    <th class="text-center">Time</th>
+                    <th class="text-center">Place</th>
+                    <th class="text-center">Time</th>
+                    <th class="text-center">Type</th>
+                    <th class="text-nowrap text-center">Reg</th>
+                    <th class="text-center">SE</th>
+                    <th class="text-center">ME</th>
+                    <th class="text-center">Day</th>
+                    <th class="text-center">Night</th>
+                    <th class="text-center">Night</th>
+                    <th class="text-center">IFR</th>
+                    <th class="text-center">PIC</th>
+                    <th class="text-center">COP</th>
+                    <th class="text-center">Dual</th>
+                    <th class="text-center">Instr</th>
+                    <th class="text-center">Type</th>
+                    <th class="text-center">Time</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <th colspan=8 class="text-end">Total this page:</th>
+                    <th class="text-center" id="s8"></th>
+                    <th class="text-center" id="s9"></th>
+                    <th class="text-center" id="s10"></th>
+                    <th class="text-center" id="s11"></th>
+                    <th class="text-center" id="s12"></th>
+                    <th class="text-center" id="s13"></th>
+                    <th class="text-center" id="s14"></th>
+                    <th class="text-center" id="s15"></th>
+                    <th class="text-center" id="s16"></th>
+                    <th class="text-center" id="s17"></th>
+                    <th class="text-center" id="s18"></th>
+                    <th class="text-center" id="s19"></th>
+                    <th class="text-center" id="s20"></th>
+                    <th class="text-center" id="s21"></th>
+                    <th class="text-center" id="s22"></th>
+                    <th class="text-center" id="s23"></th>
+                </tr>
+                <tr>
+                    <th colspan=8 class="text-end">Total all pages:</th>
+                    <th class="text-center" id="t8"></th>
+                    <th class="text-center" id="t9"></th>
+                    <th class="text-center" id="t10"></th>
+                    <th class="text-center" id="t11"></th>
+                    <th class="text-center" id="t12"></th>
+                    <th class="text-center" id="t13"></th>
+                    <th class="text-center" id="t14"></th>
+                    <th class="text-center" id="t15"></th>
+                    <th class="text-center" id="t16"></th>
+                    <th class="text-center" id="t17"></th>
+                    <th class="text-center" id="t18"></th>
+                    <th class="text-center" id="t19"></th>
+                    <th class="text-center" id="t20"></th>
+                    <th class="text-center" id="t21"></th>
+                    <th class="text-center" id="t22"></th>
+                    <th class="text-center" id="t23"></th>
+                </tr>
+            </tfoot>
+        </table>
+        <br>
+        <a id="new-flight-record" href="{{$api.LogbookNew}}" class="btn btn-outline-secondary" onclick=""><i class="bi bi-plus-square"></i> Add New Flight Record</a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-file-earmark-arrow-down"></i> Export
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatA4}}')"><i class="bi bi-file-pdf"></i> PDF A4</a></li>
+                <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatA5}}')"><i class="bi bi-file-pdf"></i> PDF A5</a></li>
+                <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatXLS}}')"><i class="bi bi-file-earmark-spreadsheet"></i> XLS</a></li>
+                <li><a class="dropdown-item" href="#" onclick="commonUtils.runExport('{{$api.ExportFormatCSV}}')"><i class="bi bi-file-text"></i> CSV</a></li>
+            </ul>
+        </div>
+
+    </div>
 </div>
 {{ end }}
 

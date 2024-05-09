@@ -9,7 +9,13 @@ import (
 
 // HandlerSettings is a handler for Settings page
 func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
 
+func (app *application) HandlerSettingsAirportDB(w http.ResponseWriter, r *http.Request) {
 	records, err := app.db.GetAirportCount()
 	if err != nil {
 		app.errorLog.Println(err)
@@ -19,11 +25,8 @@ func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) 
 
 	data := make(map[string]interface{})
 	data["records"] = records
-	data["urls"] = app.getServerUrls()
 
-	partials := []string{"settings-general", "settings-airports", "settings-misc", "settings-sync"}
-
-	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}, partials...); err != nil {
+	if err := app.renderTemplate(w, r, "settings-airportdb", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -69,6 +72,42 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 	}
 	app.isAuthEnabled = settings.AuthEnabled
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
+
+	app.writeJSON(w, http.StatusOK, response)
+}
+
+// HandlerSettingsAirportDBSave serves the POST request for airportdb settings update
+func (app *application) HandlerSettingsAirportDBSave(w http.ResponseWriter, r *http.Request) {
+
+	cursettings, err := app.db.GetSettings()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var settings models.Settings
+	var response models.JSONResponse
+
+	err = json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	cursettings.AirportDBSource = settings.AirportDBSource
+	cursettings.NoICAOFilter = settings.NoICAOFilter
+
+	err = app.db.UpdateSettings(cursettings)
+	if err != nil {
+		app.errorLog.Println(err)
+		response.OK = false
+		response.Message = err.Error()
+	} else {
+		response.OK = true
+		response.Message = "Settings have been updated"
+	}
 
 	app.writeJSON(w, http.StatusOK, response)
 }

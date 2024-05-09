@@ -251,8 +251,6 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 // HandlerStatsLimits is a handler for the Flight Time Limitations table source
 func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Request) {
 
-	var tableData models.TableData
-
 	totals, err := app.getTotalStats("", "")
 	if err != nil {
 		app.errorLog.Println(err)
@@ -260,21 +258,41 @@ func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// let's form our custom table
-	tableData.Data = append(tableData.Data,
-		[]string{
-			totals["Last28"].Time.Total,
-			totals["Last90"].Time.Total,
-			totals["Last12M"].Time.Total,
-			totals["Year"].Time.Total,
-		})
+	detailed, err := app.getDetailedLimitsStats()
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	app.writeJSON(w, http.StatusOK, tableData)
+	data := map[string]map[string]interface{}{
+		"totals": {
+			"last28":  totals["Last28"].Time.Total,
+			"last90":  totals["Last90"].Time.Total,
+			"last12m": totals["Last12M"].Time.Total,
+			"last1y":  totals["Year"].Time.Total,
+		},
+		"detailed": {
+			"last28":  detailed["Last28"],
+			"last90":  detailed["Last90"],
+			"last12m": detailed["Last12m"],
+			"last1y":  detailed["Last1y"],
+		},
+	}
+
+	app.writeJSON(w, http.StatusOK, data)
 }
 
-// HandlerStats is a handler for Stats page
-func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
+// HandlerStats is a handler for Stats Totals page
+func (app *application) HandlerStatsTotalsPage(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	if err := app.renderTemplate(w, r, "stats-totals", &templateData{Data: data}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
 
+// HandlerStatsTotalsByYearPage is a handler for Stats Totals by Year page
+func (app *application) HandlerStatsTotalsByYearPage(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 
 	totalsByYear, err := app.db.GetTotalsByYear()
@@ -285,10 +303,43 @@ func (app *application) HandlerStats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data["totalsByYear"] = totalsByYear
+	if err := app.renderTemplate(w, r, "stats-totals-year", &templateData{Data: data}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
 
-	partials := []string{"stats-totals", "stats-totals-year", "stats-totals-type", "stats-totals-class"}
+// HandlerStatsTotalsByTypePage is a handler for Stats Totals by Type page
+func (app *application) HandlerStatsTotalsByTypePage(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	if err := app.renderTemplate(w, r, "stats-totals-type", &templateData{Data: data}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
 
-	if err := app.renderTemplate(w, r, "stats", &templateData{Data: data}, partials...); err != nil {
+// HandlerStatsTotalsByClassPage is a handler for Stats Totals by Class page
+func (app *application) HandlerStatsTotalsByClassPage(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	if err := app.renderTemplate(w, r, "stats-totals-class", &templateData{Data: data}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
+// HandlerStatsLimitsPage is a handler for Stats Limits page
+func (app *application) HandlerStatsLimitsPage(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	totals, err := app.getTotalStats("", "")
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data["last28"] = totals["Last28"].Time.Total
+	data["last90"] = totals["Last90"].Time.Total
+	data["last12m"] = totals["Last12M"].Time.Total
+	data["last1y"] = totals["Year"].Time.Total
+
+	if err := app.renderTemplate(w, r, "stats-limits", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }

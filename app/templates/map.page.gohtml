@@ -1,12 +1,8 @@
 {{ template "base" .}}
-
 {{ define "title" }}Maps{{ end }}
-
 {{ define "header" }}Maps{{ end }}
-
 {{ define "css" }}
 <link rel="stylesheet" href="/static/css/ol.css">
-<link rel="stylesheet" href="/static/css/ol-map.css">
 <link rel="stylesheet" href="/static/css/ol-custom.css">
 {{ end }}
 
@@ -15,64 +11,83 @@
 {{$models := index .Data "models"}}
 {{$regs := index .Data "regs"}}
 <div class="row">
-    <div class="col-md-2">
-        <div class="row">
-            <div class="mb-2">
-                <label for="filter_date" class="form-label">Date Filter:</label>
-                <input class="form-control form-control-sm" type="text" id="daterange" name="daterange" placeholder="Date filters...">
+    <div class="col-12 col-lg-2">
+        <div class="card h-100">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0">Filters</h5>
             </div>
-            <div class="mb-2">
-                <label for="filter_registration" class="form-label">Aircraft filters:</label>
-                <input class="form-select form-select-sm" type="text" id="filter_registration"
-                    name="filter_registration" autocomplete="off" placeholder="Aircraft Registraton" list="aircraft_regs_options">
-                <datalist id="aircraft_regs_options">
-                {{ range $key, $element := $regs }}<option value="{{ $element }}">{{ end }}
-                </datalist>
+            <div class="card-body pt-1">
+                <div class="row">
+                    <div class="mb-2">
+                        <label for="filter_date" class="form-label">Date Filter:</label>
+                        <input class="form-control" type="text" id="daterange" name="daterange" placeholder="Date filters...">
+                    </div>
+                    <div class="mb-2">
+                        <label for="filter_registration" class="form-label">Aircraft filters:</label>
+                        <input class="form-select" type="text" id="filter_registration"
+                            name="filter_registration" autocomplete="off" placeholder="Aircraft Registraton" list="aircraft_regs_options">
+                        <datalist id="aircraft_regs_options">
+                        {{ range $key, $element := $regs }}<option value="{{ $element }}">{{ end }}
+                        </datalist>
+                    </div>
+                    <div class="mb-2">
+                        <input class="form-select" type="text" id="filter_model"
+                            name="filter_model" autocomplete="off" placeholder="Aircraft Model/Type" list="aircraft_models_options">
+                        <datalist id="aircraft_models_options">
+                        {{ range $key, $element := $models }}<option value="{{ $element }}">{{ end }}
+                        </datalist>
+                    </div>
+                    <div class="mb-2">
+                        <input class="form-select" type="text" id="filter_class"
+                            name="filter_class" autocomplete="off" placeholder="Aircraft Class" list="aircraft_classes_options">
+                        <datalist id="aircraft_classes_options">
+                        {{ range $key, $element := $classes }}<option value="{{ $key }}">{{ end }}
+                        </datalist>
+                    </div>
+                    <div class="mb-2">
+                        <label for="filter_place" class="form-label">Route filters:</label>
+                        <input class="form-control" type="text" id="filter_place"
+                            name="filter_place" autocomplete="off" placeholder="Arrival/Destination">
+                    </div>
+                    <div class="mb-2">
+                        <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
+                        <label class="form-check-label" for="filter_noroutes">No Routes</label>
+                    </div>
+                    <div class="mb-2">
+                        <button class="btn btn-outline-secondary float-right" type="button" id="refresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div id="some_stats"></div>
+                </div>
+                <hr>
+                <div class="alert alert-info row">
+                    The Aircraft and Route filters works in the way "string contains substring" or "*filter*". So aircraft type "C172" will include "C172" and "C172RG"
+                </div>
             </div>
-            <div class="mb-2">
-                <input class="form-select form-select-sm" type="text" id="filter_model"
-                    name="filter_model" autocomplete="off" placeholder="Aircraft Model/Type" list="aircraft_models_options">
-                <datalist id="aircraft_models_options">
-                {{ range $key, $element := $models }}<option value="{{ $element }}">{{ end }}
-                </datalist>
-            </div>
-            <div class="mb-2">
-                <input class="form-select form-select-sm" type="text" id="filter_class"
-                    name="filter_class" autocomplete="off" placeholder="Aircraft Class" list="aircraft_classes_options">
-                <datalist id="aircraft_classes_options">
-                {{ range $key, $element := $classes }}<option value="{{ $key }}">{{ end }}
-                </datalist>
-            </div>
-            <div class="mb-2">
-                <label for="filter_place" class="form-label">Route filters:</label>
-                <input class="form-control form-control-sm" type="text" id="filter_place"
-                    name="filter_place" autocomplete="off" placeholder="Arrival/Destination">
-            </div>
-            <div class="mb-2">
-                <input class="form-check-input" type="checkbox" value="" id="filter_noroutes">
-                <label class="form-check-label" for="filter_noroutes">No Routes</label>
-            </div>
-            <div class="mb-2">
-                <button class="btn btn-sm btn-outline-secondary float-right" type="button" id="refresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div id="some_stats"></div>
-        </div>
-        <hr>
-        <div class="alert alert-info row">
-            The Aircraft and Route filters works in the way "string contains substring" or "*filter*". So aircraft type "C172" will include "C172" and "C172RG"
         </div>
     </div>
-    <div class="col-md-10">
-        <div id="map" class="ol-map"></div>
+    <div class="col-12 col-lg-10">
+        <div class="card h-100">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0">Map</h5>
+            </div>
+            <div class="card-body pt-1 text-center">
+                <div class="mb-2 row">
+                    <div class="col-md-12">
+                        <div id="map" class="ol-map" style="height:900px;width:100%;"></div>
+                    </div>
+                </div>
+                <div id="popup" class="ol-popup">
+                    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                    <div id="popup-content"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<div id="popup" class="ol-popup">
-    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-    <div id="popup-content"></div>
-</div>
+
 {{ end }}
 
 {{ define "js" }}

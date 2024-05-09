@@ -417,29 +417,37 @@ const exportUtils = function () {
      * Assigns event listeners to various elements in the document.
      */
     const assignEventListeners = () => {
-        document.getElementById("show_custom_title_modal_a4").addEventListener("click", () => { showCustomTitleModal("A4"); });
-        document.getElementById("save_a4").addEventListener("click", saveExportA4);
-        document.getElementById("modal_save_a4").addEventListener("click", saveExportA4);
-        document.getElementById("modal_delete_custom_a4").addEventListener("click", () => { deleteCustomTitle("A4"); });
-        document.getElementById("export_a4").addEventListener("click", runExportA4);
-        document.getElementById("restore_defaults_a4_common").addEventListener("click", () => { restoreDefaults("a4common"); });
-        document.getElementById("restore_defaults_a4_headers").addEventListener("click", () => { restoreDefaults("a4headers"); });
-        document.getElementById("restore_defaults_a4_columns").addEventListener("click", () => { restoreDefaults("a4columns"); });
+        if (document.getElementById("export_a4")) {
+            document.getElementById("show_custom_title_modal_a4").addEventListener("click", () => { showCustomTitleModal("A4"); });
+            document.getElementById("save_a4").addEventListener("click", saveExportA4);
+            document.getElementById("modal_save_a4").addEventListener("click", saveExportA4);
+            document.getElementById("modal_delete_custom_a4").addEventListener("click", () => { deleteCustomTitle("A4"); });
+            document.getElementById("export_a4").addEventListener("click", runExportA4);
+            document.getElementById("restore_defaults_a4_common").addEventListener("click", () => { restoreDefaults("a4common"); });
+            document.getElementById("restore_defaults_a4_headers").addEventListener("click", () => { restoreDefaults("a4headers"); });
+            document.getElementById("restore_defaults_a4_columns").addEventListener("click", () => { restoreDefaults("a4columns"); });
+        }
 
-        document.getElementById("show_custom_title_modal_a5").addEventListener("click", () => { showCustomTitleModal("A5"); });
-        document.getElementById("save_a5").addEventListener("click", saveExportA5);
-        document.getElementById("modal_save_a5").addEventListener("click", saveExportA5);
-        document.getElementById("modal_delete_custom_a5").addEventListener("click", () => { deleteCustomTitle("A5"); });
-        document.getElementById("export_a5").addEventListener("click", runExportA5);
-        document.getElementById("restore_defaults_a5_common").addEventListener("click", () => { restoreDefaults("a5common"); });
-        document.getElementById("restore_defaults_a5_headers").addEventListener("click", () => { restoreDefaults("a5headers"); });
-        document.getElementById("restore_defaults_a5_columns").addEventListener("click", () => { restoreDefaults("a5columns"); });
+        if (document.getElementById("export_a5")) {
+            document.getElementById("show_custom_title_modal_a5").addEventListener("click", () => { showCustomTitleModal("A5"); });
+            document.getElementById("save_a5").addEventListener("click", saveExportA5);
+            document.getElementById("modal_save_a5").addEventListener("click", saveExportA5);
+            document.getElementById("modal_delete_custom_a5").addEventListener("click", () => { deleteCustomTitle("A5"); });
+            document.getElementById("export_a5").addEventListener("click", runExportA5);
+            document.getElementById("restore_defaults_a5_common").addEventListener("click", () => { restoreDefaults("a5common"); });
+            document.getElementById("restore_defaults_a5_headers").addEventListener("click", () => { restoreDefaults("a5headers"); });
+            document.getElementById("restore_defaults_a5_columns").addEventListener("click", () => { restoreDefaults("a5columns"); });
+        }
 
-        document.getElementById("save_csv").addEventListener("click", saveExportCSV);
-        document.getElementById("export_csv").addEventListener("click", runExportCSV);
+        if (document.getElementById("export_csv")) {
+            document.getElementById("save_csv").addEventListener("click", saveExportCSV);
+            document.getElementById("export_csv").addEventListener("click", runExportCSV);
+        }
 
-        document.getElementById("save_xls").addEventListener("click", saveExportXLS);
-        document.getElementById("export_xls").addEventListener("click", runExportXLS);
+        if (document.getElementById("export_xls")) {
+            document.getElementById("save_xls").addEventListener("click", saveExportXLS);
+            document.getElementById("export_xls").addEventListener("click", runExportXLS);
+        }
     }
 
     /**
