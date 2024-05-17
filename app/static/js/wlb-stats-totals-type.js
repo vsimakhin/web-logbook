@@ -26,6 +26,7 @@ const statsTotalsByType = function () {
             orderFixed: [0, "asc"],
             info: false,
             ajax: apiStatsTotalsByType,
+            scrollX: true,
             columnDefs: [
                 { targets: 0, className: "datatable-bold-column" },
                 { targets: 1, visible: !hide_stats_se, searchable: false },

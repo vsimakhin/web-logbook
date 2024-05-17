@@ -12,6 +12,7 @@ const statsTotals = function () {
             ordering: false,
             info: false,
             ajax: apiStatsTotals,
+            scrollX: true,
             columnDefs: [
                 { targets: 0, visible: false, searchable: false },
                 { targets: 1, className: "datatable-bold-column" },
