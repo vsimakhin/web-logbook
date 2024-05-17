@@ -5,7 +5,7 @@
 {{ define "content" }}
 {{$settings := index .Data "settings"}}
 <div class="row">
-    <div class="col-12 col-lg-12">
+    <div class="col-12 col-lg-6">
         
         <div class="card">
             <div class="card-header p-2">
@@ -16,117 +16,34 @@
             <div class="card-body pt-1">
 
                 <div class="row">
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="logbook_rows_a4" class="form-label col-md-8 col-form-label">Logbook Rows</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="logbook_rows_a4" name="logbook_rows_a4" value="{{$settings.ExportA4.LogbookRows}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="logbook_rows_a4" class="form-label col-form-label">Logbook Rows</label>
+                        <input type="text" class="form-control" id="logbook_rows_a4" name="logbook_rows_a4" value="{{$settings.ExportA4.LogbookRows}}" required="true" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="fill_a4" class="form-label col-md-8 col-form-label">Fill Row</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="fill_a4" name="fill_a4" value="{{$settings.ExportA4.Fill}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="fill_a4" class="form-label col-form-label">Fill Row</label>
+                        <input type="text" class="form-control" id="fill_a4" name="fill_a4" value="{{$settings.ExportA4.Fill}}" required="true" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="left_margin_a4" class="form-label col-md-8 col-form-label">Left Page Margin</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="left_margin_a4" name="left_margin_a4" value="{{$settings.ExportA4.LeftMargin}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="left_margin_a4" class="form-label col-form-label">Left Page Margin</label>
+                        <input type="text" class="form-control" id="left_margin_a4" name="left_margin_a4" value="{{$settings.ExportA4.LeftMargin}}" required="true" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="top_margin_a4" class="form-label col-md-8 col-form-label">Top Margin</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="top_margin_a4" name="top_margin_a4" value="{{$settings.ExportA4.TopMargin}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="top_margin_a4" class="form-label col-form-label">Top Margin</label>
+                        <input type="text" class="form-control" id="top_margin_a4" name="top_margin_a4" value="{{$settings.ExportA4.TopMargin}}" required="true" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="row_height_a4" class="form-label col-md-8 col-form-label">Row Height</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="row_height_a4" name="row_height_a4" value="{{$settings.ExportA4.BodyRow}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="row_height_a4" class="form-label col-form-label">Row Height</label>
+                        <input type="text" class="form-control" id="row_height_a4" name="row_height_a4" value="{{$settings.ExportA4.BodyRow}}" required="true" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="footer_height_a4" class="form-label col-md-8 col-form-label">Footer Row Height</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="footer_height_a4" name="footer_height_a4" value="{{$settings.ExportA4.FooterRow}}"
-                                    required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="footer_height_a4" class="form-label col-form-label">Footer Row Height</label>
+                        <input type="text" class="form-control" id="footer_height_a4" name="footer_height_a4" value="{{$settings.ExportA4.FooterRow}}" required="true" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="page_breaks_a4" class="form-label col-md-8 col-form-label">Page Breaks</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="page_breaks_a4" name="page_breaks_a4" value="{{$settings.ExportA4.PageBreaks}}" required="true" autocomplete="off" placeholder="X,Y...,Z">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="page_breaks_a4" class="form-label col-form-label">Page Breaks</label>
+                        <input type="text" class="form-control" id="page_breaks_a4" name="page_breaks_a4" value="{{$settings.ExportA4.PageBreaks}}" required="true" autocomplete="off" placeholder="X,Y...,Z">
                     </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header p-2">
-                <h5 class="card-title mb-0 p-0">Logbook Columns Header
-                    <a id="restore_defaults_a4_headers" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore header defaults"><i class="bi bi-arrow-counterclockwise"></i></a>
-                </h5>
-            </div>
-            <div class="card-body pt-1">
-
-                <div class="row">
-                    <table id="logbook" class="table-editable table-responsive-md table table-sm table-bordered table-active nowrap table-fixed">
-                        <thead>
-                            <tr class="align-top text-center">
-                                <th rowspan=2 class="text-center" id="header_date_a4" contenteditable>{{$settings.ExportA4.Headers.Date}}</th>
-                                <th colspan=2 class="text-center" id="header_departure_a4" contenteditable>{{$settings.ExportA4.Headers.Departure}}</th>
-                                <th colspan=2 class="text-center" id="header_arrival_a4" contenteditable>{{$settings.ExportA4.Headers.Arrival}}</th>
-                                <th colspan=2 class="text-center" id="header_aircraft_a4" contenteditable>{{$settings.ExportA4.Headers.Aircraft}}</th>
-                                <th colspan=2 class="text-center" id="header_spt_a4" contenteditable>{{$settings.ExportA4.Headers.SPT}}</th>
-                                <th rowspan=2 class="text-center" id="header_mcc_a4" contenteditable>{{$settings.ExportA4.Headers.MCC}}</th>
-                                <th rowspan=2 class="text-center" id="header_total_a4" contenteditable>{{$settings.ExportA4.Headers.Total}}</th>
-                                <th rowspan=2 class="text-center" id="header_pic_name_a4" contenteditable>{{$settings.ExportA4.Headers.PICName}}</th>
-                                <th colspan=2 class="text-center" id="header_landings_a4" contenteditable>{{$settings.ExportA4.Headers.Landings}}</th>
-                                <th colspan=2 class="text-center" id="header_oct_a4" contenteditable>{{$settings.ExportA4.Headers.OCT}}</th>
-                                <th colspan=4 class="text-center" id="header_pft_a4" contenteditable>{{$settings.ExportA4.Headers.PFT}}</th>
-                                <th colspan=2 class="text-center" id="header_fstd_a4" contenteditable>{{$settings.ExportA4.Headers.FSTD}}</th>
-                                <th rowspan=2 class="text-center" id="header_remarks_a4" contenteditable>{{$settings.ExportA4.Headers.Remarks}}</th>
-                            </tr>
-                            <tr class="text-center">
-                                <th class="text-center" id="header_dep_place_a4" contenteditable>{{$settings.ExportA4.Headers.DepPlace}}</th>
-                                <th class="text-center" id="header_dep_time_a4" contenteditable>{{$settings.ExportA4.Headers.DepTime}}</th>
-                                <th class="text-center" id="header_arr_place_a4" contenteditable>{{$settings.ExportA4.Headers.ArrPlace}}</th>
-                                <th class="text-center" id="header_arr_time_a4" contenteditable>{{$settings.ExportA4.Headers.ArrTime}}</th>
-                                <th class="text-center" id="header_model_a4" contenteditable>{{$settings.ExportA4.Headers.Model}}</th>
-                                <th class="text-center" id="header_reg_a4" contenteditable>{{$settings.ExportA4.Headers.Reg}}</th>
-                                <th class="text-center" id="header_se_a4" contenteditable>{{$settings.ExportA4.Headers.SE}}</th>
-                                <th class="text-center" id="header_me_a4" contenteditable>{{$settings.ExportA4.Headers.ME}}</th>
-                                <th class="text-center" id="header_land_day_a4" contenteditable>{{$settings.ExportA4.Headers.LandDay}}</th>
-                                <th class="text-center" id="header_land_night_a4" contenteditable>{{$settings.ExportA4.Headers.LandNight}}</th>
-                                <th class="text-center" id="header_night_a4" contenteditable>{{$settings.ExportA4.Headers.Night}}</th>
-                                <th class="text-center" id="header_ifr_a4" contenteditable>{{$settings.ExportA4.Headers.IFR}}</th>
-                                <th class="text-center" id="header_pic_a4" contenteditable>{{$settings.ExportA4.Headers.PIC}}</th>
-                                <th class="text-center" id="header_cop_a4" contenteditable>{{$settings.ExportA4.Headers.COP}}</th>
-                                <th class="text-center" id="header_dual_a4" contenteditable>{{$settings.ExportA4.Headers.Dual}}</th>
-                                <th class="text-center" id="header_instr_a4" contenteditable>{{$settings.ExportA4.Headers.Instr}}</th>
-                                <th class="text-center" id="header_sim_type_a4" contenteditable>{{$settings.ExportA4.Headers.SimType}}</th>
-                                <th class="text-center" id="header_sim_time_a4" contenteditable>{{$settings.ExportA4.Headers.SimTime}}</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
                 </div>
 
             </div>
@@ -141,276 +58,346 @@
             <div class="card-body pt-1">
 
                 <div class="row">
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col1_a4" class="form-label col-md-8 col-form-label">Date</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col1_a4" name="col1_a4" value="{{$settings.ExportA4.Columns.Col1}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col1_a4" class="form-label col-form-label">Date</label>
+                        <input type="text" class="form-control" id="col1_a4" name="col1_a4" value="{{$settings.ExportA4.Columns.Col1}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col2_a4" class="form-label col-md-8 col-form-label">Departure Place</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col2_a4" name="col2_a4" value="{{$settings.ExportA4.Columns.Col2}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col2_a4" class="form-label col-form-label">Departure Place</label>
+                        <input type="text" class="form-control" id="col2_a4" name="col2_a4" value="{{$settings.ExportA4.Columns.Col2}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col3_a4" class="form-label col-md-8 col-form-label">Departure Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col3_a4" name="col3_a4" value="{{$settings.ExportA4.Columns.Col3}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col3_a4" class="form-label col-form-label">Departure Time</label>
+                        <input type="text" class="form-control" id="col3_a4" name="col3_a4" value="{{$settings.ExportA4.Columns.Col3}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col4_a4" class="form-label col-md-8 col-form-label">Arrival Place</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col4_a4" name="col4_a4" value="{{$settings.ExportA4.Columns.Col4}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col4_a4" class="form-label col-form-label">Arrival Place</label>
+                        <input type="text" class="form-control" id="col4_a4" name="col4_a4" value="{{$settings.ExportA4.Columns.Col4}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col5_a4" class="form-label col-md-8 col-form-label">Arrival Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col5_a4" name="col5_a4" value="{{$settings.ExportA4.Columns.Col5}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col5_a4" class="form-label col-form-label">Arrival Time</label>
+                        <input type="text" class="form-control" id="col5_a4" name="col5_a4" value="{{$settings.ExportA4.Columns.Col5}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col6_a4" class="form-label col-md-8 col-form-label">Aircraft Type</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col6_a4" name="col6_a4" value="{{$settings.ExportA4.Columns.Col6}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col6_a4" class="form-label col-form-label">Aircraft Type</label>
+                        <input type="text" class="form-control" id="col6_a4" name="col6_a4" value="{{$settings.ExportA4.Columns.Col6}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col7_a4" class="form-label col-md-8 col-form-label">Arrival Reg</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col7_a4" name="col7_a4" value="{{$settings.ExportA4.Columns.Col7}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col7_a4" class="form-label col-form-label">Arrival Reg</label>
+                        <input type="text" class="form-control" id="col7_a4" name="col7_a4" value="{{$settings.ExportA4.Columns.Col7}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col8_a4" class="form-label col-md-8 col-form-label">SE Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col8_a4" name="col8_a4" value="{{$settings.ExportA4.Columns.Col8}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col8_a4" class="form-label col-form-label">SE Time</label>
+                        <input type="text" class="form-control" id="col8_a4" name="col8_a4" value="{{$settings.ExportA4.Columns.Col8}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col9_a4" class="form-label col-md-8 col-form-label">ME Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col9_a4" name="col9_a4" value="{{$settings.ExportA4.Columns.Col9}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col9_a4" class="form-label col-form-label">ME Time</label>
+                        <input type="text" class="form-control" id="col9_a4" name="col9_a4" value="{{$settings.ExportA4.Columns.Col9}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col10_a4" class="form-label col-md-8 col-form-label">Multi Pilot Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col10_a4" name="col10_a4" value="{{$settings.ExportA4.Columns.Col10}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col10_a4" class="form-label col-form-label">Multi Pilot Time</label>
+                        <input type="text" class="form-control" id="col10_a4" name="col10_a4" value="{{$settings.ExportA4.Columns.Col10}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col11_a4" class="form-label col-md-8 col-form-label">Total Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col11_a4" name="col11_a4" value="{{$settings.ExportA4.Columns.Col11}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col11_a4" class="form-label col-form-label">Total Time</label>
+                        <input type="text" class="form-control" id="col11_a4" name="col11_a4" value="{{$settings.ExportA4.Columns.Col11}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col12_a4" class="form-label col-md-8 col-form-label">PIC Name</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col12_a4" name="col12_a4" value="{{$settings.ExportA4.Columns.Col12}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col12_a4" class="form-label col-form-label">PIC Name</label>
+                        <input type="text" class="form-control" id="col12_a4" name="col12_a4" value="{{$settings.ExportA4.Columns.Col12}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col13_a4" class="form-label col-md-8 col-form-label">Day Landings</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col13_a4" name="col13_a4" value="{{$settings.ExportA4.Columns.Col13}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col13_a4" class="form-label col-form-label">Day Landings</label>
+                        <input type="text" class="form-control" id="col13_a4" name="col13_a4" value="{{$settings.ExportA4.Columns.Col13}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col14_a4" class="form-label col-md-8 col-form-label">Night Landings</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col14_a4" name="col14_a4" value="{{$settings.ExportA4.Columns.Col14}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col14_a4" class="form-label col-form-label">Night Landings</label>
+                        <input type="text" class="form-control" id="col14_a4" name="col14_a4" value="{{$settings.ExportA4.Columns.Col14}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col15_a4" class="form-label col-md-8 col-form-label">Night Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col15_a4" name="col15_a4" value="{{$settings.ExportA4.Columns.Col15}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col15_a4" class="form-label col-form-label">Night Time</label>
+                        <input type="text" class="form-control" id="col15_a4" name="col15_a4" value="{{$settings.ExportA4.Columns.Col15}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col16_a4" class="form-label col-md-8 col-form-label">IFR Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col16_a4" name="col16_a4" value="{{$settings.ExportA4.Columns.Col16}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col16_a4" class="form-label col-form-label">IFR Time</label>
+                        <input type="text" class="form-control" id="col16_a4" name="col16_a4" value="{{$settings.ExportA4.Columns.Col16}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col17_a4" class="form-label col-md-8 col-form-label">PIC Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col17_a4" name="col17_a4" value="{{$settings.ExportA4.Columns.Col17}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col17_a4" class="form-label col-form-label">PIC Time</label>
+                        <input type="text" class="form-control" id="col17_a4" name="col17_a4" value="{{$settings.ExportA4.Columns.Col17}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col18_a4" class="form-label col-md-8 col-form-label">Co Pilot Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col18_a4" name="col18_a4" value="{{$settings.ExportA4.Columns.Col18}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col18_a4" class="form-label col-form-label">Co Pilot Time</label>
+                        <input type="text" class="form-control" id="col18_a4" name="col18_a4" value="{{$settings.ExportA4.Columns.Col18}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col19_a4" class="form-label col-md-8 col-form-label">Dual Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col19_a4" name="col19_a4" value="{{$settings.ExportA4.Columns.Col19}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col19_a4" class="form-label col-form-label">Dual Time</label>
+                        <input type="text" class="form-control" id="col19_a4" name="col19_a4" value="{{$settings.ExportA4.Columns.Col19}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col20_a4" class="form-label col-md-8 col-form-label">Instructor Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col20_a4" name="col20_a4" value="{{$settings.ExportA4.Columns.Col20}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col20_a4" class="form-label col-form-label">Instructor Time</label>
+                        <input type="text" class="form-control" id="col20_a4" name="col20_a4" value="{{$settings.ExportA4.Columns.Col20}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col21_a4" class="form-label col-md-8 col-form-label">FSTD Type</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col21_a4" name="col21_a4" value="{{$settings.ExportA4.Columns.Col21}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col21_a4" class="form-label col-form-label">FSTD Type</label>
+                        <input type="text" class="form-control" id="col21_a4" name="col21_a4" value="{{$settings.ExportA4.Columns.Col21}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col22_a4" class="form-label col-md-8 col-form-label">FSTD Time</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col22_a4" name="col22_a4" value="{{$settings.ExportA4.Columns.Col22}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col22_a4" class="form-label col-form-label">FSTD Time</label>
+                        <input type="text" class="form-control" id="col22_a4" name="col22_a4" value="{{$settings.ExportA4.Columns.Col22}}" required="true" autocomplete="off">
                     </div>
-                
-                    <div class="col-md-2">
-                        <div class="row mb-2">
-                            <label for="col23_a4" class="form-label col-md-8 col-form-label">Remarks</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="col23_a4" name="col23_a4" value="{{$settings.ExportA4.Columns.Col23}}" required="true" autocomplete="off">
-                            </div>
-                        </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col23_a4" class="form-label col-form-label">Remarks</label>
+                        <input type="text" class="form-control" id="col23_a4" name="col23_a4" value="{{$settings.ExportA4.Columns.Col23}}" required="true" autocomplete="off">
                     </div>
                 </div>
-
-
-
-
 
             </div>
         </div>
 
+    </div>
+
+    <div class="col-12 col-lg-6">
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Logbook Columns Header
+                    <a id="restore_defaults_a4_headers" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore header defaults"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <div class="row">
+                    <div class="col-md-2 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_date_a4" value="{{$settings.ExportA4.Headers.Date}}">
+                                <label>Date</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_departure_a4" value="{{$settings.ExportA4.Headers.Departure}}">
+                                <label>Departure Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_dep_place_a4" value="{{$settings.ExportA4.Headers.DepPlace}}">
+                                <label>Place</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_dep_time_a4" value="{{$settings.ExportA4.Headers.DepTime}}">
+                                <label>Time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_arrival_a4" value="{{$settings.ExportA4.Headers.Arrival}}">
+                                <label>Arrival Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_arr_place_a4" value="{{$settings.ExportA4.Headers.ArrPlace}}">
+                                <label>Place</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_arr_time_a4" value="{{$settings.ExportA4.Headers.ArrTime}}">
+                                <label>Time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_aircraft_a4" value="{{$settings.ExportA4.Headers.Aircraft}}">
+                                <label>Aircraft Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_model_a4" value="{{$settings.ExportA4.Headers.Model}}">
+                                <label>Type</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_reg_a4" value="{{$settings.ExportA4.Headers.Reg}}">
+                                <label>Reg</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_spt_a4" value="{{$settings.ExportA4.Headers.SPT}}">
+                                <label>Single Pilot Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_se_a4" value="{{$settings.ExportA4.Headers.SE}}">
+                                <label>SE</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_me_a4" value="{{$settings.ExportA4.Headers.ME}}">
+                                <label>ME</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_mcc_a4" value="{{$settings.ExportA4.Headers.MCC}}">
+                                <label>MCC</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_total_a4" value="{{$settings.ExportA4.Headers.Total}}">
+                                <label>Total time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_pic_name_a4" value="{{$settings.ExportA4.Headers.PICName}}">
+                                <label>PIC Name</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_landings_a4" value="{{$settings.ExportA4.Headers.Landings}}">
+                                <label>Landings</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_land_day_a4" value="{{$settings.ExportA4.Headers.LandDay}}">
+                                <label>Day</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_land_night_a4" value="{{$settings.ExportA4.Headers.LandNight}}">
+                                <label>Night</label>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="col-md-7 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_oct_a4" value="{{$settings.ExportA4.Headers.OCT}}">
+                                <label>Operational condition time</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_night_a4" value="{{$settings.ExportA4.Headers.Night}}">
+                                <label>Night</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_ifr_a4" value="{{$settings.ExportA4.Headers.IFR}}">
+                                <label>IFR</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating" style="width: 150px">
+                                <input type="text" class="form-control" id="header_pft_a4" value="{{$settings.ExportA4.Headers.PFT}}">
+                                <label>Pilot function time</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_pic_a4" value="{{$settings.ExportA4.Headers.PIC}}">
+                                <label>PIC</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_cop_a4" value="{{$settings.ExportA4.Headers.COP}}">
+                                <label>Co Pilot</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_dual_a4" value="{{$settings.ExportA4.Headers.Dual}}">
+                                <label>Dual</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_instr_a4" value="{{$settings.ExportA4.Headers.Instr}}">
+                                <label>Instr</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_fstd_a4" value="{{$settings.ExportA4.Headers.FSTD}}">
+                                <label>FSTD</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_sim_type_a4" value="{{$settings.ExportA4.Headers.SimType}}">
+                                <label>Type</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_sim_time_a4" value="{{$settings.ExportA4.Headers.SimTime}}">
+                                <label>Time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_remarks_a4" value="{{$settings.ExportA4.Headers.Remarks}}">
+                                <label>Remarks</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <div class="card">
             <div class="card-header p-2">
                 <h5 class="card-title mb-0 p-0">Misc</h5>
             </div>
             <div class="card-body pt-1">
-
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="row mb-2">
-                            <div class="col">
-                                <input type="checkbox" class="form-check-input" id="replace_sp_time_a4" name="replace_sp_time_a4" {{if $settings.ExportA4.ReplaceSPTime}}checked{{end}}>
-                                <label for="replace_sp_time_a4" class="form-label">Replace SE and ME values for single pilot time with "✓" symbol (Part FCL.050 format)</label>
-                            </div>
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="replace_sp_time_a4" name="replace_sp_time_a4" {{if $settings.ExportA4.ReplaceSPTime}}checked{{end}}>
+                        <label for="replace_sp_time_a4" class="form-label">Replace SE and ME values for single pilot time with "✓" symbol (Part FCL.050 format)</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="include_signature_a4" name="include_signature_a4" {{if $settings.ExportA4.IncludeSignature}}checked{{end}}>
+                        <label for="include_signature_a4" class="form-label">Include signature</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="is_extended_a4" name="is_extended_a4" {{if $settings.ExportA4.IsExtended}}checked{{end}}>
+                        <label for="is_extended_a4" class="form-label">Extended format, it will add Date column to the FSTD section and will reduce Remarks column. <br>This format fully matches Part FCL.050 format</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Time fields autoformat</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio_a4" id="time_field_format_radio1_a4" value="0" {{if eq $settings.ExportA4.TimeFieldsAutoFormat 0}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio1_a4">None</label>
                         </div>
-                        <div class="row mb-2">
-                            <div class="col">
-                                <input type="checkbox" class="form-check-input" id="include_signature_a4" name="include_signature_a4" {{if $settings.ExportA4.IncludeSignature}}checked{{end}}>
-                                <label for="include_signature_a4" class="form-label">Include signature</label>
-                            </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio_a4" id="time_field_format_radio2_a4" value="1" {{if eq $settings.ExportA4.TimeFieldsAutoFormat 1}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio2_a4">HH:MM</label>
                         </div>
-                        <div class="row mb-2">
-                            <div class="col">
-                                <input type="checkbox" class="form-check-input" id="is_extended_a4" name="is_extended_a4" {{if $settings.ExportA4.IsExtended}}checked{{end}}>
-                                <label for="is_extended_a4" class="form-label">Extended format, it will add Date column to the FSTD section and will reduce Remarks column. <br>This format fully matches Part FCL.050 format</label>
-                            </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio_a4" id="time_field_format_radio3_a4" value="2" {{if eq $settings.ExportA4.TimeFieldsAutoFormat 2}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio3_a4">H:MM</label>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="row mb-2">
-                            <div class="col-sm-8">
-                                <label for="time_field_format_a4" class="col-form-label">Time fields autoformat</label>
-                            </div>
-                            <div class="col-sm-4 text-end">
-                                <div class="btn-group" role="group" id="time_field_format_a4" name="time_field_format_a4">
-                                    <input type="radio" class="btn-check" name="time_field_format_radio_a4" id="time_field_format_radio1_a4" autocomplete="off" {{if eq $settings.ExportA4.TimeFieldsAutoFormat 0}}checked{{end}}>
-                                    <label class="btn btn-outline-secondary" for="time_field_format_radio1_a4">None</label>
-                
-                                    <input type="radio" class="btn-check" name="time_field_format_radio_a4" id="time_field_format_radio2_a4" autocomplete="off" {{if eq $settings.ExportA4.TimeFieldsAutoFormat 1}}checked{{end}}>
-                                    <label class="btn btn-outline-secondary" for="time_field_format_radio2_a4">HH:MM</label>
-                
-                                    <input type="radio" class="btn-check" name="time_field_format_radio_a4" id="time_field_format_radio3_a4" autocomplete="off" {{if eq $settings.ExportA4.TimeFieldsAutoFormat 2}}checked{{end}}>
-                                    <label class="btn btn-outline-secondary" for="time_field_format_radio3_a4">H:MM</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-sm-8">
-                                <label for="custom_title_a4" class="col-sm-5 col-form-label">Custom A4 title page</label>
-                            </div>
-                            <div class="col-sm-4 text-end">
-                                <button id="show_custom_title_modal_a4" type="button" class="btn btn-outline-secondary"><i class="bi bi-file-pdf"></i> Manage...</button>
-                            </div>
-                        </div>
+                    <div class="col-md-12 mb-2">
+                        <button id="show_custom_title_modal_a4" type="button" class="btn btn-outline-secondary"><i class="bi bi-file-pdf"></i> Custom A4 title page</button>
                     </div>
+
                 </div>
 
             </div>
@@ -433,18 +420,15 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div class="card p-1">
-                <div class="card-body">
-                    <div class="col">
+
                         <div class="input-group">
                             <input type="file" accept=".pdf" class="form-control" id="custom_title_a4" name="custom_title_a4" />
                             <button type="button" class="btn btn-outline-secondary" id="modal_delete_custom_a4"><i class="bi bi-file-x"></i> Delete</button>
                         </div>
-                    </div>
+                    
                     <br>
                     <div id="custom_title_a4_document"></div>
-                </div>
-            </div>
+
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="modal_save_a4"><i class="bi bi-save"></i> Save</button>

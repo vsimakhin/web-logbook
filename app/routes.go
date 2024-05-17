@@ -19,6 +19,7 @@ const (
 	APILogbookSave                    = "/logbook/save"
 	APILogbookDelete                  = "/logbook/delete"
 	APILogbookNight                   = "/logbook/night"
+	APIExport                         = "/export"
 	APIExportPDFA4Page                = "/export-pdf-a4"
 	APIExportPDFA5Page                = "/export-pdf-a5"
 	APIExportCSVXLSPage               = "/export-csv-xls"
@@ -92,6 +93,7 @@ var apiMap = map[string]string{
 	"LogbookAttachmentsDelete":       APILogbookAttachmentsDelete,
 	"LogbookAttachmentsDownload":     APILogbookAttachmentsDownload,
 	"LogbookAttachmentsDownloadUUID": APILogbookAttachmentsDownloadUUID,
+	"Export":                         APIExport,
 	"ExportPDFA4Page":                APIExportPDFA4Page,
 	"ExportPDFA5Page":                APIExportPDFA5Page,
 	"ExportCSVXLSPage":               APIExportCSVXLSPage,
