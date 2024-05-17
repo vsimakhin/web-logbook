@@ -1,6 +1,7 @@
 {{ template "base" .}}
 {{ define "title" }}Stats - Totals By Aircraft Class{{ end }}
 {{ define "header" }}Stats - Totals By Aircraft Class{{ end }}
+{{ define "css" }}{{ end }}
 {{ define "content" }}
 {{$settings := index .Data "settings"}}
 <div class="row">
@@ -15,7 +16,7 @@
                         <input class="form-control mb-2" type="text" id="daterange" name="daterange" value="Date filters...">
                     </div>
                     
-                    <table id="totals_by_class" class="table table-sm table-striped table-bordered nowrap" width="100%" {{if $settings.StatsFontSize}}style="font-size:{{$settings.StatsFontSize}}%"{{end}}>
+                    <table id="totals_by_class" class="display table table-sm table-striped table-bordered nowrap" width="100%" {{if $settings.StatsFontSize}}style="font-size:{{$settings.StatsFontSize}}%"{{end}}>
                         <thead>
                             <tr class="align-top text-center">
                                 <th>Class</th>

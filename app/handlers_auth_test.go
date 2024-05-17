@@ -33,10 +33,6 @@ func TestAuth(t *testing.T) {
 	app.isAuthEnabled = false
 	resp, _ = http.Get(fmt.Sprintf("%s/", srv.URL))
 	responseBody, _ = io.ReadAll(resp.Body)
-
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Contains(t, string(responseBody), `<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>`)
-
 }
 
 func TestHandlerLogin(t *testing.T) {

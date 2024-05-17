@@ -213,6 +213,18 @@ const settingsUtils = function () {
             time_fields_auto_format = 2;
         }
 
+        let color_scheme = 0;
+        if (document.getElementById("color_scheme_radio2").checked) {
+            color_scheme = 1;
+        } else if (document.getElementById("color_scheme_radio3").checked) {
+            color_scheme = 2;
+        }
+
+        let sidebar_layout = 0;
+        if (document.getElementById("sidebar_layout_radio2").checked) {
+            sidebar_layout = 1;
+        }
+
         const payload = {
             owner_name: document.getElementById("owner_name").value,
             license_number: document.getElementById("license_number").value,
@@ -251,6 +263,8 @@ const settingsUtils = function () {
             // },
             airports_db_source: document.getElementById("airports_db_source").value,
             no_icao_filter: document.getElementById("no_icao_filter").checked,
+            color_scheme: color_scheme,
+            sidebar_layout: sidebar_layout,
         };
 
 

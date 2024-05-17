@@ -1,7 +1,7 @@
 {{ template "base" .}}
 {{ define "title" }}Airports Database{{ end }}
 {{ define "header" }}Airports Database{{ end }}
-{{ define "css" }}<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>{{ end }}
+{{ define "css" }}{{ end }}
 {{ define "content" }}
 {{$api := .API}}
 {{$settings := index .Data "settings"}}
@@ -164,7 +164,6 @@
 
 {{ end }}
 {{ define "js" }}
-<script src="/static/js/signature_pad.umd.js"></script>
 <script type="text/javascript" src="/static/js/datatables.min.js"></script>
 <script type="text/javascript" src="/static/js/wlb-settings-airportdb.js"></script>
 {{ end }}

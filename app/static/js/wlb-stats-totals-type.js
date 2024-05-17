@@ -24,11 +24,12 @@ const statsTotalsByType = function () {
         // init Totals By Type table
         const tableTotalsByType = $('#totals_by_type').DataTable({
             orderFixed: [0, "asc"],
+            ordering: false,
             info: false,
             ajax: apiStatsTotalsByType,
             scrollX: true,
             columnDefs: [
-                { targets: 0, className: "datatable-bold-column" },
+                { targets: 0, className: "fw-bold" },
                 { targets: 1, visible: !hide_stats_se, searchable: false },
                 { targets: 2, visible: !hide_stats_me, searchable: false },
                 { targets: 3, visible: !hide_stats_mcc, searchable: false },

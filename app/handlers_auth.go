@@ -90,7 +90,7 @@ func (app *application) HandlerLoginPost(w http.ResponseWriter, r *http.Request)
 			time.Now().Unix() + int64(loginAttempts[ip].failedAttempts*10),
 		}
 
-		app.errorLog.Println(err)
+		app.warningLog.Println(err)
 		response.OK = false
 		response.Message = err.Error()
 

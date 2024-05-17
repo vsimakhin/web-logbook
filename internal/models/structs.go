@@ -231,6 +231,9 @@ type Settings struct {
 
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`
+
+	ColorScheme   byte `json:"color_scheme"`
+	SidebarLayout byte `json:"sidebar_layout"`
 }
 
 // License is a type for licesing

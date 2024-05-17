@@ -1,12 +1,10 @@
 {{ template "base" .}}
 {{ define "title" }}Settings{{ end }}
 {{ define "header" }}Settings{{ end }}
-{{ define "css" }}<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>{{ end }}
+{{ define "css" }}{{ end }}
 {{ define "content" }}
 {{$api := .API}}
 {{$settings := index .Data "settings"}}
-{{$records := index .Data "records"}}
-
 <form method="post" name="settings" id="settings" class="d-block" autocomplete="off" novalidate="">
 <div class="row">
     <div class="col-12 col-lg-6">
@@ -72,33 +70,21 @@
                 <h5 class="card-title mb-0 p-0">Authentication</h5>
             </div>
             <div class="card-body pt-1">
-                <div class="row mb-2">
-                    <div class="col">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
                         <input type="checkbox" class="form-check-input" id="auth_enabled" name="auth_enabled" {{if $settings.AuthEnabled}}checked{{end}}>
                         <input type="hidden" id="previous_auth_value" value="{{$settings.AuthEnabled}}"/>
                         <label for="auth_enabled" class="form-label">Enable authentication</label>
                     </div>
-                </div>
-
-                <div class="row mb-2">
                     <div class="col-md-6">
-                        <div class="row mb-2">
-                            <label for="login" class="form-label col-md-3 col-form-label">Login</label>
-                            <div class="col-md-9">
-                                <input class="form-control" id="login" name="login" type="login" value="{{$settings.Login}}" autocomplete="off" placeholder="Login Name">
-                            </div>
-                        </div>
+                        <label for="login" class="form-label col-form-label">Login</label>
+                        <input class="form-control" id="login" name="login" type="login" value="{{$settings.Login}}" autocomplete="off" placeholder="Login Name">
                     </div>
                     <div class="col-md-6">
-                        <div class="row mb-2">
-                            <label for="password" class="form-label col-md-3 col-form-label">Password</label>
-                            <div class="col-md-9">
-                                <input class="form-control" id="password" name="password" type="password" autocomplete="off" placeholder="Password">
-                            </div>
-                        </div>
+                        <label for="password" class="form-label col-form-label">Password</label>
+                        <input class="form-control" id="password" name="password" type="password" autocomplete="off" placeholder="Password">
                     </div>
                 </div>
-            
             </div>
         </div>
 
@@ -107,35 +93,57 @@
                 <h5 class="card-title mb-0 p-0">Misc</h5>
             </div>
             <div class="card-body pt-1">
-
-                <div class="row mb-2">
-                    <div class="col">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Color scheme</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="color_scheme_radio" id="color_scheme_radio1" value="0" {{if eq $settings.ColorScheme 0}}checked{{end}}>
+                            <label class="form-check-label" for="color_scheme_radio1">Default</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="color_scheme_radio" id="color_scheme_radio2" value="1" {{if eq $settings.ColorScheme 1}}checked{{end}}>
+                            <label class="form-check-label" for="color_scheme_radio2">Dark</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="color_scheme_radio" id="color_scheme_radio3" value="2" {{if eq $settings.ColorScheme 2}}checked{{end}}>
+                            <label class="form-check-label" for="color_scheme_radio3">Light</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Sidebar layout</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sidebar_layout_radio" id="sidebar_layout_radio1" value="0" {{if eq $settings.SidebarLayout 0}}checked{{end}}>
+                            <label class="form-check-label" for="sidebar_layout_radio1">Default</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sidebar_layout_radio" id="sidebar_layout_radio2" value="1" {{if eq $settings.SidebarLayout 1}}checked{{end}}>
+                            <label class="form-check-label" for="sidebar_layout_radio2">Compact</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
                         <input type="checkbox" class="form-check-input" id="disable_flightrecord_help" name="disable_flightrecord_help" {{if $settings.DisableFlightRecordHelp}}checked{{end}}>
                         <label for="disable_flightrecord_help" class="form-label">Disable help messages on the flight record page</label>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
+                    <div class="col-md-12 mb-2">
                         <input type="checkbox" class="form-check-input" id="disable_license_warning" name="disable_license_warning" {{if $settings.DisableLicenseWarning}}checked{{end}}>
                         <label for="disable_license_warning" class="form-label">Disable license warning badge on the navbar</label>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <label for="time_field_format" class="col-sm-8 col-form-label">Time fields autoformat</label>
-                    <div class="col-sm-4">
-                        <div class="btn-group" role="group" id="time_field_format" name="time_field_format">
-                            <input type="radio" class="btn-check" name="time_field_format_radio" id="time_field_format_radio1" autocomplete="off" {{if eq $settings.TimeFieldsAutoFormat 0}}checked{{end}}>
-                            <label class="btn btn-outline-secondary" for="time_field_format_radio1">None</label>
-                        
-                            <input type="radio" class="btn-check" name="time_field_format_radio" id="time_field_format_radio2" autocomplete="off" {{if eq $settings.TimeFieldsAutoFormat 1}}checked{{end}}>
-                            <label class="btn btn-outline-secondary" for="time_field_format_radio2">HH:MM</label>
-                        
-                            <input type="radio" class="btn-check" name="time_field_format_radio" id="time_field_format_radio3" autocomplete="off" {{if eq $settings.TimeFieldsAutoFormat 2}}checked{{end}}>
-                            <label class="btn btn-outline-secondary" for="time_field_format_radio3">H:MM</label>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Time fields autoformat</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio" id="time_field_format_radio1" value="0" {{if eq $settings.TimeFieldsAutoFormat 0}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio1">None</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio" id="time_field_format_radio2" value="1" {{if eq $settings.TimeFieldsAutoFormat 1}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio2">HH:MM</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio" id="time_field_format_radio3" value="2" {{if eq $settings.TimeFieldsAutoFormat 2}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio3">H:MM</label>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -170,61 +178,55 @@
             <div class="card-body pt-1">
 
                 <div class="row">
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_se" name="hide_se" {{if $settings.HideStatsFields.SE}}checked{{end}}>
                         <label for="hide_se" class="form-label">Single Engine</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_me" name="hide_me" {{if $settings.HideStatsFields.ME}}checked{{end}}>
                         <label for="hide_me" class="form-label">Multi Engine</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_mcc" name="hide_mcc" {{if $settings.HideStatsFields.MCC}}checked{{end}}>
                         <label for="hide_mcc" class="form-label">MCC</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_night" name="hide_night" {{if $settings.HideStatsFields.Night}}checked{{end}}>
                         <label for="hide_night" class="form-label">Night</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_ifr" name="hide_ifr" {{if $settings.HideStatsFields.IFR}}checked{{end}}>
                         <label for="hide_ifr" class="form-label">IFR</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_pic" name="hide_pic" {{if $settings.HideStatsFields.PIC}}checked{{end}}>
                         <label for="hide_pic" class="form-label">PIC</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_copilot" name="hide_copilot" {{if $settings.HideStatsFields.CoPilot}}checked{{end}}>
                         <label for="hide_copilot" class="form-label">CoPilot</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_dual" name="hide_dual" {{if $settings.HideStatsFields.Dual}}checked{{end}}>
                         <label for="hide_dual" class="form-label">Dual</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_instructor" name="hide_instructor" {{if $settings.HideStatsFields.Instructor}}checked{{end}}>
                         <label for="hide_instructor" class="form-label">Instructor</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_sim" name="hide_sim" {{if $settings.HideStatsFields.Sim}}checked{{end}}>
                         <label for="hide_sim" class="form-label">Simulator</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_cc" name="hide_cc" {{if $settings.HideStatsFields.CrossCountry}}checked{{end}}>
                         <label for="hide_cc" class="form-label">Cross Country</label>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_landings" name="hide_landings" {{if $settings.HideStatsFields.Landings}}checked{{end}}>
                         <label for="hide_landings" class="form-label">Landings</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
+                    <div class="col-md-3 mb-2">
                         <input type="checkbox" class="form-check-input" id="hide_distance" name="hide_distance" {{if $settings.HideStatsFields.Distance}}checked{{end}}>
                         <label for="hide_distance" class="form-label">Distance</label>
                     </div>

@@ -62,8 +62,8 @@ const statsLimits = function () {
         chart.data.labels = labels;
         chart.data.datasets = [{
             data: values,
-            backgroundColor: 'rgba(36, 112, 220, 0.7)',
-            borderColor: 'rgba(36, 112, 220, 0.7)',
+            backgroundColor: window.theme.primary,
+            borderColor: window.theme.primary,
             borderWidth: 2,
             cubicInterpolationMode: 'monotone',
             pointRadius: 0,

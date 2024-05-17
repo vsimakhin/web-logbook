@@ -9,16 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="github.com/vsimakhin/" />
     <title>{{ block "title" . }}{{ end }}</title>
-    <link href="/static/css/app.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/css/daterangepicker.css" />
-    <link rel="stylesheet" type="text/css" href="/static/css/dashboard.css">
     {{ block "css" . }}{{ end }}
+    <link rel="stylesheet" type="text/css" href="/static/css/daterangepicker.css" />
+    {{ if eq $settings.ColorScheme 1 }}<link href="/static/css/dark.css" rel="stylesheet">{{ else }}<link href="/static/css/light.css" rel="stylesheet">{{ end }}
 </head>
-<body>
+<body data-layout="fluid" data-sidebar-position="left"
+{{ if eq $settings.ColorScheme 0 }}data-theme="default"{{ else if eq $settings.ColorScheme 1 }}data-theme="dark"{{ else }}data-theme="light"{{ end }}
+{{ if eq $settings.SidebarLayout 0 }}data-sidebar-layout="default"{{ else }}data-sidebar-layout="compact"{{ end }}
+>
     <div class="wrapper">
         <nav id="sidebar" class="sidebar js-sidebar">
             <div class="sidebar-content js-simplebar">
-                <a class="sidebar-brand" href="/"><span class="align-middle">Web Logbook</span></a>
+                <a class="sidebar-brand" href="/"><i class="sidebar-brand-icon align-middle bi bi-airplane"></i> <span class="sidebar-brand-text align-middle">Web Logbook</span></a>
 
                 <ul class="sidebar-nav">
                     <li class="sidebar-header">Pages</li>
@@ -48,44 +50,50 @@
                         <a class="sidebar-link" href="{{$api.Map}}"><i class="bi bi-map"></i> <span class="align-middle">Map</span></a>
                     </li>
 
-                    <li class="sidebar-header">Statistics</li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.StatsTotalsPage}}"><i class="bi bi-file-bar-graph"></i> <span class="align-middle">Totals</span></a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.StatsTotalsByYearPage}}"><i class="bi bi-file-bar-graph"></i> <span class="align-middle">Totals by Year</span></a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.StatsTotalsByTypePage}}"><i class="bi bi-file-bar-graph"></i> <span class="align-middle">Totals by Aircraft Type</span></a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.StatsTotalsByClassPage}}"><i class="bi bi-file-bar-graph"></i> <span class="align-middle">Totals by Aircraft Class</span></a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.StatsLimitsPage}}"><i class="bi bi-file-bar-graph"></i> <span class="align-middle">Limits</span></a>
-                    </li>
+						<a data-bs-target="#stats" data-bs-toggle="collapse" class="sidebar-link">
+                            <i class="bi bi-file-bar-graph"></i> <span class="align-middle">Statistics</span>
+						</a>
+						<ul id="stats" class="sidebar-dropdown list-unstyled collapse show" data-bs-parent="#sidebar">
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsPage}}">Totals</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsByYearPage}}">Totals by Year</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsByTypePage}}">Totals by Aircraft Type</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsByClassPage}}">Totals by Aircraft Class</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsLimitsPage}}">Limits</a></li>
+						</ul>
+					</li>
 
-                    <li class="sidebar-header">Import & Export</li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.ExportPDFA4Page}}"><i class="bi bi-file-earmark-arrow-down"></i> <span class="align-middle">Export PDF A4</span></a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.ExportPDFA5Page}}"><i class="bi bi-file-earmark-arrow-down"></i> <span class="align-middle">Export PDF A5</span></a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.ExportCSVXLSPage}}"><i class="bi bi-file-earmark-arrow-down"></i> <span class="align-middle">Export CSV&XLS</span></a>
-                    </li>
+						<a data-bs-target="#export" data-bs-toggle="collapse" class="sidebar-link">
+                        <i class="bi bi-file-earmark-arrow-down"></i> <span class="align-middle">Export</span>
+						</a>
+						<ul id="export" class="sidebar-dropdown list-unstyled collapse show" data-bs-parent="#sidebar">
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.ExportPDFA4Page}}">PDF A4</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.ExportPDFA5Page}}">PDF A5</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.ExportCSVXLSPage}}">CSV&XLS</a></li>
+						</ul>
+					</li>
+
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{$api.Import}}"><i class="bi bi-file-earmark-arrow-up"></i> <span class="align-middle">Import (beta)</span></a>
                     </li>
 
-                    <li class="sidebar-header">Settings</li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.Settings}}"><i class="bi bi-gear"></i> <span class="align-middle">General</span></a>
-                    </li>
+						<a data-bs-target="#settings" data-bs-toggle="collapse" class="sidebar-link">
+                        <i class="bi bi-gear"></i> <span class="align-middle">Settings</span>
+						</a>
+						<ul id="settings" class="sidebar-dropdown list-unstyled collapse show" data-bs-parent="#sidebar">
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.Settings}}">General</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.SettingsAirportDB}}">Airports</a></li>
+						</ul>
+					</li>
+
+                    {{if .AuthEnabled}}
+                    <hr>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{$api.SettingsAirportDB}}"><i class="bi bi-gear"></i> <span class="align-middle">Airports</span></a>
+                        <a class="sidebar-link" href="{{$api.Logout}}"><i class="bi bi-door-closed"></i> <span class="align-middle">Log Out</span></a>
                     </li>
+                   {{end}}
 
                     <hr>
 
@@ -95,6 +103,7 @@
                             {{if .NewVersion}}<span class="badge rounded-pill text-bg-info">New</span>{{ end }}
                         </a>
                     </li>
+
                 </ul>
             </div>
         </nav>
@@ -111,13 +120,6 @@
 
                 <div class="navbar-collapse collapse">
                     <ul class="navbar-nav navbar-align">
-                        <li class="nav-item dropdown">
-                            {{if .AuthEnabled}}
-                            <a class="nav-link  d-none d-sm-inline-block" href="{{$api.Logout}}">
-                                <i class="bi bi-door-closed"></i> <span class="text-dark">Log Out</span>
-                            </a>
-                            {{end}}
-                        </li>
                     </ul>
                 </div>
             </nav>
@@ -131,7 +133,7 @@
     </div>
 
     <script src="/static/js/app.js"></script>
-    <script type="text/javascript" src="/static/js/jquery-3.6.1.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="/static/js/moment.min.js"></script>
     <script type="text/javascript" src="/static/js/daterangepicker.js"></script>
     <script type="text/javascript" src="/static/js/wlb-common.js"></script>

@@ -15,7 +15,7 @@ const statsTotals = function () {
             scrollX: true,
             columnDefs: [
                 { targets: 0, visible: false, searchable: false },
-                { targets: 1, className: "datatable-bold-column" },
+                { targets: 1, className: "fw-bold" },
                 { targets: [2, 3, 4, 5, 6, 7], width: "13%" },
             ],
             paging: false,

@@ -74,8 +74,8 @@ const statsUtils = function () {
 
         chart.data.datasets = [{
             data: values,
-            backgroundColor: 'rgba(36, 112, 220, 0.7)',
-            borderColor: 'rgba(36, 112, 220, 0.7)',
+            backgroundColor: window.theme.primary,
+            borderColor: window.theme.primary,
             borderWidth: 1
         }]
         chart.update();

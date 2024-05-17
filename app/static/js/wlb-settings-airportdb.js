@@ -1,9 +1,6 @@
 "use strict";
 
 const settingsUtils = function () {
-    const removeButton = '<i class="bi bi-trash" onclick="settingsUtils.removeClassesRow(this);" id="remove_row"></i>';
-    const rowBody = `<tr><td contenteditable="true">CLASS_NAME</td><td contenteditable="true">TYPE_NAME</td><td>${removeButton}</td></tr>`;
-
     let airports_custom = null;
     let airports_db = undefined;
     let airportDBReloaded = false;
@@ -15,11 +12,13 @@ const settingsUtils = function () {
      */
     const showAirportsDB = async () => {
         const airportDBModal = new bootstrap.Modal(document.getElementById('airportDB'), {});
+        await airportDBModal.show();
 
         if (!airports_db) {
             const api = await commonUtils.getApi("AirportStandardData");
             airports_db = $('#airports_db').DataTable({
                 ordering: true,
+                scrollX: true,
                 bLengthChange: false,
                 ajax: api,
                 lengthMenu: [[20], [20]],
@@ -51,8 +50,6 @@ const settingsUtils = function () {
             airports_db.ajax.reload();
             airportDBReloaded = false;
         }
-
-        airportDBModal.show();
     }
 
     const updateAirportsSettings = async () => {
@@ -117,6 +114,7 @@ const settingsUtils = function () {
     const initCustomAirportsTable = async () => {
         airports_custom = $('#airports_custom').DataTable({
             ordering: true,
+            scrollX: true,
             lengthMenu: [[15, 30, -1], [15, 30, "All"]],
             columnDefs: [
                 { targets: [3, 4, 5], className: "dt-body-center" },

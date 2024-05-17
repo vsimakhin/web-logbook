@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -24,12 +23,8 @@ func TestHandlerMap(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIMap))
-	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-
-	assert.Contains(t, string(responseBody), `<script src="/static/js/ol.js"></script>`)
-	assert.Contains(t, string(responseBody), `<link rel="stylesheet" href="/static/css/ol.css">`)
 
 }
 

@@ -64,7 +64,7 @@ func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Reque
 		response.Message = err.Error()
 	} else {
 		response.OK = true
-		response.Message = "Settings have been updated"
+		response.Message = "Settings have been updated. You may refresh the page to see the changes."
 	}
 
 	if app.isAuthEnabled != settings.AuthEnabled && settings.AuthEnabled {

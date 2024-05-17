@@ -1,6 +1,7 @@
 {{ template "base" .}}
 {{ define "title" }}Stats - Totals By Year{{ end }}
 {{ define "header" }}Stats - Totals By Year{{ end }}
+{{ define "css" }}{{ end }}
 {{ define "content" }}
 {{$settings := index .Data "settings"}}
 {{$totalsByYear := index .Data "totalsByYear"}}
@@ -35,7 +36,7 @@
                         <tbody>
                             {{range $key, $value := $totalsByYear}}
                             <tr>
-                                <td><strong>{{$key}}</strong></td>
+                                <td class="fw-bold">{{$key}}</td>
                                 {{if not $settings.HideStatsFields.SE}}<td>{{$value.Time.SE}}</td>{{end}}
                                 {{if not $settings.HideStatsFields.ME}}<td>{{$value.Time.ME}}</td>{{end}}
                                 {{if not $settings.HideStatsFields.MCC}}<td>{{$value.Time.MCC}}</td>{{end}}
