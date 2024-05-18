@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Implemented a new responsive user interface that is friendly for desktop, mobile, and tablet devices. The design is based on the adminkit.io template, and all pages are refactored to ensure a seamless user experience across different platforms. Probably some new bugs are introduced ¯\\_(ツ)_/¯*
 - Update: rename cmd/web directory to app, just internal change.
 - Update: Code optimization. No UI change. Includes:
     - Migrated all javascript code to a js files instead of keeping them in gohtml templates, plus some html code optimization. This significantly reduces amouunt of typo and errors. 
