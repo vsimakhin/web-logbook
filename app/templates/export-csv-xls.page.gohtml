@@ -1,0 +1,56 @@
+{{ template "base" .}}
+{{ define "title" }}Stats - Totals By Aircraft Class{{ end }}
+{{ define "header" }}Stats - Totals By Aircraft Class{{ end }}
+{{ define "content" }}
+{{$settings := index .Data "settings"}}
+<div class="row">
+    <div class="col-12 col-lg-6 mb-2">
+        <div class="card h-100">
+            <div class="card-header p-2">
+                <h5 class="card-title">Export XLS</h5>
+            </div>
+            <div class="card-body pt-1">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="convert_time_xls" name="convert_time_xls"  {{if $settings.ExportXLS.ConvertTime}}checked{{end}}>
+                        <label for="convert_time_xls" class="form-label">Convert time to XLS time format</label>
+                    </div>
+                </div>
+                <hr>
+                <button class="btn btn-outline-secondary" type="button" id="save_xls"><i class="bi bi-save"></i> Save</button>
+                <button class="btn btn-outline-secondary" type="button" id="export_xls"><i class="bi bi-file-earmark-spreadsheet"></i> Export XLS</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 mb-2">
+        <div class="card h-100">
+            <div class="card-header p-2">
+                <h5 class="card-title">Export CSV</h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="crlf_csv" name="crlf_csv"  {{if $settings.ExportCSV.CRLF}}checked{{end}}>
+                        <label for="crlf_csv" class="form-label">Use '\r\n' as the line terminator</label>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="delimeter_csv" class="form-label col-md-8 col-form-label">Field Delimeter (default is ',')</label>
+                        <input type="text" class="form-control" id="delimeter_csv" name="delimeter_csv" value="{{$settings.ExportCSV.Delimeter}}" required="true" autocomplete="off">
+                    </div>
+                </div>
+
+                <hr>
+                <button class="btn btn-outline-secondary" type="button" id="save_csv"><i class="bi bi-save"></i> Save</button>
+                <button class="btn btn-outline-secondary" type="button" id="export_csv"><i class="bi bi-file-text"></i> Export CSV</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
+
+{{ define "js" }}
+<script type="text/javascript" src="/static/js/wlb-export.js"></script>
+{{ end }}

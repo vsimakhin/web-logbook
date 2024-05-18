@@ -1,47 +1,290 @@
 {{ template "base" .}}
-
 {{ define "title" }}Settings{{ end }}
-
 {{ define "header" }}Settings{{ end }}
-
-{{ define "css" }}<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>{{ end }}
-
+{{ define "css" }}{{ end }}
 {{ define "content" }}
 {{$api := .API}}
 {{$settings := index .Data "settings"}}
-{{$records := index .Data "records"}}
-
 <form method="post" name="settings" id="settings" class="d-block" autocomplete="off" novalidate="">
+<div class="row">
+    <div class="col-12 col-lg-6">
+        
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">General settings</h5>
+            </div>
+            <div class="card-body pt-1">
 
-<nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <button class="nav-link active" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-general" type="button" role="tab" aria-controls="nav-general" aria-selected="true">General</button>
-        <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-airports" type="button" role="tab" aria-controls="nav-airports" aria-selected="true">Airports</button>
-        <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-misc" type="button" role="tab" aria-controls="nav-misc" aria-selected="true">Misc</button>
-        <button class="nav-link" id="nav-general-tab" data-bs-toggle="tab" data-bs-target="#nav-sync" type="button" role="tab" aria-controls="nav-sync" aria-selected="true">Sync</button>
-    </div>
-</nav>
+                <div class="row mb-2">
+                    <label for="owner_name" class="form-label col-md-3 col-form-label">Owner Name</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="owner_name" name="owner_name" value="{{$settings.OwnerName}}" autocomplete="off" placeholder="Owner Name">
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="license_number" class="form-label col-md-3 col-form-label">License Number</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="license_number" name="license_number" value="{{$settings.LicenseNumber}}" autocomplete="off" placeholder="License Number">
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="address" class="form-label col-md-3 col-form-label">Address</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="address" name="address" value="{{$settings.Address}}" autocomplete="off" placeholder="Address">
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="signature_text" class="form-label col-md-3 col-form-label">Signature text</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="signature_text" name="signature_text" value="{{$settings.SignatureText}}" autocomplete="off" placeholder="Signature text">
+                    </div>
+                </div>
 
-<div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
-        <br>{{block "settings-general" .}}{{end}}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Logbook signature</h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <input type=file  id="signature_file" name="signature_file" hidden accept="image/png">
+                <div class="row border border-secondary-subtle mb-2">
+                    <canvas id="signature-pad" width="100%" height="150"></canvas>
+                </div>
+
+                <div class="row mb-2 gap-1">
+                    <button class="col-md-3 btn btn-outline-secondary" type="button" id="upload_signature"><i class="bi bi-cloud-arrow-up"></i> Upload</button>
+                    <button class="col-md-3 btn btn-outline-secondary" type="button" id="clear_signature"><i class="bi bi-arrow-counterclockwise"></i> Clear</button>
+                    <button class="col-md-3 btn btn-outline-secondary" type="button" id="pick_color"><i class="bi bi-brush"></i> Color</button>
+
+                    <input type="color" id="signature_color" name="signature_color" hidden>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Authentication</h5>
+            </div>
+            <div class="card-body pt-1">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="auth_enabled" name="auth_enabled" {{if $settings.AuthEnabled}}checked{{end}}>
+                        <input type="hidden" id="previous_auth_value" value="{{$settings.AuthEnabled}}"/>
+                        <label for="auth_enabled" class="form-label">Enable authentication</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="login" class="form-label col-form-label">Login</label>
+                        <input class="form-control" id="login" name="login" type="login" value="{{$settings.Login}}" autocomplete="off" placeholder="Login Name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="password" class="form-label col-form-label">Password</label>
+                        <input class="form-control" id="password" name="password" type="password" autocomplete="off" placeholder="Password">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Misc</h5>
+            </div>
+            <div class="card-body pt-1">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Color scheme</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="color_scheme_radio" id="color_scheme_radio1" value="0" {{if eq $settings.ColorScheme 0}}checked{{end}}>
+                            <label class="form-check-label" for="color_scheme_radio1">Default</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="color_scheme_radio" id="color_scheme_radio2" value="1" {{if eq $settings.ColorScheme 1}}checked{{end}}>
+                            <label class="form-check-label" for="color_scheme_radio2">Dark</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="color_scheme_radio" id="color_scheme_radio3" value="2" {{if eq $settings.ColorScheme 2}}checked{{end}}>
+                            <label class="form-check-label" for="color_scheme_radio3">Light</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Sidebar layout</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sidebar_layout_radio" id="sidebar_layout_radio1" value="0" {{if eq $settings.SidebarLayout 0}}checked{{end}}>
+                            <label class="form-check-label" for="sidebar_layout_radio1">Default</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sidebar_layout_radio" id="sidebar_layout_radio2" value="1" {{if eq $settings.SidebarLayout 1}}checked{{end}}>
+                            <label class="form-check-label" for="sidebar_layout_radio2">Compact</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="disable_flightrecord_help" name="disable_flightrecord_help" {{if $settings.DisableFlightRecordHelp}}checked{{end}}>
+                        <label for="disable_flightrecord_help" class="form-label">Disable help messages on the flight record page</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="disable_license_warning" name="disable_license_warning" {{if $settings.DisableLicenseWarning}}checked{{end}}>
+                        <label for="disable_license_warning" class="form-label">Disable license warning badge on the navbar</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Time fields autoformat</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio" id="time_field_format_radio1" value="0" {{if eq $settings.TimeFieldsAutoFormat 0}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio1">None</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio" id="time_field_format_radio2" value="1" {{if eq $settings.TimeFieldsAutoFormat 1}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio2">HH:MM</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio" id="time_field_format_radio3" value="2" {{if eq $settings.TimeFieldsAutoFormat 2}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio3">H:MM</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="tab-pane fade" id="nav-airports" role="tabpanel" aria-labelledby="nav-airports-tab">
-        <br>{{block "settings-airports" .}}{{end}}
+    <div class="col-12 col-lg-6">
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Aircraft Classes/Groups</h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <table id="aircraft_class" class="table-editable table table-bordered table-responsive-md table-striped">
+                    <thead>
+                        <tr>
+                            <th>Class Name</th>
+                            <th>Aircraft Types</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button class="btn btn-outline-secondary" type="button" id="add_row"><i class="bi bi-plus-square"></i> Add New Row</button>
+                <div id="without_classes"></div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Hide fields for Stats</h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_se" name="hide_se" {{if $settings.HideStatsFields.SE}}checked{{end}}>
+                        <label for="hide_se" class="form-label">Single Engine</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_me" name="hide_me" {{if $settings.HideStatsFields.ME}}checked{{end}}>
+                        <label for="hide_me" class="form-label">Multi Engine</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_mcc" name="hide_mcc" {{if $settings.HideStatsFields.MCC}}checked{{end}}>
+                        <label for="hide_mcc" class="form-label">MCC</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_night" name="hide_night" {{if $settings.HideStatsFields.Night}}checked{{end}}>
+                        <label for="hide_night" class="form-label">Night</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_ifr" name="hide_ifr" {{if $settings.HideStatsFields.IFR}}checked{{end}}>
+                        <label for="hide_ifr" class="form-label">IFR</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_pic" name="hide_pic" {{if $settings.HideStatsFields.PIC}}checked{{end}}>
+                        <label for="hide_pic" class="form-label">PIC</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_copilot" name="hide_copilot" {{if $settings.HideStatsFields.CoPilot}}checked{{end}}>
+                        <label for="hide_copilot" class="form-label">CoPilot</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_dual" name="hide_dual" {{if $settings.HideStatsFields.Dual}}checked{{end}}>
+                        <label for="hide_dual" class="form-label">Dual</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_instructor" name="hide_instructor" {{if $settings.HideStatsFields.Instructor}}checked{{end}}>
+                        <label for="hide_instructor" class="form-label">Instructor</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_sim" name="hide_sim" {{if $settings.HideStatsFields.Sim}}checked{{end}}>
+                        <label for="hide_sim" class="form-label">Simulator</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_cc" name="hide_cc" {{if $settings.HideStatsFields.CrossCountry}}checked{{end}}>
+                        <label for="hide_cc" class="form-label">Cross Country</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_landings" name="hide_landings" {{if $settings.HideStatsFields.Landings}}checked{{end}}>
+                        <label for="hide_landings" class="form-label">Landings</label>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="checkbox" class="form-check-input" id="hide_distance" name="hide_distance" {{if $settings.HideStatsFields.Distance}}checked{{end}}>
+                        <label for="hide_distance" class="form-label">Distance</label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Interface settings</h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <div class="row mb-1">
+                    <label for="logbook_rows" class="col-sm-10 col-form-label">Logbook table rows</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" id="logbook_rows" name="logbook_rows" value="{{if not $settings.LogbookRows}}15{{else}}{{$settings.LogbookRows}}{{end}}" min="10">
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <label for="logbook_font" class="col-sm-10 col-form-label">Logbook table font size (%)</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" id="logbook_font" name="logbook_font" value="{{if not $settings.LogbookFontSize}}100{{else}}{{$settings.LogbookFontSize}}{{end}}" min="50" max="100">
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <label for="licensing_rows" class="col-sm-10 col-form-label">Licensing table rows</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" id="licensing_rows" name="licensing_rows" value="{{if not $settings.LicensingRows}}15{{else}}{{$settings.LicensingRows}}{{end}}" min="10">
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <label for="stats_font" class="col-sm-10 col-form-label">Stats tables font size (%)</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" id="stats_font" name="stats_font" value="{{if not $settings.StatsFontSize}}100{{else}}{{$settings.StatsFontSize}}{{end}}" min="50" max="100">
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <label for="datepicker_week" class="col-sm-9 col-form-label">Date range picker week starts on</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="datepicker_week" name="datepicker_week" value="{{if not $settings.DateRangePickerWeek}}0{{else}}{{$settings.DateRangePickerWeek}}{{end}}">
+                            <option value="0" {{if not $settings.DateRangePickerWeek}}selected{{else}}{{if eq $settings.DateRangePickerWeek "0"}}selected{{end}}{{end}}>Sunday</option>
+                            <option value="1" {{if eq $settings.DateRangePickerWeek "1"}}selected{{end}}>Monday</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <div class="tab-pane fade" id="nav-misc" role="tabpanel" aria-labelledby="nav-misc-tab">
-        <br>{{block "settings-misc" .}}{{end}}
-    </div>
-
-    <div class="tab-pane fade" id="nav-sync" role="tabpanel" aria-labelledby="nav-sync-tab">
-        <br>{{block "settings-sync" .}}{{end}}
-    </div>
 </div>
 
+<input class="form-check-input d-none" type="checkbox" id="no_icao_filter" {{if $settings.NoICAOFilter}}checked{{end}}>
+<input type="hidden" name="airports_db_source" id="airports_db_source" value="{{$settings.AirportDBSource}}">
 <hr>
-<button class="btn btn-sm btn-outline-secondary" type="button" id="btn_save_settings"><i class="bi bi-save-fill"></i> Save</button>
+<button class="btn btn-outline-secondary" type="button" id="btn_save_settings"><i class="bi bi-save"></i> Save</button>
 
 </form>
 {{ end }}

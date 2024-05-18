@@ -426,7 +426,7 @@ const flightRecordUtils = function () {
                 rows = rows +
                     `<tr>
                         <td><a href="${logbookAttachmentsDownloadAPI}${data[x]["uuid"]}" target="_blank">${data[x]["document_name"]}</a></td>
-                        <td id="ask_${data[x]["uuid"]}"><a class="btn btn-sm" onclick="flightRecordUtils.askForDeleteAttachment('${data[x]["uuid"]}');"><i class="bi bi-file-x-fill"></i> Delete</a></td>
+                        <td id="ask_${data[x]["uuid"]}"><a class="btn" onclick="flightRecordUtils.askForDeleteAttachment('${data[x]["uuid"]}');"><i class="bi bi-file-x-fill"></i> Delete</a></td>
                     </tr>`;
             }
             tbody.innerHTML = rows;
@@ -443,7 +443,7 @@ const flightRecordUtils = function () {
      */
     const askForDeleteAttachment = (uuid) => {
         let tdbody = document.getElementById("ask_" + uuid);
-        tdbody.innerHTML = `<button id="delete_attachment_${uuid}" class="btn btn-sm btn-outline-danger" onclick="flightRecordUtils.deleteAttachment('${uuid}')"><i class="bi bi-check-square-fill"></i> Confirm</button>`;
+        tdbody.innerHTML = `<button id="delete_attachment_${uuid}" class="btn btn-outline-danger" onclick="flightRecordUtils.deleteAttachment('${uuid}')"><i class="bi bi-check-square-fill"></i> Confirm</button>`;
     };
 
     /**

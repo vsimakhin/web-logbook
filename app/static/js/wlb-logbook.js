@@ -6,13 +6,16 @@ const logbookUtils = function () {
 
     // inits the main table
     const initLogbookTable = async () => {
-        const remarksL = Math.round((document.documentElement.clientWidth - 1500) / 10);
+        const remarksL = Math.round((document.documentElement.clientWidth - 1700) / 10);
         const lengthMenu = await commonUtils.getPreferences("logbook_rows") || 15;
         const url = await commonUtils.getApi("LogbookData");
         const logbookAPI = await commonUtils.getApi("Logbook");
         const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
 
         const table = $('#logbook').DataTable({
+            responsive: {
+                details: false,
+            },
             bAutoWidth: false,
             ordering: false,
             ajax: {
@@ -47,6 +50,15 @@ const logbookUtils = function () {
                     }
                 }
             ],
+            layout: {
+                topStart: function () {
+                    // daterange field
+                    let toolbar = document.createElement('div');
+                    toolbar.innerHTML = '<input class="form-control form-control-sm" type="text" id="daterange" name="daterange" value="Date filters...">';
+
+                    return toolbar;
+                }
+            },
             rowCallback: function (row, data, index) {
                 $("td:eq(0)", row).html(`<a href="${logbookAPI}/${data[0]}" class="link-primary">${data[1]}</a>`);
             },
@@ -63,6 +75,8 @@ const logbookUtils = function () {
                 };
 
                 const calculateTotals = function (id, time = true) {
+                    if (!api.column(id).visible()) { return; }
+
                     // Total over all pages
                     const total = api
                         .column(id, { search: 'applied' })
@@ -75,11 +89,11 @@ const logbookUtils = function () {
 
                     // Update footer
                     if (time) {
-                        $('#logbook tfoot tr').eq(0).find('th').eq(id - offset).html(commonUtils.convertNumberToTime(pageTotal));
-                        $('#logbook tfoot tr').eq(1).find('th').eq(id - offset).html(commonUtils.convertNumberToTime(total));
+                        $(`#s${id}`).html(commonUtils.convertNumberToTime(pageTotal));
+                        $(`#t${id}`).html(commonUtils.convertNumberToTime(total));
                     } else {
-                        $('#logbook tfoot tr').eq(0).find('th').eq(id - offset).html(pageTotal);
-                        $('#logbook tfoot tr').eq(1).find('th').eq(id - offset).html(total);
+                        $(`#s${id}`).html(pageTotal);
+                        $(`#t${id}`).html(total);
                     }
                 }
 
@@ -98,11 +112,6 @@ const logbookUtils = function () {
                 calculateTotals(22); // sim
             },
             initComplete: function () {
-                // daterange field
-                $('.dataTables_filter').each(function () {
-                    $(this).append('<input class="form-control form-control-sm" type="text" id="daterange" name="daterange" value="Date filters...">');
-                });
-
                 // daterange logic
                 $('input[name="daterange"]').daterangepicker({
                     opens: 'left',
@@ -141,6 +150,29 @@ const logbookUtils = function () {
                 });
             }
         });
+
+        /**
+         * Adjusts the visibility of columns in a table based on the width of a card element.
+         */
+        const adjustColumnVisibility = () => {
+            const cardWidth = document.getElementById('logbook_card').clientWidth;
+
+            if (cardWidth >= 1500) {
+                table.columns([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]).visible(true);
+            } else if (cardWidth >= 1000 && cardWidth < 1500) {
+                table.columns([1, 2, 3, 4, 5, 6, 7, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22]).visible(true);
+                table.columns([8, 9, 10, 13, 14, 23]).visible(false);
+            } else if (cardWidth >= 770 && cardWidth < 1000) {
+                table.columns([1, 2, 3, 4, 5, 6, 7, 11, 12, 21, 22]).visible(true);
+                table.columns([8, 9, 10, 13, 14, 15, 16, 17, 18, 19, 20, 23]).visible(false);
+            } else {
+                table.columns([1, 2, 3, 4, 5, 11]).visible(true);
+                table.columns([6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]).visible(false);
+            }
+        }
+
+        $(window).resize(adjustColumnVisibility);
+        adjustColumnVisibility();
 
         // Custom filtering function for datatables
         $.fn.dataTable.ext.search.push(

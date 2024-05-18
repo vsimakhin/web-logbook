@@ -12,27 +12,6 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-func TestHandlerExport(t *testing.T) {
-
-	app, mock := initTestApplication()
-
-	models.InitMock(mock, "GetSettings")
-
-	srv := httptest.NewServer(app.routes())
-	defer srv.Close()
-
-	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APIExport))
-	responseBody, _ := io.ReadAll(resp.Body)
-
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-
-	assert.Contains(t, string(responseBody), `PDF A4`)
-	assert.Contains(t, string(responseBody), `PDF A5`)
-	assert.Contains(t, string(responseBody), `XLS`)
-	assert.Contains(t, string(responseBody), `CSV`)
-
-}
-
 func TestHandlerExportLogbook(t *testing.T) {
 
 	app, mock := initTestApplication()

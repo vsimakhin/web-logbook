@@ -33,7 +33,13 @@ func getClassesForModel(classes map[string]string, model string) []string {
 	var ac []string
 
 	for key, element := range classes {
-		if slices.Contains(strings.Split(element, ","), model) {
+		elements := strings.Split(element, ",")
+		// trim each element in slice to remove spaces
+		for i, v := range elements {
+			elements[i] = strings.TrimSpace(v)
+		}
+
+		if slices.Contains(elements, model) {
 			ac = append(ac, key)
 		}
 	}

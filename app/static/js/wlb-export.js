@@ -97,6 +97,10 @@ const exportUtils = function () {
         modal.show();
     }
 
+    const getHeaderValue = (id) => {
+        return document.getElementById(id).value.replace(/(\r\n|\n|\r)/gm, " ");
+    }
+
     /**
      * Saves A4 format settings.
      */
@@ -149,37 +153,37 @@ const exportUtils = function () {
                     col23: parseFloat(document.getElementById("col23_a4").value)
                 },
                 headers: {
-                    date: document.getElementById("header_date_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    departure: document.getElementById("header_departure_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    arrival: document.getElementById("header_arrival_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    aircraft: document.getElementById("header_aircraft_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    spt: document.getElementById("header_spt_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    mcc: document.getElementById("header_mcc_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    total: document.getElementById("header_total_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    pic_name: document.getElementById("header_pic_name_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    landings: document.getElementById("header_landings_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    oct: document.getElementById("header_oct_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    pft: document.getElementById("header_pft_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    fstd: document.getElementById("header_fstd_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    remarks: document.getElementById("header_remarks_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    dep_place: document.getElementById("header_dep_place_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    dep_time: document.getElementById("header_dep_time_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    arr_place: document.getElementById("header_arr_place_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    arr_time: document.getElementById("header_arr_time_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    model: document.getElementById("header_model_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    reg: document.getElementById("header_reg_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    se: document.getElementById("header_se_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    me: document.getElementById("header_me_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    land_day: document.getElementById("header_land_day_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    land_night: document.getElementById("header_land_night_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    night: document.getElementById("header_night_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    ifr: document.getElementById("header_ifr_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    pic: document.getElementById("header_pic_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    cop: document.getElementById("header_cop_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    dual: document.getElementById("header_dual_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    instr: document.getElementById("header_instr_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    sim_type: document.getElementById("header_sim_type_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    sim_time: document.getElementById("header_sim_time_a4").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    date: getHeaderValue("header_date_a4"),
+                    departure: getHeaderValue("header_departure_a4"),
+                    arrival: getHeaderValue("header_arrival_a4"),
+                    aircraft: getHeaderValue("header_aircraft_a4"),
+                    spt: getHeaderValue("header_spt_a4"),
+                    mcc: getHeaderValue("header_mcc_a4"),
+                    total: getHeaderValue("header_total_a4"),
+                    pic_name: getHeaderValue("header_pic_name_a4"),
+                    landings: getHeaderValue("header_landings_a4"),
+                    oct: getHeaderValue("header_oct_a4"),
+                    pft: getHeaderValue("header_pft_a4"),
+                    fstd: getHeaderValue("header_fstd_a4"),
+                    remarks: getHeaderValue("header_remarks_a4"),
+                    dep_place: getHeaderValue("header_dep_place_a4"),
+                    dep_time: getHeaderValue("header_dep_time_a4"),
+                    arr_place: getHeaderValue("header_arr_place_a4"),
+                    arr_time: getHeaderValue("header_arr_time_a4"),
+                    model: getHeaderValue("header_model_a4"),
+                    reg: getHeaderValue("header_reg_a4"),
+                    se: getHeaderValue("header_se_a4"),
+                    me: getHeaderValue("header_me_a4"),
+                    land_day: getHeaderValue("header_land_day_a4"),
+                    land_night: getHeaderValue("header_land_night_a4"),
+                    night: getHeaderValue("header_night_a4"),
+                    ifr: getHeaderValue("header_ifr_a4"),
+                    pic: getHeaderValue("header_pic_a4"),
+                    cop: getHeaderValue("header_cop_a4"),
+                    dual: getHeaderValue("header_dual_a4"),
+                    instr: getHeaderValue("header_instr_a4"),
+                    sim_type: getHeaderValue("header_sim_type_a4"),
+                    sim_time: getHeaderValue("header_sim_time_a4"),
                 }
             }
         };
@@ -251,37 +255,37 @@ const exportUtils = function () {
                     col23: parseFloat(document.getElementById("col23_a5").value)
                 },
                 headers: {
-                    date: document.getElementById("header_date_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    departure: document.getElementById("header_departure_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    arrival: document.getElementById("header_arrival_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    aircraft: document.getElementById("header_aircraft_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    spt: document.getElementById("header_spt_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    mcc: document.getElementById("header_mcc_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    total: document.getElementById("header_total_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    pic_name: document.getElementById("header_pic_name_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    landings: document.getElementById("header_landings_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    oct: document.getElementById("header_oct_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    pft: document.getElementById("header_pft_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    fstd: document.getElementById("header_fstd_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    remarks: document.getElementById("header_remarks_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    dep_place: document.getElementById("header_dep_place_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    dep_time: document.getElementById("header_dep_time_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    arr_place: document.getElementById("header_arr_place_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    arr_time: document.getElementById("header_arr_time_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    model: document.getElementById("header_model_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    reg: document.getElementById("header_reg_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    se: document.getElementById("header_se_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    me: document.getElementById("header_me_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    land_day: document.getElementById("header_land_day_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    land_night: document.getElementById("header_land_night_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    night: document.getElementById("header_night_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    ifr: document.getElementById("header_ifr_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    pic: document.getElementById("header_pic_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    cop: document.getElementById("header_cop_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    dual: document.getElementById("header_dual_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    instr: document.getElementById("header_instr_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    sim_type: document.getElementById("header_sim_type_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
-                    sim_time: document.getElementById("header_sim_time_a5").innerText.replace(/(\r\n|\n|\r)/gm, " "),
+                    date: getHeaderValue("header_date_a5"),
+                    departure: getHeaderValue("header_departure_a5"),
+                    arrival: getHeaderValue("header_arrival_a5"),
+                    aircraft: getHeaderValue("header_aircraft_a5"),
+                    spt: getHeaderValue("header_spt_a5"),
+                    mcc: getHeaderValue("header_mcc_a5"),
+                    total: getHeaderValue("header_total_a5"),
+                    pic_name: getHeaderValue("header_pic_name_a5"),
+                    landings: getHeaderValue("header_landings_a5"),
+                    oct: getHeaderValue("header_oct_a5"),
+                    pft: getHeaderValue("header_pft_a5"),
+                    fstd: getHeaderValue("header_fstd_a5"),
+                    remarks: getHeaderValue("header_remarks_a5"),
+                    dep_place: getHeaderValue("header_dep_place_a5"),
+                    dep_time: getHeaderValue("header_dep_time_a5"),
+                    arr_place: getHeaderValue("header_arr_place_a5"),
+                    arr_time: getHeaderValue("header_arr_time_a5"),
+                    model: getHeaderValue("header_model_a5"),
+                    reg: getHeaderValue("header_reg_a5"),
+                    se: getHeaderValue("header_se_a5"),
+                    me: getHeaderValue("header_me_a5"),
+                    land_day: getHeaderValue("header_land_day_a5"),
+                    land_night: getHeaderValue("header_land_night_a5"),
+                    night: getHeaderValue("header_night_a5"),
+                    ifr: getHeaderValue("header_ifr_a5"),
+                    pic: getHeaderValue("header_pic_a5"),
+                    cop: getHeaderValue("header_cop_a5"),
+                    dual: getHeaderValue("header_dual_a5"),
+                    instr: getHeaderValue("header_instr_a5"),
+                    sim_type: getHeaderValue("header_sim_type_a5"),
+                    sim_time: getHeaderValue("header_sim_time_a5"),
                 }
             }
         };
@@ -417,29 +421,37 @@ const exportUtils = function () {
      * Assigns event listeners to various elements in the document.
      */
     const assignEventListeners = () => {
-        document.getElementById("show_custom_title_modal_a4").addEventListener("click", () => { showCustomTitleModal("A4"); });
-        document.getElementById("save_a4").addEventListener("click", saveExportA4);
-        document.getElementById("modal_save_a4").addEventListener("click", saveExportA4);
-        document.getElementById("modal_delete_custom_a4").addEventListener("click", () => { deleteCustomTitle("A4"); });
-        document.getElementById("export_a4").addEventListener("click", runExportA4);
-        document.getElementById("restore_defaults_a4_common").addEventListener("click", () => { restoreDefaults("a4common"); });
-        document.getElementById("restore_defaults_a4_headers").addEventListener("click", () => { restoreDefaults("a4headers"); });
-        document.getElementById("restore_defaults_a4_columns").addEventListener("click", () => { restoreDefaults("a4columns"); });
+        if (document.getElementById("export_a4")) {
+            document.getElementById("show_custom_title_modal_a4").addEventListener("click", () => { showCustomTitleModal("A4"); });
+            document.getElementById("save_a4").addEventListener("click", saveExportA4);
+            document.getElementById("modal_save_a4").addEventListener("click", saveExportA4);
+            document.getElementById("modal_delete_custom_a4").addEventListener("click", () => { deleteCustomTitle("A4"); });
+            document.getElementById("export_a4").addEventListener("click", runExportA4);
+            document.getElementById("restore_defaults_a4_common").addEventListener("click", () => { restoreDefaults("a4common"); });
+            document.getElementById("restore_defaults_a4_headers").addEventListener("click", () => { restoreDefaults("a4headers"); });
+            document.getElementById("restore_defaults_a4_columns").addEventListener("click", () => { restoreDefaults("a4columns"); });
+        }
 
-        document.getElementById("show_custom_title_modal_a5").addEventListener("click", () => { showCustomTitleModal("A5"); });
-        document.getElementById("save_a5").addEventListener("click", saveExportA5);
-        document.getElementById("modal_save_a5").addEventListener("click", saveExportA5);
-        document.getElementById("modal_delete_custom_a5").addEventListener("click", () => { deleteCustomTitle("A5"); });
-        document.getElementById("export_a5").addEventListener("click", runExportA5);
-        document.getElementById("restore_defaults_a5_common").addEventListener("click", () => { restoreDefaults("a5common"); });
-        document.getElementById("restore_defaults_a5_headers").addEventListener("click", () => { restoreDefaults("a5headers"); });
-        document.getElementById("restore_defaults_a5_columns").addEventListener("click", () => { restoreDefaults("a5columns"); });
+        if (document.getElementById("export_a5")) {
+            document.getElementById("show_custom_title_modal_a5").addEventListener("click", () => { showCustomTitleModal("A5"); });
+            document.getElementById("save_a5").addEventListener("click", saveExportA5);
+            document.getElementById("modal_save_a5").addEventListener("click", saveExportA5);
+            document.getElementById("modal_delete_custom_a5").addEventListener("click", () => { deleteCustomTitle("A5"); });
+            document.getElementById("export_a5").addEventListener("click", runExportA5);
+            document.getElementById("restore_defaults_a5_common").addEventListener("click", () => { restoreDefaults("a5common"); });
+            document.getElementById("restore_defaults_a5_headers").addEventListener("click", () => { restoreDefaults("a5headers"); });
+            document.getElementById("restore_defaults_a5_columns").addEventListener("click", () => { restoreDefaults("a5columns"); });
+        }
 
-        document.getElementById("save_csv").addEventListener("click", saveExportCSV);
-        document.getElementById("export_csv").addEventListener("click", runExportCSV);
+        if (document.getElementById("export_csv")) {
+            document.getElementById("save_csv").addEventListener("click", saveExportCSV);
+            document.getElementById("export_csv").addEventListener("click", runExportCSV);
+        }
 
-        document.getElementById("save_xls").addEventListener("click", saveExportXLS);
-        document.getElementById("export_xls").addEventListener("click", runExportXLS);
+        if (document.getElementById("export_xls")) {
+            document.getElementById("save_xls").addEventListener("click", saveExportXLS);
+            document.getElementById("export_xls").addEventListener("click", runExportXLS);
+        }
     }
 
     /**

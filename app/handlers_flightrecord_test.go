@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -24,12 +23,8 @@ func TestHandlerFlightRecordNew(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILogbookNew))
-	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-
-	assert.Contains(t, string(responseBody), `<link rel="stylesheet" href="/static/css/ol.css">`)
-	assert.Contains(t, string(responseBody), `<script src="/static/js/ol.js"></script>`)
 
 }
 
@@ -46,11 +41,7 @@ func TestHandlerFlightRecordByID(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, strings.ReplaceAll(APILogbookUUID, "{uuid}", "uuid")))
-	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-
-	assert.Contains(t, string(responseBody), `<link rel="stylesheet" href="/static/css/ol.css">`)
-	assert.Contains(t, string(responseBody), `<script src="/static/js/ol.js"></script>`)
 
 }

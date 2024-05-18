@@ -20,6 +20,9 @@ const (
 	APILogbookDelete                  = "/logbook/delete"
 	APILogbookNight                   = "/logbook/night"
 	APIExport                         = "/export"
+	APIExportPDFA4Page                = "/export-pdf-a4"
+	APIExportPDFA5Page                = "/export-pdf-a5"
+	APIExportCSVXLSPage               = "/export-csv-xls"
 	APIExportFormat                   = "/export/{format}"
 	APIExportRestoreDefaults          = "/export/restore"
 	APIImport                         = "/import"
@@ -42,6 +45,7 @@ const (
 	APILicensingDownload              = "/licensing/download/"
 	APILicensingDownloadUUID          = APILicensingDownload + "{uuid}"
 	APISettings                       = "/settings"
+	APISettingsAirportDB              = "/settings-airportdb"
 	APISettingsAircraftClasses        = "/settings/classes"
 	APIAirport                        = "/airport/"
 	APIAirportID                      = "/airport/{id}"
@@ -52,11 +56,15 @@ const (
 	APIAirportDeleteCustom            = "/airport/custom/delete"
 	APIMap                            = "/map"
 	APIMapData                        = "/map/data"
-	APIStats                          = "/stats"
-	APIStatsTotals                    = "/stats/totals"
-	APIStatsTotalsByType              = "/stats/totals-by-type"
-	APIStatsTotalsByClass             = "/stats/totals-by-class"
-	APIStatsLimits                    = "/stats/limits"
+	APIStatsTotals                    = "/stats/data/totals"
+	APIStatsTotalsByType              = "/stats/data/totals-by-type"
+	APIStatsTotalsByClass             = "/stats/data/totals-by-class"
+	APIStatsLimits                    = "/stats/data/limits"
+	APIStatsTotalsPage                = "/stats-totals"
+	APIStatsTotalsByYearPage          = "/stats-totals-by-year"
+	APIStatsTotalsByTypePage          = "/stats-totals-by-type"
+	APIStatsTotalsByClassPage         = "/stats-totals-by-class"
+	APIStatsLimitsPage                = "/stats-limits"
 	APILogin                          = "/login"
 	APILogout                         = "/logout"
 	APISyncAirports                   = "/sync/airports"
@@ -86,6 +94,9 @@ var apiMap = map[string]string{
 	"LogbookAttachmentsDownload":     APILogbookAttachmentsDownload,
 	"LogbookAttachmentsDownloadUUID": APILogbookAttachmentsDownloadUUID,
 	"Export":                         APIExport,
+	"ExportPDFA4Page":                APIExportPDFA4Page,
+	"ExportPDFA5Page":                APIExportPDFA5Page,
+	"ExportCSVXLSPage":               APIExportCSVXLSPage,
 	"ExportFormat":                   APIExportFormat,
 	"ExportRestoreDefaults":          APIExportRestoreDefaults,
 	"Import":                         APIImport,
@@ -99,12 +110,17 @@ var apiMap = map[string]string{
 	"AirportAddCustom":               APIAirportAddCustom,
 	"AirportDeleteCustom":            APIAirportDeleteCustom,
 	"Settings":                       APISettings,
+	"SettingsAirportDB":              APISettingsAirportDB,
 	"SettingsAircraftClasses":        APISettingsAircraftClasses,
-	"Stats":                          APIStats,
 	"StatsTotals":                    APIStatsTotals,
 	"StatsTotalsByType":              APIStatsTotalsByType,
 	"StatsTotalsByClass":             APIStatsTotalsByClass,
 	"StatsLimits":                    APIStatsLimits,
+	"StatsTotalsPage":                APIStatsTotalsPage,
+	"StatsTotalsByYearPage":          APIStatsTotalsByYearPage,
+	"StatsTotalsByTypePage":          APIStatsTotalsByTypePage,
+	"StatsTotalsByClassPage":         APIStatsTotalsByClassPage,
+	"StatsLimitsPage":                APIStatsLimitsPage,
 	"Map":                            APIMap,
 	"MapData":                        APIMapData,
 	"Licensing":                      APILicensing,
@@ -156,7 +172,10 @@ func (app *application) routes() *chi.Mux {
 		server.Get(APILogbookAttachmentsDownloadUUID, app.HandlerAttachmentDownload)
 
 		// export
-		server.Get(APIExport, app.HandlerExport)
+		server.Get(APIExportPDFA4Page, app.HandlerExportPDFA4Page)
+		server.Get(APIExportPDFA5Page, app.HandlerExportPDFA5Page)
+		server.Get(APIExportCSVXLSPage, app.HandlerExportCSVXLSPage)
+
 		server.Get(APIExportFormat, app.HandlerExportLogbook)
 		server.Post(APIExportFormat, app.HandlerExportSettingsSave)
 		server.Post(APIExportRestoreDefaults, app.HandlerExportRestoreDefaults)
@@ -182,13 +201,20 @@ func (app *application) routes() *chi.Mux {
 		// settings
 		server.Get(APISettings, app.HandlerSettings)
 		server.Post(APISettings, app.HandlerSettingsSave)
+		server.Get(APISettingsAirportDB, app.HandlerSettingsAirportDB)
+		server.Post(APISettingsAirportDB, app.HandlerSettingsAirportDBSave)
 
 		// stats
-		server.Get(APIStats, app.HandlerStats)
 		server.Get(APIStatsTotals, app.HandlerStatsTotals)
 		server.Get(APIStatsTotalsByType, app.HandlerStatsTotalsByType)
 		server.Get(APIStatsTotalsByClass, app.HandlerStatsTotalsByClass)
 		server.Get(APIStatsLimits, app.HandlerStatsLimits)
+
+		server.Get(APIStatsTotalsPage, app.HandlerStatsTotalsPage)
+		server.Get(APIStatsTotalsByYearPage, app.HandlerStatsTotalsByYearPage)
+		server.Get(APIStatsTotalsByTypePage, app.HandlerStatsTotalsByTypePage)
+		server.Get(APIStatsTotalsByClassPage, app.HandlerStatsTotalsByClassPage)
+		server.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)
 
 		// map
 		server.Get(APIMap, app.HandlerMap)

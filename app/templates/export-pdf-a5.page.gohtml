@@ -1,0 +1,444 @@
+{{ template "base" .}}
+{{ define "title" }}Export - PDF A5{{ end }}
+{{ define "header" }}Export - PDF A5{{ end }}
+{{ define "css" }}{{ end }}
+{{ define "content" }}
+{{$settings := index .Data "settings"}}
+<div class="row">
+    <div class="col-12 col-lg-6">
+        
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Page Settings
+                    <a id="restore_defaults_a5_common" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore page defaults"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label for="logbook_rows_a5" class="form-label col-form-label">Logbook Rows</label>
+                        <input type="text" class="form-control" id="logbook_rows_a5" name="logbook_rows_a5" value="{{$settings.ExportA5.LogbookRows}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="fill_a5" class="form-label col-form-label">Fill Row</label>
+                        <input type="text" class="form-control" id="fill_a5" name="fill_a5" value="{{$settings.ExportA5.Fill}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="left_margin_a5" class="form-label col-form-label">Left Margin (left page)</label>
+                        <input type="text" class="form-control" id="left_margin_a_a5" name="left_margin_a_a5" value="{{$settings.ExportA5.LeftMarginA}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="top_margin_a5" class="form-label col-form-label">Lef Margin (right page)</label>
+                        <input type="text" class="form-control" id="left_margin_b_a5" name="left_margin_b_a5" value="{{$settings.ExportA5.LeftMarginB}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="top_margin_a5" class="form-label col-form-label">Top Margin</label>
+                        <input type="text" class="form-control" id="top_margin_a5" name="top_margin_a5" value="{{$settings.ExportA5.TopMargin}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="row_height_a5" class="form-label col-form-label">Row Height</label>
+                        <input type="text" class="form-control" id="row_height_a5" name="row_height_a5" value="{{$settings.ExportA5.BodyRow}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="footer_height_a5" class="form-label col-form-label">Footer Row Height</label>
+                        <input type="text" class="form-control" id="footer_height_a5" name="footer_height_a5" value="{{$settings.ExportA5.FooterRow}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2-2">
+                        <label for="page_breaks_a5" class="form-label col-form-label">Page Breaks</label>
+                        <input type="text" class="form-control" id="page_breaks_a5" name="page_breaks_a5" value="{{$settings.ExportA5.PageBreaks}}" required="true" autocomplete="off" placeholder="X,Y...,Z">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Logbook Columns Width
+                    <a id="restore_defaults_a5_columns" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore colums defaults"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label for="col1_a5" class="form-label col-form-label">Date</label>
+                        <input type="text" class="form-control" id="col1_a5" name="col1_a5" value="{{$settings.ExportA5.Columns.Col1}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col2_a5" class="form-label col-form-label">Departure Place</label>
+                        <input type="text" class="form-control" id="col2_a5" name="col2_a5" value="{{$settings.ExportA5.Columns.Col2}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col3_a5" class="form-label col-form-label">Departure Time</label>
+                        <input type="text" class="form-control" id="col3_a5" name="col3_a5" value="{{$settings.ExportA5.Columns.Col3}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col4_a5" class="form-label col-form-label">Arrival Place</label>
+                        <input type="text" class="form-control" id="col4_a5" name="col4_a5" value="{{$settings.ExportA5.Columns.Col4}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col5_a5" class="form-label col-form-label">Arrival Time</label>
+                        <input type="text" class="form-control" id="col5_a5" name="col5_a5" value="{{$settings.ExportA5.Columns.Col5}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col6_a5" class="form-label col-form-label">Aircraft Type</label>
+                        <input type="text" class="form-control" id="col6_a5" name="col6_a5" value="{{$settings.ExportA5.Columns.Col6}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col7_a5" class="form-label col-form-label">Arrival Reg</label>
+                        <input type="text" class="form-control" id="col7_a5" name="col7_a5" value="{{$settings.ExportA5.Columns.Col7}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col8_a5" class="form-label col-form-label">SE Time</label>
+                        <input type="text" class="form-control" id="col8_a5" name="col8_a5" value="{{$settings.ExportA5.Columns.Col8}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col9_a5" class="form-label col-form-label">ME Time</label>
+                        <input type="text" class="form-control" id="col9_a5" name="col9_a5" value="{{$settings.ExportA5.Columns.Col9}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col10_a5" class="form-label col-form-label">Multi Pilot Time</label>
+                        <input type="text" class="form-control" id="col10_a5" name="col10_a5" value="{{$settings.ExportA5.Columns.Col10}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col11_a5" class="form-label col-form-label">Total Time</label>
+                        <input type="text" class="form-control" id="col11_a5" name="col11_a5" value="{{$settings.ExportA5.Columns.Col11}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col12_a5" class="form-label col-form-label">PIC Name</label>
+                        <input type="text" class="form-control" id="col12_a5" name="col12_a5" value="{{$settings.ExportA5.Columns.Col12}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col13_a5" class="form-label col-form-label">Day Landings</label>
+                        <input type="text" class="form-control" id="col13_a5" name="col13_a5" value="{{$settings.ExportA5.Columns.Col13}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col14_a5" class="form-label col-form-label">Night Landings</label>
+                        <input type="text" class="form-control" id="col14_a5" name="col14_a5" value="{{$settings.ExportA5.Columns.Col14}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col15_a5" class="form-label col-form-label">Night Time</label>
+                        <input type="text" class="form-control" id="col15_a5" name="col15_a5" value="{{$settings.ExportA5.Columns.Col15}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col16_a5" class="form-label col-form-label">IFR Time</label>
+                        <input type="text" class="form-control" id="col16_a5" name="col16_a5" value="{{$settings.ExportA5.Columns.Col16}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col17_a5" class="form-label col-form-label">PIC Time</label>
+                        <input type="text" class="form-control" id="col17_a5" name="col17_a5" value="{{$settings.ExportA5.Columns.Col17}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col18_a5" class="form-label col-form-label">Co Pilot Time</label>
+                        <input type="text" class="form-control" id="col18_a5" name="col18_a5" value="{{$settings.ExportA5.Columns.Col18}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col19_a5" class="form-label col-form-label">Dual Time</label>
+                        <input type="text" class="form-control" id="col19_a5" name="col19_a5" value="{{$settings.ExportA5.Columns.Col19}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col20_a5" class="form-label col-form-label">Instructor Time</label>
+                        <input type="text" class="form-control" id="col20_a5" name="col20_a5" value="{{$settings.ExportA5.Columns.Col20}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col21_a5" class="form-label col-form-label">FSTD Type</label>
+                        <input type="text" class="form-control" id="col21_a5" name="col21_a5" value="{{$settings.ExportA5.Columns.Col21}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col22_a5" class="form-label col-form-label">FSTD Time</label>
+                        <input type="text" class="form-control" id="col22_a5" name="col22_a5" value="{{$settings.ExportA5.Columns.Col22}}" required="true" autocomplete="off">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="col23_a5" class="form-label col-form-label">Remarks</label>
+                        <input type="text" class="form-control" id="col23_a5" name="col23_a5" value="{{$settings.ExportA5.Columns.Col23}}" required="true" autocomplete="off">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Logbook Columns Header
+                    <a id="restore_defaults_a5_headers" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore header defaults"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </h5>
+            </div>
+            <div class="card-body pt-1">
+
+                <div class="row">
+                    <div class="col-md-2 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_date_a5" value="{{$settings.ExportA5.Headers.Date}}">
+                                <label>Date</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_departure_a5" value="{{$settings.ExportA5.Headers.Departure}}">
+                                <label>Departure Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_dep_place_a5" value="{{$settings.ExportA5.Headers.DepPlace}}">
+                                <label>Place</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_dep_time_a5" value="{{$settings.ExportA5.Headers.DepTime}}">
+                                <label>Time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_arrival_a5" value="{{$settings.ExportA5.Headers.Arrival}}">
+                                <label>Arrival Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_arr_place_a5" value="{{$settings.ExportA5.Headers.ArrPlace}}">
+                                <label>Place</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_arr_time_a5" value="{{$settings.ExportA5.Headers.ArrTime}}">
+                                <label>Time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_aircraft_a5" value="{{$settings.ExportA5.Headers.Aircraft}}">
+                                <label>Aircraft Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_model_a5" value="{{$settings.ExportA5.Headers.Model}}">
+                                <label>Type</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_reg_a5" value="{{$settings.ExportA5.Headers.Reg}}">
+                                <label>Reg</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_spt_a5" value="{{$settings.ExportA5.Headers.SPT}}">
+                                <label>Single Pilot Header</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_se_a5" value="{{$settings.ExportA5.Headers.SE}}">
+                                <label>SE</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_me_a5" value="{{$settings.ExportA5.Headers.ME}}">
+                                <label>ME</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_mcc_a5" value="{{$settings.ExportA5.Headers.MCC}}">
+                                <label>MCC</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_total_a5" value="{{$settings.ExportA5.Headers.Total}}">
+                                <label>Total time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_pic_name_a5" value="{{$settings.ExportA5.Headers.PICName}}">
+                                <label>PIC Name</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_landings_a5" value="{{$settings.ExportA5.Headers.Landings}}">
+                                <label>Landings</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_land_day_a5" value="{{$settings.ExportA5.Headers.LandDay}}">
+                                <label>Day</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_land_night_a5" value="{{$settings.ExportA5.Headers.LandNight}}">
+                                <label>Night</label>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="col-md-7 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_oct_a5" value="{{$settings.ExportA5.Headers.OCT}}">
+                                <label>Operational condition time</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_night_a5" value="{{$settings.ExportA5.Headers.Night}}">
+                                <label>Night</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_ifr_a5" value="{{$settings.ExportA5.Headers.IFR}}">
+                                <label>IFR</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating" style="width: 150px">
+                                <input type="text" class="form-control" id="header_pft_a5" value="{{$settings.ExportA5.Headers.PFT}}">
+                                <label>Pilot function time</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_pic_a5" value="{{$settings.ExportA5.Headers.PIC}}">
+                                <label>PIC</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_cop_a5" value="{{$settings.ExportA5.Headers.COP}}">
+                                <label>Co Pilot</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_dual_a5" value="{{$settings.ExportA5.Headers.Dual}}">
+                                <label>Dual</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_instr_a5" value="{{$settings.ExportA5.Headers.Instr}}">
+                                <label>Instr</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <div class="input-group">
+                            <div class="form-floating w-50">
+                                <input type="text" class="form-control" id="header_fstd_a5" value="{{$settings.ExportA5.Headers.FSTD}}">
+                                <label>FSTD</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_sim_type_a5" value="{{$settings.ExportA5.Headers.SimType}}">
+                                <label>Type</label>
+                            </div>
+                            <div class="form-floating w-25">
+                                <input type="text" class="form-control" id="header_sim_time_a5" value="{{$settings.ExportA5.Headers.SimTime}}">
+                                <label>Time</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="input-group mb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="header_remarks_a5" value="{{$settings.ExportA5.Headers.Remarks}}">
+                                <label>Remarks</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header p-2">
+                <h5 class="card-title mb-0 p-0">Misc</h5>
+            </div>
+            <div class="card-body pt-1">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="replace_sp_time_a5" name="replace_sp_time_a5" {{if $settings.ExportA5.ReplaceSPTime}}checked{{end}}>
+                        <label for="replace_sp_time_a5" class="form-label">Replace SE and ME values for single pilot time with "✓" symbol (Part FCL.050 format)</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="include_signature_a5" name="include_signature_a5" {{if $settings.ExportA5.IncludeSignature}}checked{{end}}>
+                        <label for="include_signature_a5" class="form-label">Include signature</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <input type="checkbox" class="form-check-input" id="is_extended_a5" name="is_extended_a5" {{if $settings.ExportA5.IsExtended}}checked{{end}}>
+                        <label for="is_extended_a5" class="form-label">Extended format, it will add Date column to the FSTD section and will reduce Remarks column. <br>This format fully matches Part FCL.050 format</label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Time fields autoformat</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio_a5" id="time_field_format_radio1_a5" value="0" {{if eq $settings.ExportA5.TimeFieldsAutoFormat 0}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio1_a5">None</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio_a5" id="time_field_format_radio2_a5" value="1" {{if eq $settings.ExportA5.TimeFieldsAutoFormat 1}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio2_a5">HH:MM</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="time_field_format_radio_a5" id="time_field_format_radio3_a5" value="2" {{if eq $settings.ExportA5.TimeFieldsAutoFormat 2}}checked{{end}}>
+                            <label class="form-check-label" for="time_field_format_radio3_a5">H:MM</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <button id="show_custom_title_modal_a5" type="button" class="btn btn-outline-secondary"><i class="bi bi-file-pdf"></i> Custom A5 title page</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<hr>
+
+<button class="btn btn-outline-secondary" type="button" id="save_a5"><i class="bi bi-save"></i> Save</button>
+<button class="btn btn-outline-secondary" type="button" id="export_a5"><i class="bi bi-file-pdf"></i> Export PDF A5</button>
+
+<!-- Modal -->
+<div class="modal fade" id="custom_title_a5_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="custom_title_a5_modal" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="custom_title_a5_modal">Custom title page</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+                <input type="file" accept=".pdf" class="form-control" id="custom_title_a5" name="custom_title_a5" />
+                <button type="button" class="btn btn-outline-secondary" id="modal_delete_custom_a5"><i class="bi bi-file-x"></i> Delete</button>
+            </div>
+            <br>
+            <div id="custom_title_a5_document"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="modal_save_a5"><i class="bi bi-save"></i> Save</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-counterclockwise"></i> OK</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+{{ end }}
+{{ define "js" }}
+<script type="text/javascript" src="/static/js/wlb-export.js"></script>
+{{ end }}

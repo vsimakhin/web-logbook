@@ -1,6 +1,6 @@
 # Web-logbook
 
-This is a simple free EASA-style logbook application written in golang.
+This is a simple, free and opensource EASA-style logbook application written in golang.
 
 You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
 
@@ -12,6 +12,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Implemented a new responsive user interface that is friendly for desktop, mobile, and tablet devices. The design is based on the adminkit.io template, and all pages are refactored to ensure a seamless user experience across different platforms. Probably some new bugs are introduced ¯\\_(ツ)_/¯*
 - Update: rename cmd/web directory to app, just internal change.
 - Update: Code optimization. No UI change. Includes:
     - Migrated all javascript code to a js files instead of keeping them in gohtml templates, plus some html code optimization. This significantly reduces amouunt of typo and errors. 
@@ -50,11 +51,9 @@ The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/
 1. Run:
   * Windows:
     * Double-click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (need to solve it later), but just run it.
-  * Linux:
+  * Linux/MacOS:
     * Open a terminal and navigate to the directory
     * Run `./web-logbook`
-  * MacOS:
-    * *I still didn't test it for MacOS, so in theory, should be as same as for Linux, but... who knows ¯\\_(ツ)_/¯*
 4. Open your browser, type http://localhost:4000 and the application is ready to use
   * *(first run)* Go to the [Settings](http://localhost:4000/settings) page, `Airports` tab and click on the `Update Airport DB` button
 6. To close the application, use `Ctrl+C` in the terminal window or just close it
@@ -86,87 +85,90 @@ $ ./web-logbook -h
 
 # Supported operating systems
 
-Since it's written in golang it can run on any system if you compile the sources. For now, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are 3 binaries for Linux, MacOS and Windows, all of them are amd64.
+Since it's written in Golang, it can run on any system after compiling the sources. Currently, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are binaries available for Linux, MacOS, and Windows.
 
-There is an application [Web Logbook Mobile Ionic](https://github.com/vsimakhin/web-logbook-mobile-ionic) for Android (and later I hope will be for IOS), which can sync with the main application.
 
 # Interface
 
-Currently, there are implemented several modules in the logbook app:
-* Logbook itself
-  * Flight records 
+* Logbook
+  * Flight records with date filter and global search through all data
+  * Quick export to PDF (A4, A5) and CSV/XLS
+* Flight records
+  * Flight data
   * Attachments for the flight records
   * Automatic night-time calculation
   * Map drawing and distance calculation for the flight record
-* Settings
-  * Signature and owner name
-  * Signature pad to automatically include signatures to the PDF exports
-  * Enable/Disable authentication (in case you need to expose the app to the public internet)
-  * Aircraft groups/classes
-  * List global airport database
-  * Your own custom airfields or heliports
-  * Some interface settings
+* Licensing & Certification
+  * List of licenses, certificates and endorsements
+  * Document attachments and preview
+  * Expiration time tracking
+* Map
+  * Map of the flights
+  * Date filters
+  * Routes and airports filters
+  * Aircraft filters
+* Statistics
+  * Totals
+  * By Year
+  * By Aircraft
+  * By Aircraft group/class
+  * Limits (EASA flight time limitations)
 * Export
   * Export to EASA PDF format (A4 and A5)
+  * PDF export formats with custom title pages (for example, include your CV automatically)
   * Additional export formats (XLSX, CSV)
   * Adjustable settings for each export format
 * Import
   * CSV support
   * Automatic WebLogbook profile load
-* Map
-  * Filters for routes and airports
-  * Filters for the aircraft
-* Licensing & Certification
-  * Document attachments and preview
-  * Expiration time tracking
-* Statistics
-  * Totals
-  * By Year
-  * By Aircraft
-  * By Aircraft group/class, defined in settings
+* Settings
+  * Owner name, license and address, signature for the PDF exports
+  * Signature pad to automatically include signatures to the PDF exports
+  * Enable/Disable authentication (in case you need to expose the app to the public internet)
+  * Aircraft groups/classes
+  * Global airport database
+  * Your own custom airfields or heliports
+  * Some interface settings
 
 ## Logbook
-
-![Main logbook page](https://github.com/vsimakhin/web-logbook-assets/raw/main/logbook-main.png)
-
-## Export
-
-![Export](https://github.com/vsimakhin/web-logbook-assets/raw/main/export.png)
-
-### A4
-![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/logbook-export.png)
-
-### A5
-![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-a.png)
-![Export to PDF](https://github.com/vsimakhin/web-logbook-assets/raw/main/export-a5-b.png)
-
-So in real life the logbook could look like
-![Pilot logbook](https://github.com/vsimakhin/web-logbook-assets/raw/main/logbook_irl.jpg)
+![EASA Logbook](./readme-assets/logbook.png)
 
 ## Flight record
+![Flight record](./readme-assets/flight-record.png)
 
-![Flight record](https://github.com/vsimakhin/web-logbook-assets/raw/main/flight-record-example.png)
+## Licensing & Certification
+![Licensing & Certification](./readme-assets/licensing-record.png)
 
-### Attachments
-![Flight record attachments](https://github.com/vsimakhin/web-logbook-assets/raw/main/flight-record-example-attachments.png)
+## Map
+![Map of the flights](./readme-assets/map-example.png)
+
+## Stats example
+![Flight stats example](./readme-assets/stats-example.png)
+
+## Export
+![Export](./readme-assets/export-page.png)
+
+### A4
+![Export to PDF](./readme-assets/logbook-export.png)
+
+### A5
+![Export to PDF](./readme-assets/export-a5-a.png)
+![Export to PDF](./readme-assets/export-a5-b.png)
+
+So in real life the logbook could look like
+![Pilot logbook](./readme-assets/logbook_irl.jpg)
+
+## Import
+![Import](./readme-assets/import.png)
 
 ## Settings
+![Settings](./readme-assets/settings-general.png)
 
-![Settings](https://github.com/vsimakhin/web-logbook-assets/raw/main/settings.png)
+## Dark mode
+![Dark mode](./readme-assets/dark-mode.png)
 
-![Settings-Airports](https://github.com/vsimakhin/web-logbook-assets/raw/main/settings-airports.png)
-
-## Stats
-
-![Flight stats](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats.png)
-
-![Map](https://github.com/vsimakhin/web-logbook-assets/raw/main/stats-map.png)
-
-## Licensing & Certifications
-
-![Licensing](https://github.com/vsimakhin/web-logbook-assets/raw/main/licensing.png)
-
-![Licensing record](https://github.com/vsimakhin/web-logbook-assets/raw/main/licensing-record.png)
+## Mobile friendly
+![Mobile friendly](./readme-assets/mobile-friendly.png)
 
 # Airports Databases
 
@@ -219,6 +221,7 @@ In case you'd like to add some other features to the logbook or you found a bug,
 
 # Used libraries
 
+* Adminkit.io https://adminkit.io
 * Bootstrap https://getbootstrap.com/
 * Datatables https://datatables.net/
 * Openlayers https://openlayers.org/

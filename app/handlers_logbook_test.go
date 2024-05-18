@@ -27,7 +27,6 @@ func TestHandlerLogbook(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	// need to have datatables css and js
-	assert.Contains(t, string(responseBody), `<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>`)
 	assert.Contains(t, string(responseBody), `<script type="text/javascript" src="/static/js/datatables.min.js"></script>`)
 
 }
