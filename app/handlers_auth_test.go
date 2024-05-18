@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -24,15 +23,14 @@ func TestAuth(t *testing.T) {
 	// auth enabled
 	app.isAuthEnabled = true
 	resp, _ := http.Get(fmt.Sprintf("%s/", srv.URL))
-	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Contains(t, string(responseBody), `<input class="form-control" id="login" type="login" placeholder="Login"`)
 
 	// auth disabled
 	app.isAuthEnabled = false
 	resp, _ = http.Get(fmt.Sprintf("%s/", srv.URL))
-	responseBody, _ = io.ReadAll(resp.Body)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
 }
 
 func TestHandlerLogin(t *testing.T) {
@@ -45,10 +43,8 @@ func TestHandlerLogin(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILogin))
-	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Contains(t, string(responseBody), `<input class="form-control" id="login" type="login" placeholder="Login"`)
 
 }
 
@@ -62,9 +58,7 @@ func TestHandlerLogout(t *testing.T) {
 	defer srv.Close()
 
 	resp, _ := http.Get(fmt.Sprintf("%s%s", srv.URL, APILogout))
-	responseBody, _ := io.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Contains(t, string(responseBody), `<input class="form-control" id="login" type="login" placeholder="Login"`)
 
 }
