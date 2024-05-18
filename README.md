@@ -10,7 +10,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.35.0] - 18.05.2024
 
 - New: Implemented a new responsive user interface that is friendly for desktop, mobile, and tablet devices. The design is based on the adminkit.io template, and all pages are refactored to ensure a seamless user experience across different platforms. Probably some new bugs are introduced ¯\\_(ツ)_/¯*
 - Update: rename cmd/web directory to app, just internal change.
