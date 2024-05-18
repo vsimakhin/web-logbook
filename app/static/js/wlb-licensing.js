@@ -66,8 +66,6 @@ const licensingUtils = function () {
                 table.columns([2, 6, 7]).visible(true);
                 table.columns([3, 4, 5, 8]).visible(false);
             }
-
-            table.columns.adjust().draw();
         }
 
         $(window).resize(adjustColumnVisibility);
