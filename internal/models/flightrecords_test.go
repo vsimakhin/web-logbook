@@ -38,7 +38,6 @@ func TestDeleteFlightRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
 	InitMock(mock, "DeleteFlightRecord")
-	InitMock(mock, "InsertDeletedItemLogbook")
 
 	err := db.DeleteFlightRecord("uuid")
 	if err != nil {

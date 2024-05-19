@@ -99,7 +99,6 @@ func TestDeleteLicenseRecord(t *testing.T) {
 	db, mock := initDBModel(t)
 
 	InitMock(mock, "DeleteLicenseRecord")
-	InitMock(mock, "InsertDeletedItemLicense")
 
 	err := db.DeleteLicenseRecord("uuid")
 	if err != nil {

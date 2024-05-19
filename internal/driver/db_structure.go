@@ -87,12 +87,6 @@ var attachmentsTable = NewTable("attachments", "uuid", UUID,
 		{Name: "document", Type: Blob},
 	})
 
-var deletedItemsTable = NewTable("deleted_items", "uuid", UUID,
-	[]Column{
-		{Name: "table_name", Type: SmallText, Properties: "NOT NULL"},
-		{Name: "delete_time", Type: DateTime, Properties: "NOT NULL"},
-	})
-
 var logbookView = NewView("logbook_view",
 	SQLQuery{
 		SQLite: `
