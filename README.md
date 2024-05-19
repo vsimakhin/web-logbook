@@ -1,3 +1,7 @@
+![GitHub Release](https://img.shields.io/github/v/release/vsimakhin/web-logbook) ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/vsimakhin/web-logbook/latest/total?color=green)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/vsimakhin/web-logbook/total?label=all%20downloads) ![GitHub License](https://img.shields.io/github/license/vsimakhin/web-logbook)
+
+
 # Web-logbook
 
 This is a simple, free and opensource EASA-style logbook application written in golang.
@@ -7,6 +11,9 @@ You can clone the repo and compile the binaries yourself, or just download the l
 Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web browser at http://localhost:4000
 
 You also can easily export all flight records into EASA style pdf format, print it, sign and use it as a usual paper logbook.
+
+
+
 
 # Changelog
 
