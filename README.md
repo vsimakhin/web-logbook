@@ -13,9 +13,6 @@ Once you start the app it automatically creates an SQLite local DB and starts li
 
 You also can easily export all flight records into EASA style pdf format, print it, sign and use it as a usual paper logbook.
 
-
-
-
 # Changelog
 
 ## [Unreleased]
@@ -60,7 +57,7 @@ The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/
     * Open a terminal and navigate to the directory
     * Run `./web-logbook`
 4. Open your browser, type http://localhost:4000 and the application is ready to use
-  * *(first run)* Go to the [Settings](http://localhost:4000/settings) page, `Airports` tab and click on the `Update Airport DB` button
+  * *(first run)* Go to the `Settings->Airports` page and click on the `Update Airport DB` button
 6. To close the application, use `Ctrl+C` in the terminal window or just close it
 
 ## CLI options
