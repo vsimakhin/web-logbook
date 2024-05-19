@@ -47,24 +47,9 @@ func InitMock(mock sqlmock.Sqlmock, item string) {
 			WithArgs("uuid").
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
-	case "InsertDeletedItemLogbook":
-		mock.ExpectExec("INSERT INTO deleted_items").
-			WithArgs("uuid", "logbook", time.Now().Unix()).
-			WillReturnResult(sqlmock.NewResult(0, 1))
-
-	case "InsertDeletedItemLicense":
-		mock.ExpectExec("INSERT INTO deleted_items").
-			WithArgs("uuid", "licensing", time.Now().Unix()).
-			WillReturnResult(sqlmock.NewResult(0, 1))
-
 	case "DeleteAttachment":
 		mock.ExpectExec("DELETE FROM attachments WHERE uuid").
 			WithArgs("uuid").
-			WillReturnResult(sqlmock.NewResult(0, 1))
-
-	case "InsertDeletedItemAttachment":
-		mock.ExpectExec("INSERT INTO deleted_items").
-			WithArgs("uuid", "attachments", time.Now().Unix()).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "InsertAttachment":

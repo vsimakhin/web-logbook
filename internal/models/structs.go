@@ -194,10 +194,6 @@ type HideFields struct {
 	Distance     bool `json:"hide_distance"`
 }
 
-type SyncOptions struct {
-	KeepDeletedRecordsDays int64 `json:"keep_deleted_records_days"`
-}
-
 // Settings is a type for settings
 type Settings struct {
 	OwnerName               string            `json:"owner_name"`
@@ -226,8 +222,6 @@ type Settings struct {
 	DateRangePickerWeek string     `json:"datepicker_week"`
 
 	TimeFieldsAutoFormat byte `json:"time_fields_auto_format"`
-
-	SyncOptions SyncOptions `json:"sync_options"`
 
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`

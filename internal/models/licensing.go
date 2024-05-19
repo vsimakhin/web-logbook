@@ -163,12 +163,6 @@ func (m *DBModel) DeleteLicenseRecord(uuid string) error {
 		return err
 	}
 
-	query := "INSERT INTO deleted_items (uuid, table_name, delete_time) VALUES (?,?,?)"
-	_, err = m.DB.ExecContext(ctx, query, uuid, "licensing", time.Now().Unix())
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

@@ -67,13 +67,6 @@ const (
 	APIStatsLimitsPage                = "/stats-limits"
 	APILogin                          = "/login"
 	APILogout                         = "/logout"
-	APISyncAirports                   = "/sync/airports"
-	APISyncDeleted                    = "/sync/deleted"
-	APISyncFlightRecords              = "/sync/flightrecords"
-	APISyncLicensing                  = "/sync/licensing"
-	APISyncAttachmentsAll             = "/sync/attachments/all"
-	APISyncAttachments                = "/sync/attachments/{uuid}"
-	APISyncAttachmentsUpload          = "/sync/attachments/upload"
 )
 
 var apiMap = map[string]string{
@@ -230,22 +223,6 @@ func (app *application) routes() *chi.Mux {
 		server.Post(APILicensingSave, app.HandlerLicensingRecordSave)
 		server.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)
 		server.Post(APILicensingAttachmentDelete, app.HandlerLicensingDeleteAttachment)
-
-		// sync
-		server.Get(APISyncAirports, app.HandlerSyncAirports)
-
-		server.Get(APISyncDeleted, app.HandlerSyncDeletedGet)
-		server.Post(APISyncDeleted, app.HandlerSyncDeletedPost)
-
-		server.Get(APISyncFlightRecords, app.HandlerSyncFlightRecordsGet)
-		server.Post(APISyncFlightRecords, app.HandlerSyncFlightRecordsPost)
-
-		server.Get(APISyncAttachmentsAll, app.HandlerSyncAttachmentsAll)
-		server.Get(APISyncAttachments, app.HandlerSyncAttachments)
-		server.Post(APISyncAttachmentsUpload, app.HandlerSyncAttachmentsUpload)
-
-		server.Get(APISyncLicensing, app.HandlerSyncLicensingGet)
-		server.Post(APISyncLicensing, app.HandlerSyncLicensingPost)
 
 		// api & parameters
 		server.Get(APIGetApi, app.HandlerGetApi)

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Code cleanup, removing code for synchronization with mobile client (will not continue working on it)
 - Update: Update golang version (1.21.10) and go packages.
  
 ## [2.35.0] - 18.05.2024

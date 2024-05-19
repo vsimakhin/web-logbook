@@ -58,7 +58,6 @@ func TestDeleteAttachment(t *testing.T) {
 	db, mock := initDBModel(t)
 
 	InitMock(mock, "DeleteAttachment")
-	InitMock(mock, "InsertDeletedItemAttachment")
 
 	err := db.DeleteAttachment("uuid")
 	if err != nil {

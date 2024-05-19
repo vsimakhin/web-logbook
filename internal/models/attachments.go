@@ -88,12 +88,6 @@ func (m *DBModel) DeleteAttachment(uuid string) error {
 		return err
 	}
 
-	query = "INSERT INTO deleted_items (uuid, table_name, delete_time) VALUES (?,?,?)"
-	_, err = m.DB.ExecContext(ctx, query, uuid, "attachments", time.Now().Unix())
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

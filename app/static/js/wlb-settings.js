@@ -258,9 +258,6 @@ const settingsUtils = function () {
             licensing_rows: document.getElementById("licensing_rows").value,
             datepicker_week: document.getElementById("datepicker_week").value,
             time_fields_auto_format: time_fields_auto_format,
-            // sync_options: {
-            //     keep_deleted_records_days: parseInt(document.getElementById("keep_deleted_records_days").value)
-            // },
             airports_db_source: document.getElementById("airports_db_source").value,
             no_icao_filter: document.getElementById("no_icao_filter").checked,
             color_scheme: color_scheme,
