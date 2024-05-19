@@ -181,8 +181,6 @@ The app supports 3 sources:
 
 If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
 
-Please make sure to click the `Save` button before updating the database to ensure that all changes are saved.
-
 # Advanced configuration
 ## HTTPS enable
 
