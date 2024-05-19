@@ -219,7 +219,7 @@ In case you'd like to add some other features to the logbook or you found a bug,
 
 # Used libraries
 
-* Adminkit.io https://adminkit.io
+* Adminkit.io https://adminkit.io (AdminKit PRO License Agreement for Hobby License - https://adminkit.io/licenses/)
 * Bootstrap https://getbootstrap.com/
 * Datatables https://datatables.net/
 * Openlayers https://openlayers.org/
