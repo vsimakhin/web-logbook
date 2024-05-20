@@ -1,6 +1,8 @@
 {{ define "base" }}
 {{$api := .API}}
 {{$settings := index .Data "settings"}}
+{{$activePage := index .Data "activePage"}}
+{{$activeSubPage := index .Data "activeSubPage"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,13 +27,13 @@
                 <ul class="sidebar-nav">
                     <li class="sidebar-header">Pages</li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item {{if eq $activePage "logbook"}}active{{end}}">
                         <a class="sidebar-link" href="{{$api.Logbook}}">
                             <i class="bi bi-book"></i> <span class="align-middle">Logbook</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item {{if eq $activePage "licensing"}}active{{end}}">
                         <a class="sidebar-link" href="{{$api.Licensing}}">
                             <i class="bi bi-file-medical"></i> <span class="align-middle">Licensing</span>
                             {{if not $settings.DisableLicenseWarning}}{{if .License.Expired}}
@@ -46,45 +48,45 @@
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item {{if eq $activePage "map"}}active{{end}}">
                         <a class="sidebar-link" href="{{$api.Map}}"><i class="bi bi-map"></i> <span class="align-middle">Map</span></a>
                     </li>
 
-                    <li class="sidebar-item">
-						<a data-bs-target="#stats" data-bs-toggle="collapse" class="sidebar-link">
+                    <li class="sidebar-item {{if eq $activePage "stats"}}active{{end}}">
+						<a data-bs-target="#stats" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "stats"}}collapsed{{end}}">
                             <i class="bi bi-file-bar-graph"></i> <span class="align-middle">Statistics</span>
 						</a>
-						<ul id="stats" class="sidebar-dropdown list-unstyled collapse show" data-bs-parent="#sidebar">
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsPage}}">Totals</a></li>
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsByYearPage}}">Totals by Year</a></li>
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsByTypePage}}">Totals by Aircraft Type</a></li>
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsTotalsByClassPage}}">Totals by Aircraft Class</a></li>
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.StatsLimitsPage}}">Limits</a></li>
+						<ul id="stats" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "stats"}}show{{end}}" data-bs-parent="#sidebar">
+							<li class="sidebar-item {{if eq $activeSubPage "totals"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsPage}}">Totals</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "totalsByYear"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByYearPage}}">Totals by Year</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "totalsByType"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByTypePage}}">Totals by Aircraft Type</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "totalsByClass"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByClassPage}}">Totals by Aircraft Class</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "limits"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsLimitsPage}}">Limits</a></li>
 						</ul>
 					</li>
 
-                    <li class="sidebar-item">
-						<a data-bs-target="#export" data-bs-toggle="collapse" class="sidebar-link">
+                    <li class="sidebar-item {{if eq $activePage "export"}}active{{end}}">
+						<a data-bs-target="#export" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "export"}}collapsed{{end}}">
                         <i class="bi bi-file-earmark-arrow-down"></i> <span class="align-middle">Export</span>
 						</a>
-						<ul id="export" class="sidebar-dropdown list-unstyled collapse show" data-bs-parent="#sidebar">
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.ExportPDFA4Page}}">PDF A4</a></li>
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.ExportPDFA5Page}}">PDF A5</a></li>
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.ExportCSVXLSPage}}">CSV&XLS</a></li>
+						<ul id="export" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "export"}}show{{end}}" data-bs-parent="#sidebar">
+							<li class="sidebar-item {{if eq $activeSubPage "pdfa4"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportPDFA4Page}}">PDF A4</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "pdfa5"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportPDFA5Page}}">PDF A5</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "csv"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportCSVXLSPage}}">CSV&XLS</a></li>
 						</ul>
 					</li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item {{if eq $activePage "import"}}active{{end}}">
                         <a class="sidebar-link" href="{{$api.Import}}"><i class="bi bi-file-earmark-arrow-up"></i> <span class="align-middle">Import (beta)</span></a>
                     </li>
 
-                    <li class="sidebar-item">
-						<a data-bs-target="#settings" data-bs-toggle="collapse" class="sidebar-link">
+                    <li class="sidebar-item {{if eq $activePage "settings"}}active{{end}}">
+						<a data-bs-target="#settings" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "settings"}}collapsed{{end}}">
                         <i class="bi bi-gear"></i> <span class="align-middle">Settings</span>
 						</a>
-						<ul id="settings" class="sidebar-dropdown list-unstyled collapse show" data-bs-parent="#sidebar">
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.Settings}}">General</a></li>
-							<li class="sidebar-item"><a class="sidebar-link" href="{{$api.SettingsAirportDB}}">Airports</a></li>
+						<ul id="settings" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "settings"}}show{{end}}" data-bs-parent="#sidebar">
+							<li class="sidebar-item {{if eq $activeSubPage "general"}}active{{end}}"><a class="sidebar-link" href="{{$api.Settings}}">General</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "airports"}}active{{end}}"><a class="sidebar-link" href="{{$api.SettingsAirportDB}}">Airports</a></li>
 						</ul>
 					</li>
 

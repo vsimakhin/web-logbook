@@ -10,6 +10,8 @@ import (
 // HandlerSettings is a handler for Settings page
 func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
+	data["activePage"] = "settings"
+	data["activeSubPage"] = "general"
 	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -25,7 +27,8 @@ func (app *application) HandlerSettingsAirportDB(w http.ResponseWriter, r *http.
 
 	data := make(map[string]interface{})
 	data["records"] = records
-
+	data["activePage"] = "settings"
+	data["activeSubPage"] = "airports"
 	if err := app.renderTemplate(w, r, "settings-airportdb", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}

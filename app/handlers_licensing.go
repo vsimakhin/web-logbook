@@ -15,7 +15,10 @@ import (
 
 // HandlerLicensing is a handler for /licensing page
 func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "licensing", &templateData{}); err != nil {
+	data := make(map[string]interface{})
+	data["activePage"] = "licensing"
+
+	if err := app.renderTemplate(w, r, "licensing", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }

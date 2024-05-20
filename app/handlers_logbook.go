@@ -8,7 +8,9 @@ import (
 
 // HandlerLogbook is a handler for /logbook page
 func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "logbook", &templateData{}); err != nil {
+	data := make(map[string]interface{})
+	data["activePage"] = "logbook"
+	if err := app.renderTemplate(w, r, "logbook", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
