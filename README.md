@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.35.2] - 20.05.2024
 
 - Fix: Proper password field validation on Save
 - Update: Support for submit button (on Enter key) on login page
