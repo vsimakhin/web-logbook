@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.35.1] - 20.05.2024
 
 - Fix: Correct using styles and classes for the sidebar when switching between the pages
 - Update: Code cleanup, removing code for synchronization with mobile client (will not continue working on it)
