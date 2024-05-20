@@ -17,6 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Add horizontal scrolling for the logbook page to properly support mobile devices
 - Fix: Add dynamic resizing for the charts on Stats pages
 - Fix: Instructor's hours for the Total Stats table were mixed up for the last 90 days and the last 12 months
 
