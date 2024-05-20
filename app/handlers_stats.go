@@ -198,8 +198,8 @@ func (app *application) HandlerStatsTotals(w http.ResponseWriter, r *http.Reques
 		tableData.Data = append(tableData.Data, []string{"J", "Instructor",
 			totals["Last28"].Time.Instructor,
 			totals["Month"].Time.Instructor,
-			totals["Last12M"].Time.Instructor,
 			totals["Last90"].Time.Instructor,
+			totals["Last12M"].Time.Instructor,
 			totals["Year"].Time.Instructor,
 			totals["Totals"].Time.Instructor,
 		})
