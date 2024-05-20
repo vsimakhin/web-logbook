@@ -28,7 +28,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="m-sm-3">
-                                <form>
+                                <form onsubmit="Submit(); return false;" action="">
                                     <div class="alert alert-danger text-center d-none p-2" id="info" role="alert"></div>
                                     <div class="mb-3">
                                         <label class="form-label">Username</label>
@@ -39,7 +39,7 @@
                                         <input class="form-control form-control-lg" type="password" id="password" name="password" placeholder="Enter your password" />
                                     </div>
                                     <div class="d-grid gap-2 mt-3">
-                                        <a class="btn btn-lg btn-primary" onclick="Submit();">Log in</a>
+                                        <button type="submit" class="btn btn-lg btn-primary" onclick="Submit();">Log in</button>
                                     </div>
                                 </form>
                             </div>
