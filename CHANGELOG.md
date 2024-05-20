@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Instructor's hours for the Total Stats table were mixed up for the last 90 days and the last 12 months
+
 ## [2.35.1] - 20.05.2024
 
 - Fix: Correct using styles and classes for the sidebar when switching between the pages
