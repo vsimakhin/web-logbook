@@ -8,6 +8,7 @@ const statsUtils = function () {
         type: "bar",
         data: {},
         options: {
+            maintainAspectRatio: false,
             responsive: true,
             interaction: { intersect: false, },
             scales: { y: { beginAtZero: true } },
@@ -79,6 +80,7 @@ const statsUtils = function () {
             borderWidth: 1
         }]
         chart.update();
+        chartResize();
     }
 
     const loadChart = (table_name) => {
@@ -86,6 +88,38 @@ const statsUtils = function () {
         const cols = tb.rows[0].cells.length;
         onStatsClick(table_name, cols - 1);
     }
+
+    /**
+     * Resizes the chart based on the window size and the height of the stats card.
+     * It will not resize the chart if the window width is less than 1200px (mobile devices)
+     * It will set the default height of the chart to 250px if the calculated height is too small
+     */
+    const chartResize = () => {
+        const defaultHeight = '250px';
+        const offset = 250
+        const statsCard = document.getElementById('table_stats');
+
+        if (window.innerWidth < 1200 || !statsCard) {
+            chart.canvas.parentNode.style.height = defaultHeight;
+            return; // do not apply resizing for small screens
+        }
+
+        const windowHeight = window.innerHeight;
+
+        const height = windowHeight - statsCard.clientHeight - offset;
+        if (height < 250) {
+            chart.canvas.parentNode.style.height = defaultHeight;
+            return; // ignore further reduction if any
+        }
+
+        chart.canvas.parentNode.style.height = `${height}px`;;
+    }
+
+    window.addEventListener('resize', () => {
+        chartResize();
+    });
+
+
 
     return { onStatsClick, loadChart }
 }();

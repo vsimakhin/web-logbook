@@ -11,7 +11,7 @@
             <div class="card-header p-2">
                 <h5 class="card-title">Totals</h5>
             </div>
-            <div class="card-body pt-1">
+            <div class="card-body pt-1" id="table_stats">
                 <div class="row mb-2">
                     <table id="totals_by_year" class="table table-sm table-striped table-bordered nowrap" width="100%" {{if $settings.StatsFontSize}}style="font-size:{{$settings.StatsFontSize}}%"{{end}}>
                         <thead>
@@ -66,10 +66,10 @@
                 <h5 class="card-title">Chart</h5>
                 <h6 class="card-subtitle text-muted mb-0">Click on the table column header to show the chart</h6>
             </div>
-            <div class="card-body pt-1 text-center">
+            <div class="card-body pt-1 text-center" id="chart_stats">
                 <div class="row">
                     <div class="col-md-12">
-                        <canvas id="myChart" height="100px"></canvas>
+                        <canvas id="myChart" height="100%"></canvas>
                     </div>
                 </div>
             </div>
