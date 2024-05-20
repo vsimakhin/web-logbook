@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix: Proper password field validation on Save
+- Update: Support for submit button (on Enter key) on login page
 - Fix: Add horizontal scrolling for the logbook page to properly support mobile devices
 - Fix: Add dynamic resizing for the charts on Stats pages
 - Fix: Instructor's hours for the Total Stats table were mixed up for the last 90 days and the last 12 months
