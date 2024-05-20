@@ -16,7 +16,7 @@ import (
 func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-
+	data["activePage"] = "import"
 	if err := app.renderTemplate(w, r, "import", &templateData{Data: data}, "import-mapfields-modal"); err != nil {
 		app.errorLog.Println(err)
 	}

@@ -286,6 +286,8 @@ func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Reques
 // HandlerStats is a handler for Stats Totals page
 func (app *application) HandlerStatsTotalsPage(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
+	data["activePage"] = "stats"
+	data["activeSubPage"] = "totals"
 	if err := app.renderTemplate(w, r, "stats-totals", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -303,6 +305,8 @@ func (app *application) HandlerStatsTotalsByYearPage(w http.ResponseWriter, r *h
 	}
 
 	data["totalsByYear"] = totalsByYear
+	data["activePage"] = "stats"
+	data["activeSubPage"] = "totalsByYear"
 	if err := app.renderTemplate(w, r, "stats-totals-year", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -311,6 +315,8 @@ func (app *application) HandlerStatsTotalsByYearPage(w http.ResponseWriter, r *h
 // HandlerStatsTotalsByTypePage is a handler for Stats Totals by Type page
 func (app *application) HandlerStatsTotalsByTypePage(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
+	data["activePage"] = "stats"
+	data["activeSubPage"] = "totalsByType"
 	if err := app.renderTemplate(w, r, "stats-totals-type", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -319,6 +325,8 @@ func (app *application) HandlerStatsTotalsByTypePage(w http.ResponseWriter, r *h
 // HandlerStatsTotalsByClassPage is a handler for Stats Totals by Class page
 func (app *application) HandlerStatsTotalsByClassPage(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
+	data["activePage"] = "stats"
+	data["activeSubPage"] = "totalsByClass"
 	if err := app.renderTemplate(w, r, "stats-totals-class", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -339,6 +347,8 @@ func (app *application) HandlerStatsLimitsPage(w http.ResponseWriter, r *http.Re
 	data["last12m"] = totals["Last12M"].Time.Total
 	data["last1y"] = totals["Year"].Time.Total
 
+	data["activePage"] = "stats"
+	data["activeSubPage"] = "limits"
 	if err := app.renderTemplate(w, r, "stats-limits", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
