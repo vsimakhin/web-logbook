@@ -161,13 +161,22 @@ const settingsUtils = function () {
         }
     }
 
+    const validatePasswordField = (field) => {
+        if (!field.value) {
+            if (document.getElementById("previous_auth_value").value == "false") {
+                return updateFieldValidity(field, false);
+            }
+        }
+        return commonUtils.updateFieldValidity(field, true);
+    }
+
     /**
      * Validates the coomon settings fields.
      */
     const validateFields = () => {
         const fields = [
             { name: "login", validator: commonUtils.validateRequiredField, error: "Login field is empty\r\n" },
-            { name: "password", validator: commonUtils.validateRequiredField, error: "Password field is empty\r\n" },
+            { name: "password", validator: validatePasswordField, error: "Password field is empty\r\n" },
         ]
         const errorMessage = commonUtils.validateFields(fields);
 
