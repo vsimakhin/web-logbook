@@ -191,6 +191,11 @@ The app supports 3 sources:
 If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
 
 # Advanced configuration
+
+## Docker
+
+Check [readme](./docker/README.md) for dockerized app for more details.
+
 ## HTTPS enable
 
 Since the app is running on `localhost` it's not possible to create a public certificate that would be valid by public CAs. As an option, you can create a self-signed certificate and add it to the root CA in your operating system. For that, you can use [`mkcert` tool](https://github.com/FiloSottile/mkcert).
