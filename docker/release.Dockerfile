@@ -14,8 +14,8 @@ RUN LATEST_RELEASE=$(curl --silent "https://api.github.com/repos/vsimakhin/web-l
     cp ./web-logbook-linux-amd64/web-logbook ./ && \
     rm -rf web-logbook.tar.gz web-logbook-linux-amd64
 
-RUN mkdir db
+VOLUME [ "/data", "/certs" ]
 
 EXPOSE 4000
 
-CMD ["./web-logbook", "-dsn", "/web-logbook/db/web-logbook.sql"]
+ENTRYPOINT ["./web-logbook", "-dsn", "/data/web-logbook.sql"]
