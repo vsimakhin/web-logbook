@@ -3,8 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
+	"golang.org/x/exp/slices"
 )
 
 const farFuture = "30000101"
@@ -308,6 +312,58 @@ func (app *application) HandlerStatsTotalsByYearPage(w http.ResponseWriter, r *h
 	data["activePage"] = "stats"
 	data["activeSubPage"] = "totalsByYear"
 	if err := app.renderTemplate(w, r, "stats-totals-year", &templateData{Data: data}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
+// HandlerStatsTotalsByMonthPage is a handler for Stats Totals by Month page
+func (app *application) HandlerStatsTotalsByMonthPage(w http.ResponseWriter, r *http.Request) {
+	// get all years in the logbook
+	years, err := app.db.GetYears()
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+
+	// year parameter
+	year := chi.URLParam(r, "year")
+	_, err = strconv.Atoi(year)
+	if err != nil || !slices.Contains(years, year) {
+		year = years[0]
+	}
+
+	// start and end dates for the selected year
+	startDate, err := time.Parse("20060102", fmt.Sprintf("%s0101", year))
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	endDate, err := time.Parse("20060102", fmt.Sprintf("%s1231", year))
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// get totals by month
+	totalsByMonth, err := app.db.GetDetailedTotals(
+		startDate.Format("20060102"), endDate.Format("20060102"), true,
+		app.db.GenerateFlightRecordMap(startDate, endDate, true),
+	)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["activePage"] = "stats"
+	data["activeSubPage"] = "totalsByMonth"
+	data["totalsByMonth"] = totalsByMonth
+	data["years"] = years
+	data["year"] = year
+	if err := app.renderTemplate(w, r, "stats-totals-month", &templateData{Data: data}); err != nil {
 		app.errorLog.Println(err)
 	}
 }

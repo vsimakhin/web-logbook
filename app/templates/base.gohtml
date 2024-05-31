@@ -59,6 +59,7 @@
 						<ul id="stats" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "stats"}}show{{end}}" data-bs-parent="#sidebar">
 							<li class="sidebar-item {{if eq $activeSubPage "totals"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsPage}}">Totals</a></li>
 							<li class="sidebar-item {{if eq $activeSubPage "totalsByYear"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByYearPage}}">Totals by Year</a></li>
+							<li class="sidebar-item {{if eq $activeSubPage "totalsByMonth"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByMonthPage}}">Totals by Month</a></li>
 							<li class="sidebar-item {{if eq $activeSubPage "totalsByType"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByTypePage}}">Totals by Aircraft Type</a></li>
 							<li class="sidebar-item {{if eq $activeSubPage "totalsByClass"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByClassPage}}">Totals by Aircraft Class</a></li>
 							<li class="sidebar-item {{if eq $activeSubPage "limits"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsLimitsPage}}">Limits</a></li>
