@@ -174,12 +174,18 @@ func (app *application) getDetailedLimitsStats() (map[string]map[string]string, 
 	getData := func(key string, startDate time.Time, groupByMonth bool) error {
 		total, err := app.db.GetDetailedTotals(
 			startDate.Format("20060102"), farFuture,
-			groupByMonth, app.db.GenerateFlightRecordMap(startDate, groupByMonth),
+			groupByMonth, app.db.GenerateFlightRecordMap(startDate, now, groupByMonth),
 		)
 		if err != nil {
 			return err
 		}
-		totals[key] = total
+
+		totalTimeMap := make(map[string]string)
+		for key, record := range total {
+			totalTimeMap[key] = record.Time.Total
+		}
+
+		totals[key] = totalTimeMap
 		return nil
 	}
 

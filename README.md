@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: New stats page - Totals by Month
+
 ## [2.35.2] - 20.05.2024
 
 - Fix: Proper password field validation on Save
@@ -38,20 +42,6 @@ You also can easily export all flight records into EASA style pdf format, print 
     - Removed map data for css and js files for standard libraries. As a result, the final size of the application binary file is reduced by ~10 MB to ~18MB.
     - Added simple brutforce protection for login page.
     - Optimize internal helper function, so need for additional error check.
-
-## [2.34.0] - 03.04.2024
-
-- New: Add support for MySQL database. Check [readme](https://github.com/vsimakhin/web-logbook?tab=readme-ov-file#mysql-database) for more details.
-- Update: Refactored PDF export package. No UI changes.
-- New: Add support for a custom title page for PDF A4/A5 exports.
-- Update: Update openlayers lib from 7.3.0 to 9.0.0. No UI changes.
-- Update: Update golang from 1.20.3 to 1.21.8. No UI changes.
-- Fix: Finally fixed the unit tests. No UI changes.
-
-## [2.33.0] - 08.03.2024
-
-- New: License Number and Address fields on the `Settings` page. They are printed (if not empty) on the title page for PDF exported logbook.
-- Fix: Try to fix a `Map` page layout for Mac OS
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
@@ -121,6 +111,7 @@ Since it's written in Golang, it can run on any system after compiling the sourc
 * Statistics
   * Totals
   * By Year
+  * By Month
   * By Aircraft
   * By Aircraft group/class
   * Limits (EASA flight time limitations)

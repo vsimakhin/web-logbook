@@ -62,6 +62,8 @@ const (
 	APIStatsLimits                    = "/stats/data/limits"
 	APIStatsTotalsPage                = "/stats-totals"
 	APIStatsTotalsByYearPage          = "/stats-totals-by-year"
+	APIStatsTotalsByMonthPage         = "/stats-totals-by-month"
+	APIStatsTotalsByMonthYearPage     = "/stats-totals-by-month/{year}"
 	APIStatsTotalsByTypePage          = "/stats-totals-by-type"
 	APIStatsTotalsByClassPage         = "/stats-totals-by-class"
 	APIStatsLimitsPage                = "/stats-limits"
@@ -111,6 +113,8 @@ var apiMap = map[string]string{
 	"StatsLimits":                    APIStatsLimits,
 	"StatsTotalsPage":                APIStatsTotalsPage,
 	"StatsTotalsByYearPage":          APIStatsTotalsByYearPage,
+	"StatsTotalsByMonthPage":         APIStatsTotalsByMonthPage,
+	"StatsTotalsByMonthYearPage":     APIStatsTotalsByMonthYearPage,
 	"StatsTotalsByTypePage":          APIStatsTotalsByTypePage,
 	"StatsTotalsByClassPage":         APIStatsTotalsByClassPage,
 	"StatsLimitsPage":                APIStatsLimitsPage,
@@ -205,6 +209,8 @@ func (app *application) routes() *chi.Mux {
 
 		server.Get(APIStatsTotalsPage, app.HandlerStatsTotalsPage)
 		server.Get(APIStatsTotalsByYearPage, app.HandlerStatsTotalsByYearPage)
+		server.Get(APIStatsTotalsByMonthPage, app.HandlerStatsTotalsByMonthPage)
+		server.Get(APIStatsTotalsByMonthYearPage, app.HandlerStatsTotalsByMonthPage)
 		server.Get(APIStatsTotalsByTypePage, app.HandlerStatsTotalsByTypePage)
 		server.Get(APIStatsTotalsByClassPage, app.HandlerStatsTotalsByClassPage)
 		server.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)

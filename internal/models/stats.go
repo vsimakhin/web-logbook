@@ -3,6 +3,8 @@ package models
 import (
 	"context"
 	"time"
+
+	"golang.org/x/exp/slices"
 )
 
 // distance calculates distance between 2 airports
@@ -120,11 +122,14 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 
 }
 
-func (m *DBModel) GenerateFlightRecordMap(start time.Time, groupByMonth bool) map[string]FlightRecord {
+// GenerateFlightRecordMap generates a map of flight records based on the given start and end time.
+// The flight records are grouped either by month or by day, depending on the value of the groupByMonth parameter.
+// The generated map contains flight records with their corresponding time format as the key.
+// The flight records are initialized with zero values.
+func (m *DBModel) GenerateFlightRecordMap(start time.Time, end time.Time, groupByMonth bool) map[string]FlightRecord {
 	totals := make(map[string]FlightRecord)
 	var increment func(time.Time) time.Time
 	var timeFormat string
-	end := time.Now().UTC()
 
 	if groupByMonth {
 		timeFormat = "01/2006"
@@ -141,11 +146,12 @@ func (m *DBModel) GenerateFlightRecordMap(start time.Time, groupByMonth bool) ma
 	return totals
 }
 
-func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMonth bool, totals map[string]FlightRecord) (map[string]string, error) {
+// GetDetailedTotals retrieves detailed flight records from the database and calculates totals based on the specified date range.
+// It takes a start date, end date, a flag indicating whether to group by month, and a map to store the calculated totals.
+// The function returns the updated totals map and an error, if any.
+func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMonth bool, totals map[string]FlightRecord) (map[string]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
-	detailedTotals := make(map[string]string)
 
 	sqlQuery := "SELECT date, m_date, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, " +
@@ -156,7 +162,7 @@ func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMon
 	rows, err := m.DB.QueryContext(ctx, sqlQuery)
 
 	if err != nil {
-		return detailedTotals, err
+		return totals, err
 	}
 	defer rows.Close()
 
@@ -168,7 +174,7 @@ func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMon
 			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
 
 		if err != nil {
-			return detailedTotals, err
+			return totals, err
 		}
 
 		if (startDate <= fr.MDate) && (fr.MDate <= endDate) {
@@ -181,11 +187,44 @@ func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMon
 		}
 	}
 
-	for k, v := range totals {
-		detailedTotals[k] = v.Time.Total
+	return totals, nil
+}
+
+// GetYears returns a slice of strings representing the distinct years present in the logbook_view table.
+// If there are no records, the current year is returned.
+func (m *DBModel) GetYears() ([]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var years []string
+	var date string
+
+	query := "SELECT DISTINCT m_date FROM logbook_view ORDER BY m_date DESC"
+	rows, err := m.DB.QueryContext(ctx, query)
+
+	if err != nil {
+		return years, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&date)
+		if err != nil {
+			return years, err
+		}
+
+		year := date[:4]
+		if !slices.Contains(years, year) {
+			years = append(years, year)
+		}
 	}
 
-	return detailedTotals, nil
+	// if there are no records, return current year
+	if len(years) == 0 {
+		years = append(years, time.Now().UTC().Format("2006"))
+	}
+
+	return years, nil
 }
 
 // GetTotalsByYear calculates totals by year

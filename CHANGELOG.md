@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: New stats page - Totals by Month
+
 ## [2.35.2] - 20.05.2024
 
 - Fix: Proper password field validation on Save
