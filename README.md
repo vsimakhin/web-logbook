@@ -17,6 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Added new option to the Settings page - `Do not adjust logbook columns for small screens`. In this case the full logbook table will be shown without hiding any columns for mobile devices.
 - New: New stats page - Totals by Month
 
 ## [2.35.2] - 20.05.2024
