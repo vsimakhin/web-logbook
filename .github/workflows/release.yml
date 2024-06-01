@@ -43,11 +43,17 @@ jobs:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: dist/web-logbook-linux-arm64.tar.gz
 
-      - name: Upload Linux ARM32
+      - name: Upload Linux ARM32 v6
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: dist/web-logbook-linux-arm.tar.gz
+          asset_path: dist/web-logbook-linux-arm-6.tar.gz
+
+      - name: Upload Linux ARM32 v7
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: dist/web-logbook-linux-arm-7.tar.gz
 
       - name: Upload Window AMD64
         uses: shogo82148/actions-upload-release-asset@v1
