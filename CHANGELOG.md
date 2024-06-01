@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.36.0] - 01.06.2024
 
 - Update: Slightly updated the build script to support v6 and v7 platforms for ARM32 binaries.
 - New: Added new option to the Settings page - `Do not adjust logbook columns for small screens`. In this case the full logbook table will be shown without hiding any columns for mobile devices.
