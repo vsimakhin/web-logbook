@@ -159,7 +159,7 @@ const logbookUtils = function () {
          * Adjusts the visibility of columns in a table based on the width of a card element.
          */
         const adjustColumnVisibility = async () => {
-            if (!logbook_no_columns_change) {
+            if (logbook_no_columns_change === true) {
                 return;
             }
 
