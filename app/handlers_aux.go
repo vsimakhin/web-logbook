@@ -84,6 +84,7 @@ func (app *application) HandlerPreferences(w http.ResponseWriter, r *http.Reques
 		"hide_stats_landings":          settings.HideStatsFields.Landings,
 		"hide_stats_distance":          settings.HideStatsFields.Distance,
 		"signature_image":              settings.SignatureImage,
+		"logbook_no_columns_change":    settings.LogbookNoColumnsChnage,
 	}
 
 	app.writeJSON(w, http.StatusOK, data)
