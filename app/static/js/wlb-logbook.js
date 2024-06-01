@@ -11,6 +11,7 @@ const logbookUtils = function () {
         const url = await commonUtils.getApi("LogbookData");
         const logbookAPI = await commonUtils.getApi("Logbook");
         const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
+        const logbook_no_columns_change = await commonUtils.getPreferences("logbook_no_columns_change");
 
         const table = $('#logbook').DataTable({
             responsive: {
@@ -42,8 +43,10 @@ const logbookUtils = function () {
                 { targets: [12], width: "9%" }, //pic
                 {
                     targets: [23], render: function (data, type, row) {
-                        if (data.length > remarksL) {
-                            var txt = data.substr(0, remarksL) + '…'
+                        if (data.length !== 0 && data.length > remarksL) {
+                            let txt = "";
+                            if (remarksL < 0) { txt = data.substr(0, 5) + '…'; }
+                            else { txt = data.substr(0, remarksL) + '…'; }
                             return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${commonUtils.escapeHtml(data)}">${commonUtils.escapeHtml(txt)}</span>`;
                         } else {
                             return data;
@@ -155,7 +158,11 @@ const logbookUtils = function () {
         /**
          * Adjusts the visibility of columns in a table based on the width of a card element.
          */
-        const adjustColumnVisibility = () => {
+        const adjustColumnVisibility = async () => {
+            if (!logbook_no_columns_change) {
+                return;
+            }
+
             const cardWidth = document.getElementById('logbook_card').clientWidth;
 
             if (cardWidth >= 1500) {
@@ -176,7 +183,7 @@ const logbookUtils = function () {
         }
 
         $(window).resize(adjustColumnVisibility);
-        adjustColumnVisibility();
+        await adjustColumnVisibility();
 
         // Custom filtering function for datatables
         $.fn.dataTable.ext.search.push(

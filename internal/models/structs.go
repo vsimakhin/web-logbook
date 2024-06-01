@@ -214,14 +214,14 @@ type Settings struct {
 	ExportXLS ExportXLS `json:"export_xls"`
 	ExportCSV ExportCSV `json:"export_csv"`
 
-	HideStatsFields     HideFields `json:"hide_stats_fields"`
-	StatsFontSize       string     `json:"stats_font_size"`
-	LogbookFontSize     string     `json:"logbook_font_size"`
-	LogbookRows         string     `json:"logbook_rows"`
-	LicensingRows       string     `json:"licensing_rows"`
-	DateRangePickerWeek string     `json:"datepicker_week"`
-
-	TimeFieldsAutoFormat byte `json:"time_fields_auto_format"`
+	HideStatsFields        HideFields `json:"hide_stats_fields"`
+	StatsFontSize          string     `json:"stats_font_size"`
+	LogbookFontSize        string     `json:"logbook_font_size"`
+	LogbookRows            string     `json:"logbook_rows"`
+	TimeFieldsAutoFormat   byte       `json:"time_fields_auto_format"`
+	LogbookNoColumnsChnage bool       `json:"logbook_no_columns_change"`
+	LicensingRows          string     `json:"licensing_rows"`
+	DateRangePickerWeek    string     `json:"datepicker_week"`
 
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`

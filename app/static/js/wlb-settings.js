@@ -264,6 +264,7 @@ const settingsUtils = function () {
             stats_font_size: document.getElementById("stats_font").value,
             logbook_font_size: document.getElementById("logbook_font").value,
             logbook_rows: document.getElementById("logbook_rows").value,
+            logbook_no_columns_change: document.getElementById("logbook_no_columns_change").checked,
             licensing_rows: document.getElementById("licensing_rows").value,
             datepicker_week: document.getElementById("datepicker_week").value,
             time_fields_auto_format: time_fields_auto_format,
