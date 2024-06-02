@@ -19,6 +19,8 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/alexedwards/scs/mysqlstore v0.0.0-20240316134038-7e11d57e8885
+	github.com/alexedwards/scs/sqlite3store v0.0.0-20240316134038-7e11d57e8885
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect

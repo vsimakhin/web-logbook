@@ -87,6 +87,12 @@ var attachmentsTable = NewTable("attachments", "uuid", UUID,
 		{Name: "document", Type: Blob},
 	})
 
+var sessionsTable = NewTable("sessions", "token", ColumnType{SQLite: "TEXT", MySQL: "CHAR(43)"},
+	[]Column{
+		{Name: "data", Type: ColumnType{SQLite: "BLOB", MySQL: "BLOB"}, Properties: "NOT NULL"},
+		{Name: "expiry", Type: ColumnType{SQLite: "REAL", MySQL: "TIMESTAMP(6)"}, Properties: "NOT NULL"},
+	})
+
 var logbookView = NewView("logbook_view",
 	SQLQuery{
 		SQLite: `
