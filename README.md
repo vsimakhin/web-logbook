@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.37.0] - 02.06.2024
 
 - Update: Session manager now stores tokens in the database instead of memory. In this case it's possible to run the application in the Cloud platforms (AWS ECS, Google Cloud Run, Kubernetes) without always keeping it live and active.
 
