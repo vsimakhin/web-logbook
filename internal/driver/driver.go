@@ -41,7 +41,7 @@ func OpenDB(engine string, dsn string) (*sql.DB, error) {
 func validateDB(db *sql.DB, engine string) error {
 	// check tables
 	tables := []*Table{logbookTable, airportsTable, customAirportsTable,
-		settingsTable, licensingTable, attachmentsTable,
+		settingsTable, licensingTable, attachmentsTable, sessionsTable,
 	}
 
 	for _, table := range tables {

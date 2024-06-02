@@ -12,6 +12,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
 	"github.com/vsimakhin/web-logbook/internal/driver"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -123,6 +125,17 @@ func createDBConnection(engine string, dsn string) (*sql.DB, error) {
 	return conn, nil
 }
 
+func createSessionManager(conn *sql.DB, engine string) *scs.SessionManager {
+	session := scs.New()
+	session.Lifetime = 12 * time.Hour
+	if engine == "sqlite" {
+		session.Store = sqlite3store.New(conn)
+	} else {
+		session.Store = mysqlstore.New(conn)
+	}
+	return session
+}
+
 func main() {
 	var err error
 
@@ -151,8 +164,7 @@ func main() {
 	defer conn.Close()
 
 	// set up session
-	session = scs.New()
-	session.Lifetime = 12 * time.Hour
+	session = createSessionManager(conn, cfg.db.engine)
 
 	app := &application{
 		config:        cfg,
