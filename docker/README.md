@@ -9,7 +9,7 @@ There are several options for how you can use the dockerized version of the web-
 There is an official public repository at the Docker Hub [https://hub.docker.com/repository/docker/vsimakhin/web-logbook/](https://hub.docker.com/repository/docker/vsimakhin/web-logbook/) where you can pull the image. You can pull either the `latest` tag or a tag according to the release version.
 
 ```bash
-docker pull vsimakhin/web-logbok:latest
+docker pull vsimakhin/web-logbook:latest
 ```
 
 ## Build mage from latest release
