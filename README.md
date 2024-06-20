@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: The daterange picker on the main Logbook page didn't recognize the settings for the first day of the week (Monday or Sunday)
+
 ## [2.37.0] - 02.06.2024
 
 - Update: Session manager now stores tokens in the database instead of memory. In this case it's possible to run the application in the Cloud platforms (AWS ECS, Google Cloud Run, Kubernetes) without always keeping it live and active.
@@ -38,16 +42,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Fix: Correct using styles and classes for the sidebar when switching between the pages
 - Update: Code cleanup, removing code for synchronization with mobile client (will not continue working on it)
 - Update: Update golang version (1.21.10) and go packages.
-
-## [2.35.0] - 18.05.2024
-
-- New: Implemented a new responsive user interface that is friendly for desktop, mobile, and tablet devices. The design is based on the adminkit.io template, and all pages are refactored to ensure a seamless user experience across different platforms. Probably some new bugs are introduced ¯\\_(ツ)_/¯*
-- Update: rename cmd/web directory to app, just internal change.
-- Update: Code optimization. No UI change. Includes:
-    - Migrated all javascript code to a js files instead of keeping them in gohtml templates, plus some html code optimization. This significantly reduces amouunt of typo and errors. 
-    - Removed map data for css and js files for standard libraries. As a result, the final size of the application binary file is reduced by ~10 MB to ~18MB.
-    - Added simple brutforce protection for login page.
-    - Optimize internal helper function, so need for additional error check.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

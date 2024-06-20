@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: The daterange picker on the main Logbook page didn't recognize the settings for the first day of the week (Monday or Sunday)
+
 ## [2.37.0] - 02.06.2024
 
 - Update: Session manager now stores tokens in the database instead of memory. In this case it's possible to run the application in the Cloud platforms (AWS ECS, Google Cloud Run, Kubernetes) without always keeping it live and active.
