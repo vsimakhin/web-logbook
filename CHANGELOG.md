@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Update golang to 1.21.11 and golang packages
 - Fix: The daterange picker on the main Logbook page didn't recognize the settings for the first day of the week (Monday or Sunday)
 
 ## [2.37.0] - 02.06.2024
