@@ -134,7 +134,7 @@ const logbookUtils = function () {
                     linkedCalendars: false,
                     locale: {
                         cancelLabel: 'Clear',
-                        firstDay: firstDay
+                        firstDay: parseInt(firstDay) || 0
                     }
                 }, function (start, end, label) {
                     startDate = start;
