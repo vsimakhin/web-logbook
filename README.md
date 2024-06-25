@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.38.0] - 25.06.2024
 
 - Fix: Bug with columns for the extended PDF format, both A4 and A5.
 - Update: Update golang to 1.21.11 and golang packages
