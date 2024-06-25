@@ -215,7 +215,7 @@ user:password@protocol(address)/dbname?param=value
 
 For example, 
 ```
-./web-logbook -engine mysql -dsn "web-logbook-user:pwd@tcp(192.168.0.222)/web-logbook
+./web-logbook -engine mysql -dsn "web-logbook-user:pwd@tcp(192.168.0.222)/web-logbook"
 ```
 
 # New features/Issues
