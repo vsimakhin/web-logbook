@@ -243,6 +243,20 @@ func (p *PDFExporter) initColumns() {
 			c.Col23, //remarks
 		},
 	}
+
+	// extended format add Date column to the FSTD session by reducing Remarks
+	if p.Export.IsExtended {
+		p.columns.w1[10] += c.Col1
+		p.columns.w1[11] -= c.Col1
+
+		p.columns.w2[11] += c.Col1
+		p.columns.w2[12] -= c.Col1
+
+		p.columns.w3[22] -= c.Col1
+
+		p.columns.w4[15] += c.Col1
+		p.columns.w4[17] -= c.Col1
+	}
 }
 
 // initPDF initializes the PDF object
