@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Bug with columns for the extended PDF format, both A4 and A5.
 - Update: Update golang to 1.21.11 and golang packages
 - Fix: The daterange picker on the main Logbook page didn't recognize the settings for the first day of the week (Monday or Sunday)
 
