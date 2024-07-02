@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Incorrect night time calculation when flying inside the polar circle
+
 ## [2.38.0] - 25.06.2024
 
 - Fix: Bug with columns for the extended PDF format, both A4 and A5.

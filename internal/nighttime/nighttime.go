@@ -77,23 +77,38 @@ func (route *Route) FlightSpeed() float64 {
 	return route.RouteDistance() / route.FlightTime().Hours()
 }
 
-// SunriseSunset returns sunrise and sunset times
-func (place *Place) SunriseSunset() (time.Time, time.Time) {
-	sunrise, sunset := sunrise.SunriseSunset(place.Lat, place.Lon, place.Time.UTC().Year(), place.Time.UTC().Month(), place.Time.UTC().Day())
+// SunriseSunset returns sunrise and sunset times or time.Time{} if there is no night
+func (place *Place) SunriseSunset() (time.Time, time.Time, float64) {
+	sunElevation := sunrise.Elevation(place.Lat, place.Lon, place.Time)
+	sunRise, sunSet := sunrise.SunriseSunset(place.Lat, place.Lon, place.Time.UTC().Year(), place.Time.UTC().Month(), place.Time.UTC().Day())
 
-	return sunrise.UTC().Add(time.Duration(-30) * time.Minute), sunset.UTC().Add(time.Duration(30) * time.Minute)
+	noNight := time.Time{}
+	if sunRise == noNight || sunSet == noNight {
+		return noNight, noNight, sunElevation
+	}
+
+	aviationSunRise := sunRise.Add(time.Duration(-30) * time.Minute)
+	aviationSunSet := sunSet.Add(time.Duration(30) * time.Minute)
+
+	return aviationSunRise, aviationSunSet, sunElevation
 }
 
 // Sunrise returns aviation sunrise time
 func (place *Place) Sunrise() time.Time {
-	s, _ := place.SunriseSunset()
+	s, _, _ := place.SunriseSunset()
 	return s
 }
 
 // Sunset returns aviation sunset time (+30 minutes from apparent sunset)
 func (place *Place) Sunset() time.Time {
-	_, s := place.SunriseSunset()
+	_, s, _ := place.SunriseSunset()
 	return s
+}
+
+// Elevation returns sun elevation at the place
+func (place *Place) Elevation() float64 {
+	_, _, e := place.SunriseSunset()
+	return e
 }
 
 func (route *Route) NightTime() time.Duration {
@@ -107,9 +122,9 @@ func (route *Route) NightTime() time.Duration {
 }
 
 func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute float64) time.Duration {
-	d := time.Duration(0)
 
 	distance := distance(start, end)
+
 	if distance > maxDistance {
 		// too long, let's split it again
 		mid := midpoint(start, end)
@@ -117,19 +132,29 @@ func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute fl
 		flightTime := distance / 2 / speedPerMinute
 		mid.Time = start.Time.Add(time.Duration(flightTime) * time.Minute)
 
-		d = nightSegment(start, mid, maxDistance, speedPerMinute) + nightSegment(mid, end, maxDistance, speedPerMinute)
-	} else {
-		// get sunrise and sunset for the end point
-		// it could be calculated for the middle point again to be more precise,
-		// but it will add few more calculations and the error is not so high
-		sr, ss := end.SunriseSunset()
-
-		if end.Time.After(sr) && end.Time.Before(ss) {
-			d = time.Duration(0)
-		} else {
-			d = time.Duration(distance / speedPerMinute * float64(time.Minute))
-		}
+		return nightSegment(start, mid, maxDistance, speedPerMinute) + nightSegment(mid, end, maxDistance, speedPerMinute)
 	}
 
-	return d
+	// get sunrise and sunset for the end point
+	// it could be calculated for the middle point again to be more precise,
+	// but it will add few more calculations and the error is not so high
+	sr, ss, elevation := end.SunriseSunset()
+
+	nightTime := time.Duration(distance / speedPerMinute * float64(time.Minute))
+
+	if sr.Year() == 1 && ss.Year() == 1 {
+		if elevation > 0 {
+			// Polar day, no night time
+			return 0
+		}
+		// Polar night, all time is night
+		return nightTime
+	}
+
+	// day time
+	if end.Time.After(sr) && end.Time.Before(ss) {
+		return 0
+	}
+
+	return nightTime
 }
