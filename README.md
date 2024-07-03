@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Incorrect night time calculation when flying inside the polar circle
+
 ## [2.38.0] - 25.06.2024
 
 - Fix: Bug with columns for the extended PDF format, both A4 and A5.
@@ -38,12 +42,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Fix: Add horizontal scrolling for the logbook page to properly support mobile devices
 - Fix: Add dynamic resizing for the charts on Stats pages
 - Fix: Instructor's hours for the Total Stats table were mixed up for the last 90 days and the last 12 months
-
-## [2.35.1] - 20.05.2024
-
-- Fix: Correct using styles and classes for the sidebar when switching between the pages
-- Update: Code cleanup, removing code for synchronization with mobile client (will not continue working on it)
-- Update: Update golang version (1.21.10) and go packages.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
