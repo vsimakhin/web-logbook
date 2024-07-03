@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.39.0] - 03.07.2024
 
 - Fix: Incorrect night time calculation when flying inside the polar circle
 
