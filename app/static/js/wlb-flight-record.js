@@ -5,7 +5,6 @@ const flightRecordUtils = function () {
 
     /**
      * Calculates the total time and night time based on the departure and arrival times.
-     * @returns {Promise<void>} A promise that resolves when the calculation is complete.
      */
     const calculateTimes = async (e) => {
         const date = commonUtils.getElementValue("date");
@@ -134,17 +133,43 @@ const flightRecordUtils = function () {
         }
     }
 
+    const updateFlightRecordTitle = () => {
+        const departurePlace = commonUtils.getElementValue("departure_place");
+        const arrivalPlace = commonUtils.getElementValue("arrival_place");
+        const prevUuid = commonUtils.getElementValue("prev_uuid");
+        const nextUuid = commonUtils.getElementValue("next_uuid");
+        const url = commonUtils.getElementValue("flight_record_url");
+
+        // Construct the base caption
+        let caption = "Flight Record";
+        if (departurePlace && arrivalPlace) {
+            caption += ` ${departurePlace} - ${arrivalPlace}`;
+        }
+
+        // Update the page title
+        document.title = caption;
+
+        // Construct navigation links if applicable
+        const prevLink = prevUuid && prevUuid !== "0" ? ` <a href="${url}/${prevUuid}"><i class="bi bi-chevron-left"></i></a> ` : "";
+        const nextLink = nextUuid && nextUuid !== "0" ? ` <a href="${url}/${nextUuid}"><i class="bi bi-chevron-right"></i></a>` : "";
+
+        // Update the page header
+        document.getElementById("page_header").innerHTML = caption + prevLink + nextLink;
+    }
     /**
      * Handles the change event for the departure and arrival places.
      * Loads the flight map if both departure and arrival places are selected.
-     * @returns {Promise<void>} A promise that resolves when the flight map is loaded.
      */
     const onDepArrChange = async (e) => {
         const departure_place = commonUtils.getElementValue("departure_place");
         const arrival_place = commonUtils.getElementValue("arrival_place");
 
         if (departure_place !== "" && arrival_place !== "") {
+            // load map
             await flightRecordMap.loadMap(departure_place, arrival_place);
+
+            // update title and header
+            updateFlightRecordTitle();
         }
     }
 
@@ -164,7 +189,6 @@ const flightRecordUtils = function () {
 
     /**
      * Enables tooltips for flight record fields based on user preferences.
-     * @returns {Promise<void>} A promise that resolves when tooltips are enabled.
      */
     const enableTooltips = async () => {
         const isEnable = await commonUtils.getPreferences("enable_flightrecord_tooltips");
@@ -237,7 +261,6 @@ const flightRecordUtils = function () {
 
     /**
      * Initializes the date range picker.
-     * @returns {Promise<void>} A promise that resolves when the date range picker is initialized.
      */
     const initDateRangePicker = async () => {
         const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
@@ -313,7 +336,6 @@ const flightRecordUtils = function () {
     /**
      * Saves the flight record by sending a POST request to the server.
      * Validates the form fields before sending the request.
-     * @returns {Promise<void>} A promise that resolves when the request is completed.
      */
     const saveFlightRecord = async () => {
         if (!validateFields()) {
@@ -363,8 +385,15 @@ const flightRecordUtils = function () {
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
-            if (typeof data.redirect_url !== 'undefined') {
-                location.href = data.redirect_url;
+
+            if (commonUtils.getElementValue("uuid") === "") {
+                // set new uuid
+                commonUtils.setElementValue("uuid", data.data);
+
+                // show buttons
+                document.getElementById("attach_button").classList.remove("d-none");
+                document.getElementById("new_flight_record").classList.remove("d-none");
+                document.getElementById("ask_delete_flight_record_btn").classList.remove("d-none");
             }
         } else {
             commonUtils.showErrorMessage(data.message);
@@ -374,7 +403,6 @@ const flightRecordUtils = function () {
     /**
      * Asks for confirmation before deleting a flight record.
      * @param {Event} e - The event object.
-     * @returns {Promise<void>} - A promise that resolves when the delete modal is shown.
      */
     const askForDeleteFlightRecord = async (e) => {
         const deleteModal = new bootstrap.Modal(document.getElementById("delete-record"));
@@ -384,7 +412,6 @@ const flightRecordUtils = function () {
     /**
      * Deletes a flight record.
      * @param {Event} e - The event object.
-     * @returns {Promise<void>} - A promise that resolves when the flight record is deleted.
      */
     const deleteFlightRecord = async (e) => {
         const payload = {
@@ -405,7 +432,6 @@ const flightRecordUtils = function () {
 
     /**
      * Loads attachments for a flight record.
-     * @returns {Promise<void>} A promise that resolves when the attachments are loaded.
      */
     const loadAttachments = async () => {
         const uuid = document.getElementById("uuid").value
@@ -449,7 +475,6 @@ const flightRecordUtils = function () {
     /**
      * Deletes an attachment with the specified UUID.
      * @param {string} uuid - The UUID of the attachment to delete.
-     * @returns {Promise<void>} - A promise that resolves when the attachment is deleted.
      */
     const deleteAttachment = async (uuid) => {
         let payload = { uuid: uuid };
@@ -466,7 +491,6 @@ const flightRecordUtils = function () {
     /**
      * Opens the upload attachments modal.
      * @param {Event} e - The event object.
-     * @returns {Promise<void>} - A promise that resolves when the modal is shown.
      */
     const openUploadAttachemnts = async (e) => {
         const uploadModal = new bootstrap.Modal(document.getElementById("attachments"));
@@ -475,7 +499,6 @@ const flightRecordUtils = function () {
 
     /**
      * Uploads an attachment for the flight record.
-     * @returns {Promise<void>} A promise that resolves when the attachment is uploaded.
      */
     const uploadAttachment = async () => {
         if (commonUtils.getElementValue("document") === "") {
@@ -507,6 +530,7 @@ const flightRecordUtils = function () {
      * Initializes the page by assigning event listeners, enabling tooltips, and triggering the onDepArrChange function.
      */
     const initPage = async () => {
+        updateFlightRecordTitle();
         assignEventListeners();
         await enableTooltips();
         await onDepArrChange();

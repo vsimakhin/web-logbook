@@ -280,8 +280,14 @@ const commonUtils = function () {
      * @returns {boolean} - The updated validity state of the field.
      */
     const updateFieldValidity = (field, isValid) => {
-        field.classList.remove(isValid ? "is-invalid" : "is-valid");
-        field.classList.add(isValid ? "is-valid" : "is-invalid");
+        if (isValid) {
+            field.classList.remove("is-invalid");
+        }
+        else {
+            field.classList.remove("is-valid");
+            field.classList.add("is-invalid");
+        }
+
         return isValid;
     }
 

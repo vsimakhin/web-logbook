@@ -1,20 +1,8 @@
 {{ template "base" .}}
 
-{{ define "title" }}
-{{$fr := index .Data "flightRecord"}}
-Flight Record {{if $fr.UUID}}{{ if and $fr.Departure.Place $fr.Arrival.Place}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{end}}{{end}}
-{{ end }}
+{{ define "title" }}Flight Record{{ end }}
 
-{{ define "header" }}
-{{$api := .API}}
-{{$fr := index .Data "flightRecord"}}
-Flight Record 
-{{if $fr.UUID}}
-    {{if and $fr.Departure.Place $fr.Arrival.Place}}{{$fr.Departure.Place}} - {{$fr.Arrival.Place}}{{end}}
-    {{if ne $fr.PrevUUID "0"}}<a href="{{$api.Logbook}}/{{$fr.PrevUUID}}"><i class="bi bi-chevron-left"></i></a>{{end}}
-    {{if ne $fr.NextUUID "0"}}<a href="{{$api.Logbook}}/{{$fr.NextUUID}}"><i class="bi bi-chevron-right"></i></a>{{end}}
-{{end}}
-{{ end }}
+{{ define "header" }}Flight Record{{ end }}
 
 {{ define "css" }}
 <link rel="stylesheet" href="/static/css/ol.css">
@@ -202,14 +190,17 @@ Flight Record
     </div>
 </div>
 <input type="hidden" name="uuid" id="uuid" value="{{if $fr.UUID}}{{$fr.UUID}}{{end}}">
+<input type="hidden" name="flight_record_url" id="flight_record_url" value="{{$api.Logbook}}">
+<input type="hidden" name="prev_uuid" id="prev_uuid" value="{{$fr.PrevUUID}}">
+<input type="hidden" name="next_uuid" id="next_uuid" value="{{$fr.NextUUID}}">
 <hr>
 
 <button class="btn btn-outline-secondary" type="button" id="save_flight_record_btn"><i class="bi bi-save"></i> Save</button>
-{{if $fr.UUID}}<button id="attach_button" class="btn btn-outline-secondary"><i class="bi bi-paperclip"></i> Attachments</button>{{end}}
-{{if $fr.UUID}}<a id="new_flight_record" class="btn btn-outline-secondary" href="{{$api.LogbookNew}}?last_arrival={{$fr.Arrival.Place}}&last_date={{$fr.Date}}"><i class="bi bi-plus-square"></i> Add New Flight Record</a>{{end}}
+<button id="attach_button" class="btn btn-outline-secondary {{if not $fr.UUID}}d-none{{end}}"><i class="bi bi-paperclip"></i> Attachments</button>
+<a id="new_flight_record" class="btn btn-outline-secondary {{if not $fr.UUID}}d-none{{end}}" href="{{$api.LogbookNew}}?last_arrival={{$fr.Arrival.Place}}&last_date={{$fr.Date}}"><i class="bi bi-plus-square"></i> Add New Flight Record</a>
 
 <div class="float-end">
-{{if $fr.UUID}}<button id="ask_delete_flight_record_btn" class="btn btn-outline-danger float-right"><i class="bi bi-file-x"></i> Delete</button>{{end}}
+<button id="ask_delete_flight_record_btn" class="btn btn-outline-danger float-right {{if not $fr.UUID}}d-none{{end}}"><i class="bi bi-file-x"></i> Delete</button>
 </div>
 
 

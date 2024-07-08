@@ -135,8 +135,7 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 		} else {
 			response.OK = true
 			response.Message = "New Flight Record has been saved"
-			response.RedirectURL = fmt.Sprintf("%s/%s", APILogbook, flightRecord.UUID)
-
+			response.Data = flightRecord.UUID
 		}
 
 	} else {
