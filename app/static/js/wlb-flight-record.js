@@ -133,12 +133,12 @@ const flightRecordUtils = function () {
         }
     }
 
-    const updateFlightRecordTitle = () => {
+    const updateFlightRecordTitle = async () => {
         const departurePlace = commonUtils.getElementValue("departure_place");
         const arrivalPlace = commonUtils.getElementValue("arrival_place");
         const prevUuid = commonUtils.getElementValue("prev_uuid");
         const nextUuid = commonUtils.getElementValue("next_uuid");
-        const url = commonUtils.getElementValue("flight_record_url");
+        const url = await commonUtils.getApi("Logbook");
 
         // Construct the base caption
         let caption = "Flight Record";
@@ -169,8 +169,39 @@ const flightRecordUtils = function () {
             await flightRecordMap.loadMap(departure_place, arrival_place);
 
             // update title and header
-            updateFlightRecordTitle();
+            await updateFlightRecordTitle();
         }
+    }
+
+    /**
+     * Creates a new flight record based on the last arrival and date.
+     */
+    const newFlightRecord = async () => {
+        const url = await commonUtils.getApi("LogbookNew");
+        const date = commonUtils.getElementValue("date");
+        const arrival = commonUtils.getElementValue("arrival_place");
+        location.href = `${url}?last_arrival=${arrival}&last_date=${date}`;
+    }
+
+    /**
+     * Copies the flight record
+     */
+    const copyFlightRecord = async () => {
+        // set empty uuids
+        commonUtils.setElementValue("uuid", "");
+        commonUtils.setElementValue("prev_uuid", "");
+        commonUtils.setElementValue("next_uuid", "");
+
+        // hide buttons
+        document.getElementById("attach_button").classList.add("d-none");
+        document.getElementById("new_flight_record").classList.add("d-none");
+        document.getElementById("ask_delete_flight_record_btn").classList.add("d-none");
+        document.getElementById("copy_flight_record").classList.add("d-none");
+
+        await updateFlightRecordTitle();
+
+        // show info message
+        commonUtils.showInfoMessage("Flight record copied, update the details/flight times and save");
     }
 
     /**
@@ -252,11 +283,12 @@ const flightRecordUtils = function () {
 
         // on click
         document.getElementById("save_flight_record_btn").addEventListener("click", saveFlightRecord);
-        if (document.getElementById("ask_delete_flight_record_btn")) { document.getElementById("ask_delete_flight_record_btn").addEventListener("click", askForDeleteFlightRecord); }
-        if (document.getElementById("delete_flight_record_btn")) { document.getElementById("delete_flight_record_btn").addEventListener("click", deleteFlightRecord); }
-        if (document.getElementById("attach_button")) { document.getElementById("attach_button").addEventListener("click", openUploadAttachemnts); }
-
+        document.getElementById("ask_delete_flight_record_btn").addEventListener("click", askForDeleteFlightRecord);
+        document.getElementById("delete_flight_record_btn").addEventListener("click", deleteFlightRecord);
+        document.getElementById("attach_button").addEventListener("click", openUploadAttachemnts);
         document.getElementById("upload").addEventListener("click", uploadAttachment);
+        document.getElementById("new_flight_record").addEventListener("click", newFlightRecord);
+        document.getElementById("copy_flight_record").addEventListener("click", copyFlightRecord);
     }
 
     /**
@@ -394,6 +426,7 @@ const flightRecordUtils = function () {
                 document.getElementById("attach_button").classList.remove("d-none");
                 document.getElementById("new_flight_record").classList.remove("d-none");
                 document.getElementById("ask_delete_flight_record_btn").classList.remove("d-none");
+                document.getElementById("copy_flight_record").classList.remove("d-none");
             }
         } else {
             commonUtils.showErrorMessage(data.message);
@@ -530,7 +563,7 @@ const flightRecordUtils = function () {
      * Initializes the page by assigning event listeners, enabling tooltips, and triggering the onDepArrChange function.
      */
     const initPage = async () => {
-        updateFlightRecordTitle();
+        await updateFlightRecordTitle();
         assignEventListeners();
         await enableTooltips();
         await onDepArrChange();
