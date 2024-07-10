@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: The page will no longer reload when saving a new flight record.
+- Update: During validation, fields with correct values will no longer be highlighted in green. Only fields with incorrect values will be highlighted in red.
+- New: Added a "Copy" button to the Flight Record page.
+- Update: When the arrival or departure time is changed and the total time is recalculated, the other time fields will also be checked against the old total.
+
 ## [2.39.0] - 03.07.2024
 
 - Fix: Incorrect night time calculation when flying inside the polar circle
