@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.40.0] - 10.07.2024
 
 - Update: The page will no longer reload when saving a new flight record.
 - Update: During validation, fields with correct values will no longer be highlighted in green. Only fields with incorrect values will be highlighted in red.
