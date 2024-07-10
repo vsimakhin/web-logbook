@@ -19,7 +19,21 @@ const flightRecordUtils = function () {
 
             // total time
             const totalTime = calculateTotalTime(start, end);
+
+            const oldTotalTime = commonUtils.getElementValue("total_time");
             commonUtils.setElementValue("total_time", totalTime);
+
+            if (oldTotalTime !== "") {
+                // Probably the total time was already set and now recalculated,
+                // so we can go through the other time fields and update the time as well.
+                // As a case - the flight record was copied and now the times are recalculated.
+                const targetFields = ["se_time", "me_time", "mcc_time", "night_time", "ifr_time", "pic_time", "sic_time", "dual_time", "instr_time", "sim_time"];
+                targetFields.forEach((field) => {
+                    if (commonUtils.getElementValue(field) === oldTotalTime) {
+                        commonUtils.setElementValue(field, totalTime);
+                    }
+                });
+            }
 
             // night time
             if (date && departure_place && arrival_place) {

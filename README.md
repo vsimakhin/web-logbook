@@ -15,6 +15,13 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Update: The page will no longer reload when saving a new flight record.
+- Update: During validation, fields with correct values will no longer be highlighted in green. Only fields with incorrect values will be highlighted in red.
+- New: Added a "Copy" button to the Flight Record page.
+- Update: When the arrival or departure time is changed and the total time is recalculated, the other time fields will also be checked against the old total.
+
 ## [2.39.0] - 03.07.2024
 
 - Fix: Incorrect night time calculation when flying inside the polar circle
@@ -28,20 +35,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [2.37.0] - 02.06.2024
 
 - Update: Session manager now stores tokens in the database instead of memory. In this case it's possible to run the application in the Cloud platforms (AWS ECS, Google Cloud Run, Kubernetes) without always keeping it live and active.
-
-## [2.36.0] - 01.06.2024
-
-- Update: Slightly updated the build script to support v6 and v7 platforms for ARM32 binaries.
-- New: Added new option to the Settings page - `Do not adjust logbook columns for small screens`. In this case the full logbook table will be shown without hiding any columns for mobile devices.
-- New: New stats page - Totals by Month
-
-## [2.35.2] - 20.05.2024
-
-- Fix: Proper password field validation on Save
-- Update: Support for submit button (on Enter key) on login page
-- Fix: Add horizontal scrolling for the logbook page to properly support mobile devices
-- Fix: Add dynamic resizing for the charts on Stats pages
-- Fix: Instructor's hours for the Total Stats table were mixed up for the last 90 days and the last 12 months
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
