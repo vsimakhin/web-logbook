@@ -15,6 +15,11 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Update go minor version (1.21.13) and related packages (bug and security fixes).
+- Fix: Corrected a title for the login page.
+
 ## [2.40.0] - 10.07.2024
 
 - Update: The page will no longer reload when saving a new flight record.
@@ -31,10 +36,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Fix: Bug with columns for the extended PDF format, both A4 and A5.
 - Update: Update golang to 1.21.11 and golang packages
 - Fix: The daterange picker on the main Logbook page didn't recognize the settings for the first day of the week (Monday or Sunday)
-
-## [2.37.0] - 02.06.2024
-
-- Update: Session manager now stores tokens in the database instead of memory. In this case it's possible to run the application in the Cloud platforms (AWS ECS, Google Cloud Run, Kubernetes) without always keeping it live and active.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
