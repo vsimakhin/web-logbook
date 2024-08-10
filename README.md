@@ -19,6 +19,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - Update: Update go minor version (1.21.13) and related packages (bug and security fixes).
 - Fix: Corrected a title for the login page.
+- Fix: Fix the random order of the elements on Stats by Type/Class pages
 
 ## [2.40.0] - 10.07.2024
 
