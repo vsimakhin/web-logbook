@@ -13,6 +13,8 @@ const logbookUtils = function () {
         const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
         const logbook_no_columns_change = await commonUtils.getPreferences("logbook_no_columns_change");
 
+        var initCompleted = false;
+
         const table = $('#logbook').DataTable({
             responsive: {
                 details: false,
@@ -152,6 +154,8 @@ const logbookUtils = function () {
                     endDate = null;
                     table.draw();
                 });
+
+                initCompleted = true;
             }
         });
 
@@ -159,13 +163,14 @@ const logbookUtils = function () {
          * Adjusts the visibility of columns in a table based on the width of a card element.
          */
         const adjustColumnVisibility = async () => {
-            if (logbook_no_columns_change === true) {
+            if (!initCompleted || logbook_no_columns_change) {
                 return;
             }
-
             const cardWidth = document.getElementById('logbook_card').clientWidth;
 
+            console.log(table.columns().count())
             if (cardWidth >= 1500) {
+                console.log(table.columns())
                 table.columns([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]).visible(true);
             } else if (cardWidth >= 1000 && cardWidth < 1500) {
                 table.columns([1, 2, 3, 4, 5, 6, 7, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22]).visible(true);
