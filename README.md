@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.41.0] - 11.08.2024
 
 - Update: Update go minor version (1.21.13) and related packages (bug and security fixes).
 - Fix: Corrected a title for the login page.
