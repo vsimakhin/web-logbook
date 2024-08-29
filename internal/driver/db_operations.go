@@ -15,7 +15,7 @@ const (
 	createTable = iota
 	getColumns  = iota
 	alterTable  = iota
-	checkView   = iota
+	dropView    = iota
 	createView  = iota
 	checkIndex  = iota
 	createIndex = iota
@@ -30,7 +30,7 @@ var queries = map[string]map[int]string{
 		createTable: "CREATE TABLE %s (%s %s PRIMARY KEY)",
 		getColumns:  "PRAGMA table_info(%s)",
 		alterTable:  "ALTER TABLE %s ADD COLUMN %s %s",
-		checkView:   "SELECT * FROM %s WHERE 1=2",
+		dropView:    "DROP VIEW IF EXISTS %s",
 		createView:  "CREATE VIEW %s AS %s",
 		checkIndex:  "PRAGMA index_list(%s)",
 		createIndex: "CREATE INDEX %s ON %s (%s)",
@@ -40,7 +40,7 @@ var queries = map[string]map[int]string{
 		createTable: "CREATE TABLE %s (%s %s PRIMARY KEY);",
 		getColumns:  "SHOW COLUMNS FROM %s",
 		alterTable:  "ALTER TABLE %s ADD COLUMN %s %s",
-		checkView:   "SELECT * FROM %s WHERE 1=2",
+		dropView:    "DROP VIEW IF EXISTS %s",
 		createView:  "CREATE VIEW %s AS %s",
 		checkIndex:  "SHOW INDEX FROM %s",
 		createIndex: "CREATE INDEX %s ON %s (%s)",
@@ -225,21 +225,26 @@ func (v *View) initView(db *sql.DB, engine string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	if !v.isExists(ctx, db, engine) {
-		err := v.createView(ctx, db, engine)
-		if err != nil {
-			return err
-		}
+	v.dropView(db, engine)
+	err := v.createView(ctx, db, engine)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-// isExists checks if the view exists in the database.
-func (v *View) isExists(ctx context.Context, db *sql.DB, engine string) bool {
-	query := fmt.Sprintf(queries[engine][checkView], v.Name)
-	_, err := db.ExecContext(ctx, query)
+// dropView drops the view from the database.
+func (v *View) dropView(db *sql.DB, engine string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	return err == nil
+	query := fmt.Sprintf(queries[engine][dropView], v.Name)
+	_, err := db.ExecContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // createView creates the view in the database.
