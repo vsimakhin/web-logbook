@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: No longer shorten the remarks field for small screens if the option "Do not adjust logbook columns for small screens" is selected
 - Fix: Recreate the database view during startup in case changes didn't propagate after a version change.
 
 ## [2.41.0] - 11.08.2024
