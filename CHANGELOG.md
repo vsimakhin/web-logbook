@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Recreate the database view during startup in case changes didn't propagate after a version change.
+
 ## [2.41.0] - 11.08.2024
 
 - Update: Update go minor version (1.21.13) and related packages (bug and security fixes).

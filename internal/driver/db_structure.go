@@ -103,7 +103,7 @@ var logbookView = NewView("logbook_view",
 				iif(day_landings='',0,day_landings) as day_landings, 
 				iif(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks, update_time
+				instructor_time, sim_type, sim_time, pic_name, remarks, IFNULL(update_time,0) as update_time
 			FROM logbook;
 			`,
 		MySQL: `
@@ -114,7 +114,7 @@ var logbookView = NewView("logbook_view",
 				IF(day_landings='',0,day_landings) as day_landings, 
 				IF(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks, update_time
+				instructor_time, sim_type, sim_time, pic_name, remarks, IFNULL(update_time,0) as update_time
 			FROM logbook;
 		`,
 	},

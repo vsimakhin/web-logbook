@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Recreate the database view during startup in case changes didn't propagate after a version change.
+
 ## [2.41.0] - 11.08.2024
 
 - Update: Update go minor version (1.21.13) and related packages (bug and security fixes).
@@ -31,12 +35,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [2.39.0] - 03.07.2024
 
 - Fix: Incorrect night time calculation when flying inside the polar circle
-
-## [2.38.0] - 25.06.2024
-
-- Fix: Bug with columns for the extended PDF format, both A4 and A5.
-- Update: Update golang to 1.21.11 and golang packages
-- Fix: The daterange picker on the main Logbook page didn't recognize the settings for the first day of the week (Monday or Sunday)
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
