@@ -45,14 +45,19 @@ const logbookUtils = function () {
                 { targets: [12], width: "9%" }, //pic
                 {
                     targets: [23], render: function (data, type, row) {
-                        if (data.length !== 0 && data.length > remarksL) {
-                            let txt = "";
-                            if (remarksL < 0) { txt = data.substr(0, 5) + '…'; }
-                            else { txt = data.substr(0, remarksL) + '…'; }
-                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${commonUtils.escapeHtml(data)}">${commonUtils.escapeHtml(txt)}</span>`;
-                        } else {
+                        const cardWidth = document.getElementById('logbook_card').clientWidth;
+                        if (cardWidth < 1500 && logbook_no_columns_change) {
                             return data;
                         }
+
+                        if (data.length !== 0 && data.length > remarksL) {
+                            const txt = remarksL < 0 ? data.substr(0, 5) + '…' : data.substr(0, remarksL) + '…';
+                            const escapedData = commonUtils.escapeHtml(data);
+                            const escapedTxt = commonUtils.escapeHtml(txt);
+                            return `<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="${escapedData}">${escapedTxt}</span>`;
+                        }
+
+                        return data;
                     }
                 }
             ],
@@ -168,9 +173,7 @@ const logbookUtils = function () {
             }
             const cardWidth = document.getElementById('logbook_card').clientWidth;
 
-            console.log(table.columns().count())
             if (cardWidth >= 1500) {
-                console.log(table.columns())
                 table.columns([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]).visible(true);
             } else if (cardWidth >= 1000 && cardWidth < 1500) {
                 table.columns([1, 2, 3, 4, 5, 6, 7, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22]).visible(true);
