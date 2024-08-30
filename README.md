@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.42.0] - 30.08.2024
 
 - Update: No longer shorten the remarks field for small screens if the option "Do not adjust logbook columns for small screens" is selected
 - Fix: Recreate the database view during startup in case changes didn't propagate after a version change.
