@@ -140,7 +140,6 @@ func (app *application) HandlerFlightRecordSave(w http.ResponseWriter, r *http.R
 
 	} else {
 		// just update the current flight record
-		flightRecord.UpdateTime = time.Now().Unix() // set update time
 		err = app.db.UpdateFlightRecord(flightRecord)
 		if err != nil {
 			app.errorLog.Println(fmt.Errorf("error updating the flight record - %s", err))

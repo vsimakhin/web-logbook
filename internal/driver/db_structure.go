@@ -37,7 +37,6 @@ var logbookTable = NewTable("logbook", "uuid", UUID,
 		{Name: "sim_time", Type: DateTime},
 		{Name: "pic_name", Type: SmallText},
 		{Name: "remarks", Type: FullText},
-		{Name: "update_time", Type: Int},
 	})
 
 var airportsTable = NewTable("airports", "icao", SmallText,
@@ -77,7 +76,6 @@ var licensingTable = NewTable("licensing", "uuid", UUID,
 		{Name: "document_name", Type: BigText},
 		{Name: "document", Type: Blob},
 		{Name: "remarks", Type: FullText},
-		{Name: "update_time", Type: Int},
 	})
 
 var attachmentsTable = NewTable("attachments", "uuid", UUID,
@@ -103,7 +101,7 @@ var logbookView = NewView("logbook_view",
 				iif(day_landings='',0,day_landings) as day_landings, 
 				iif(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks, IFNULL(update_time,0) as update_time
+				instructor_time, sim_type, sim_time, pic_name, remarks
 			FROM logbook;
 			`,
 		MySQL: `
@@ -114,7 +112,7 @@ var logbookView = NewView("logbook_view",
 				IF(day_landings='',0,day_landings) as day_landings, 
 				IF(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks, IFNULL(update_time,0) as update_time
+				instructor_time, sim_type, sim_time, pic_name, remarks
 			FROM logbook;
 		`,
 	},

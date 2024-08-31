@@ -75,7 +75,6 @@ func TestInsertFlightRecord(t *testing.T) {
 	fr.SIM.Time = "2:00"
 	fr.PIC = "Self"
 	fr.Remarks = "Remarks"
-	fr.UpdateTime = 1000
 
 	err := db.InsertFlightRecord(fr)
 	if err != nil {
@@ -113,7 +112,6 @@ func TestUpdateFlightRecord(t *testing.T) {
 	fr.SIM.Time = "2:00"
 	fr.PIC = "Self"
 	fr.Remarks = "Remarks"
-	fr.UpdateTime = 1000
 
 	err := db.UpdateFlightRecord(fr)
 	if err != nil {

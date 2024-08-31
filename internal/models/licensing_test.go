@@ -63,7 +63,6 @@ func TestUpdateLicenseRecord(t *testing.T) {
 	lic.ValidFrom = "valid_from"
 	lic.ValidUntil = "valid_until"
 	lic.Remarks = "remarks"
-	lic.UpdateTime = 1000
 
 	err := db.UpdateLicenseRecord(lic)
 	if err != nil {
@@ -87,7 +86,6 @@ func TestInsertLicenseRecord(t *testing.T) {
 	lic.Remarks = "remarks"
 	lic.DocumentName = "document_name"
 	lic.Document = []byte("0")
-	lic.UpdateTime = 1000
 
 	err := db.InsertLicenseRecord(lic)
 	if err != nil {
@@ -101,17 +99,6 @@ func TestDeleteLicenseRecord(t *testing.T) {
 	InitMock(mock, "DeleteLicenseRecord")
 
 	err := db.DeleteLicenseRecord("uuid")
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestDeleteLicenseAttachment(t *testing.T) {
-	db, mock := initDBModel(t)
-
-	InitMock(mock, "DeleteLicenseAttachment")
-
-	err := db.DeleteLicenseAttachment("uuid")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -14,7 +14,7 @@ func (m *DBModel) GetLicenses() ([]License, error) {
 	var licenses []License
 
 	query := "SELECT uuid, category, name, number, issued, " +
-		"valid_from, valid_until, document_name, document, IFNULL(update_time,0) as update_time " +
+		"valid_from, valid_until, document_name, document " +
 		"FROM licensing ORDER BY category, name"
 	rows, err := m.DB.QueryContext(ctx, query)
 
@@ -25,7 +25,7 @@ func (m *DBModel) GetLicenses() ([]License, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
-			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.Document, &lic.UpdateTime)
+			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.Document)
 
 		if err != nil {
 			return licenses, err
@@ -44,12 +44,12 @@ func (m *DBModel) GetLicenseRecordByID(uuid string) (License, error) {
 	var lic License
 
 	query := "SELECT uuid, category, name, number, issued, " +
-		"valid_from, valid_until, remarks, document_name, document, IFNULL(update_time,0) as update_time " +
+		"valid_from, valid_until, remarks, document_name, document " +
 		"FROM licensing WHERE uuid = ?"
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 
 	err := row.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
-		&lic.ValidFrom, &lic.ValidUntil, &lic.Remarks, &lic.DocumentName, &lic.Document, &lic.UpdateTime)
+		&lic.ValidFrom, &lic.ValidUntil, &lic.Remarks, &lic.DocumentName, &lic.Document)
 
 	if err != nil {
 		return lic, err
@@ -91,32 +91,28 @@ func (m *DBModel) UpdateLicenseRecord(lic License) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if lic.UpdateTime == 0 {
-		lic.UpdateTime = time.Now().Unix()
-	}
-
 	var err error
 
 	if lic.DocumentName != "" {
 		query := "UPDATE licensing SET " +
 			"category = ?, name = ?, number = ?, " +
 			"issued = ?, valid_from = ?, valid_until = ?, " +
-			"remarks = ?, document_name = ?, document = ?, update_time = ? " +
+			"remarks = ?, document_name = ?, document = ? " +
 			"WHERE uuid = ?"
 		_, err = m.DB.ExecContext(ctx, query,
 			lic.Category, lic.Name, lic.Number,
 			lic.Issued, lic.ValidFrom, lic.ValidUntil,
-			lic.Remarks, lic.DocumentName, lic.Document, lic.UpdateTime,
+			lic.Remarks, lic.DocumentName, lic.Document,
 			lic.UUID,
 		)
 	} else {
 		query := "UPDATE licensing SET " +
 			"category = ?, name = ?, number = ?, " +
-			"issued = ?, valid_from = ?, valid_until = ?, remarks = ?, update_time = ? " +
+			"issued = ?, valid_from = ?, valid_until = ?, remarks = ? " +
 			"WHERE uuid = ?"
 		_, err = m.DB.ExecContext(ctx, query,
 			lic.Category, lic.Name, lic.Number,
-			lic.Issued, lic.ValidFrom, lic.ValidUntil, lic.Remarks, lic.UpdateTime,
+			lic.Issued, lic.ValidFrom, lic.ValidUntil, lic.Remarks,
 			lic.UUID,
 		)
 	}
@@ -133,17 +129,13 @@ func (m *DBModel) InsertLicenseRecord(lic License) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if lic.UpdateTime == 0 {
-		lic.UpdateTime = time.Now().Unix()
-	}
-
 	query := "INSERT INTO licensing " +
-		"(uuid, category, name, number, issued, valid_from, valid_until, remarks, document_name, document, update_time) " +
-		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+		"(uuid, category, name, number, issued, valid_from, valid_until, remarks, document_name, document) " +
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, )"
 	_, err := m.DB.ExecContext(ctx, query,
 		lic.UUID, lic.Category, lic.Name, lic.Number,
 		lic.Issued, lic.ValidFrom, lic.ValidUntil, lic.Remarks,
-		lic.DocumentName, lic.Document, lic.UpdateTime,
+		lic.DocumentName, lic.Document,
 	)
 
 	if err != nil {
@@ -173,8 +165,8 @@ func (m *DBModel) DeleteLicenseAttachment(uuid string) error {
 
 	var err error
 
-	query := `UPDATE licensing SET document_name = "", document = null, update_time = ? WHERE uuid = ?`
-	_, err = m.DB.ExecContext(ctx, query, time.Now().Unix(), uuid)
+	query := `UPDATE licensing SET document_name = "", document = null WHERE uuid = ?`
+	_, err = m.DB.ExecContext(ctx, query, uuid)
 
 	if err != nil {
 		return err

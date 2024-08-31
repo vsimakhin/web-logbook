@@ -117,7 +117,7 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
 		"arrival_place, arrival_time, aircraft_model, reg_name, " +
 		"se_time, me_time, mcc_time, total_time, day_landings, night_landings, " +
 		"night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, " +
-		"sim_type, sim_time, pic_name, remarks, update_time " +
+		"sim_type, sim_time, pic_name, remarks " +
 		"FROM logbook_view WHERE uuid = ?"
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 
@@ -125,7 +125,7 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
 		&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 		&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 		&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
-		&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.UpdateTime)
+		&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks)
 
 	if err != nil {
 		return fr, err
@@ -175,23 +175,19 @@ func (m *DBModel) UpdateFlightRecord(fr FlightRecord) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if fr.UpdateTime == 0 {
-		fr.UpdateTime = time.Now().Unix()
-	}
-
 	query := "UPDATE logbook SET " +
 		"date = ?, departure_place = ?, departure_time = ?, " +
 		"arrival_place = ?, arrival_time = ?, aircraft_model = ?, reg_name = ?, " +
 		"se_time = ?, me_time = ?, mcc_time = ?, total_time = ?, day_landings = ?, night_landings = ?, " +
 		"night_time = ?, ifr_time = ?, pic_time = ?, co_pilot_time = ?, dual_time = ?, instructor_time = ?, " +
-		"sim_type = ?, sim_time = ?, pic_name = ?, remarks = ?, update_time = ? " +
+		"sim_type = ?, sim_time = ?, pic_name = ?, remarks = ? " +
 		"WHERE uuid = ?"
 	_, err := m.DB.ExecContext(ctx, query,
 		fr.Date, fr.Departure.Place, fr.Departure.Time,
 		fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg,
 		fr.Time.SE, fr.Time.ME, fr.Time.MCC, fr.Time.Total, fr.Landings.Day, fr.Landings.Night,
 		fr.Time.Night, fr.Time.IFR, fr.Time.PIC, fr.Time.CoPilot, fr.Time.Dual, fr.Time.Instructor,
-		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks, fr.UpdateTime, fr.UUID,
+		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks, fr.UUID,
 	)
 
 	if err != nil {
@@ -206,27 +202,23 @@ func (m *DBModel) InsertFlightRecord(fr FlightRecord) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if fr.UpdateTime == 0 {
-		fr.UpdateTime = time.Now().Unix()
-	}
-
 	query := "INSERT INTO logbook " +
 		"(uuid, date, departure_place, departure_time, " +
 		"arrival_place, arrival_time, aircraft_model, reg_name, " +
 		"se_time, me_time, mcc_time, total_time, day_landings, night_landings, " +
 		"night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, " +
-		"sim_type, sim_time, pic_name, remarks, update_time) " +
+		"sim_type, sim_time, pic_name, remarks) " +
 		"VALUES (?, ?, ?, ?, " +
 		"?, ?, ?, ?, " +
 		"?, ?, ?, ?, ?, ?, " +
 		"?, ?, ?, ?, ?, ?, " +
-		"?, ?, ?, ?, ?)"
+		"?, ?, ?, ?)"
 	_, err := m.DB.ExecContext(ctx, query,
 		fr.UUID, fr.Date, fr.Departure.Place, fr.Departure.Time,
 		fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg,
 		fr.Time.SE, fr.Time.ME, fr.Time.MCC, fr.Time.Total, fr.Landings.Day, fr.Landings.Night,
 		fr.Time.Night, fr.Time.IFR, fr.Time.PIC, fr.Time.CoPilot, fr.Time.Dual, fr.Time.Instructor,
-		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks, fr.UpdateTime,
+		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks,
 	)
 
 	if err != nil {
@@ -263,7 +255,7 @@ func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 			arrival_place, arrival_time, aircraft_model, reg_name,
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
-			sim_type, sim_time, pic_name, remarks, update_time
+			sim_type, sim_time, pic_name, remarks
 		FROM logbook_view
 		ORDER BY m_date desc, departure_time desc`)
 
@@ -277,7 +269,7 @@ func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
-			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.UpdateTime)
+			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks)
 
 		if err != nil {
 			return flightRecords, err
