@@ -15,7 +15,7 @@ const exportUtils = function () {
     const getCustomTitle = async (format) => {
         if (!formatMap[format]) { return; }
 
-        const api = await commonUtils.getApi("LogbookUUIDAttachments");
+        const api = commonUtils.getApi("LogbookUUIDAttachments");
         const url = api.replace("{uuid}", formatMap[format]);
         const data = await commonUtils.fetchJSON(url);
         return data.length > 0 ? data[0].uuid : "";
@@ -27,12 +27,12 @@ const exportUtils = function () {
      */
     const deleteCustomTitle = async (format) => {
         // drop current saved file from attachments
-        const api = await commonUtils.getApi("LogbookUUIDAttachments");
+        const api = commonUtils.getApi("LogbookUUIDAttachments");
         const url = api.replace("{uuid}", formatMap[format]);
         const data = await commonUtils.fetchJSON(url);
 
         if (data.length > 0) {
-            const requestUrl = await commonUtils.getApi("LogbookAttachmentsDelete");
+            const requestUrl = commonUtils.getApi("LogbookAttachmentsDelete");
 
             for (let i = 0; i < data.length; i++) {
                 const payload = { uuid: data[i].uuid }
@@ -61,7 +61,7 @@ const exportUtils = function () {
             payload.append("record_id", formatMap[format]);
 
             const requestOptions = { method: "post", body: payload };
-            const requestUrl = await commonUtils.getApi("LogbookAttachmentsUpload");
+            const requestUrl = commonUtils.getApi("LogbookAttachmentsUpload");
             await fetch(requestUrl, requestOptions)
         }
 
@@ -78,7 +78,7 @@ const exportUtils = function () {
 
         const uuid = await getCustomTitle(format);
         if (uuid !== "") {
-            const api = await commonUtils.getApi("LogbookAttachmentsDownload");
+            const api = commonUtils.getApi("LogbookAttachmentsDownload");
             const data = `${api}${uuid}`;
             const response = await fetch(data);
             if (response) {
@@ -188,8 +188,8 @@ const exportUtils = function () {
             }
         };
 
-        const api = await commonUtils.getApi("Export");
-        const formatA4 = await commonUtils.getApi("ExportFormatA4");
+        const api = commonUtils.getApi("Export");
+        const formatA4 = commonUtils.getApi("ExportFormatA4");
         const fullUrl = `${api}/${formatA4}`;
         const data = await commonUtils.postRequest(fullUrl, payload);
         if (data.ok) {
@@ -290,8 +290,8 @@ const exportUtils = function () {
             }
         };
 
-        const api = await commonUtils.getApi("Export");
-        const formatA5 = await commonUtils.getApi("ExportFormatA5");
+        const api = commonUtils.getApi("Export");
+        const formatA5 = commonUtils.getApi("ExportFormatA5");
         const fullUrl = `${api}/${formatA5}`;
         const data = await commonUtils.postRequest(fullUrl, payload);
         if (data.ok) {
@@ -315,8 +315,8 @@ const exportUtils = function () {
             }
         };
 
-        const api = await commonUtils.getApi("Export");
-        const formatCSV = await commonUtils.getApi("ExportFormatCSV");
+        const api = commonUtils.getApi("Export");
+        const formatCSV = commonUtils.getApi("ExportFormatCSV");
         const fullUrl = `${api}/${formatCSV}`;
         const data = await commonUtils.postRequest(fullUrl, payload);
         if (data.ok) {
@@ -339,8 +339,8 @@ const exportUtils = function () {
             }
         };
 
-        const api = await commonUtils.getApi("Export");
-        const formatXLS = await commonUtils.getApi("ExportFormatXLS");
+        const api = commonUtils.getApi("Export");
+        const formatXLS = commonUtils.getApi("ExportFormatXLS");
         const fullUrl = `${api}/${formatXLS}`;
         const data = await commonUtils.postRequest(fullUrl, payload);
         if (data.ok) {
@@ -357,7 +357,7 @@ const exportUtils = function () {
      * Runs the export process for A4 format.
      */
     const runExportA4 = async () => {
-        const formatA4 = await commonUtils.getApi("ExportFormatA4");
+        const formatA4 = commonUtils.getApi("ExportFormatA4");
         commonUtils.runExport(formatA4);
     }
 
@@ -365,7 +365,7 @@ const exportUtils = function () {
      * Runs the export process for A5 format.
      */
     const runExportA5 = async () => {
-        const formatA5 = await commonUtils.getApi("ExportFormatA5");
+        const formatA5 = commonUtils.getApi("ExportFormatA5");
         commonUtils.runExport(formatA5);
     }
 
@@ -373,7 +373,7 @@ const exportUtils = function () {
      * Runs the export process for CSV format.
      */
     const runExportCSV = async () => {
-        const formatCSV = await commonUtils.getApi("ExportFormatCSV");
+        const formatCSV = commonUtils.getApi("ExportFormatCSV");
         commonUtils.runExport(formatCSV);
     }
 
@@ -381,7 +381,7 @@ const exportUtils = function () {
      * Runs the export process for XLS format.
      */
     const runExportXLS = async () => {
-        const formatXLS = await commonUtils.getApi("ExportFormatXLS");
+        const formatXLS = commonUtils.getApi("ExportFormatXLS");
         commonUtils.runExport(formatXLS);
     }
 
@@ -390,7 +390,7 @@ const exportUtils = function () {
      * @param {string} part - The part of the export to restore defaults for.
      */
     const restoreDefaults = async (part) => {
-        const api = await commonUtils.getApi("ExportRestoreDefaults");
+        const api = commonUtils.getApi("ExportRestoreDefaults");
         const data = await commonUtils.postRequest(api, part);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);

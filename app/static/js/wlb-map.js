@@ -8,7 +8,7 @@ const mapUtils = function () {
         document.getElementById("map").innerText = "";
         document.getElementById("some_stats").innerText = "Routes: 0\nAirports: 0";
 
-        const mapDataApi = await commonUtils.getApi("MapData");
+        const mapDataApi = commonUtils.getApi("MapData");
         const data = await commonUtils.fetchJSON(`${mapDataApi}${parameters}`);
 
         const lines = data["lines"];
@@ -209,7 +209,7 @@ const mapUtils = function () {
 
     const initDatePickers = async () => {
         setrange(start, end);
-        const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
+        const firstDay = commonUtils.getPreferences("daterange_picker_first_day");
 
 
         // daterange logic

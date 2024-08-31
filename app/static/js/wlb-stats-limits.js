@@ -72,7 +72,7 @@ const statsLimits = function () {
     }
 
     const initPage = async () => {
-        const apiStatsLimits = await commonUtils.getApi('StatsLimits');
+        const apiStatsLimits = commonUtils.getApi('StatsLimits');
         const data = await commonUtils.fetchJSON(apiStatsLimits);
 
         document.getElementById("last28").innerHTML = drawProgressBar(data["totals"]["last28"], 90);

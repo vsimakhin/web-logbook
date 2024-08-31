@@ -4,8 +4,8 @@ const statsTotals = function () {
     const initPage = async () => {
         let startDate = null;
         let endDate = null;
-        const apiStatsTotals = await commonUtils.getApi('StatsTotals');
-        const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
+        const apiStatsTotals = commonUtils.getApi('StatsTotals');
+        const firstDay = commonUtils.getPreferences("daterange_picker_first_day");
 
         // init Totals table
         const tableTotals = $("#totals").DataTable({

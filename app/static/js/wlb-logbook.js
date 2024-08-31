@@ -7,11 +7,11 @@ const logbookUtils = function () {
     // inits the main table
     const initLogbookTable = async () => {
         const remarksL = Math.round((document.documentElement.clientWidth - 1700) / 10);
-        const lengthMenu = await commonUtils.getPreferences("logbook_rows") || 15;
-        const url = await commonUtils.getApi("LogbookData");
-        const logbookAPI = await commonUtils.getApi("Logbook");
-        const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
-        const logbook_no_columns_change = await commonUtils.getPreferences("logbook_no_columns_change");
+        const lengthMenu = commonUtils.getPreferences("logbook_rows") || 15;
+        const url = commonUtils.getApi("LogbookData");
+        const logbookAPI = commonUtils.getApi("Logbook");
+        const firstDay = commonUtils.getPreferences("daterange_picker_first_day");
+        const logbook_no_columns_change = commonUtils.getPreferences("logbook_no_columns_change");
 
         var initCompleted = false;
 
@@ -22,16 +22,10 @@ const logbookUtils = function () {
             bAutoWidth: false,
             ordering: false,
             scrollX: true,
+            oLanguage: { sEmptyTable: "No flight records" },
             ajax: {
                 url: url,
-                dataSrc: function (json) {
-                    if (json.data === null) {
-                        $("#logbook").dataTable().fnSettings().oLanguage.sEmptyTable = "No flight records";
-                        return [];
-                    } else {
-                        return json.data;
-                    }
-                }
+                dataSrc: function (json) { return json.data === null ? [] : json.data; }
             },
             lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             columnDefs: [

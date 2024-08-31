@@ -2,7 +2,7 @@
 
 const statsTotalsByMonth = function () {
     const yearChange = async () => {
-        const api = await commonUtils.getApi('StatsTotalsByMonthYearPage');
+        const api = commonUtils.getApi('StatsTotalsByMonthYearPage');
         year = commonUtils.getElementValue("year");
         window.location.href = api.replace('{year}', year);
     }

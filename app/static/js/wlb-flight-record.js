@@ -85,7 +85,7 @@ const flightRecordUtils = function () {
             }
         };
 
-        const api = await commonUtils.getApi("LogbookNight");
+        const api = commonUtils.getApi("LogbookNight");
         const json = await commonUtils.postRequest(api, payload);
 
         if (json.ok) {
@@ -134,7 +134,7 @@ const flightRecordUtils = function () {
     const onRegChange = async () => {
         // check if aircrafts are not empty
         if (Object.keys(aircrafts).length === 0) {
-            const api = await commonUtils.getApi("Aircrafts");
+            const api = commonUtils.getApi("Aircrafts");
             aircrafts = await commonUtils.fetchJSON(api);
         }
 
@@ -152,7 +152,7 @@ const flightRecordUtils = function () {
         const arrivalPlace = commonUtils.getElementValue("arrival_place");
         const prevUuid = commonUtils.getElementValue("prev_uuid");
         const nextUuid = commonUtils.getElementValue("next_uuid");
-        const url = await commonUtils.getApi("Logbook");
+        const url = commonUtils.getApi("Logbook");
 
         // Construct the base caption
         let caption = "Flight Record";
@@ -191,7 +191,7 @@ const flightRecordUtils = function () {
      * Creates a new flight record based on the last arrival and date.
      */
     const newFlightRecord = async () => {
-        const url = await commonUtils.getApi("LogbookNew");
+        const url = commonUtils.getApi("LogbookNew");
         const date = commonUtils.getElementValue("date");
         const arrival = commonUtils.getElementValue("arrival_place");
         location.href = `${url}?last_arrival=${arrival}&last_date=${date}`;
@@ -236,7 +236,7 @@ const flightRecordUtils = function () {
      * Enables tooltips for flight record fields based on user preferences.
      */
     const enableTooltips = async () => {
-        const isEnable = await commonUtils.getPreferences("enable_flightrecord_tooltips");
+        const isEnable = commonUtils.getPreferences("enable_flightrecord_tooltips");
         if (isEnable) {
             const msg = "Double Click will copy value from Total Time";
 
@@ -309,7 +309,7 @@ const flightRecordUtils = function () {
      * Initializes the date range picker.
      */
     const initDateRangePicker = async () => {
-        const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
+        const firstDay = commonUtils.getPreferences("daterange_picker_first_day");
 
         $('input[name="date"]').daterangepicker({
             singleDatePicker: true,
@@ -427,7 +427,7 @@ const flightRecordUtils = function () {
             remarks: commonUtils.getElementValue("remarks")
         };
 
-        const api = await commonUtils.getApi("LogbookSave");
+        const api = commonUtils.getApi("LogbookSave");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
@@ -465,7 +465,7 @@ const flightRecordUtils = function () {
             uuid: commonUtils.getElementValue("uuid")
         }
 
-        const api = await commonUtils.getApi("LogbookDelete");
+        const api = commonUtils.getApi("LogbookDelete");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
@@ -489,12 +489,12 @@ const flightRecordUtils = function () {
         let tbody = document.getElementById("attachments_table");
         let rows = "";
 
-        const api = await commonUtils.getApi("LogbookUUIDAttachments");
+        const api = commonUtils.getApi("LogbookUUIDAttachments");
         const data = await commonUtils.fetchJSON(api.replace("{uuid}", uuid));
 
         if (data.length) {
             tbody.innerHTML = "";
-            const logbookAttachmentsDownloadAPI = await commonUtils.getApi("LogbookAttachmentsDownload");
+            const logbookAttachmentsDownloadAPI = commonUtils.getApi("LogbookAttachmentsDownload");
             for (let x = 0; x < data.length; x++) {
                 rows = rows +
                     `<tr>
@@ -525,7 +525,7 @@ const flightRecordUtils = function () {
      */
     const deleteAttachment = async (uuid) => {
         let payload = { uuid: uuid };
-        const api = await commonUtils.getApi("LogbookAttachmentsDelete");
+        const api = commonUtils.getApi("LogbookAttachmentsDelete");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             loadAttachments();
@@ -553,7 +553,7 @@ const flightRecordUtils = function () {
         }
 
         const payload = new FormData(document.getElementById("flight_record_attachment_form"));
-        const api = await commonUtils.getApi("LogbookAttachmentsUpload");
+        const api = commonUtils.getApi("LogbookAttachmentsUpload");
         let requestOptions = {
             method: "post",
             mode: "same-origin",

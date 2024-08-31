@@ -35,7 +35,7 @@ const settingsUtils = function () {
      * Loads the signature image from preferences and sets it in the signature pad.
      */
     const loadSignature = async () => {
-        const signatureImage = await commonUtils.getPreferences("signature_image");
+        const signatureImage = commonUtils.getPreferences("signature_image");
         if (signatureImage !== "") {
             signaturePad.fromDataURL(signatureImage);
         }
@@ -130,7 +130,7 @@ const settingsUtils = function () {
     const reloadAircraftClassesTable = async () => {
         $('#aircraft_class').find('tbody').empty();
 
-        const apiAircrafts = await commonUtils.getApi("Aircrafts");
+        const apiAircrafts = commonUtils.getApi("Aircrafts");
         const aircrafts = await commonUtils.fetchJSON(apiAircrafts);
         let models_data = [];
         for (let item in aircrafts) {
@@ -139,7 +139,7 @@ const settingsUtils = function () {
             }
         }
 
-        const apiSettingsAircraftClasses = await commonUtils.getApi("SettingsAircraftClasses");
+        const apiSettingsAircraftClasses = commonUtils.getApi("SettingsAircraftClasses");
         const classes_data = await commonUtils.fetchJSON(apiSettingsAircraftClasses);
 
         for (let key of Object.keys(classes_data)) {
@@ -275,7 +275,7 @@ const settingsUtils = function () {
         };
 
 
-        const api = await commonUtils.getApi("Settings");
+        const api = commonUtils.getApi("Settings");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             reloadAircraftClassesTable();

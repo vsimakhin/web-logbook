@@ -1,47 +1,25 @@
 "use strict";
 
 const commonUtils = function () {
-    let api = {};
-    let preferences = {};
-
     /**
-     * Fetches data from the API and caches it for future use.
+     * Fetches API endpoint
      * @param {string} apiItem - The API item to fetch.
-     * @returns {Promise<any>} - A promise that resolves to the fetched API data.
      */
-    const getApi = async (apiItem) => {
-        if (!api.hasOwnProperty(apiItem)) {
-            const result = await fetchJSON(`/api/${apiItem}`);
-            if (!result) {
-                console.error(`Error fetching API ${apiItem}.`);
-                return "";
-            }
-            api[apiItem] = result;
-        }
-        return api[apiItem];
+    const getApi = (apiItem) => {
+        return apiMap[apiItem];
     }
 
     /**
      * Retrieves the preferences/settings for the app.
      * @param {string} item - The preference item to retrieve.
-     * @returns {Promise<any>} - A promise that resolves to the value of the preference item, or null if it fails.
      */
-    const getPreferences = async (item) => {
-        if (!preferences.hasOwnProperty(item)) {
-            try {
-                preferences = await fetchJSON("/preferences");
-            } catch (error) {
-                console.error(`Failed to get preferences: ${error}`);
-                return null;
-            }
-        }
+    const getPreferences = (item) => {
         return preferences[item] || null;
     }
 
     /**
      * Fetches JSON data from the specified URL.
      * @param {string} url - The URL to fetch JSON data from.
-     * @returns {Promise<Object>} - A promise that resolves to the JSON data.
      */
     const fetchJSON = async (url) => {
         const options = {
@@ -123,10 +101,9 @@ const commonUtils = function () {
     /**
      * Runs the export process for the specified format.
      * @param {string} format - The format to export (e.g., "pdf", "csv").
-     * @returns {Promise<void>} - A promise that resolves when the export process is complete.
      */
     const runExport = async (format) => {
-        const api = await getApi("Export");
+        const api = getApi("Export");
         window.open(`${api}/${format}`, "_blank");
     }
 
@@ -246,7 +223,6 @@ const commonUtils = function () {
      * Sends a POST request to the specified URL with the given payload.
      * @param {string} url - The URL to send the request to.
      * @param {object} payload - The payload to include in the request body.
-     * @returns {Promise<object>} - A promise that resolves to the JSON response from the server.
      */
     const postRequest = async (url, payload) => {
         const options = {

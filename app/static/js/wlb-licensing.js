@@ -4,11 +4,11 @@ const licensingUtils = function () {
 
     const initLicensing = async () => {
         const downloadIcon = `<i class="bi bi-cloud-arrow-down"></i>`;
-        const lengthMenu = await commonUtils.getPreferences("licensing_rows") || 15;
+        const lengthMenu = commonUtils.getPreferences("licensing_rows") || 15;
         const groupColumn = 0;
-        const url = await commonUtils.getApi("LicensingData");
-        const licensingDownloadAPI = await commonUtils.getApi("LicensingDownload");
-        const licensingAPI = await commonUtils.getApi("Licensing");
+        const url = commonUtils.getApi("LicensingData");
+        const licensingDownloadAPI = commonUtils.getApi("LicensingDownload");
+        const licensingAPI = commonUtils.getApi("Licensing");
 
         const table = $("#licensing").DataTable({
             bAutoWidth: false,
@@ -19,16 +19,10 @@ const licensingUtils = function () {
             ],
             ordering: false,
             paging: true,
+            oLanguage: { sEmptyTable: "No records" },
             ajax: {
                 url: url,
-                dataSrc: function (json) {
-                    if (json.data === null) {
-                        $("#licensing").dataTable().fnSettings().oLanguage.sEmptyTable = "No records";
-                        return [];
-                    } else {
-                        return json.data;
-                    }
-                }
+                dataSrc: function (json) { return json.data === null ? [] : json.data; }
             },
             lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             drawCallback: function (settings) {

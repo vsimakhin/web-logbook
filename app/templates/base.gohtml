@@ -53,43 +53,43 @@
                     </li>
 
                     <li class="sidebar-item {{if eq $activePage "stats"}}active{{end}}">
-						<a data-bs-target="#stats" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "stats"}}collapsed{{end}}">
+                        <a data-bs-target="#stats" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "stats"}}collapsed{{end}}">
                             <i class="bi bi-file-bar-graph"></i> <span class="align-middle">Statistics</span>
-						</a>
-						<ul id="stats" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "stats"}}show{{end}}" data-bs-parent="#sidebar">
-							<li class="sidebar-item {{if eq $activeSubPage "totals"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsPage}}">Totals</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "totalsByYear"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByYearPage}}">Totals by Year</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "totalsByMonth"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByMonthPage}}">Totals by Month</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "totalsByType"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByTypePage}}">Totals by Aircraft Type</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "totalsByClass"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByClassPage}}">Totals by Aircraft Class</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "limits"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsLimitsPage}}">Limits</a></li>
-						</ul>
-					</li>
+                        </a>
+                        <ul id="stats" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "stats"}}show{{end}}" data-bs-parent="#sidebar">
+                            <li class="sidebar-item {{if eq $activeSubPage "totals"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsPage}}">Totals</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "totalsByYear"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByYearPage}}">Totals by Year</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "totalsByMonth"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByMonthPage}}">Totals by Month</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "totalsByType"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByTypePage}}">Totals by Aircraft Type</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "totalsByClass"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsTotalsByClassPage}}">Totals by Aircraft Class</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "limits"}}active{{end}}"><a class="sidebar-link" href="{{$api.StatsLimitsPage}}">Limits</a></li>
+                        </ul>
+                    </li>
 
                     <li class="sidebar-item {{if eq $activePage "export"}}active{{end}}">
-						<a data-bs-target="#export" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "export"}}collapsed{{end}}">
+                        <a data-bs-target="#export" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "export"}}collapsed{{end}}">
                         <i class="bi bi-file-earmark-arrow-down"></i> <span class="align-middle">Export</span>
-						</a>
-						<ul id="export" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "export"}}show{{end}}" data-bs-parent="#sidebar">
-							<li class="sidebar-item {{if eq $activeSubPage "pdfa4"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportPDFA4Page}}">PDF A4</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "pdfa5"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportPDFA5Page}}">PDF A5</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "csv"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportCSVXLSPage}}">CSV&XLS</a></li>
-						</ul>
-					</li>
+                        </a>
+                        <ul id="export" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "export"}}show{{end}}" data-bs-parent="#sidebar">
+                            <li class="sidebar-item {{if eq $activeSubPage "pdfa4"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportPDFA4Page}}">PDF A4</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "pdfa5"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportPDFA5Page}}">PDF A5</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "csv"}}active{{end}}"><a class="sidebar-link" href="{{$api.ExportCSVXLSPage}}">CSV&XLS</a></li>
+                        </ul>
+                    </li>
 
                     <li class="sidebar-item {{if eq $activePage "import"}}active{{end}}">
                         <a class="sidebar-link" href="{{$api.Import}}"><i class="bi bi-file-earmark-arrow-up"></i> <span class="align-middle">Import (beta)</span></a>
                     </li>
 
                     <li class="sidebar-item {{if eq $activePage "settings"}}active{{end}}">
-						<a data-bs-target="#settings" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "settings"}}collapsed{{end}}">
+                        <a data-bs-target="#settings" data-bs-toggle="collapse" class="sidebar-link {{if ne $activePage "settings"}}collapsed{{end}}">
                         <i class="bi bi-gear"></i> <span class="align-middle">Settings</span>
-						</a>
-						<ul id="settings" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "settings"}}show{{end}}" data-bs-parent="#sidebar">
-							<li class="sidebar-item {{if eq $activeSubPage "general"}}active{{end}}"><a class="sidebar-link" href="{{$api.Settings}}">General</a></li>
-							<li class="sidebar-item {{if eq $activeSubPage "airports"}}active{{end}}"><a class="sidebar-link" href="{{$api.SettingsAirportDB}}">Airports</a></li>
-						</ul>
-					</li>
+                        </a>
+                        <ul id="settings" class="sidebar-dropdown list-unstyled collapse {{if eq $activePage "settings"}}show{{end}}" data-bs-parent="#sidebar">
+                            <li class="sidebar-item {{if eq $activeSubPage "general"}}active{{end}}"><a class="sidebar-link" href="{{$api.Settings}}">General</a></li>
+                            <li class="sidebar-item {{if eq $activeSubPage "airports"}}active{{end}}"><a class="sidebar-link" href="{{$api.SettingsAirportDB}}">Airports</a></li>
+                        </ul>
+                    </li>
 
                     {{if .AuthEnabled}}
                     <hr>
@@ -139,6 +139,34 @@
     <script type="text/javascript" src="/static/js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="/static/js/moment.min.js"></script>
     <script type="text/javascript" src="/static/js/daterangepicker.js"></script>
+    <script>
+    const apiMap = {
+        {{- range $key, $value := .API }}
+        "{{ $key }}": "{{ $value }}",
+        {{- end }}
+    };
+    const preferences = {
+        "enable_flightrecord_tooltips": !{{$settings.DisableFlightRecordHelp}},
+        "daterange_picker_first_day":   {{$settings.DateRangePickerWeek}},
+        "licensing_rows":               {{$settings.LicensingRows}},
+        "logbook_rows":                 {{$settings.LogbookRows}},
+        "hide_stats_se":                {{$settings.HideStatsFields.SE}},
+        "hide_stats_me":                {{$settings.HideStatsFields.ME}},
+        "hide_stats_mcc":               {{$settings.HideStatsFields.MCC}},
+        "hide_stats_night":             {{$settings.HideStatsFields.Night}},
+        "hide_stats_ifr":               {{$settings.HideStatsFields.IFR}},
+        "hide_stats_pic":               {{$settings.HideStatsFields.PIC}},
+        "hide_stats_copilot":           {{$settings.HideStatsFields.CoPilot}},
+        "hide_stats_dual":              {{$settings.HideStatsFields.Dual}},
+        "hide_stats_instructor":        {{$settings.HideStatsFields.Instructor}},
+        "hide_stats_sim":               {{$settings.HideStatsFields.Sim}},
+        "hide_stats_crosscountry":      {{$settings.HideStatsFields.CrossCountry}},
+        "hide_stats_landings":          {{$settings.HideStatsFields.Landings}},
+        "hide_stats_distance":          {{$settings.HideStatsFields.Distance}},
+        "signature_image":              {{$settings.SignatureImage}},
+        "logbook_no_columns_change":    {{$settings.LogbookNoColumnsChnage}},
+    }
+    </script>
     <script type="text/javascript" src="/static/js/wlb-common.js"></script>
     {{ block "js" . }}{{ end }}
 

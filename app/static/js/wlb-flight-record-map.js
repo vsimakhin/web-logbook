@@ -61,7 +61,7 @@ const flightRecordMap = function () {
         document.getElementById("map").innerText = "";
 
         // load deprature & arrival airports
-        const api = await commonUtils.getApi("Airport");
+        const api = commonUtils.getApi("Airport");
         const dep = await commonUtils.fetchJSON(`${api}${departure_place}`);
         const arr = await commonUtils.fetchJSON(`${api}${arrival_place}`);
 

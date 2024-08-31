@@ -10,8 +10,6 @@ import (
 
 const (
 	APIRoot                           = "/"
-	APIGetApi                         = "/api/{api}"
-	APIPreferences                    = "/preferences"
 	APILogbook                        = "/logbook"
 	APILogbookUUID                    = "/logbook/{uuid}"
 	APILogbookData                    = "/logbook/data"
@@ -73,7 +71,6 @@ const (
 
 var apiMap = map[string]string{
 	"Root":                           APIRoot,
-	"Preferences":                    APIPreferences,
 	"Logbook":                        APILogbook,
 	"LogbookData":                    APILogbookData,
 	"LogbookUUID":                    APILogbookUUID,
@@ -229,10 +226,6 @@ func (app *application) routes() *chi.Mux {
 		server.Post(APILicensingSave, app.HandlerLicensingRecordSave)
 		server.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)
 		server.Post(APILicensingAttachmentDelete, app.HandlerLicensingDeleteAttachment)
-
-		// api & parameters
-		server.Get(APIGetApi, app.HandlerGetApi)
-		server.Get(APIPreferences, app.HandlerPreferences)
 	})
 
 	// login & logout
@@ -241,7 +234,11 @@ func (app *application) routes() *chi.Mux {
 	server.Get(APILogout, app.HandlerLogout)
 
 	// other stuff
-	server.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
+	if app.config.env == "dev" {
+		server.Handle("/static/*", app.HandlerStatic())
+	} else {
+		server.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
+	}
 	server.HandleFunc("/favicon.ico", app.HandlerFavicon)
 	server.NotFound(app.HandlerNotFound)
 	server.MethodNotAllowed(app.HandlerNotAllowed)

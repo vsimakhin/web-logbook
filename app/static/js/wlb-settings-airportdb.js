@@ -15,7 +15,7 @@ const settingsUtils = function () {
         await airportDBModal.show();
 
         if (!airports_db) {
-            const api = await commonUtils.getApi("AirportStandardData");
+            const api = commonUtils.getApi("AirportStandardData");
             airports_db = $('#airports_db').DataTable({
                 ordering: true,
                 scrollX: true,
@@ -58,7 +58,7 @@ const settingsUtils = function () {
             no_icao_filter: document.getElementById("no_icao_filter").checked,
         };
 
-        const api = await commonUtils.getApi("SettingsAirportDB");
+        const api = commonUtils.getApi("SettingsAirportDB");
         const data = await commonUtils.postRequest(api, payload);
         return data.ok;
     }
@@ -79,7 +79,7 @@ const settingsUtils = function () {
         startUpdateStatus();
         commonUtils.showInfoMessage("Updating...", false);
 
-        const api = await commonUtils.getApi("AirportUpdate");
+        const api = commonUtils.getApi("AirportUpdate");
         const data = await commonUtils.fetchJSON(api);
         if (data.ok) {
             document.getElementById("airports").value = data.message + " airports";
@@ -137,7 +137,7 @@ const settingsUtils = function () {
      * Reloads the custom airports data.
      */
     const reloadCustomAirports = async () => {
-        const api = await commonUtils.getApi("AirportCustomData");
+        const api = commonUtils.getApi("AirportCustomData");
         const data = await commonUtils.fetchJSON(api);
         airports_custom.clear();
         if (data["data"] !== null) {
@@ -214,7 +214,7 @@ const settingsUtils = function () {
             lon: parseFloat(airport_lon.value),
         };
 
-        const api = await commonUtils.getApi("AirportAddCustom");
+        const api = commonUtils.getApi("AirportAddCustom");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
@@ -235,7 +235,7 @@ const settingsUtils = function () {
             name: airport_name,
         };
 
-        const api = await commonUtils.getApi("AirportDeleteCustom");
+        const api = commonUtils.getApi("AirportDeleteCustom");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);

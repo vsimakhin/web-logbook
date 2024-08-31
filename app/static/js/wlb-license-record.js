@@ -48,7 +48,7 @@ const licenseRecordUtils = function () {
         }
 
         const payload = new FormData(document.getElementById("licensing"));
-        const api = await commonUtils.getApi("LicensingSave");
+        const api = commonUtils.getApi("LicensingSave");
         const requestOptions = {
             method: "post",
             mode: "same-origin",
@@ -75,7 +75,7 @@ const licenseRecordUtils = function () {
      */
     const deleteLicense = async () => {
         const payload = { uuid: document.getElementById("uuid").value }
-        const api = await commonUtils.getApi("LicensingDelete");
+        const api = commonUtils.getApi("LicensingDelete");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
@@ -92,7 +92,7 @@ const licenseRecordUtils = function () {
      */
     const deleteAttachment = async () => {
         const payload = { uuid: document.getElementById("uuid").value }
-        const api = await commonUtils.getApi("LicensingAttachmentDelete");
+        const api = commonUtils.getApi("LicensingAttachmentDelete");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
@@ -139,7 +139,7 @@ const licenseRecordUtils = function () {
      * @returns {Promise<void>} A promise that resolves when the date pickers are initialized.
      */
     const initDatePickers = async () => {
-        const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
+        const firstDay = commonUtils.getPreferences("daterange_picker_first_day");
         ["issued", "valid_from", "valid_until"].forEach(name => initDatePicker(name, firstDay));
     }
 

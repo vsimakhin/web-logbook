@@ -5,21 +5,21 @@ const statsTotalsByClass = function () {
         let startDate = null;
         let endDate = null;
 
-        const apiStatsTotalsByClass = await commonUtils.getApi('StatsTotalsByClass');
-        const hide_stats_se = await commonUtils.getPreferences("hide_stats_se");
-        const hide_stats_me = await commonUtils.getPreferences("hide_stats_me");
-        const hide_stats_mcc = await commonUtils.getPreferences("hide_stats_mcc");
-        const hide_stats_night = await commonUtils.getPreferences("hide_stats_night");
-        const hide_stats_ifr = await commonUtils.getPreferences("hide_stats_ifr");
-        const hide_stats_pic = await commonUtils.getPreferences("hide_stats_pic");
-        const hide_stats_copilot = await commonUtils.getPreferences("hide_stats_copilot");
-        const hide_stats_dual = await commonUtils.getPreferences("hide_stats_dual");
-        const hide_stats_instructor = await commonUtils.getPreferences("hide_stats_instructor");
-        const hide_stats_sim = await commonUtils.getPreferences("hide_stats_sim");
-        const hide_stats_crosscountry = await commonUtils.getPreferences("hide_stats_crosscountry");
-        const hide_stats_landings = await commonUtils.getPreferences("hide_stats_landings");
-        const hide_stats_distance = await commonUtils.getPreferences("hide_stats_distance");
-        const firstDay = await commonUtils.getPreferences("daterange_picker_first_day");
+        const apiStatsTotalsByClass = commonUtils.getApi('StatsTotalsByClass');
+        const hide_stats_se = commonUtils.getPreferences("hide_stats_se");
+        const hide_stats_me = commonUtils.getPreferences("hide_stats_me");
+        const hide_stats_mcc = commonUtils.getPreferences("hide_stats_mcc");
+        const hide_stats_night = commonUtils.getPreferences("hide_stats_night");
+        const hide_stats_ifr = commonUtils.getPreferences("hide_stats_ifr");
+        const hide_stats_pic = commonUtils.getPreferences("hide_stats_pic");
+        const hide_stats_copilot = commonUtils.getPreferences("hide_stats_copilot");
+        const hide_stats_dual = commonUtils.getPreferences("hide_stats_dual");
+        const hide_stats_instructor = commonUtils.getPreferences("hide_stats_instructor");
+        const hide_stats_sim = commonUtils.getPreferences("hide_stats_sim");
+        const hide_stats_crosscountry = commonUtils.getPreferences("hide_stats_crosscountry");
+        const hide_stats_landings = commonUtils.getPreferences("hide_stats_landings");
+        const hide_stats_distance = commonUtils.getPreferences("hide_stats_distance");
+        const firstDay = commonUtils.getPreferences("daterange_picker_first_day");
 
         // init Totals By Type table
         const tableTotalsByClass = $("#totals_by_class").DataTable({

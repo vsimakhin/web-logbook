@@ -66,7 +66,7 @@ const importUtils = function () {
      */
     const createBackup = async () => {
         const payload = {};
-        const api = await commonUtils.getApi("ImportCreateBackup");
+        const api = commonUtils.getApi("ImportCreateBackup");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             commonUtils.showInfoMessage(data.message);
@@ -293,7 +293,7 @@ const importUtils = function () {
             data: frs,
         }
 
-        const api = await commonUtils.getApi("ImportRun");
+        const api = commonUtils.getApi("ImportRun");
         const data = await commonUtils.postRequest(api, payload);
         if (data.ok) {
             clearTable();
