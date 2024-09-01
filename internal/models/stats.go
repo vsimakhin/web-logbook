@@ -67,12 +67,8 @@ func (m *DBModel) CreateDistanceCache() {
 	defer rows.Close()
 
 	for rows.Next() {
-		dep := ""
-		arr := ""
-
-		err := rows.Scan(&dep, &arr)
-
-		if err != nil {
+		var dep, arr string
+		if err := rows.Scan(&dep, &arr); err != nil {
 			return
 		}
 
@@ -86,7 +82,6 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var fr FlightRecord
 	totals := initZeroFlightRecord()
 
 	sqlQuery := "SELECT m_date, se_time, me_time, mcc_time, total_time, " +
@@ -96,20 +91,18 @@ func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, err
 		"FROM logbook_view"
 
 	rows, err := m.DB.QueryContext(ctx, sqlQuery)
-
 	if err != nil {
 		return totals, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&fr.MDate, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+		var fr FlightRecord
+		if err := rows.Scan(&fr.MDate, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
-			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
-
-		if err != nil {
-			return fr, err
+			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place); err != nil {
+			return totals, err
 		}
 
 		if (startDate <= fr.MDate) && (fr.MDate <= endDate) {
@@ -160,7 +153,6 @@ func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMon
 		"FROM logbook_view"
 
 	rows, err := m.DB.QueryContext(ctx, sqlQuery)
-
 	if err != nil {
 		return totals, err
 	}
@@ -168,12 +160,10 @@ func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMon
 
 	for rows.Next() {
 		var fr FlightRecord
-		err := rows.Scan(&fr.Date, &fr.MDate, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
+		if err := rows.Scan(&fr.Date, &fr.MDate, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
-			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
-
-		if err != nil {
+			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place); err != nil {
 			return totals, err
 		}
 
@@ -192,24 +182,20 @@ func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMon
 
 // GetYears returns a slice of strings representing the distinct years present in the logbook_view table.
 // If there are no records, the current year is returned.
-func (m *DBModel) GetYears() ([]string, error) {
+func (m *DBModel) GetYears() (years []string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var years []string
-	var date string
-
 	query := "SELECT DISTINCT m_date FROM logbook_view ORDER BY m_date DESC"
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return years, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&date)
-		if err != nil {
+		var date string
+		if err := rows.Scan(&date); err != nil {
 			return years, err
 		}
 
@@ -232,7 +218,6 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var fr FlightRecord
 	totals := make(map[string]FlightRecord)
 
 	query := "SELECT m_date, se_time, me_time, mcc_time, total_time, " +
@@ -240,13 +225,13 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
 		"FROM logbook_view ORDER BY m_date"
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return totals, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
+		var fr FlightRecord
 		err := rows.Scan(&fr.MDate, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
@@ -275,26 +260,23 @@ func (m *DBModel) GetTotalsByAircraftType(startDate string, endDate string) (map
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var fr FlightRecord
 	totals := make(map[string]FlightRecord)
-
 	query := "SELECT m_date, aircraft_model, se_time, me_time, mcc_time, total_time, " +
 		"day_landings, night_landings, night_time, ifr_time, pic_time, co_pilot_time, " +
 		"dual_time, instructor_time, sim_time, departure_place, arrival_place " +
 		"FROM logbook_view"
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return totals, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
+		var fr FlightRecord
 		err := rows.Scan(&fr.MDate, &fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,
 			&fr.Time.Dual, &fr.Time.Instructor, &fr.SIM.Time, &fr.Departure.Place, &fr.Arrival.Place)
-
 		if err != nil {
 			return totals, err
 		}
@@ -323,7 +305,6 @@ func (m *DBModel) GetTotalsByAircraftClass(startDate string, endDate string) (ma
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var fr FlightRecord
 	totals := make(map[string]FlightRecord)
 
 	settings, err := m.GetSettings()
@@ -343,6 +324,7 @@ func (m *DBModel) GetTotalsByAircraftClass(startDate string, endDate string) (ma
 	defer rows.Close()
 
 	for rows.Next() {
+		var fr FlightRecord
 		err := rows.Scan(&fr.MDate, &fr.Aircraft.Model, &fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total,
 			&fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot,

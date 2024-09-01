@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
@@ -17,29 +15,24 @@ func InitMock(mock sqlmock.Sqlmock, item string) {
 
 	case "UpdateLicenseRecord":
 		mock.ExpectExec("UPDATE licensing SET category = ?").
-			WithArgs("category", "name", "number", "issued", "valid_from", "valid_until", "remarks", 1000, "uuid").
-			WillReturnResult(sqlmock.NewResult(0, 1))
-
-	case "DeleteLicenseAttachment":
-		mock.ExpectExec("UPDATE licensing SET document_name").
-			WithArgs(time.Now().Unix(), "uuid").
+			WithArgs("category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "uuid").
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "InsertLicenseRecord":
 		mock.ExpectExec("INSERT INTO licensing").
-			WithArgs("uuid", "category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "document_name", []byte("0"), 1000).
+			WithArgs("uuid", "category", "name", "number", "issued", "valid_from", "valid_until", "remarks", "document_name", []byte("0")).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "UpdateFlightRecord":
 		mock.ExpectExec("UPDATE logbook SET date").
 			WithArgs("01/02/2022", "LKPR", "1000", "EDDM", "1200", "C152", "OK-XXX", "2:00", "2:00", "2:00", "2:00", 1, 2,
-				"2:00", "2:00", "2:00", "2:00", "2:00", "2:00", "SIM", "2:00", "Self", "Remarks", 1000, "uuid").
+				"2:00", "2:00", "2:00", "2:00", "2:00", "2:00", "SIM", "2:00", "Self", "Remarks", "uuid").
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "InsertFlightRecord":
 		mock.ExpectExec("INSERT INTO logbook").
 			WithArgs("uuid", "01/02/2022", "LKPR", "1000", "EDDM", "1200", "C152", "OK-XXX", "2:00", "2:00", "2:00", "2:00", 1, 2,
-				"2:00", "2:00", "2:00", "2:00", "2:00", "2:00", "SIM", "2:00", "Self", "Remarks", 1000).
+				"2:00", "2:00", "2:00", "2:00", "2:00", "2:00", "SIM", "2:00", "Self", "Remarks").
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 	case "DeleteFlightRecord":
@@ -118,13 +111,13 @@ func InitMock(mock sqlmock.Sqlmock, item string) {
 				"arrival_place", "arrival_time", "aircraft_model", "reg_name",
 				"se_time", "me_time", "mcc_time", "total_time", "day_landings", "night_landings",
 				"night_time", "ifr_time", "pic_time", "co_pilot_time", "dual_time", "instructor_time",
-				"sim_type", "sim_time", "pic_name", "remarks", "update_time",
+				"sim_type", "sim_time", "pic_name", "remarks",
 			}).
 				AddRow("uuid", "01/02/2022", "20220201", "XXXX", "1000",
 					"XXXX", "1200", "C152", "OK-XXX",
 					"2:00", "2:00", "2:00", "2:00", 1, 2,
 					"2:00", "2:00", "2:00", "2:00", "2:00", "2:00",
-					"SIM", "2:00", "Self", "Remarks", 1234567890))
+					"SIM", "2:00", "Self", "Remarks"))
 
 	case "GetFlightRecordByID":
 		mock.ExpectQuery("SELECT (.+) FROM logbook_view WHERE uuid").
@@ -134,32 +127,32 @@ func InitMock(mock sqlmock.Sqlmock, item string) {
 				"arrival_place", "arrival_time", "aircraft_model", "reg_name",
 				"se_time", "me_time", "mcc_time", "total_time", "day_landings", "night_landings",
 				"night_time", "ifr_time", "pic_time", "co_pilot_time", "dual_time", "instructor_time",
-				"sim_type", "sim_time", "pic_name", "remarks", "update_time",
+				"sim_type", "sim_time", "pic_name", "remarks",
 			}).
 				AddRow("uuid", "01/02/2022", "20220201", "XXXX", "1000",
 					"XXXX", "1200", "C152", "OK-XXX",
 					"2:00", "2:00", "2:00", "2:00", 1, 2,
 					"2:00", "2:00", "2:00", "2:00", "2:00", "2:00",
-					"SIM", "2:00", "Self", "Remarks", 1234567890))
+					"SIM", "2:00", "Self", "Remarks"))
 
 	case "GetLicenses":
 		mock.ExpectQuery("SELECT (.+) FROM licensing ORDER BY category, name").
 			WillReturnRows(mock.NewRows([]string{
 				"uuid", "category", "name", "number", "issued",
-				"valid_from", "valid_until", "document_name", "document", "update_time",
+				"valid_from", "valid_until", "document_name", "document",
 			}).
 				AddRow("uuid", "category", "name", "number", "issued",
-					"01/01/2022", "01/01/2022", "document_name", "document", 1000))
+					"01/01/2022", "01/01/2022", "document_name", "document"))
 
 	case "GetLicenseRecordByID":
 		mock.ExpectQuery("SELECT (.+) FROM licensing WHERE uuid").
 			WithArgs("uuid").
 			WillReturnRows(mock.NewRows([]string{
 				"uuid", "category", "name", "number", "issued",
-				"valid_from", "valid_until", "remarks", "document_name", "document", "update_time",
+				"valid_from", "valid_until", "remarks", "document_name", "document",
 			}).
 				AddRow("uuid", "category", "name", "number", "issued",
-					"01/01/2022", "01/01/2023", "remarks", "document_name", "document", 10000))
+					"01/01/2022", "01/01/2023", "remarks", "document_name", "document"))
 
 	case "GetLicensesCategory":
 		mock.ExpectQuery("SELECT category FROM licensing GROUP BY category ORDER BY category").

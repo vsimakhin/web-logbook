@@ -9,8 +9,9 @@ import (
 )
 
 // GetAirportByID return airport record by ID (ICAO or IATA)
-func (m *DBModel) GetAirportByID(id string) (Airport, error) {
+func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 	// check airport id in cache first
+	id = strings.TrimSpace(id)
 	if value, ok := acache[id]; ok {
 		return value, nil
 	}
@@ -18,20 +19,16 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var airport Airport
-
-	id = strings.Trim(id, " ")
-
 	query := "SELECT icao, iata, name, city, country, elevation, lat, lon " +
 		"FROM airports_view WHERE icao = ? or iata = ?"
 	row := m.DB.QueryRowContext(ctx, query, id, id)
-
-	err := row.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
+	err = row.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
 		&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
 
-	if err == sql.ErrNoRows {
-		return airport, nil
-	} else if err != nil {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return airport, nil
+		}
 		return airport, err
 	}
 
@@ -42,26 +39,23 @@ func (m *DBModel) GetAirportByID(id string) (Airport, error) {
 }
 
 // GetAirports generates Airports DB for rendering maps
-func (m *DBModel) GetAirports() (map[string]Airport, error) {
+func (m *DBModel) GetAirports() (airports map[string]Airport, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	airports := make(map[string]Airport)
-	var airport Airport
+	airports = make(map[string]Airport)
 
 	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports_view"
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return airports, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
-			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
-
-		if err != nil {
+		var airport Airport
+		if err = rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
+			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon); err != nil {
 			return airports, err
 		}
 
@@ -73,13 +67,11 @@ func (m *DBModel) GetAirports() (map[string]Airport, error) {
 }
 
 // UpdateAirportDB updates airports table
-func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int, error) {
-	var err error
-
+func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (records int, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	records := 0
+	records = 0
 
 	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports;")
 	if err != nil {
@@ -94,27 +86,24 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int,
 
 	isAlpha := regexp.MustCompile(`^[A-Z]+$`).MatchString
 	for _, airport := range airports {
-		if !no_icao_filter {
-			if !isAlpha(airport.ICAO) || len(airport.ICAO) != 4 { // check for valid ICAO codes only
-				continue
-			}
+		if !noICAOFilter && (!isAlpha(airport.ICAO) || len(airport.ICAO) != 4) {
+			// Skip invalid ICAO codes
+			continue
 		}
+
 		query := "INSERT INTO airports (icao, iata, name, city, country, elevation, lat, lon) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-		_, err := tx.ExecContext(ctx, query,
-			airport.ICAO, airport.IATA, airport.Name, airport.City,
-			airport.Country, airport.Elevation, airport.Lat, airport.Lon,
-		)
 
-		if err != nil {
-			err = tx.Rollback()
+		if _, err = tx.ExecContext(ctx, query,
+			airport.ICAO, airport.IATA, airport.Name, airport.City,
+			airport.Country, airport.Elevation, airport.Lat, airport.Lon); err != nil {
+			tx.Rollback()
 			return records, err
 		}
 	}
 
 	// commit transaction
-	err = tx.Commit()
-	if err != nil {
+	if err = tx.Commit(); err != nil {
 		return records, err
 	}
 
@@ -127,111 +116,57 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, no_icao_filter bool) (int,
 }
 
 // GetAirportCount returns amount of records in the airports table
-func (m *DBModel) GetAirportCount() (int, error) {
+func (m *DBModel) GetAirportCount() (records int, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	records := 0
-
 	row := m.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM airports")
-
-	err := row.Scan(&records)
-
-	if err != nil {
-		return records, err
+	if err = row.Scan(&records); err != nil {
+		return 0, err
 	}
 
 	return records, nil
 }
 
-// GetAllAirports returns all airports
-func (m *DBModel) GetAllAirports() ([]Airport, error) {
+// fetchAirports is a helper function to fetch airports based on a query and a scan function
+func (m *DBModel) fetchAirports(query string) (airports []Airport, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var airports []Airport
-	var airport Airport
-
-	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports_view"
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
-		return airports, err
+		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
-			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
-
-		if err != nil {
+		var airport Airport
+		if err = rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
+			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon); err != nil {
 			return airports, err
 		}
-
 		airports = append(airports, airport)
 	}
 
 	return airports, nil
+}
+
+// GetAllAirports returns all airports
+func (m *DBModel) GetAllAirports() (airports []Airport, err error) {
+	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports_view"
+	return m.fetchAirports(query)
 }
 
 // GetStandardAirports returns a list of Standard Airports
-func (m *DBModel) GetStandardAirports() ([]Airport, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	var airports []Airport
-	var airport Airport
-
+func (m *DBModel) GetStandardAirports() (airports []Airport, err error) {
 	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports"
-	rows, err := m.DB.QueryContext(ctx, query)
-
-	if err != nil {
-		return airports, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		err := rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
-			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
-
-		if err != nil {
-			return airports, err
-		}
-
-		airports = append(airports, airport)
-	}
-
-	return airports, nil
+	return m.fetchAirports(query)
 }
 
 // GetCustomAirports returns a list of Custom Airports
-func (m *DBModel) GetCustomAirports() ([]Airport, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	var airports []Airport
-	var airport Airport
-
-	query := "SELECT name, city, country, elevation, lat, lon FROM airports_custom"
-	rows, err := m.DB.QueryContext(ctx, query)
-
-	if err != nil {
-		return airports, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		err := rows.Scan(&airport.Name, &airport.City,
-			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon)
-
-		if err != nil {
-			return airports, err
-		}
-
-		airports = append(airports, airport)
-	}
-
-	return airports, nil
+func (m *DBModel) GetCustomAirports() (airports []Airport, err error) {
+	query := "SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom"
+	return m.fetchAirports(query)
 }
 
 // AddCustomAirport adds new custom/user airport
@@ -254,15 +189,10 @@ func (m *DBModel) AddCustomAirport(arpt Airport) error {
 }
 
 // RemoveCustomAirport removes custom/user airport
-func (m *DBModel) RemoveCustomAirport(airport string) error {
+func (m *DBModel) RemoveCustomAirport(airport string) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, "DELETE FROM airports_custom WHERE name = ?", airport)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports_custom WHERE name = ?", airport)
+	return err
 }

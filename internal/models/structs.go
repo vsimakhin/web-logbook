@@ -72,8 +72,6 @@ type FlightRecord struct {
 	Distance int
 	PrevUUID string
 	NextUUID string
-
-	UpdateTime int64 `json:"update_time"`
 }
 
 // Airpot is a structure for airport record
@@ -242,7 +240,6 @@ type License struct {
 	Remarks      string `json:"remarks"`
 	DocumentName string `json:"document_name"`
 	Document     []byte `json:"document"`
-	UpdateTime   int64  `json:"update_time"`
 }
 
 // Attachment is a type for attachments

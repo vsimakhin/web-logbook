@@ -19,16 +19,10 @@ const licensingUtils = function () {
             ],
             ordering: false,
             paging: true,
+            oLanguage: { sEmptyTable: "No records" },
             ajax: {
                 url: url,
-                dataSrc: function (json) {
-                    if (json.data === null) {
-                        $("#licensing").dataTable().fnSettings().oLanguage.sEmptyTable = "No records";
-                        return [];
-                    } else {
-                        return json.data;
-                    }
-                }
+                dataSrc: function (json) { return json.data === null ? [] : json.data; }
             },
             lengthMenu: [[parseInt(lengthMenu), -1], [lengthMenu, "All"]],
             drawCallback: function (settings) {
