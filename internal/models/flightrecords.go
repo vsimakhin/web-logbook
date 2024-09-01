@@ -10,18 +10,16 @@ import (
 
 // atod converts formatted string to time.Duration
 func atod(value string) time.Duration {
-	strTime := value
-
-	if strTime == "" {
-		strTime = "0:0"
+	if value == "" {
+		value = "0:0"
 	}
 
-	strTime = fmt.Sprintf("%sm", strings.ReplaceAll(strTime, ":", "h"))
+	strTime := fmt.Sprintf("%sm", strings.ReplaceAll(value, ":", "h"))
 
 	duration, err := time.ParseDuration(strTime)
 	if err != nil {
 		fmt.Printf("Error parsing time %s\n", strTime)
-		duration, _ = time.ParseDuration("0h0m")
+		return 0
 	}
 
 	return duration
@@ -42,9 +40,8 @@ func dtoa(value time.Duration) string {
 
 	if h == 0 && m == 0 {
 		return "0:00"
-	} else {
-		return fmt.Sprintf("%01d:%02d", h, m)
 	}
+	return fmt.Sprintf("%01d:%02d", h, m)
 }
 
 // calculateTotals calculates totals for page footer
@@ -82,7 +79,6 @@ func (m *DBModel) GetFlightRecordNextAndPrevUUID(uuid string) (prevUUID string, 
 		"FROM logbook_view order by m_date, departure_time"
 
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return "0", "0"
 	}
@@ -91,9 +87,7 @@ func (m *DBModel) GetFlightRecordNextAndPrevUUID(uuid string) (prevUUID string, 
 	record_uuid := ""
 
 	for rows.Next() {
-		err = rows.Scan(&record_uuid, &prevUUID, &nextUUID)
-
-		if err != nil {
+		if err = rows.Scan(&record_uuid, &prevUUID, &nextUUID); err != nil {
 			return "0", "0"
 		}
 
@@ -107,11 +101,9 @@ func (m *DBModel) GetFlightRecordNextAndPrevUUID(uuid string) (prevUUID string, 
 }
 
 // GetFlightRecordByID returns flight record by UUID
-func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
+func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
-	var fr FlightRecord
 
 	query := "SELECT uuid, date, m_date, departure_place, departure_time, " +
 		"arrival_place, arrival_time, aircraft_model, reg_name, " +
@@ -121,13 +113,11 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (FlightRecord, error) {
 		"FROM logbook_view WHERE uuid = ?"
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 
-	err := row.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
+	if err = row.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
 		&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 		&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 		&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
-		&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks)
-
-	if err != nil {
+		&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks); err != nil {
 		return fr, err
 	}
 
@@ -189,12 +179,7 @@ func (m *DBModel) UpdateFlightRecord(fr FlightRecord) error {
 		fr.Time.Night, fr.Time.IFR, fr.Time.PIC, fr.Time.CoPilot, fr.Time.Dual, fr.Time.Instructor,
 		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks, fr.UUID,
 	)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // InsertFlightRecord add a new flight record to the logbook table
@@ -220,12 +205,7 @@ func (m *DBModel) InsertFlightRecord(fr FlightRecord) error {
 		fr.Time.Night, fr.Time.IFR, fr.Time.PIC, fr.Time.CoPilot, fr.Time.Dual, fr.Time.Instructor,
 		fr.SIM.Type, fr.SIM.Time, fr.PIC, fr.Remarks,
 	)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // DeleteFlightRecord deletes a flight record by UUID
@@ -234,20 +214,13 @@ func (m *DBModel) DeleteFlightRecord(uuid string) error {
 	defer cancel()
 
 	_, err := m.DB.ExecContext(ctx, "DELETE FROM logbook WHERE uuid = ?", uuid)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // GetFlightRecords returns the flight records in the logbook table
-func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
+func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
-	var fr FlightRecord
-	var flightRecords []FlightRecord
 
 	rows, err := m.DB.QueryContext(ctx, `
 		SELECT
@@ -265,13 +238,12 @@ func (m *DBModel) GetFlightRecords() ([]FlightRecord, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
+		var fr FlightRecord
+		if err = rows.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
 			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
-			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks)
-
-		if err != nil {
+			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks); err != nil {
 			return flightRecords, err
 		}
 		flightRecords = append(flightRecords, fr)

@@ -38,9 +38,5 @@ func (m *DBModel) UpdateDefaults(param string) error {
 	}
 
 	err = m.UpdateSettings(s)
-	if err != nil {
-		return nil
-	}
-
-	return nil
+	return err
 }

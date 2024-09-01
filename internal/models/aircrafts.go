@@ -6,16 +6,13 @@ import (
 )
 
 // GetAircrafts returns already recorded aircrafts
-func (m *DBModel) GetAircrafts(condition int) (map[string]string, error) {
+func (m *DBModel) GetAircrafts(condition int) (aircrafts map[string]string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	aircrafts := make(map[string]string)
+	aircrafts = make(map[string]string)
 
 	var query string
-	var aircraftModel string
-	var regName string
-
 	if condition == LastAircrafts {
 		query = "SELECT DISTINCT aircraft_model, reg_name FROM " +
 			"(SELECT aircraft_model, reg_name FROM logbook_view " +
@@ -25,17 +22,16 @@ func (m *DBModel) GetAircrafts(condition int) (map[string]string, error) {
 		query = "SELECT aircraft_model, reg_name FROM logbook_view WHERE aircraft_model <> '' " +
 			"GROUP BY aircraft_model, reg_name ORDER BY aircraft_model"
 	}
-	rows, err := m.DB.QueryContext(ctx, query)
 
+	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return aircrafts, err
 	}
 	defer rows.Close()
 
+	var aircraftModel, regName string
 	for rows.Next() {
-		err = rows.Scan(&aircraftModel, &regName)
-
-		if err != nil {
+		if err = rows.Scan(&aircraftModel, &regName); err != nil {
 			return aircrafts, err
 		}
 		aircrafts[regName] = aircraftModel
@@ -45,28 +41,21 @@ func (m *DBModel) GetAircrafts(condition int) (map[string]string, error) {
 }
 
 // GetAircraftModels returns the list of the recorded aircraft models/types
-func (m *DBModel) GetAircraftModels() ([]string, error) {
+func (m *DBModel) GetAircraftModels() (models []string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var models []string
-
-	var query string
-	var model string
-
-	query = "SELECT aircraft_model FROM logbook_view WHERE aircraft_model <> '' " +
+	query := "SELECT aircraft_model FROM logbook_view WHERE aircraft_model <> '' " +
 		"GROUP BY aircraft_model ORDER BY aircraft_model"
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return models, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&model)
-
-		if err != nil {
+		var model string
+		if err = rows.Scan(&model); err != nil {
 			return models, err
 		}
 		models = append(models, model)
@@ -76,28 +65,21 @@ func (m *DBModel) GetAircraftModels() ([]string, error) {
 }
 
 // GetAircraftRegs returns the list of the recorded aircraft registrations
-func (m *DBModel) GetAircraftRegs() ([]string, error) {
+func (m *DBModel) GetAircraftRegs() (regs []string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var regs []string
-
-	var query string
-	var reg string
-
-	query = "SELECT reg_name FROM logbook_view WHERE reg_name <> '' " +
+	query := "SELECT reg_name FROM logbook_view WHERE reg_name <> '' " +
 		"GROUP BY reg_name ORDER BY reg_name"
 	rows, err := m.DB.QueryContext(ctx, query)
-
 	if err != nil {
 		return regs, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&reg)
-
-		if err != nil {
+		var reg string
+		if err = rows.Scan(&reg); err != nil {
 			return regs, err
 		}
 		regs = append(regs, reg)
@@ -110,5 +92,8 @@ func (m *DBModel) GetAircraftRegs() ([]string, error) {
 func (m *DBModel) GetAircraftClasses() (map[string]string, error) {
 
 	settings, err := m.GetSettings()
+	if err != nil {
+		return nil, err
+	}
 	return settings.AircraftClasses, err
 }
