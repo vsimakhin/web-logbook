@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Update: removed update_time field from tables and some small code optimization. No UI change.
+
 ## [2.42.0] - 30.08.2024
 
 - Update: No longer shorten the remarks field for small screens if the option "Do not adjust logbook columns for small screens" is selected
@@ -32,10 +36,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: During validation, fields with correct values will no longer be highlighted in green. Only fields with incorrect values will be highlighted in red.
 - New: Added a "Copy" button to the Flight Record page.
 - Update: When the arrival or departure time is changed and the total time is recalculated, the other time fields will also be checked against the old total.
-
-## [2.39.0] - 03.07.2024
-
-- Fix: Incorrect night time calculation when flying inside the polar circle
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
