@@ -17,6 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Updated golang version to the latest 1.23.2 and required packages.
 - Update: removed update_time field from tables and some small code optimization. No UI change.
 
 ## [2.42.0] - 30.08.2024
