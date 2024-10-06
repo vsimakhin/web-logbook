@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io/fs"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
 )
 
 //go:embed static
@@ -41,20 +39,6 @@ func (app *application) HandlerNotAllowed(w http.ResponseWriter, r *http.Request
 	if err := app.renderTemplate(w, r, "notallowed", nil); err != nil {
 		app.errorLog.Println(err)
 	}
-}
-
-func (app *application) HandlerGetApi(w http.ResponseWriter, r *http.Request) {
-	api := chi.URLParam(r, "api")
-
-	// check if api is in mapAPI
-	item, ok := apiMap[api]
-	if !ok {
-		app.errorLog.Println("api not found")
-		http.Error(w, "api not found", http.StatusNotFound)
-		return
-	}
-
-	app.writeJSON(w, http.StatusOK, item)
 }
 
 func (app *application) HandlerPreferences(w http.ResponseWriter, r *http.Request) {

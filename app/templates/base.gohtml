@@ -136,6 +136,13 @@
     </div>
 
     <script src="/static/js/app.js"></script>
+    <script>
+    const apiMap = {
+        {{- range $key, $value := .API }}
+        "{{ $key }}": "{{ $value }}",
+        {{- end }}
+    };
+    </script>
     <script type="text/javascript" src="/static/js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="/static/js/moment.min.js"></script>
     <script type="text/javascript" src="/static/js/daterangepicker.js"></script>

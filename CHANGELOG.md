@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: removed update_time field from tables and some small code optimization. No UI change.
+
 ## [2.42.0] - 30.08.2024
 
 - Update: No longer shorten the remarks field for small screens if the option "Do not adjust logbook columns for small screens" is selected
