@@ -1,6 +1,8 @@
 module github.com/vsimakhin/web-logbook
 
-go 1.21
+go 1.22.0
+
+toolchain go1.23.2
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -12,9 +14,9 @@ require (
 	github.com/nathan-osman/go-sunrise v1.1.0
 	github.com/stretchr/testify v1.9.0
 	github.com/xuri/excelize/v2 v2.8.1
-	golang.org/x/crypto v0.26.0
-	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
-	modernc.org/sqlite v1.32.0
+	golang.org/x/crypto v0.28.0
+	golang.org/x/exp v0.0.0-20241004190924-225e2abe05e6
+	modernc.org/sqlite v1.33.1
 )
 
 require (
@@ -33,16 +35,16 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
-	github.com/richardlehane/msoleps v1.0.3 // indirect
+	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/xuri/efp v0.0.0-20240408161823-9ad904a10d6d // indirect
 	github.com/xuri/nfp v0.0.0-20240318013403-ab9948c2c4a7 // indirect
-	golang.org/x/net v0.28.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
+	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/text v0.19.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/gc/v3 v3.0.0-20240801135723-a856999a2e4a // indirect
-	modernc.org/libc v1.60.0 // indirect
+	modernc.org/gc/v3 v3.0.0-20241004144649-1aea3fae8852 // indirect
+	modernc.org/libc v1.61.0 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.8.0 // indirect
 	modernc.org/strutil v1.2.0 // indirect
