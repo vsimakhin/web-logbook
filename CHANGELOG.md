@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.43.0] - 10.10.2024
 
 - Update: Updated golang version to the latest 1.23.2 and required packages.
 - Update: Removed update_time field from tables and some small code optimization. No UI change.
