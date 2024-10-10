@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Update: removed update_time field from tables and some small code optimization. No UI change.
+- Update: Updated golang version to the latest 1.23.2 and required packages.
+- Update: Removed update_time field from tables and some small code optimization. No UI change.
 
 ## [2.42.0] - 30.08.2024
 
