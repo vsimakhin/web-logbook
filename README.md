@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [2.43.2] - 21.10.2024
+
+- Fix: Error on `Total by Month` page when changing a year in Chrome and MS Edge browsers.
+
 ## [2.43.1] - 21.10.2024
 
 - Fix: Attachments not uploaded if the new record saved and page wasn't reloaded
