@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [2.43.1] - 21.10.2024
+
+- Fix: Attachments not uploaded if the new record saved and page wasn't reloaded
+
 ## [2.43.0] - 10.10.2024
 
 - Update: Updated golang version to the latest 1.23.2 and required packages.

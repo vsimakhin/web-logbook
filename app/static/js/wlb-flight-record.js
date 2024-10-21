@@ -435,6 +435,8 @@ const flightRecordUtils = function () {
             if (commonUtils.getElementValue("uuid") === "") {
                 // set new uuid
                 commonUtils.setElementValue("uuid", data.data);
+                // set uuid for attachments form
+                commonUtils.setElementValue("record_id", data.data);
 
                 // show buttons
                 document.getElementById("attach_button").classList.remove("d-none");
