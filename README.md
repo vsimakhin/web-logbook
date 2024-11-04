@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [2.43.3] - 04.11.2024
+
+- Fix: Resolved SQL syntax error that occurred when creating a new license record.
+
 ## [2.43.2] - 21.10.2024
 
 - Fix: Error on `Total by Month` page when changing a year in Chrome and MS Edge browsers.
@@ -38,13 +42,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Update go minor version (1.21.13) and related packages (bug and security fixes).
 - Fix: Corrected a title for the login page.
 - Fix: Fix the random order of the elements on Stats by Type/Class pages
-
-## [2.40.0] - 10.07.2024
-
-- Update: The page will no longer reload when saving a new flight record.
-- Update: During validation, fields with correct values will no longer be highlighted in green. Only fields with incorrect values will be highlighted in red.
-- New: Added a "Copy" button to the Flight Record page.
-- Update: When the arrival or departure time is changed and the total time is recalculated, the other time fields will also be checked against the old total.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

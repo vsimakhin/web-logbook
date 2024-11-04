@@ -111,7 +111,7 @@ func (m *DBModel) InsertLicenseRecord(lic License) (err error) {
 
 	query := "INSERT INTO licensing " +
 		"(uuid, category, name, number, issued, valid_from, valid_until, remarks, document_name, document) " +
-		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, )"
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
 	_, err = m.DB.ExecContext(ctx, query,
 		lic.UUID, lic.Category, lic.Name, lic.Number,
 		lic.Issued, lic.ValidFrom, lic.ValidUntil, lic.Remarks,
