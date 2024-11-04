@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.43.3] - 04.11.2024
+
+- Fix: Resolved SQL syntax error that occurred when creating a new license record.
+
 ## [2.43.2] - 21.10.2024
 
 - Fix: Error on `Total by Month` page when changing a year in Chrome and MS Edge browsers.
