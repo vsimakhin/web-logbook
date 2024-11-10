@@ -80,4 +80,3 @@ jobs:
           push: true
           tags: |
             vsimakhin/web-logbook:${{ steps.extract_tag.outputs.tag }}
-            vsimakhin/web-logbook:latest
