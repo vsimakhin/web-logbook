@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: There are few major updates for the docker files and image containers
+  - The base image changed from `debian:bookworm-slim` to `alpine`, which reduced the container image size 3x - from 104MB to 37MB
+  - The image supports `linux/amd64` and `linux/arm64` now
+  - The entrypoint and cmd are changed. If you don't see data with the new image try to remove `./web-logbook` from the command
+  ```yaml
+  # old image
+  ENTRYPOINT ["./web-logbook", "-dsn", "/data/web-logbook.sql"]
+  
+  # new image
+  ENTRYPOINT ["./web-logbook" ]
+  CMD ["-dsn", "/data/web-logbook.sql"]
+  ```
+
 ## [2.43.3] - 04.11.2024
 
 - Fix: Resolved SQL syntax error that occurred when creating a new license record.
