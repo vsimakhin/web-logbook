@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.44.0] - 13.12.2024
 
 - Update: Update golang packages.
 - Fix: Add database schema version and check, so the app will not recreate DB views on every start up.

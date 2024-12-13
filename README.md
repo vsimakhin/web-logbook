@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [2.44.0] - 13.12.2024
 
 - Update: Update golang packages.
 - Fix: Add database schema version and check, so the app will not recreate DB views on every start up.
@@ -53,12 +53,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - Update: No longer shorten the remarks field for small screens if the option "Do not adjust logbook columns for small screens" is selected
 - Fix: Recreate the database view during startup in case changes didn't propagate after a version change.
-
-## [2.41.0] - 11.08.2024
-
-- Update: Update go minor version (1.21.13) and related packages (bug and security fixes).
-- Fix: Corrected a title for the login page.
-- Fix: Fix the random order of the elements on Stats by Type/Class pages
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
