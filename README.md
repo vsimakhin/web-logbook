@@ -17,6 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Update golang packages.
 - Fix: Add database schema version and check, so the app will not recreate DB views on every start up.
 - Update: There are few major updates for the docker files and image containers
   - The base image changed from `debian:bookworm-slim` to `alpine`, which reduced the container image size 3x - from 104MB to 37MB
