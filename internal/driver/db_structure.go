@@ -1,6 +1,8 @@
 package driver
 
 var (
+	schemaVersion = "2.0.1"
+
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}
 	SmallText = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}
@@ -11,6 +13,12 @@ var (
 	Real      = ColumnType{SQLite: "REAL", MySQL: "FLOAT"}
 	Blob      = ColumnType{SQLite: "BLOB", MySQL: "LONGBLOB"}
 )
+
+var metadataTable = NewTable("metadata", "id", ColumnType{SQLite: "INTEGER", MySQL: "INT UNSIGNED AUTO_INCREMENT"},
+	[]Column{
+		{Name: "version", Type: ColumnType{SQLite: "VARCHAR(32)", MySQL: "VARCHAR(32)"}, Properties: "NOT NULL"},
+		{Name: "created_at", Type: DateTime},
+	})
 
 var logbookTable = NewTable("logbook", "uuid", UUID,
 	[]Column{
