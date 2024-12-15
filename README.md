@@ -31,6 +31,13 @@ You also can easily export all flight records into EASA style pdf format, print 
   ENTRYPOINT ["./web-logbook" ]
   CMD ["-dsn", "/data/web-logbook.sql"]
   ```
+  - **BREAKING**: If you encounter errors like the one shown below, verify the access rights and ownership of your `web-logbook.sql` file. Ensure it is owned by the current user rather than root, and update the ownership if necessary.
+  ```bash
+  SQL logic error: no such table: metadata (1)
+  ERROR	2024/12/14 20:33:01 main.go:162: SQL logic error: view logbook_view already exists (1)
+
+  ```
+   
 
 ## [2.43.3] - 04.11.2024
 
