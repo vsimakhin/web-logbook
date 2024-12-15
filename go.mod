@@ -1,8 +1,6 @@
 module github.com/vsimakhin/web-logbook
 
-go 1.22.0
-
-toolchain go1.23.2
+go 1.23.4
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -17,11 +15,6 @@ require (
 	golang.org/x/crypto v0.31.0
 	golang.org/x/exp v0.0.0-20241210194714-1829a127f884
 	modernc.org/sqlite v1.34.2
-)
-
-require (
-	github.com/kr/text v0.2.0 // indirect
-	github.com/rogpeppe/go-internal v1.9.0 // indirect
 )
 
 require (
@@ -48,7 +41,7 @@ require (
 	golang.org/x/text v0.21.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/gc/v3 v3.0.0-20241004144649-1aea3fae8852 // indirect
+	modernc.org/gc/v3 v3.0.0-20241213165251-3bc300f6d0c9 // indirect
 	modernc.org/libc v1.61.4 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.8.0 // indirect
