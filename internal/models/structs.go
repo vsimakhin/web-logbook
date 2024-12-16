@@ -56,7 +56,8 @@ type FlightRecord struct {
 		Dual       string `json:"dual_time"`
 		Instructor string `json:"instructor_time"`
 
-		CrossCountry string
+		// calculated
+		CrossCountry string `json:"cc_time,omitempty"`
 	} `json:"time"`
 	Landings struct {
 		Day   int `json:"day"`
@@ -69,9 +70,10 @@ type FlightRecord struct {
 	PIC     string `json:"pic_name"`
 	Remarks string `json:"remarks"`
 
-	Distance int
-	PrevUUID string
-	NextUUID string
+	// calculated
+	Distance int    `json:"distance,omitempty"`
+	PrevUUID string `json:"prev_uuid,omitempty"`
+	NextUUID string `json:"next_uuid,omitempty"`
 }
 
 // Airpot is a structure for airport record
@@ -261,10 +263,4 @@ type Mock struct {
 	Rows   []string
 	Values []driver.Value
 	Args   []driver.Value
-}
-
-type DeletedItem struct {
-	UUID       string `json:"uuid"`
-	TableName  string `json:"table_name"`
-	DeleteTime string `json:"delete_time"`
 }

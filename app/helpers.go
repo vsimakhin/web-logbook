@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"path"
+	"runtime"
 	"strings"
 	"time"
 
@@ -34,6 +36,34 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	if err != nil {
 		app.errorLog.Println(err)
 	}
+}
+
+func (app *application) writeErrorResponse(w http.ResponseWriter, status int, message string) {
+	response := models.JSONResponse{
+		OK:      false,
+		Message: message,
+	}
+	app.writeJSON(w, status, response)
+}
+
+func (app *application) writeOkResponse(w http.ResponseWriter, message string) {
+	response := models.JSONResponse{
+		OK:      true,
+		Message: message,
+	}
+	app.writeJSON(w, http.StatusOK, response)
+}
+
+func (app *application) handleError(w http.ResponseWriter, err error) {
+	// Capture the file and line number of the original error
+	_, file, line, ok := runtime.Caller(1)
+	if ok {
+		app.errorLog.Printf("%s:%d: %v", path.Base(file), line, err)
+	} else {
+		app.errorLog.Println(err)
+	}
+	// app.errorLog.Println(err)
+	app.writeErrorResponse(w, http.StatusInternalServerError, err.Error())
 }
 
 // checkNewVersion checks if the new version released on github

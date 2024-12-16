@@ -8,7 +8,7 @@ import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
-export const DRAWER_WIDTH = 250;
+export const DRAWER_WIDTH = 200;
 
 export const NAV_ITEMS = [
   { segment: 'logbook', title: 'Logbook', icon: <AutoStoriesOutlinedIcon /> },
@@ -33,5 +33,5 @@ export const NAV_ITEMS = [
 
 export let API_URL = '/api';
 if (import.meta.env.MODE === 'development') {
-  API_URL = 'http://localhost:5000/api';
+  API_URL = 'http://localhost:4000/api';
 }

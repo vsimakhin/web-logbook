@@ -17,7 +17,6 @@ const BRANDING = {
 };
 
 function App() {
-
   // theme
   const lightTheme = createTheme(getMPTheme('light'));
   const darkTheme = createTheme(getMPTheme('dark'));

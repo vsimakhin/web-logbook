@@ -23,6 +23,7 @@ require (
 	github.com/alexedwards/scs/sqlite3store v0.0.0-20240316134038-7e11d57e8885
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/go-chi/cors v1.2.1
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
