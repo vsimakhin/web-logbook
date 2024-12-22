@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 // Custom components and libraries
-import { handleExportRows } from '../../util/csv-export';
+import { handleExportRows } from './csv-export';
 import { dateFilterFn, getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 
 export const LogbookTable = ({ columns, data, isLoading, ...props }) => {

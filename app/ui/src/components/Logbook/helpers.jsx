@@ -175,7 +175,6 @@ export const timeFilterFn = (row, columnId, filterValue) => {
   if (rowValue === "" || rowValue === null || rowValue === undefined) return false;
 
   const rowTime = dayjs(rowValue, "HH:mm");
-  console.log(rowTime, min, max);
 
   const isAfterMin = min !== undefined ? rowTime >= min : true;
   const isBeforeMax = max !== undefined ? rowTime <= max : true;
@@ -185,7 +184,6 @@ export const timeFilterFn = (row, columnId, filterValue) => {
 
 // custom filter function for landing range
 export const landingFilterFn = (row, columnId, filterValue) => {
-  console.log(row, columnId, filterValue);
   const rowValue = parseInt(getValue(row.original, columnId)) || 0;
   const [min, max] = filterValue || [];
 
