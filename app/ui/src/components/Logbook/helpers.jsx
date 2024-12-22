@@ -94,6 +94,7 @@ export const createLandingColumn = (id, name) => ({
   header: name,
   size: 53,
   ...renderProps,
+  filterVariant: "number-range", filterFn: "landingFilterFn",
   Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue()),
   Footer: ({ table }) => renderLangingFooter(table, id),
 })
@@ -178,6 +179,20 @@ export const timeFilterFn = (row, columnId, filterValue) => {
 
   const isAfterMin = min !== undefined ? rowTime >= min : true;
   const isBeforeMax = max !== undefined ? rowTime <= max : true;
+
+  return isAfterMin && isBeforeMax;
+}
+
+// custom filter function for landing range
+export const landingFilterFn = (row, columnId, filterValue) => {
+  console.log(row, columnId, filterValue);
+  const rowValue = parseInt(getValue(row.original, columnId)) || 0;
+  const [min, max] = filterValue || [];
+
+  if (!min && !max) return true;
+
+  const isAfterMin = min !== undefined ? rowValue >= min : true;
+  const isBeforeMax = max !== undefined ? rowValue <= max : true;
 
   return isAfterMin && isBeforeMax;
 }

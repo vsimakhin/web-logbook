@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 // Custom components and libraries
 import { handleExportRows } from '../../util/csv-export';
-import { dateFilterFn, getFilterLabel, timeFilterFn } from './helpers';
+import { dateFilterFn, getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 
 export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
   const tablePageKey = 'logbook-table-page-size';
@@ -34,6 +34,7 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
     timeFilterFn: timeFilterFn,
+    landingFilterFn: landingFilterFn,
   }), []);
 
   const handleCSVExport = useCallback((table) => {
