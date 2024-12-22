@@ -50,8 +50,6 @@ export const FlightRecordDetails = ({ flightData }) => {
     });
   };
 
-
-  console.log(flight)
   return (
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>

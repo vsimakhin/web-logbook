@@ -133,7 +133,6 @@ var apiMap = map[string]string{
 	"Logout":                         APILogout,
 	"ExportFormatA4":                 exportA4,
 	"ExportFormatA5":                 exportA5,
-	"ExportFormatCSV":                exportCSV,
 	"ExportFormatXLS":                exportXLS,
 }
 

@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/vsimakhin/web-logbook/internal/csvexport"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/pdfexport"
 	"github.com/vsimakhin/web-logbook/internal/xlsexport"
@@ -14,7 +13,6 @@ import (
 
 const exportA4 = "A4"
 const exportA5 = "A5"
-const exportCSV = "csv"
 const exportXLS = "xls"
 
 // HandlerExportPDFA4Page is a handler for /export-pdf-a4 page
@@ -103,15 +101,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 			return pdfExporter.ExportA5(flightRecords, w)
 		}
 
-	case exportCSV:
-		contentType = "text/csv"
-		fileName = "logbook.csv"
-		var e csvexport.ExportCSV
-		e.ExportCSV = settings.ExportCSV
-		exportFunc = func() error {
-			return e.Export(flightRecords, w)
-		}
-
 	case exportXLS:
 		contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 		fileName = "logbook.xlsx"
@@ -159,9 +148,6 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 
 	} else if format == exportA5 {
 		currsettings.ExportA5 = settings.ExportA5
-
-	} else if format == exportCSV {
-		currsettings.ExportCSV = settings.ExportCSV
 
 	} else if format == exportXLS {
 		currsettings.ExportXLS = settings.ExportXLS
