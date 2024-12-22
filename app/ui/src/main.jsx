@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 // pages
 import Root from './pages/Root';
 import LogbookPage from './pages/LogbookPage.jsx';
+import FlightRecordPage from './pages/FlightRecordPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -20,7 +21,12 @@ const router = createBrowserRouter([
         id: 'root',
         children: [
           { index: true, element: <LogbookPage /> },
-          { path: 'logbook', element: <LogbookPage /> },
+          {
+            path: 'logbook', children: [
+              { index: true, element: <LogbookPage /> },
+              { path: ":id", element: <FlightRecordPage /> }
+            ]
+          },
         ]
       },
     ],

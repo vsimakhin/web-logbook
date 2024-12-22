@@ -1,15 +1,13 @@
 import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer } from 'material-react-table';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 // MUI UI elements
 import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip';
 import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-// MUI Icons
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 // Custom components and libraries
-import { handleExportRows } from './csv-export';
 import { dateFilterFn, getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
+import PDFExportButton from './PDFExportButton';
+import CSVExportButton from './CSVExportButton';
+import NewFlightRecordButton from './NewFlightRecordButton';
 
 const tablePageKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
@@ -47,10 +45,6 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
     landingFilterFn: landingFilterFn,
   }), []);
 
-  const handleCSVExport = useCallback((table) => {
-    handleExportRows(table.getPrePaginationRowModel().rows);
-  }, []);
-
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
@@ -72,9 +66,9 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <Tooltip title="Quick CSV Export">
-          <IconButton onClick={() => handleCSVExport(table)} size="small"><FileDownloadOutlinedIcon /></IconButton>
-        </Tooltip>
+        <NewFlightRecordButton />
+        <CSVExportButton table={table} />
+        <PDFExportButton />
       </Box>
     ),
     muiTablePaperProps: { variant: 'outlined', elevation: 0 },

@@ -162,7 +162,14 @@ func (app *application) routes() *chi.Mux {
 		r.Use(app.Auth) // to review
 
 		// logbook
-		r.With(middleware.Compress(5)).Get("/logbook/data", app.HandlerApiLogbookData)
+		r.Route("/logbook", func(r chi.Router) {
+			r.With(middleware.Compress(5)).Get("/data", app.HandlerApiLogbookData)
+		})
+
+		// export
+		r.Route("/export", func(r chi.Router) {
+			r.Get("/{format}", app.HandlerExportLogbook)
+		})
 
 		// logout
 		r.Post("/logout", app.HandlerLogout) // to review
@@ -193,7 +200,7 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIExportPDFA5Page, app.HandlerExportPDFA5Page)
 		r.Get(APIExportCSVXLSPage, app.HandlerExportCSVXLSPage)
 
-		r.Get(APIExportFormat, app.HandlerExportLogbook)
+		// r.Get(APIExportFormat, app.HandlerExportLogbook)
 		r.Post(APIExportFormat, app.HandlerExportSettingsSave)
 		r.Post(APIExportRestoreDefaults, app.HandlerExportRestoreDefaults)
 
