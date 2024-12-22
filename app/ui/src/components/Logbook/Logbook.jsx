@@ -71,7 +71,7 @@ export const Logbook = () => {
     },
     {
       Header: renderHeader(["Operation", "Condition Time"]),
-      header: "OCT", columns: [
+      header: "Operation Condition Time", columns: [
         createTimeColumn("time.night_time", "Night"),
         createTimeColumn("time.ifr_time", "IFR"),
       ]

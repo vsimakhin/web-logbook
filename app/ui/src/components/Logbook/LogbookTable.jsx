@@ -11,16 +11,22 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { handleExportRows } from './csv-export';
 import { dateFilterFn, getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 
+const tablePageKey = 'logbook-table-page-size';
+const columnVisibilityKey = 'logbook-table-column-visibility';
+
 export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
-  const tablePageKey = 'logbook-table-page-size';
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    const savedVisibility = localStorage.getItem(columnVisibilityKey);
+    return savedVisibility ? JSON.parse(savedVisibility) : {};
+  });
 
   const toggleFilterDrawer = (open) => () => { setIsFilterDrawerOpen(open) };
 
   const initialPageSize = useMemo(() => {
     return localStorage.getItem(tablePageKey) ? parseInt(localStorage.getItem(tablePageKey)) : 15;
-  }, [tablePageKey]);
+  }, []);
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -29,7 +35,11 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
 
   useEffect(() => {
     localStorage.setItem(tablePageKey, pagination.pageSize);
-  }, [pagination.pageSize, tablePageKey]);
+  }, [pagination.pageSize]);
+
+  useEffect(() => {
+    localStorage.setItem(columnVisibilityKey, JSON.stringify(columnVisibility));
+  }, [columnVisibility]);
 
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
@@ -59,6 +69,7 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
     columnResizeMode: 'onEnd',
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
         <Tooltip title="Quick CSV Export">
@@ -68,7 +79,7 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
     ),
     muiTablePaperProps: { variant: 'outlined', elevation: 0 },
     onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters },
+    state: { pagination, columnFilters: columnFilters, columnVisibility },
     columnFilterDisplayMode: 'custom',
     enableFacetedValues: true,
     defaultColumn: {
