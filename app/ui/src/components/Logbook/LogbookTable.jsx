@@ -4,22 +4,19 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 // Custom components and libraries
-import { dateFilterFn } from '../../util/helpers';
 import { handleExportRows } from '../../util/csv-export';
-import { IconButton } from '@mui/material';
+import { dateFilterFn, getFilterLabel, timeFilterFn } from './helpers';
 
-const PAGE_SIZE_KEY = 'pageSize';
-
-export const DataTable = ({ tableName, columns, data, isLoading, renderRowActions, customComponents, initialState = {}, tableProps, onFilterChange, ...props }) => {
-  const tablePageKey = `${PAGE_SIZE_KEY}-${tableName}`;
+export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
+  const tablePageKey = 'logbook-table-page-size';
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [columnFilters, setColumnFilters] = useState([]);
 
-  const toggleFilterDrawer = (open) => () => {
-    setIsFilterDrawerOpen(open);
-  };
+  const toggleFilterDrawer = (open) => () => { setIsFilterDrawerOpen(open) };
 
   const initialPageSize = useMemo(() => {
     return localStorage.getItem(tablePageKey) ? parseInt(localStorage.getItem(tablePageKey)) : 15;
@@ -30,19 +27,13 @@ export const DataTable = ({ tableName, columns, data, isLoading, renderRowAction
     pageSize: initialPageSize,
   });
 
-  const [columnFilters, setColumnFilters] = useState([]);
-
   useEffect(() => {
     localStorage.setItem(tablePageKey, pagination.pageSize);
   }, [pagination.pageSize, tablePageKey]);
 
-  const tableInitialState = useMemo(() => ({
-    density: 'compact',
-    ...initialState,
-  }), [initialState]);
-
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
+    timeFilterFn: timeFilterFn,
   }), []);
 
   const handleCSVExport = useCallback((table) => {
@@ -52,7 +43,7 @@ export const DataTable = ({ tableName, columns, data, isLoading, renderRowAction
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
-    initialState: tableInitialState,
+    initialState: { density: 'compact' },
     isLoading: isLoading,
     enableColumnResizing: true,
     enableGlobalFilterModes: true,
@@ -60,16 +51,15 @@ export const DataTable = ({ tableName, columns, data, isLoading, renderRowAction
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
     enableColumnDragging: false,
     enableColumnPinning: false,
-    enableEditing: renderRowActions ? true : false,
+    // enableEditing: renderRowActions ? true : false,
     enableGrouping: true,
     enableDensityToggle: false,
-    renderRowActions: renderRowActions,
+    // renderRowActions: renderRowActions,
     columnResizeMode: 'onEnd',
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        {customComponents}
         <Tooltip title="Quick CSV Export">
           <IconButton onClick={() => handleCSVExport(table)} size="small"><FileDownloadOutlinedIcon /></IconButton>
         </Tooltip>
@@ -80,31 +70,25 @@ export const DataTable = ({ tableName, columns, data, isLoading, renderRowAction
     state: { pagination, columnFilters: columnFilters },
     columnFilterDisplayMode: 'custom',
     enableFacetedValues: true,
-    muiFilterTextFieldProps: ({ column }) => ({
-      label: `Filter by ${column.columnDef.header}`,
-    }),
-    ...tableProps
+    defaultColumn: {
+      muiFilterTextFieldProps: ({ column }) => (getFilterLabel(column)),
+    },
+    enableSorting: false,
+    enableColumnActions: false,
   });
-
-  useEffect(() => {
-    if (columnFilters && onFilterChange) {
-      const filteredRows = table.getFilteredRowModel().rows.map(row => row.original);
-      onFilterChange({ filters: columnFilters, filteredRows });
-    }
-  }, [columnFilters, onFilterChange, table, data]);
 
   return (
     <>
       <MaterialReactTable table={table} {...props} />
       <Drawer anchor="right" open={isFilterDrawerOpen} onClose={toggleFilterDrawer(false)} sx={{
         '& .MuiDrawer-paper': {
-          marginTop: '64px', // Adjust this based on your toolbar height
-          height: 'calc(100% - 64px)', // Ensure the drawer doesn’t exceed the viewport height
+          marginTop: '64px',
+          height: 'calc(100% - 64px)',
         },
       }}>
         <Box sx={{ width: 350, padding: 2 }}>
           {table.getLeafHeaders().map((header) => {
-            if (header.id === 'mrt-row-spacer' || header.id === 'mrt-row-actions') return null;
+            if (header.id === 'mrt-row-spacer' || header.id === 'mrt-row-actions' || header.id.startsWith('center_1_')) return null;
             return < MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
           })}
         </Box>
@@ -112,3 +96,5 @@ export const DataTable = ({ tableName, columns, data, isLoading, renderRowAction
     </>
   );
 }
+
+export default LogbookTable;

@@ -1,19 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 // MUI
 import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import { fetchLogbookData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { useMemo } from "react";
-import { DataTable } from "../UIElements/DataTable";
-
-const renderTextProps = {
-  muiTableBodyCellProps: { align: "left", sx: { p: 0.5 } }, muiTableHeadCellProps: { align: "center" }
-};
-const renderProps = {
-  muiTableBodyCellProps: { align: "center", sx: { p: 0.5 } }, muiTableHeadCellProps: { align: "center" }
-};
+import LogbookTable from "./LogbookTable";
+import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderHeader, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 
 export const Logbook = () => {
   const navigate = useNavigate();
@@ -27,78 +21,73 @@ export const Logbook = () => {
   const columns = useMemo(() => [
     {
       header: "Date", ...renderTextProps, columns: [
-        { accessorKey: "date", header: "", size: 90, ...renderTextProps },
+        createDateColumn("date", "", 90),
       ]
     },
     {
       header: "Departure", ...renderProps, columns: [
-        { accessorKey: "departure.place", header: "Place", size: 55, ...renderProps },
-        { accessorKey: "departure.time", header: "Time", size: 50, ...renderProps },
+        createColumn("departure.place", "Place", 55),
+        createColumn("departure.time", "Time", 50)
       ]
     },
     {
       header: "Arrival", columns: [
-        { accessorKey: "arrival.place", header: "Place", size: 55, ...renderProps },
-        { accessorKey: "arrival.time", header: "Time", size: 50, ...renderProps },
+        createColumn("arrival.place", "Place", 55),
+        createColumn("arrival.time", "Time", 50)
       ]
     },
     {
       header: "Aircraft", columns: [
-        { accessorKey: "aircraft.model", header: "Type", size: 80, ...renderProps },
-        { accessorKey: "aircraft.reg_name", header: "Reg", size: 80, ...renderProps },
+        createColumn("aircraft.model", "Type", 80),
+        createColumn("aircraft.reg_name", "Reg", 80, false, renderTotalFooter())
       ]
     },
     {
       header: "Single Pilot", columns: [
-        { accessorKey: "time.se_time", header: "SE", size: 50, ...renderProps },
-        { accessorKey: "time.me_time", header: "ME", size: 50, ...renderProps },
+        createTimeColumn("time.se_time", "SE"),
+        createTimeColumn("time.me_time", "ME"),
       ]
     },
     {
       header: "MCC", columns: [
-        { accessorKey: "time.mcc_time", header: "", size: 50, ...renderProps },
+        createTimeColumn("time.mcc_time", "MCC")
       ]
     },
     {
       header: "Total", columns: [
-        { accessorKey: "time.total_time", header: "", size: 50, ...renderProps },
+        createTimeColumn("time.total_time", "")
       ]
     },
     {
       header: "PIC Name", columns: [
-        { accessorKey: "pic_name", header: "", size: 150, ...renderTextProps },
+        createColumn("pic_name", "", 150, true)
       ]
     },
     {
       header: "Landings", columns: [
-        {
-          accessorKey: "landings.day", header: "Day", size: 50, ...renderProps,
-          Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue())
-        },
-        {
-          accessorKey: "landings.night", header: "Night", size: 60, ...renderProps,
-          Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue())
-        },
+        createLandingColumn("landings.day", "Day"),
+        createLandingColumn("landings.night", "Night")
       ]
     },
     {
-      header: "Operational Condition Time", columns: [
-        { accessorKey: "time.night_time", header: "Night", size: 60, ...renderProps },
-        { accessorKey: "time.ifr_time", header: "IFR", size: 60, ...renderProps },
+      Header: renderHeader(["Operation", "Condition Time"]),
+      header: "OCT", columns: [
+        createTimeColumn("time.night_time", "Night"),
+        createTimeColumn("time.ifr_time", "IFR"),
       ]
     },
     {
       header: "Pilot Function Time", columns: [
-        { accessorKey: "time.pic_time", header: "PIC", size: 50, ...renderProps },
-        { accessorKey: "time.co_pilot_time", header: "COP", size: 50, ...renderProps },
-        { accessorKey: "time.dual_time", header: "Dual", size: 50, ...renderProps },
-        { accessorKey: "time.instructor_time", header: "Instr", size: 50, ...renderProps },
+        createTimeColumn("time.pic_time", "PIC"),
+        createTimeColumn("time.co_pilot_time", "COP"),
+        createTimeColumn("time.dual_time", "Dual"),
+        createTimeColumn("time.instructor_time", "Instr")
       ]
     },
     {
       header: "FSTD Session", columns: [
-        { accessorKey: "sim.type", header: "Type", size: 70, ...renderProps },
-        { accessorKey: "sim.time", header: "Time", size: 50, ...renderProps },
+        createColumn("sim.type", "Type", 70),
+        createTimeColumn("sim.time", "Time")
       ]
     },
     {
@@ -111,14 +100,10 @@ export const Logbook = () => {
   return (
     <>
       {isLoading && <LinearProgress />}
-      <DataTable
-        tableName="logbook"
+      <LogbookTable
         columns={columns}
         data={data}
         isLoading={isLoading}
-        tableProps={{ enableSorting: false, enableColumnActions: false }}
-      // renderRowActions={renderRowActions}
-      // customComponents={customComponents}
       />
     </>
   );
