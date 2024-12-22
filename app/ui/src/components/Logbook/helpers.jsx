@@ -1,8 +1,11 @@
+import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 // MUI
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+// Custom
+import { convertMinutesToTime, convertTimeToMinutes, getValue } from "../../util/helpers";
 
 export const renderTextProps = {
   muiTableBodyCellProps: { align: "left", sx: { p: 0.5 } },
@@ -17,26 +20,6 @@ export const renderProps = {
 };
 
 export const timeFieldSize = 60;
-
-// Convert minutes to HHHH:MM format
-const convertMinutesToTime = (minutes) => {
-  if (!minutes) return "00:00";
-
-  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
-  const mins = String(minutes % 60).padStart(2, '0');
-  return `${hours}:${mins}`;
-};
-
-// Convert HHHH:MM format back to minutes if needed
-const convertTimeToMinutes = (time) => {
-  if (!time) return 0;
-  const [hours, mins] = time.split(':').map(Number);
-  return hours * 60 + mins;
-};
-
-const getValue = (obj, path) => {
-  return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), obj);
-};
 
 export const renderTotalFooter = () => {
   return (
@@ -102,6 +85,7 @@ export const createLandingColumn = (id, name) => ({
 export const createDateColumn = (id, name, size) => ({
   accessorKey: id,
   header: name,
+  Cell: ({ renderedCellValue, row }) => (<Typography variant="body2" color="primary"><Link to={`/logbook/${row.original.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>{renderedCellValue}</Link></Typography>),
   size: size,
   ...renderTextProps,
   filterVariant: "date-range", filterFn: "dateFilterFn",

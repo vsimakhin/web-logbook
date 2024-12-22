@@ -164,6 +164,7 @@ func (app *application) routes() *chi.Mux {
 		// logbook
 		r.Route("/logbook", func(r chi.Router) {
 			r.With(middleware.Compress(5)).Get("/data", app.HandlerApiLogbookData)
+			r.Get("/{uuid}", app.HandlerApiFlightRecordByID)
 		})
 
 		// export
@@ -182,7 +183,7 @@ func (app *application) routes() *chi.Mux {
 		// r.Get(APIRoot, app.HandlerLogbook)
 		// r.Get(APILogbook, app.HandlerLogbook)
 		// r.Get(APILogbookData, app.HandlerFlightRecordsData)
-		r.Get(APILogbookUUID, app.HandlerFlightRecordByID)
+		// r.Get(APILogbookUUID, app.HandlerFlightRecordByID)
 		r.Get(APILogbookNew, app.HandlerFlightRecordNew)
 
 		r.Post(APILogbookSave, app.HandlerFlightRecordSave)

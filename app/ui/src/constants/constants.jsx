@@ -35,3 +35,47 @@ export let API_URL = '/api';
 if (import.meta.env.MODE === 'development') {
   API_URL = 'http://localhost:4000/api';
 }
+
+export const FLIGHT_INITIAL_STATE = {
+  uuid: "",
+  date: "",
+  departure: {
+    place: "",
+    time: ""
+  },
+  arrival: {
+    place: "",
+    time: ""
+  },
+  aircraft: {
+    model: "",
+    reg_name: ""
+  },
+  time: {
+    se_time: "",
+    me_time: "",
+    mcc_time: "",
+    total_time: "",
+    night_time: "",
+    ifr_time: "",
+    pic_time: "",
+    co_pilot_time: "",
+    dual_time: "",
+    instructor_time: ""
+  },
+  landings: {
+    day: "", night: ""
+  },
+  sim: {
+    type: "", time: ""
+  },
+  pic_name: "",
+  remarks: ""
+};
+
+export const PLACE_SLOT_PROPS = {
+  htmlInput: { maxLength: 4, style: { textTransform: 'uppercase' }, onInput: (e) => { e.target.value = e.target.value.toUpperCase() } }
+}
+export const TIME_SLOT_PROPS = {
+  htmlInput: { maxLength: 4, style: { textTransform: 'uppercase' }, onInput: (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, '') } }
+}
