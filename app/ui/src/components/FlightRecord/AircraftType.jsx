@@ -1,18 +1,27 @@
-import { Tooltip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+// Custom components
 import Select from "../UIElements/Select"
+import { fetchAircraftModels } from "../../util/http/aircraft";
 
 export const AircraftType = ({ gsize, value, handleChange }) => {
+  const navigate = useNavigate();
+
+  const { data: options } = useQuery({
+    queryFn: ({ signal }) => fetchAircraftModels({ signal, navigate }),
+    queryKey: ['aircraft-models'],
+  })
 
   return (
-    <Tooltip title="Aircraft type">
-      <Select gsize={gsize}
-        id="aircraft.model"
-        label="Airplane Type"
-        handleChange={handleChange}
-        value={value}
-        tooltip={"Aircraft type"}
-      />
-    </Tooltip>
+    <Select gsize={gsize}
+      id="aircraft.model"
+      label="Aircraft Type"
+      handleChange={handleChange}
+      value={value}
+      tooltip={"Aircraft type"}
+      options={options}
+      freeSolo={true}
+    />
   );
 }
 

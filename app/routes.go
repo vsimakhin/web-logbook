@@ -166,6 +166,13 @@ func (app *application) routes() *chi.Mux {
 			r.Get("/{uuid}", app.HandlerApiFlightRecordByID)
 		})
 
+		// aircrafts
+		r.Route("/aircraft", func(r chi.Router) {
+			r.Get("/models", app.HandlerApiAircraftModels)
+			r.Get("/list", app.HandlerAircrafts)
+			r.Get("/list/{filter}", app.HandlerAircrafts)
+		})
+
 		// export
 		r.Route("/export", func(r chi.Router) {
 			r.Get("/{format}", app.HandlerExportLogbook)
