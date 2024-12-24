@@ -13,28 +13,21 @@ import (
 )
 
 // HandlerFlightRecordByID shows flight record by UUID
-func (app *application) HandlerFlightRecordByID(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlerApiFlightRecordByID(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 
 	flightRecord, err := app.db.GetFlightRecordByID(uuid)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot find the flight record %s - %s", uuid, err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	aircraftRegs, aircraftModels := app.lastRegsAndModels()
-
-	data := make(map[string]interface{})
-	data["flightRecord"] = flightRecord
-	data["aircraftRegs"] = aircraftRegs
-	data["aircraftModels"] = aircraftModels
-	data["enableHelpMessages"] = app.isFlightRecordHelpEnabled()
-
-	if err := app.renderTemplate(w, r, "flight-record", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
+	app.writeJSON(w, http.StatusOK, flightRecord)
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// for review
+///////////////////////////////////////////////////////////////////////////////////////
 
 // HandlerFlightRecordNew shows the empty form for a new flight record
 func (app *application) HandlerFlightRecordNew(w http.ResponseWriter, r *http.Request) {

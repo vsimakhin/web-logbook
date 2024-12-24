@@ -258,3 +258,13 @@ In case you'd like to add some other features to the logbook or you found a bug,
 * Signature Pad https://github.com/szimek/signature_pad
 * PapaParse https://github.com/mholt/PapaParse
 * arc.js https://github.com/springmeyer/arc.js
+
+
+* Golang go-pdf https://github.com/go-pdf/fpdf
+* Golang chi web-server https://github.com/go-chi/chi
+* React https://react.dev/
+* Material UI https://mui.com/material-ui/
+* Material React Table https://material-react-table.com
+* dayjs https://github.com/iamkun/dayjs
+* TanStack Query https://tanstack.com/query/
+* export-to-csv https://github.com/alexcaza/export-to-csv
