@@ -20,8 +20,6 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
     return savedVisibility ? JSON.parse(savedVisibility) : {};
   });
 
-  const toggleFilterDrawer = (open) => () => { setIsFilterDrawerOpen(open) };
-
   const initialPageSize = useMemo(() => {
     return localStorage.getItem(tablePageKey) ? parseInt(localStorage.getItem(tablePageKey)) : 15;
   }, []);
@@ -86,7 +84,7 @@ export const LogbookTable = ({ columns, data, isLoading, ...props }) => {
   return (
     <>
       <MaterialReactTable table={table} {...props} />
-      <Drawer anchor="right" open={isFilterDrawerOpen} onClose={toggleFilterDrawer(false)} sx={{
+      <Drawer anchor="right" open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} sx={{
         '& .MuiDrawer-paper': {
           marginTop: '64px',
           height: 'calc(100% - 64px)',

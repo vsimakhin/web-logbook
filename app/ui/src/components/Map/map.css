@@ -1,0 +1,34 @@
+.map {
+    width: 100%;
+    height: 400px;
+}
+
+.ol-popup {
+    position: absolute;
+    left: -50px;
+    min-width: 280px;
+}
+
+.ol-popup:after,
+.ol-popup:before {
+    top: 100%;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ol-popup:after {
+    left: 48px;
+    margin-left: -10px;
+}
+
+.ol-popup:before {
+    left: 48px;
+    margin-left: -11px;
+}
+
+.ol-popup-closer {}
+
+.ol-popup-closer:after {}

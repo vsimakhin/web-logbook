@@ -173,6 +173,11 @@ func (app *application) routes() *chi.Mux {
 			r.Get("/list/{filter}", app.HandlerAircrafts)
 		})
 
+		// airports
+		r.Route("/airport", func(r chi.Router) {
+			r.Get("/{id}", app.HandlerAirportByID)
+		})
+
 		// export
 		r.Route("/export", func(r chi.Router) {
 			r.Get("/{format}", app.HandlerExportLogbook)

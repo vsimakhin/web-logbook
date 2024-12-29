@@ -16,9 +16,6 @@ type DBModel struct {
 // cache for calculated distance
 var dcache = make(map[string]int)
 
-// cache for airports
-var acache = make(map[string]Airport)
-
 // jsonResponse is a type for post data handlers response
 type JSONResponse struct {
 	OK          bool   `json:"ok"`
