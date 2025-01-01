@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -45,8 +46,10 @@ func (m *DBModel) GetAircraftModels() (models []string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "SELECT aircraft_model FROM logbook_view WHERE aircraft_model <> '' " +
-		"GROUP BY aircraft_model ORDER BY aircraft_model"
+	query := `SELECT DISTINCT aircraft_model 
+		FROM logbook_view 
+		WHERE aircraft_model <> '' 
+		ORDER BY aircraft_model`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return models, err
@@ -65,12 +68,26 @@ func (m *DBModel) GetAircraftModels() (models []string, err error) {
 }
 
 // GetAircraftRegs returns the list of the recorded aircraft registrations
-func (m *DBModel) GetAircraftRegs() (regs []string, err error) {
+func (m *DBModel) GetAircraftRegs(records int) (regs []string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "SELECT reg_name FROM logbook_view WHERE reg_name <> '' " +
-		"GROUP BY reg_name ORDER BY reg_name"
+	query := `SELECT DISTINCT reg_name
+		FROM logbook_view
+		WHERE reg_name <> ""
+		ORDER BY reg_name`
+	if records > 0 {
+		query = `SELECT DISTINCT reg_name
+			FROM (
+				SELECT reg_name
+				FROM logbook_view
+				WHERE reg_name <> ""
+				ORDER BY m_date DESC
+				LIMIT ` + fmt.Sprintf("%d", records) +
+			`) subquery
+			ORDER BY reg_name;`
+	}
+
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return regs, err

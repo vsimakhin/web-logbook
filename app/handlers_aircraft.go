@@ -8,7 +8,6 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerNightTime is a handler for calculating night time
 func (app *application) HandlerAircrafts(w http.ResponseWriter, r *http.Request) {
 
 	var aircrafts map[string]string
@@ -26,4 +25,15 @@ func (app *application) HandlerAircrafts(w http.ResponseWriter, r *http.Request)
 	}
 
 	app.writeJSON(w, http.StatusOK, aircrafts)
+}
+
+// HandlerApiAircraftModels is a handler for getting the list of aircraft models/types
+func (app *application) HandlerApiAircraftModels(w http.ResponseWriter, r *http.Request) {
+
+	models, err := app.db.GetAircraftModels()
+	if err != nil {
+		app.handleError(w, err)
+	}
+
+	app.writeJSON(w, http.StatusOK, models)
 }

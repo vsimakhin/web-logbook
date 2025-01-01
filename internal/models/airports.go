@@ -5,15 +5,18 @@ import (
 	"database/sql"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
+
+var airportCache sync.Map
 
 // GetAirportByID return airport record by ID (ICAO or IATA)
 func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 	// check airport id in cache first
 	id = strings.TrimSpace(id)
-	if value, ok := acache[id]; ok {
-		return value, nil
+	if cachedAirport, ok := airportCache.Load(id); ok {
+		return cachedAirport.(Airport), nil
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -33,7 +36,7 @@ func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 	}
 
 	// add to cache
-	acache[id] = airport
+	airportCache.Store(id, airport)
 
 	return airport, nil
 }
