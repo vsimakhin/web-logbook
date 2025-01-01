@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -5,10 +6,11 @@ import IconButton from '@mui/material/IconButton';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 
 export const NewFlightRecordButton = () => {
+  const navigate = useNavigate();
 
   return (
     <Tooltip title="Add New Flight Record">
-      <IconButton onClick={() => console.log("todo: new flight record")} size="small"><AddBoxOutlinedIcon /></IconButton>
+      <IconButton onClick={() => navigate("/logbook/new")} size="small"><AddBoxOutlinedIcon /></IconButton>
     </Tooltip>
   )
 }

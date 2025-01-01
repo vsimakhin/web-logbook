@@ -4,22 +4,32 @@ import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 // Custom
+import CardHeader from "../UIElements/CardHeader";
 import FlightRecordDetails from "./FlightRecordDetails";
 import { fetchFlightData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 import FlightMap from "../Map/FlightMap";
+import HelpButton from "./HelpButton";
+import NewFlightRecordButton from "./NewFlightRecordButton";
+import CopyFlightRecordButton from "./CopyFlightRecordButton";
+import SaveFlightRecordButton from "./SaveFlightRecordButton";
+import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 
 export const FlightRecord = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [flight, setFlight] = useState(FLIGHT_INITIAL_STATE);
+
+  const [flight, setFlight] = useState({ ...FLIGHT_INITIAL_STATE, uuid: id });
   const [mapData, setMapData] = useState([]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['flight', id],
     queryFn: ({ signal }) => fetchFlightData({ signal, id, navigate }),
+    enabled: !(flight.uuid === "new"),
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
 
@@ -63,7 +73,22 @@ export const FlightRecord = () => {
       {isLoading && <LinearProgress />}
       <Grid container spacing={1} >
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-          <FlightRecordDetails flight={flight} handleChange={handleChange} />
+          <Card variant="outlined" sx={{ mb: 1 }}>
+            <CardContent>
+              <CardHeader title={"Flight Record"}
+                action={
+                  <>
+                    <HelpButton />
+                    <SaveFlightRecordButton flight={flight} />
+                    <NewFlightRecordButton setFlight={setFlight} />
+                    <CopyFlightRecordButton setFlight={setFlight} />
+                    <DeleteFlightRecordButton flight={flight} />
+                  </>
+                }
+              />
+              <FlightRecordDetails flight={flight} handleChange={handleChange} />
+            </CardContent>
+          </Card >
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>

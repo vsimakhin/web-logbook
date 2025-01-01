@@ -13,12 +13,6 @@ const (
 	APIRoot                           = "/"
 	APIPreferences                    = "/preferences"
 	APILogbook                        = "/logbook"
-	APILogbookUUID                    = "/logbook/{uuid}"
-	APILogbookData                    = "/logbook/data"
-	APILogbookNew                     = "/logbook/new"
-	APILogbookSave                    = "/logbook/save"
-	APILogbookDelete                  = "/logbook/delete"
-	APILogbookNight                   = "/logbook/night"
 	APIExport                         = "/export"
 	APIExportPDFA4Page                = "/export-pdf-a4"
 	APIExportPDFA5Page                = "/export-pdf-a5"
@@ -75,12 +69,6 @@ var apiMap = map[string]string{
 	"Root":                           APIRoot,
 	"Preferences":                    APIPreferences,
 	"Logbook":                        APILogbook,
-	"LogbookData":                    APILogbookData,
-	"LogbookUUID":                    APILogbookUUID,
-	"LogbookNew":                     APILogbookNew,
-	"LogbookSave":                    APILogbookSave,
-	"LogbookDelete":                  APILogbookDelete,
-	"LogbookNight":                   APILogbookNight,
 	"Aircrafts":                      APIAircrafts,
 	"AircraftsFilter":                APIAircraftsFilter,
 	"LogbookUUIDAttachments":         APILogbookUUIDAttachments,
@@ -164,6 +152,10 @@ func (app *application) routes() *chi.Mux {
 		r.Route("/logbook", func(r chi.Router) {
 			r.With(middleware.Compress(5)).Get("/data", app.HandlerApiLogbookData)
 			r.Get("/{uuid}", app.HandlerApiFlightRecordByID)
+			r.Delete("/{uuid}", app.HandlerApiFlightRecordDelete)
+			r.Post("/new", app.HandlerApiFlightRecordNew)
+			r.Put("/{uuid}", app.HandlerApiFlightRecordUpdate)
+			r.Post("/night", app.HandlerNightTime)
 		})
 
 		// aircrafts
@@ -189,18 +181,6 @@ func (app *application) routes() *chi.Mux {
 
 	r.Route("/", func(r chi.Router) {
 		r.Use(app.Auth)
-
-		// logbook
-		// r.Get(APIRoot, app.HandlerLogbook)
-		// r.Get(APILogbook, app.HandlerLogbook)
-		// r.Get(APILogbookData, app.HandlerFlightRecordsData)
-		// r.Get(APILogbookUUID, app.HandlerFlightRecordByID)
-		r.Get(APILogbookNew, app.HandlerFlightRecordNew)
-
-		r.Post(APILogbookSave, app.HandlerFlightRecordSave)
-		r.Post(APILogbookDelete, app.HandlerFlightRecordDelete)
-
-		r.Post(APILogbookNight, app.HandlerNightTime)
 
 		r.Get(APILogbookUUIDAttachments, app.HandlerGetAttachments)
 		r.Post(APILogbookAttachmentsUpload, app.HandlerUploadAttachment)

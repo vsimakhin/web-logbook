@@ -7,6 +7,7 @@ import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import dayjs from 'dayjs';
 
 export const DRAWER_WIDTH = 200;
 
@@ -38,7 +39,7 @@ if (import.meta.env.MODE === 'development') {
 
 export const FLIGHT_INITIAL_STATE = {
   uuid: "",
-  date: "",
+  date: dayjs().format('DD/MM/YYYY'),
   departure: {
     place: "",
     time: ""

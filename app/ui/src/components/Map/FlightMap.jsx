@@ -30,20 +30,16 @@ import icon from "../../assets/favicon.ico";
 import { fetchAirport } from '../../util/http/airport';
 
 const getAirportData = async (id, navigate) => {
-  const response = await queryClient.fetchQuery({
-    queryKey: ["airport", id],
-    queryFn: ({ signal }) => fetchAirport({ signal, id, navigate }),
-  });
+  try {
+    const response = await queryClient.fetchQuery({
+      queryKey: ["airport", id],
+      queryFn: ({ signal }) => fetchAirport({ signal, id, navigate }),
+    });
 
-  // if response type Response
-  if (response instanceof Response) {
-    // looks like airport is not found
-    if (response.status === 404) {
-      return null;
-    }
+    return response;
+  } catch {
+    return null;
   }
-
-  return response;
 }
 
 const addMarker = (features, airport) => {

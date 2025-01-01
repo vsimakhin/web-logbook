@@ -15,9 +15,9 @@ export const handleFetch = async (url, options, navigate, errorMessage, returnJs
 
   if (!response.ok) {
     handle401(response, navigate);
-    if (response.status === 404) {
-      return response;
-    }
+    // if (response.status === 404) {
+    //   return response;
+    // }
     const error = new Error(response.statusText || errorMessage);
     error.code = response.status;
     try {
