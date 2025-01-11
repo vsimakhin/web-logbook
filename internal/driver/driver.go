@@ -55,7 +55,7 @@ func validateDB(db *sql.DB, engine string) error {
 		}
 
 		// check views
-		views := []*View{logbookView, airportsView}
+		views := []*View{logbookView, airportsView, attachmentsView}
 		for _, view := range views {
 			if err := view.initView(db, engine); err != nil {
 				return err
@@ -107,7 +107,7 @@ func updateSchemaVersion(db *sql.DB) error {
 	defer cancel()
 
 	query := "INSERT INTO metadata (version, created_at) VALUES (?,?)"
-	_, err := db.ExecContext(ctx, query, schemaVersion, time.Now().Format("02.01.2006 15:04:05"))
+	_, err := db.ExecContext(ctx, query, schemaVersion, time.Now().Format("20060102 15:04:05"))
 	return err
 }
 

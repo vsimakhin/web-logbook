@@ -10,7 +10,7 @@ func (m *DBModel) GetAttachments(recordID string) (attachments []Attachment, err
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "SELECT uuid, record_id, document_name FROM attachments WHERE record_id = ?"
+	query := "SELECT uuid, record_id, description, document_name FROM attachments_view WHERE record_id = ?"
 	rows, err := m.DB.QueryContext(ctx, query, recordID)
 	if err != nil {
 		return attachments, err
@@ -19,7 +19,7 @@ func (m *DBModel) GetAttachments(recordID string) (attachments []Attachment, err
 
 	for rows.Next() {
 		var att Attachment
-		if err = rows.Scan(&att.UUID, &att.RecordID, &att.DocumentName); err != nil {
+		if err = rows.Scan(&att.UUID, &att.RecordID, &att.Description, &att.DocumentName); err != nil {
 			return attachments, err
 		}
 		attachments = append(attachments, att)
@@ -33,7 +33,7 @@ func (m *DBModel) GetAllAttachments() (attachments []Attachment, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "SELECT uuid, record_id, document_name FROM attachments"
+	query := "SELECT uuid, record_id, description, document_name FROM attachments_view"
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return attachments, err
@@ -42,7 +42,7 @@ func (m *DBModel) GetAllAttachments() (attachments []Attachment, err error) {
 
 	for rows.Next() {
 		var att Attachment
-		if err = rows.Scan(&att.UUID, &att.RecordID, &att.DocumentName); err != nil {
+		if err = rows.Scan(&att.UUID, &att.RecordID, &att.Description, &att.DocumentName); err != nil {
 			return attachments, err
 		}
 		attachments = append(attachments, att)
@@ -56,8 +56,8 @@ func (m *DBModel) InsertAttachmentRecord(att Attachment) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "INSERT INTO attachments (uuid, record_id, document_name, document) VALUES (?, ?, ?, ?)"
-	_, err = m.DB.ExecContext(ctx, query, att.UUID, att.RecordID, att.DocumentName, att.Document)
+	query := "INSERT INTO attachments (uuid, record_id, description, document_name, document) VALUES (?, ?, ?, ?)"
+	_, err = m.DB.ExecContext(ctx, query, att.UUID, att.Description, att.RecordID, att.DocumentName, att.Document)
 
 	return err
 }
@@ -100,8 +100,8 @@ func (m *DBModel) GetAttachmentByID(uuid string) (att Attachment, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "SELECT uuid, record_id, document_name, document FROM attachments WHERE uuid = ?"
+	query := "SELECT uuid, record_id, description, document_name, document FROM attachments_view WHERE uuid = ?"
 	row := m.DB.QueryRowContext(ctx, query, uuid)
-	err = row.Scan(&att.UUID, &att.RecordID, &att.DocumentName, &att.Document)
+	err = row.Scan(&att.UUID, &att.RecordID, &att.Description, &att.DocumentName, &att.Document)
 	return att, err
 }

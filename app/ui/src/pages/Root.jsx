@@ -20,7 +20,7 @@ const CustomAppTitle = () => {
 export const Root = () => {
   return (
     <DashboardLayout sidebarExpandedWidth={DRAWER_WIDTH} slots={{ appTitle: CustomAppTitle }}>
-      <PageContainer maxWidth={false} title="" >
+      <PageContainer maxWidth={false} title="" breadcrumbs={[]}>
         <Outlet />
       </PageContainer>
     </DashboardLayout>

@@ -54,11 +54,11 @@ export const PDFExportButton = () => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
-        <MenuItem onClick={() => handleExport("A4")}>
-          <PictureAsPdfOutlinedIcon /> Export PDF A4
+        <MenuItem onClick={() => handleExport("A4")} sx={{ p: 0 }}>
+          <PictureAsPdfOutlinedIcon sx={{ m: 1 }} color="action" /> Export PDF A4
         </MenuItem>
-        <MenuItem onClick={() => handleExport("A5")}>
-          <PictureAsPdfOutlinedIcon /> Export PDF A5
+        <MenuItem onClick={() => handleExport("A5")} sx={{ p: 0 }}>
+          <PictureAsPdfOutlinedIcon sx={{ m: 1 }} color="action" /> Export PDF A5
         </MenuItem>
       </Menu>
     </>

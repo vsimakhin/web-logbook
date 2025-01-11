@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "2.0.1"
+	schemaVersion = "3.0.3"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}
@@ -89,6 +89,7 @@ var licensingTable = NewTable("licensing", "uuid", UUID,
 var attachmentsTable = NewTable("attachments", "uuid", UUID,
 	[]Column{
 		{Name: "record_id", Type: UUID},
+		{Name: "description", Type: BigText, Properties: "NOT NULL DEFAULT ''"},
 		{Name: "document_name", Type: BigText},
 		{Name: "document", Type: Blob},
 	})
@@ -138,5 +139,16 @@ var airportsView = NewView("airports_view",
 			UNION
 			SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom
 			`,
+	},
+)
+
+var attachmentsView = NewView("attachments_view",
+	SQLQuery{
+		SQLite: `
+			SELECT uuid, record_id, IFNULL(description, "") AS description, document_name, document FROM attachments;
+			`,
+		MySQL: `
+			SELECT uuid, record_id, IFNULL(description, "") AS description, document_name, document FROM attachments;
+		`,
 	},
 )

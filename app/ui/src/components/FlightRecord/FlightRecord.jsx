@@ -18,6 +18,7 @@ import NewFlightRecordButton from "./NewFlightRecordButton";
 import CopyFlightRecordButton from "./CopyFlightRecordButton";
 import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
+import Attachments from "../Attachment/Attachments";
 
 export const FlightRecord = () => {
   const { id } = useParams();
@@ -75,7 +76,7 @@ export const FlightRecord = () => {
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
-              <CardHeader title={"Flight Record"}
+              <CardHeader title="Flight Record"
                 action={
                   <>
                     <HelpButton />
@@ -89,6 +90,8 @@ export const FlightRecord = () => {
               <FlightRecordDetails flight={flight} handleChange={handleChange} />
             </CardContent>
           </Card >
+
+          <Attachments id={id} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>

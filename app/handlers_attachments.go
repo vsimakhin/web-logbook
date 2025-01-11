@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,18 +12,46 @@ import (
 )
 
 // HandlerGetAttachments generates attachments
-func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlerApiGetAttachments(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 
 	attachments, err := app.db.GetAttachments(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	app.writeJSON(w, http.StatusOK, attachments)
 }
+
+// HandlerApiGetAttachment is a hadnler for attachment download
+func (app *application) HandlerApiGetAttachment(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	att, err := app.db.GetAttachmentByID(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, att)
+}
+
+// HandlerApiDeleteAttachment is a handler for removing attachments
+func (app *application) HandlerApiDeleteAttachment(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	err := app.db.DeleteAttachment(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Attachment removed")
+}
+
+////////////////////////////////////////////////////////
+// for review
 
 // HandlerUploadAttachment handles attachments upload
 func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.Request) {
@@ -84,51 +111,4 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 	}
 
 	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerDeleteAttachment is a handler for removing attachments
-func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.Request) {
-
-	var att models.Attachment
-	var response models.JSONResponse
-
-	err := json.NewDecoder(r.Body).Decode(&att)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = app.db.DeleteAttachment(att.UUID)
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerAttachmentDownload is a hadnler for attachment download
-func (app *application) HandlerAttachmentDownload(w http.ResponseWriter, r *http.Request) {
-	uuid := chi.URLParam(r, "uuid")
-
-	att, err := app.db.GetAttachmentByID(uuid)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", att.DocumentName))
-
-	_, err = w.Write(att.Document)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 }
