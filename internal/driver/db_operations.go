@@ -42,7 +42,7 @@ var queries = map[string]map[int]string{
 		alterTable:  "ALTER TABLE %s ADD COLUMN %s %s",
 		dropView:    "DROP VIEW IF EXISTS %s",
 		createView:  "CREATE VIEW %s AS %s",
-		checkIndex:  "SHOW INDEX FROM %s",
+		checkIndex:  "SELECT index_name FROM information_schema.statistics WHERE table_name = '%s'",
 		createIndex: "CREATE INDEX %s ON %s (%s)",
 	},
 }
@@ -192,9 +192,8 @@ func (t *Table) ensureIndexExists(ctx context.Context, db *sql.DB, engine string
 		var indexName string
 
 		var str string
-		var strp *string
 		if engine == MySQL {
-			err = rows.Scan(&str, &str, &indexName, &str, &str, &str, &str, &strp, &strp, &str, &str, &str, &str, &str, &strp)
+			err = rows.Scan(&indexName)
 		} else if engine == SQLite {
 			err = rows.Scan(&str, &indexName, &str, &str, &str)
 		}

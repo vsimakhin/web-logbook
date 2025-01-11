@@ -1,10 +1,10 @@
 package driver
 
 var (
-	schemaVersion = "2.0.1"
+	schemaVersion = "2.0.3"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
-	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(10)"}
+	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
 	SmallText = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(255)"}
 	BigText   = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(512)"}
 	FullText  = ColumnType{SQLite: "TEXT", MySQL: "TEXT"}
