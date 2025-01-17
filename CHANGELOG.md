@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Resolved an issue with the query for retrieving created indexes in MySQL.
+- Update: Update golang packages.
+
 ## [2.44.0] - 13.12.2024
 
 - Update: Update golang packages.
