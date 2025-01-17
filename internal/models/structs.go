@@ -245,7 +245,6 @@ type License struct {
 type Attachment struct {
 	UUID         string `json:"uuid"`
 	RecordID     string `json:"record_id"`
-	Description  string `json:"description"`
 	DocumentName string `json:"document_name"`
 	Document     []byte `json:"document"`
 }
