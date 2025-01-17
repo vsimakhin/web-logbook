@@ -163,6 +163,7 @@ func (app *application) routes() *chi.Mux {
 			r.Get("/list/{uuid}", app.HandlerApiGetAttachments)
 			r.Get("/{uuid}", app.HandlerApiGetAttachment)
 			r.Delete("/{uuid}", app.HandlerApiDeleteAttachment)
+			r.Post("/upload", app.HandlerApiUploadAttachment)
 		})
 
 		// aircrafts
@@ -188,11 +189,6 @@ func (app *application) routes() *chi.Mux {
 
 	r.Route("/", func(r chi.Router) {
 		r.Use(app.Auth)
-
-		// r.Get(APILogbookUUIDAttachments, app.HandlerGetAttachments)
-		r.Post(APILogbookAttachmentsUpload, app.HandlerUploadAttachment)
-		// r.Post(APILogbookAttachmentsDelete, app.HandlerDeleteAttachment)
-		// r.Get(APILogbookAttachmentsDownloadUUID, app.HandlerAttachmentDownload)
 
 		// export
 		r.Get(APIExportPDFA4Page, app.HandlerExportPDFA4Page)

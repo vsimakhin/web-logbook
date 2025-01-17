@@ -28,3 +28,13 @@ export const deleteAttachment = async ({ id, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot delete attachment');
 }
+
+export const uploadAttachement = async ({ payload, navigate }) => {
+  const url = `${API_URL}/attachment/upload`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    body: payload,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot upload attachment', false);
+}

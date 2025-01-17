@@ -56,8 +56,8 @@ func (m *DBModel) InsertAttachmentRecord(att Attachment) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "INSERT INTO attachments (uuid, record_id, description, document_name, document) VALUES (?, ?, ?, ?)"
-	_, err = m.DB.ExecContext(ctx, query, att.UUID, att.Description, att.RecordID, att.DocumentName, att.Document)
+	query := "INSERT INTO attachments (uuid, record_id, description, document_name, document) VALUES (?, ?, ?, ?, ?)"
+	_, err = m.DB.ExecContext(ctx, query, att.UUID, att.RecordID, att.Description, att.DocumentName, att.Document)
 
 	return err
 }

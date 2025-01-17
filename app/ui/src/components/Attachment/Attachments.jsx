@@ -9,6 +9,7 @@ import CardHeader from "../UIElements/CardHeader";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchAttachments } from "../../util/http/attachment";
 import Attachment from "./Attachment";
+import AddAttachmentButton from "./AddAttachmentButton";
 
 export const Attachments = ({ id }) => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export const Attachments = ({ id }) => {
           <CardHeader title="Attachments"
             action={
               <>
-
+                <AddAttachmentButton id={id} />
               </>
             }
           />

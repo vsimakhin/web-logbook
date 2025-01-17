@@ -50,30 +50,25 @@ func (app *application) HandlerApiDeleteAttachment(w http.ResponseWriter, r *htt
 	app.writeOkResponse(w, "Attachment removed")
 }
 
-////////////////////////////////////////////////////////
-// for review
-
-// HandlerUploadAttachment handles attachments upload
-func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.Request) {
-
-	var response models.JSONResponse
+// HandlerApiUploadAttachment handles attachments upload
+func (app *application) HandlerApiUploadAttachment(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	attachment := models.Attachment{
-		RecordID: r.PostFormValue("record_id"),
+		RecordID: r.PostFormValue("id"),
 	}
 
 	// check attached file
 	file, header, err := r.FormFile("document")
 	if err != nil {
 		if !strings.Contains(err.Error(), "no such file") {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			app.handleError(w, err)
 			return
 		}
 	} else {
@@ -83,7 +78,7 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 		// read file
 		bs, err := io.ReadAll(file)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			app.handleError(w, err)
 			return
 		}
 		attachment.Document = bs
@@ -92,23 +87,17 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 	// new record
 	uuid, err := uuid.NewRandom()
 	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
+		app.handleError(w, err)
+		return
 	}
 
 	attachment.UUID = uuid.String()
 
 	err = app.db.InsertAttachmentRecord(attachment)
 	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Attachment has been uploaded"
-
+		app.handleError(w, err)
+		return
 	}
 
-	app.writeJSON(w, http.StatusOK, response)
+	app.writeOkResponse(w, "Attachment has been uploaded")
 }
