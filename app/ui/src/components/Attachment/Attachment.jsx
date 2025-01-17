@@ -3,10 +3,8 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 // Custom
 import { DownloadAttachmentButton } from './DownloadAttachmentButton';
 import DeleteAttachmentButton from './DeleteAttachmentButton';
@@ -30,7 +28,6 @@ export const Attachment = ({ attachment }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
-        <MenuItem onClick={() => console.log("preview")} sx={{ p: 0 }}><VisibilityOutlinedIcon sx={{ m: 1 }} color="action" />Preview</MenuItem>
         <DownloadAttachmentButton attachment={attachment} handleClose={handleClose} />
         <DeleteAttachmentButton attachment={attachment} handleClose={handleClose} />
       </Menu>
