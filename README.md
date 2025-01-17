@@ -15,6 +15,11 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [2.44.1] - 17.01.2025
+
+- Fix: Resolved an issue with the query for retrieving created indexes in MySQL.
+- Update: Update golang packages.
+
 ## [2.44.0] - 13.12.2024
 
 - Update: Update golang packages.
@@ -37,7 +42,6 @@ You also can easily export all flight records into EASA style pdf format, print 
   ERROR	2024/12/14 20:33:01 main.go:162: SQL logic error: view logbook_view already exists (1)
 
   ```
-   
 
 ## [2.43.3] - 04.11.2024
 
