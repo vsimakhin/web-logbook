@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 // Custom components and libraries
-// import { dateFilterFn, getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
+import { dateFilterFn } from './helpers';
 // import CSVExportButton from './CSVExportButton';
 // import NewFlightRecordButton from './NewFlightRecordButton';
 
@@ -36,11 +36,7 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
     localStorage.setItem(columnVisibilityKey, JSON.stringify(columnVisibility));
   }, [columnVisibility]);
 
-  const filterFns = useMemo(() => ({
-    // dateFilterFn: dateFilterFn,
-    // timeFilterFn: timeFilterFn,
-    // landingFilterFn: landingFilterFn,
-  }), []);
+  const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
 
   const table = useMaterialReactTable({
     columns: columns,
@@ -53,10 +49,8 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
     enableColumnDragging: false,
     enableColumnPinning: false,
-    // enableEditing: renderRowActions ? true : false,
     enableGrouping: true,
     enableDensityToggle: false,
-    // renderRowActions: renderRowActions,
     columnResizeMode: 'onEnd',
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
@@ -73,7 +67,7 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
     columnFilterDisplayMode: 'custom',
     enableFacetedValues: true,
     defaultColumn: {
-      // muiFilterTextFieldProps: ({ column }) => (getFilterLabel(column)),
+      muiFilterTextFieldProps: ({ column }) => ({ label: `Filter by ${column.columnDef.header}` }),
     },
     enableSorting: true,
     enableColumnActions: true,

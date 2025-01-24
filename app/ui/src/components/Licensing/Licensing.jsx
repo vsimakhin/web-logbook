@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useMemo } from "react";
 // MUI
 import LinearProgress from "@mui/material/LinearProgress";
+import Typography from "@mui/material/Typography";
 // Custom
 import { fetchLicenses } from "../../util/http/licensing";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import LisencingTable from "./LicensingTable";
+import { createDateColumn } from "./helpers";
 
 export const Licensing = () => {
   const navigate = useNavigate();
@@ -17,14 +19,29 @@ export const Licensing = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load aircrafts list' });
 
+
+
   const columns = useMemo(() => [
-    { accessorKey: "category", header: "Category" },
-    { accessorKey: "name", header: "Name" },
+    {
+      accessorKey: "category",
+      header: "Category",
+      size: 150,
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      Cell: ({ renderedCellValue, row }) => (
+        <Typography variant="body2" color="primary">
+          <Link to={`/licensing/${row.original.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>{renderedCellValue}</Link>
+        </Typography>
+      ),
+      size: 250,
+    },
     { accessorKey: "number", header: "Number" },
-    { accessorKey: "issued", header: "Issued" },
-    { accessorKey: "valid_from", header: "Valid From" },
-    { accessorKey: "valid_until", header: "Valid Until" },
-    { accessorKey: "remarks", header: "Remarks" },
+    createDateColumn("issued", "Issued"),
+    createDateColumn("valid_from", "Valid From"),
+    createDateColumn("valid_until", "Valid Until"),
+    { accessorKey: "remarks", header: "Remarks", grow: true },
   ], []);
 
   return (
