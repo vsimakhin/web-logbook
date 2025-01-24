@@ -6,18 +6,13 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 const (
 	APIRoot                           = "/"
 	APIPreferences                    = "/preferences"
 	APILogbook                        = "/logbook"
-	APILogbookUUID                    = "/logbook/{uuid}"
-	APILogbookData                    = "/logbook/data"
-	APILogbookNew                     = "/logbook/new"
-	APILogbookSave                    = "/logbook/save"
-	APILogbookDelete                  = "/logbook/delete"
-	APILogbookNight                   = "/logbook/night"
 	APIExport                         = "/export"
 	APIExportPDFA4Page                = "/export-pdf-a4"
 	APIExportPDFA5Page                = "/export-pdf-a5"
@@ -74,12 +69,6 @@ var apiMap = map[string]string{
 	"Root":                           APIRoot,
 	"Preferences":                    APIPreferences,
 	"Logbook":                        APILogbook,
-	"LogbookData":                    APILogbookData,
-	"LogbookUUID":                    APILogbookUUID,
-	"LogbookNew":                     APILogbookNew,
-	"LogbookSave":                    APILogbookSave,
-	"LogbookDelete":                  APILogbookDelete,
-	"LogbookNight":                   APILogbookNight,
 	"Aircrafts":                      APIAircrafts,
 	"AircraftsFilter":                APIAircraftsFilter,
 	"LogbookUUIDAttachments":         APILogbookUUIDAttachments,
@@ -132,123 +121,162 @@ var apiMap = map[string]string{
 	"Logout":                         APILogout,
 	"ExportFormatA4":                 exportA4,
 	"ExportFormatA5":                 exportA5,
-	"ExportFormatCSV":                exportCSV,
 	"ExportFormatXLS":                exportXLS,
 }
 
 var session *scs.SessionManager
 
 func (app *application) routes() *chi.Mux {
-	server := chi.NewRouter()
+	r := chi.NewRouter()
 
 	if app.config.env == "dev" {
-		server.Use(middleware.Logger)
+		r.Use(middleware.Logger)
 	}
 
-	server.Use(SessionLoad)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 
-	server.Route("/", func(server chi.Router) {
-		server.Use(app.Auth)
+	r.Use(SessionLoad) // to review
+
+	r.Post("/api/login", app.HandlerLogin) // to review
+
+	r.Route("/api", func(r chi.Router) {
+		r.Use(app.Auth) // to review
 
 		// logbook
-		server.Get(APIRoot, app.HandlerLogbook)
-		server.Get(APILogbook, app.HandlerLogbook)
-		server.Get(APILogbookData, app.HandlerFlightRecordsData)
-		server.Get(APILogbookUUID, app.HandlerFlightRecordByID)
-		server.Get(APILogbookNew, app.HandlerFlightRecordNew)
+		r.Route("/logbook", func(r chi.Router) {
+			r.With(middleware.Compress(5)).Get("/data", app.HandlerApiLogbookData)
+			r.Get("/{uuid}", app.HandlerApiFlightRecordByID)
+			r.Delete("/{uuid}", app.HandlerApiFlightRecordDelete)
+			r.Post("/new", app.HandlerApiFlightRecordNew)
+			r.Put("/{uuid}", app.HandlerApiFlightRecordUpdate)
+			r.Post("/night", app.HandlerNightTime)
+		})
 
-		server.Post(APILogbookSave, app.HandlerFlightRecordSave)
-		server.Post(APILogbookDelete, app.HandlerFlightRecordDelete)
+		// licensing
+		r.Route("/licensing", func(r chi.Router) {
+			r.Get("/list", app.HandlerApiGetLicensingRecords)
+		})
 
-		server.Post(APILogbookNight, app.HandlerNightTime)
-
-		server.Get(APILogbookUUIDAttachments, app.HandlerGetAttachments)
-		server.Post(APILogbookAttachmentsUpload, app.HandlerUploadAttachment)
-		server.Post(APILogbookAttachmentsDelete, app.HandlerDeleteAttachment)
-		server.Get(APILogbookAttachmentsDownloadUUID, app.HandlerAttachmentDownload)
-
-		// export
-		server.Get(APIExportPDFA4Page, app.HandlerExportPDFA4Page)
-		server.Get(APIExportPDFA5Page, app.HandlerExportPDFA5Page)
-		server.Get(APIExportCSVXLSPage, app.HandlerExportCSVXLSPage)
-
-		server.Get(APIExportFormat, app.HandlerExportLogbook)
-		server.Post(APIExportFormat, app.HandlerExportSettingsSave)
-		server.Post(APIExportRestoreDefaults, app.HandlerExportRestoreDefaults)
-
-		// import
-		server.Get(APIImport, app.HandlerImport)
-		server.Post(APIImportCreateBackup, app.HandlerImportCreateBackup)
-		server.Post(APIImportRun, app.HandlerImportRun)
-
-		// airports
-		server.Get(APIAirportID, app.HandlerAirportByID)
-		server.Get(APIAirportUpdate, app.HandlerAirportUpdate)
-		server.Get(APIAirportStandardData, app.HandlerAirportDBData)
-		server.Get(APIAirportCustomData, app.HandlerAirportCustomData)
-		server.Post(APIAirportAddCustom, app.HandlerAirportAddCustom)
-		server.Post(APIAirportDeleteCustom, app.HandlerAirportDeleteCustom)
+		// attachments
+		r.Route("/attachment", func(r chi.Router) {
+			r.Get("/list/{uuid}", app.HandlerApiGetAttachments)
+			r.Get("/{uuid}", app.HandlerApiGetAttachment)
+			r.Delete("/{uuid}", app.HandlerApiDeleteAttachment)
+			r.Post("/upload", app.HandlerApiUploadAttachment)
+		})
 
 		// aircrafts
-		server.Get(APISettingsAircraftClasses, app.HandlerSettingsAircraftClasses)
-		server.Get(APIAircrafts, app.HandlerAircrafts)
-		server.Get(APIAircraftsFilter, app.HandlerAircrafts)
+		r.Route("/aircraft", func(r chi.Router) {
+			r.Get("/models", app.HandlerApiAircraftModels)
+			r.Get("/list", app.HandlerAircrafts)
+			r.Get("/list/{filter}", app.HandlerAircrafts)
+		})
+
+		// airports
+		r.Route("/airport", func(r chi.Router) {
+			r.Get("/{id}", app.HandlerAirportByID)
+		})
+
+		// export
+		r.Route("/export", func(r chi.Router) {
+			r.Get("/{format}", app.HandlerExportLogbook)
+		})
+
+		// logout
+		r.Post("/logout", app.HandlerLogout) // to review
+	})
+
+	r.Route("/", func(r chi.Router) {
+		r.Use(app.Auth)
+
+		// export
+		r.Get(APIExportPDFA4Page, app.HandlerExportPDFA4Page)
+		r.Get(APIExportPDFA5Page, app.HandlerExportPDFA5Page)
+		r.Get(APIExportCSVXLSPage, app.HandlerExportCSVXLSPage)
+
+		// r.Get(APIExportFormat, app.HandlerExportLogbook)
+		r.Post(APIExportFormat, app.HandlerExportSettingsSave)
+		r.Post(APIExportRestoreDefaults, app.HandlerExportRestoreDefaults)
+
+		// import
+		r.Get(APIImport, app.HandlerImport)
+		r.Post(APIImportCreateBackup, app.HandlerImportCreateBackup)
+		r.Post(APIImportRun, app.HandlerImportRun)
+
+		// airports
+		r.Get(APIAirportID, app.HandlerAirportByID)
+		r.Get(APIAirportUpdate, app.HandlerAirportUpdate)
+		r.Get(APIAirportStandardData, app.HandlerAirportDBData)
+		r.Get(APIAirportCustomData, app.HandlerAirportCustomData)
+		r.Post(APIAirportAddCustom, app.HandlerAirportAddCustom)
+		r.Post(APIAirportDeleteCustom, app.HandlerAirportDeleteCustom)
+
+		// aircrafts
+		r.Get(APISettingsAircraftClasses, app.HandlerSettingsAircraftClasses)
+		r.Get(APIAircrafts, app.HandlerAircrafts)
+		r.Get(APIAircraftsFilter, app.HandlerAircrafts)
 
 		// settings
-		server.Get(APISettings, app.HandlerSettings)
-		server.Post(APISettings, app.HandlerSettingsSave)
-		server.Get(APISettingsAirportDB, app.HandlerSettingsAirportDB)
-		server.Post(APISettingsAirportDB, app.HandlerSettingsAirportDBSave)
+		r.Get(APISettings, app.HandlerSettings)
+		r.Post(APISettings, app.HandlerSettingsSave)
+		r.Get(APISettingsAirportDB, app.HandlerSettingsAirportDB)
+		r.Post(APISettingsAirportDB, app.HandlerSettingsAirportDBSave)
 
 		// stats
-		server.Get(APIStatsTotals, app.HandlerStatsTotals)
-		server.Get(APIStatsTotalsByType, app.HandlerStatsTotalsByType)
-		server.Get(APIStatsTotalsByClass, app.HandlerStatsTotalsByClass)
-		server.Get(APIStatsLimits, app.HandlerStatsLimits)
+		r.Get(APIStatsTotals, app.HandlerStatsTotals)
+		r.Get(APIStatsTotalsByType, app.HandlerStatsTotalsByType)
+		r.Get(APIStatsTotalsByClass, app.HandlerStatsTotalsByClass)
+		r.Get(APIStatsLimits, app.HandlerStatsLimits)
 
-		server.Get(APIStatsTotalsPage, app.HandlerStatsTotalsPage)
-		server.Get(APIStatsTotalsByYearPage, app.HandlerStatsTotalsByYearPage)
-		server.Get(APIStatsTotalsByMonthPage, app.HandlerStatsTotalsByMonthPage)
-		server.Get(APIStatsTotalsByMonthYearPage, app.HandlerStatsTotalsByMonthPage)
-		server.Get(APIStatsTotalsByTypePage, app.HandlerStatsTotalsByTypePage)
-		server.Get(APIStatsTotalsByClassPage, app.HandlerStatsTotalsByClassPage)
-		server.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)
+		r.Get(APIStatsTotalsPage, app.HandlerStatsTotalsPage)
+		r.Get(APIStatsTotalsByYearPage, app.HandlerStatsTotalsByYearPage)
+		r.Get(APIStatsTotalsByMonthPage, app.HandlerStatsTotalsByMonthPage)
+		r.Get(APIStatsTotalsByMonthYearPage, app.HandlerStatsTotalsByMonthPage)
+		r.Get(APIStatsTotalsByTypePage, app.HandlerStatsTotalsByTypePage)
+		r.Get(APIStatsTotalsByClassPage, app.HandlerStatsTotalsByClassPage)
+		r.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)
 
 		// map
-		server.Get(APIMap, app.HandlerMap)
-		server.Get(APIMapData, app.HandlerMapData)
+		r.Get(APIMap, app.HandlerMap)
+		r.Get(APIMapData, app.HandlerMapData)
 
 		// documents
-		server.Get(APILicensing, app.HandlerLicensing)
-		server.Get(APILicensingData, app.HandlerLicensingRecordsData)
-		server.Get(APILicensingUUID, app.HandlerLicensingRecordByID)
-		server.Get(APILicensingNew, app.HandlerLicensingRecordNew)
-		server.Get(APILicensingDownloadUUID, app.HandlerLicensingDownload)
+		r.Get(APILicensingUUID, app.HandlerLicensingRecordByID)
+		r.Get(APILicensingNew, app.HandlerLicensingRecordNew)
+		r.Get(APILicensingDownloadUUID, app.HandlerLicensingDownload)
 
-		server.Post(APILicensingSave, app.HandlerLicensingRecordSave)
-		server.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)
-		server.Post(APILicensingAttachmentDelete, app.HandlerLicensingDeleteAttachment)
+		r.Post(APILicensingSave, app.HandlerLicensingRecordSave)
+		r.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)
+		r.Post(APILicensingAttachmentDelete, app.HandlerLicensingDeleteAttachment)
 
 		// api & parameters
-		server.Get(APIPreferences, app.HandlerPreferences)
+		r.Get(APIPreferences, app.HandlerPreferences)
 	})
 
 	// login & logout
-	server.Get(APILogin, app.HandlerLogin)
-	server.Post(APILogin, app.HandlerLoginPost)
-	server.Get(APILogout, app.HandlerLogout)
+	r.Get(APILogin, app.HandlerLogin)
+	r.Post(APILogin, app.HandlerLoginPost)
+	r.Get(APILogout, app.HandlerLogout)
 
 	// other stuff
 	if app.config.env == "dev" {
-		server.Handle("/static/*", app.HandlerStatic())
+		r.Handle("/static/*", app.HandlerStatic())
 	} else {
-		server.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
+		r.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
 	}
-	server.HandleFunc("/favicon.ico", app.HandlerFavicon)
-	server.NotFound(app.HandlerNotFound)
-	server.MethodNotAllowed(app.HandlerNotAllowed)
+	r.HandleFunc("/favicon.ico", app.HandlerFavicon)
+	r.NotFound(app.HandlerNotFound)
+	r.MethodNotAllowed(app.HandlerNotAllowed)
 
-	return server
+	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))
+
+	return r
 }
 
 // SessionLoad peforms the load and save of a session, per request
