@@ -1,11 +1,13 @@
-import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer } from 'material-react-table';
+import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer, MRT_ExpandAllButton } from 'material-react-table';
 import { useEffect, useMemo, useState } from 'react';
 // MUI UI elements
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
+import Stack from '@mui/material/Stack';
+
 // Custom components and libraries
 import { dateFilterFn } from './helpers';
-// import CSVExportButton from './CSVExportButton';
+import CSVExportButton from './CSVExportButton';
 // import NewFlightRecordButton from './NewFlightRecordButton';
 
 const tablePageKey = 'licensing-table-page-size';
@@ -41,7 +43,13 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
-    initialState: { density: 'compact' },
+    initialState: {
+      density: 'compact',
+      expanded: true,
+      grouping: ['category']
+    },
+    positionToolbarAlertBanner: 'bottom',
+    groupedColumnMode: 'remove',
     isLoading: isLoading,
     enableColumnResizing: true,
     enableGlobalFilterModes: true,
@@ -58,7 +66,7 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
         {/* <NewFlightRecordButton /> */}
-        {/* <CSVExportButton table={table} /> */}
+        <CSVExportButton table={table} />
       </Box>
     ),
     muiTablePaperProps: { variant: 'outlined', elevation: 0 },
@@ -84,7 +92,7 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
       }}>
         <Box sx={{ width: 350, padding: 2 }}>
           {table.getLeafHeaders().map((header) => {
-            if (header.id === 'mrt-row-spacer' || header.id === 'mrt-row-actions' || header.id.startsWith('center_1_')) return null;
+            if (header.id.startsWith('mrt-') || header.id.startsWith('Expire') || header.id.startsWith('center_1_')) return null;
             return < MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
           })}
         </Box>

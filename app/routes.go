@@ -247,7 +247,6 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIMapData, app.HandlerMapData)
 
 		// documents
-		r.Get(APILicensingData, app.HandlerLicensingRecordsData)
 		r.Get(APILicensingUUID, app.HandlerLicensingRecordByID)
 		r.Get(APILicensingNew, app.HandlerLicensingRecordNew)
 		r.Get(APILicensingDownloadUUID, app.HandlerLicensingDownload)

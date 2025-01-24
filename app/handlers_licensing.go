@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -25,54 +24,6 @@ func (app *application) HandlerApiGetLicensingRecords(w http.ResponseWriter, r *
 
 //////////////////////////////////////////////
 /////////////////////////////////////////////
-
-// HandlerFlightRecordsData generates data for the logbook table at /logbook page
-func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *http.Request) {
-
-	type TableData struct {
-		Data [][]string `json:"data"`
-	}
-
-	var tableData TableData
-
-	licenses, err := app.db.GetLicenses()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for _, item := range licenses {
-		expire := ""
-		if item.ValidUntil != "" {
-			expireDate, err := time.Parse("02/01/2006", item.ValidUntil)
-			if err != nil {
-				app.errorLog.Printf("error parsing time %s: %s", item.ValidUntil, err.Error())
-			}
-
-			days := int(expireDate.Sub(time.Now().UTC()).Hours() / 24)
-			if days <= 0 {
-				expire = "Expired!"
-			} else if days <= 30 {
-				expire = fmt.Sprintf("In %d days", days)
-			} else {
-				expire = fmt.Sprintf("In %d months", int(days/30))
-			}
-		}
-
-		link := ""
-		if item.DocumentName != "" {
-			link = item.UUID
-		} else {
-			link = ""
-		}
-
-		tableRow := []string{item.Category, item.UUID, item.Name, item.Number, item.Issued, item.ValidFrom, item.ValidUntil, expire, link}
-		tableData.Data = append(tableData.Data, tableRow)
-	}
-
-	app.writeJSON(w, http.StatusOK, tableData)
-}
 
 // HandlerLicensingRecordByID is handler for a license record
 func (app *application) HandlerLicensingRecordByID(w http.ResponseWriter, r *http.Request) {

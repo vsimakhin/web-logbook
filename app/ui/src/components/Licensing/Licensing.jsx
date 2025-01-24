@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { fetchLicenses } from "../../util/http/licensing";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import LisencingTable from "./LicensingTable";
-import { createDateColumn } from "./helpers";
+import { calculateExpiry, createDateColumn, getExpireColor } from "./helpers";
 
 export const Licensing = () => {
   const navigate = useNavigate();
@@ -19,14 +19,8 @@ export const Licensing = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load aircrafts list' });
 
-
-
   const columns = useMemo(() => [
-    {
-      accessorKey: "category",
-      header: "Category",
-      size: 150,
-    },
+    { accessorKey: "category", header: "Category", size: 150 },
     {
       accessorKey: "name",
       header: "Name",
@@ -41,6 +35,23 @@ export const Licensing = () => {
     createDateColumn("issued", "Issued"),
     createDateColumn("valid_from", "Valid From"),
     createDateColumn("valid_until", "Valid Until"),
+    {
+      accessorId: "expire",
+      header: "Expire",
+      Cell: ({ row }) => {
+        const expiry = calculateExpiry(row.original.valid_until);
+        if (!expiry) return null;
+
+        return (
+          <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
+            {expiry.diffDays < 0
+              ? 'Expired'
+              : `${expiry.months} month${expiry.months === 1 ? '' : 's'} ${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
+          </Typography>
+        );
+      },
+      size: 150,
+    },
     { accessorKey: "remarks", header: "Remarks", grow: true },
   ], []);
 
