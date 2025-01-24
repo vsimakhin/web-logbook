@@ -10,9 +10,11 @@ func (m *DBModel) GetLicenses() (licenses []License, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	query := "SELECT uuid, category, name, number, issued, " +
-		"valid_from, valid_until, document_name, document " +
-		"FROM licensing ORDER BY category, name"
+	query := `SELECT 
+				uuid, category, name, number, issued, 
+				valid_from, valid_until, document_name
+			FROM licensing 
+			ORDER BY category, name`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return licenses, err
@@ -22,7 +24,7 @@ func (m *DBModel) GetLicenses() (licenses []License, err error) {
 	for rows.Next() {
 		var lic License
 		if err = rows.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
-			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName, &lic.Document); err != nil {
+			&lic.ValidFrom, &lic.ValidUntil, &lic.DocumentName); err != nil {
 			return licenses, err
 		}
 		licenses = append(licenses, lic)

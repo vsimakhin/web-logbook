@@ -13,15 +13,18 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerLicensing is a handler for /licensing page
-func (app *application) HandlerLicensing(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "licensing"
-
-	if err := app.renderTemplate(w, r, "licensing", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
+func (app *application) HandlerApiGetLicensingRecords(w http.ResponseWriter, r *http.Request) {
+	licenses, err := app.db.GetLicenses()
+	if err != nil {
+		app.handleError(w, err)
+		return
 	}
+
+	app.writeJSON(w, http.StatusOK, licenses)
 }
+
+//////////////////////////////////////////////
+/////////////////////////////////////////////
 
 // HandlerFlightRecordsData generates data for the logbook table at /logbook page
 func (app *application) HandlerLicensingRecordsData(w http.ResponseWriter, r *http.Request) {

@@ -10,6 +10,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './pages/Root';
 import LogbookPage from './pages/LogbookPage.jsx';
 import FlightRecordPage from './pages/FlightRecordPage.jsx';
+import LicensingPage from './pages/LicensingPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,11 @@ const router = createBrowserRouter([
               { path: ":id", element: <FlightRecordPage /> }
             ]
           },
+          {
+            path: 'licensing', children: [
+              { index: true, element: <LicensingPage /> },
+            ]
+          }
         ]
       },
     ],
