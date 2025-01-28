@@ -1,7 +1,6 @@
 package models
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -70,7 +69,7 @@ func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
 // GetFlightRecordNextAndPrevUUID parse through all records with additional lag and lead functions
 // to get previous and next records ids for pagination on the flight record page
 func (m *DBModel) GetFlightRecordNextAndPrevUUID(uuid string) (prevUUID string, nextUUID string) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT uuid, " +
@@ -102,7 +101,7 @@ func (m *DBModel) GetFlightRecordNextAndPrevUUID(uuid string) (prevUUID string, 
 
 // GetFlightRecordByID returns flight record by UUID
 func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT uuid, date, m_date, departure_place, departure_time, " +
@@ -129,7 +128,7 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) 
 
 // IsFlightRecordExists checks if the flight record already exists
 func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	n := 0
@@ -162,7 +161,7 @@ func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
 
 // UpdateFlightRecord updates the flight records in the logbook table
 func (m *DBModel) UpdateFlightRecord(fr FlightRecord) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "UPDATE logbook SET " +
@@ -184,7 +183,7 @@ func (m *DBModel) UpdateFlightRecord(fr FlightRecord) error {
 
 // InsertFlightRecord add a new flight record to the logbook table
 func (m *DBModel) InsertFlightRecord(fr FlightRecord) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "INSERT INTO logbook " +
@@ -210,7 +209,7 @@ func (m *DBModel) InsertFlightRecord(fr FlightRecord) error {
 
 // DeleteFlightRecord deletes a flight record by UUID
 func (m *DBModel) DeleteFlightRecord(uuid string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	_, err := m.DB.ExecContext(ctx, "DELETE FROM logbook WHERE uuid = ?", uuid)
@@ -219,7 +218,7 @@ func (m *DBModel) DeleteFlightRecord(uuid string) error {
 
 // GetFlightRecords returns the flight records in the logbook table
 func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	rows, err := m.DB.QueryContext(ctx, `

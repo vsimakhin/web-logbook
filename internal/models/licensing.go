@@ -1,13 +1,12 @@
 package models
 
 import (
-	"context"
 	"time"
 )
 
 // GetFlightRecords returns the flight records in the logbook table
 func (m *DBModel) GetLicenses() (licenses []License, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := `SELECT 
@@ -35,12 +34,14 @@ func (m *DBModel) GetLicenses() (licenses []License, err error) {
 
 // GetFlightRecordByID returns flight record by UUID
 func (m *DBModel) GetLicenseRecordByID(uuid string) (lic License, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "SELECT uuid, category, name, number, issued, " +
-		"valid_from, valid_until, remarks, document_name, document " +
-		"FROM licensing WHERE uuid = ?"
+	query := `SELECT 
+				uuid, category, name, number, issued,
+				valid_from, valid_until, remarks, document_name, document
+			FROM licensing 
+			WHERE uuid = ?`
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 
 	if err := row.Scan(&lic.UUID, &lic.Category, &lic.Name, &lic.Number, &lic.Issued,
@@ -53,7 +54,7 @@ func (m *DBModel) GetLicenseRecordByID(uuid string) (lic License, err error) {
 
 // GetLicensesCategory returns all already recorded categories
 func (m *DBModel) GetLicensesCategory() (categories []string, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT category FROM licensing GROUP BY category ORDER BY category"
@@ -76,7 +77,7 @@ func (m *DBModel) GetLicensesCategory() (categories []string, err error) {
 
 // UpdateLicenseRecord updates the license records in the licensing table
 func (m *DBModel) UpdateLicenseRecord(lic License) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	if lic.DocumentName != "" {
@@ -108,7 +109,7 @@ func (m *DBModel) UpdateLicenseRecord(lic License) (err error) {
 
 // InsertLicenseRecord add a new license record to the licensing table
 func (m *DBModel) InsertLicenseRecord(lic License) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "INSERT INTO licensing " +
@@ -125,7 +126,7 @@ func (m *DBModel) InsertLicenseRecord(lic License) (err error) {
 
 // DeleteLicenseRecord deletes a license record by UUID
 func (m *DBModel) DeleteLicenseRecord(uuid string) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	_, err = m.DB.ExecContext(ctx, "DELETE FROM licensing WHERE uuid = ?", uuid)
@@ -134,7 +135,7 @@ func (m *DBModel) DeleteLicenseRecord(uuid string) (err error) {
 
 // DeleteLicenseAttachment drops license attachment
 func (m *DBModel) DeleteLicenseAttachment(uuid string) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := `UPDATE licensing SET document_name = "", document = null WHERE uuid = ?`
@@ -144,7 +145,7 @@ func (m *DBModel) DeleteLicenseAttachment(uuid string) (err error) {
 
 // CheckLicenseExpiration returns the number of expired and expiring (warning) licenses
 func (m *DBModel) CheckLicenseExpiration() (int, int) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	expired, warning := 0, 0

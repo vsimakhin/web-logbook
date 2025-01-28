@@ -46,7 +46,7 @@ export const Licensing = () => {
           <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
             {expiry.diffDays < 0
               ? 'Expired'
-              : `${expiry.months} month${expiry.months === 1 ? '' : 's'} ${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
+              : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
           </Typography>
         );
       },

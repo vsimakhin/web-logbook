@@ -19,7 +19,7 @@ func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 		return cachedAirport.(Airport), nil
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT icao, iata, name, city, country, elevation, lat, lon " +
@@ -43,7 +43,7 @@ func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 
 // GetAirports generates Airports DB for rendering maps
 func (m *DBModel) GetAirports() (airports map[string]Airport, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	airports = make(map[string]Airport)
@@ -120,7 +120,7 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (record
 
 // GetAirportCount returns amount of records in the airports table
 func (m *DBModel) GetAirportCount() (records int, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	row := m.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM airports")
@@ -133,7 +133,7 @@ func (m *DBModel) GetAirportCount() (records int, err error) {
 
 // fetchAirports is a helper function to fetch airports based on a query and a scan function
 func (m *DBModel) fetchAirports(query string) (airports []Airport, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	rows, err := m.DB.QueryContext(ctx, query)
@@ -174,7 +174,7 @@ func (m *DBModel) GetCustomAirports() (airports []Airport, err error) {
 
 // AddCustomAirport adds new custom/user airport
 func (m *DBModel) AddCustomAirport(arpt Airport) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "INSERT INTO airports_custom " +
@@ -193,7 +193,7 @@ func (m *DBModel) AddCustomAirport(arpt Airport) error {
 
 // RemoveCustomAirport removes custom/user airport
 func (m *DBModel) RemoveCustomAirport(airport string) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports_custom WHERE name = ?", airport)

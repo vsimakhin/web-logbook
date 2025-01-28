@@ -12,6 +12,7 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
+// HandlerApiGetLicensingRecords returns a list of license records
 func (app *application) HandlerApiGetLicensingRecords(w http.ResponseWriter, r *http.Request) {
 	licenses, err := app.db.GetLicenses()
 	if err != nil {
@@ -22,33 +23,21 @@ func (app *application) HandlerApiGetLicensingRecords(w http.ResponseWriter, r *
 	app.writeJSON(w, http.StatusOK, licenses)
 }
 
-//////////////////////////////////////////////
-/////////////////////////////////////////////
-
-// HandlerLicensingRecordByID is handler for a license record
-func (app *application) HandlerLicensingRecordByID(w http.ResponseWriter, r *http.Request) {
+// HandlerApiGetLicensingRecord is handler for a license record
+func (app *application) HandlerApiGetLicensingRecord(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 
 	license, err := app.db.GetLicenseRecordByID(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	categories, err := app.db.GetLicensesCategory()
-	if err != nil {
-		app.errorLog.Println(err)
-	}
-
-	data := make(map[string]interface{})
-	data["license"] = license
-	data["categories"] = categories
-
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
+	app.writeJSON(w, http.StatusOK, license)
 }
+
+//////////////////////////////////////////////
+/////////////////////////////////////////////
 
 // HandlerLicensingDownload is a handler for downloading the license files
 func (app *application) HandlerLicensingDownload(w http.ResponseWriter, r *http.Request) {

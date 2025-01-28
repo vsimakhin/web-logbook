@@ -7,9 +7,14 @@ export const TextField = ({ gsize, id, name = id, label, handleChange, ...props 
     <Grid size={gsize}>
       <Tooltip title={props.tooltip}>
         <div>
-          <MUITextField id={id} name={name} label={label}
+          <MUITextField
+            id={id}
+            name={name}
+            label={label}
             onChange={(event) => handleChange(id, event.target.value)}
-            fullWidth size="small" variant="outlined"
+            fullWidth
+            size="small"
+            variant="outlined"
             {...props}
             aria-label={label}
           />

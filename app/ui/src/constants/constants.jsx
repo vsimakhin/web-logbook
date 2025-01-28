@@ -76,6 +76,19 @@ export const FLIGHT_INITIAL_STATE = {
   remarks: ""
 };
 
+export const LICENSE_INITIAL_STATE = {
+  uuid: "",
+  category: "",
+  name: "",
+  number: "",
+  issued: dayjs().format('DD/MM/YYYY'),
+  valid_from: dayjs().format('DD/MM/YYYY'),
+  valid_until: dayjs().format('DD/MM/YYYY'),
+  document_name: "",
+  document: "",
+  remarks: ""
+};
+
 export const PLACE_SLOT_PROPS = {
   htmlInput: { maxLength: 4, style: { textTransform: 'uppercase' }, onInput: (e) => { e.target.value = e.target.value.toUpperCase() } }
 }

@@ -1,14 +1,12 @@
 package models
 
 import (
-	"context"
 	"fmt"
-	"time"
 )
 
 // GetAircrafts returns already recorded aircrafts
 func (m *DBModel) GetAircrafts(condition int) (aircrafts map[string]string, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	aircrafts = make(map[string]string)
@@ -43,7 +41,7 @@ func (m *DBModel) GetAircrafts(condition int) (aircrafts map[string]string, err 
 
 // GetAircraftModels returns the list of the recorded aircraft models/types
 func (m *DBModel) GetAircraftModels() (models []string, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := `SELECT DISTINCT aircraft_model 
@@ -69,7 +67,7 @@ func (m *DBModel) GetAircraftModels() (models []string, err error) {
 
 // GetAircraftRegs returns the list of the recorded aircraft registrations
 func (m *DBModel) GetAircraftRegs(records int) (regs []string, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := `SELECT DISTINCT reg_name
