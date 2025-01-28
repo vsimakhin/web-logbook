@@ -21,3 +21,23 @@ export const fetchLicense = async ({ signal, navigate, id }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot fetch license');
 }
+
+export const createLicenseRecord = async ({ payload, navigate }) => {
+  const url = `${API_URL}/licensing/new`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    body: payload,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot create license record', false);
+}
+
+export const updateLicenseRecord = async ({ uuid, payload, navigate }) => {
+  const url = `${API_URL}/licensing/${uuid}`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    body: payload,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot update license record', false);
+}

@@ -12,6 +12,8 @@ import { fetchLicense } from "../../util/http/licensing";
 import { LICENSE_INITIAL_STATE } from "../../constants/constants";
 import CardHeader from "../UIElements/CardHeader";
 import LicenseRecordDetails from "./LicenseRecordDetails";
+import LicensePreview from "./LicensePreview";
+import SaveLicenseRecordButton from "./SaveLicenseRecordButton";
 
 export const LicenseRecord = () => {
   const { id } = useParams();
@@ -47,7 +49,7 @@ export const LicenseRecord = () => {
                 action={
                   <>
                     {/* <HelpButton /> */}
-                    {/* Save button */}
+                    <SaveLicenseRecordButton license={license} />
                     {/* Delete button */}
                     {/* Delete attachment button */}
                   </>
@@ -59,7 +61,7 @@ export const LicenseRecord = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-          {/* Preview */}
+          <LicensePreview license={license} />
         </Grid>
       </Grid>
     </>

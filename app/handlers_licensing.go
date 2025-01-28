@@ -36,6 +36,128 @@ func (app *application) HandlerApiGetLicensingRecord(w http.ResponseWriter, r *h
 	app.writeJSON(w, http.StatusOK, license)
 }
 
+func (app *application) ParseLicenseFormData(r *http.Request) (license models.License, err error) {
+	err = r.ParseMultipartForm(32 << 20)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
+		return license, err
+	}
+
+	license = models.License{
+		UUID:       r.PostFormValue("uuid"),
+		Category:   r.PostFormValue("category"),
+		Name:       r.PostFormValue("name"),
+		Number:     r.PostFormValue("number"),
+		Issued:     r.PostFormValue("issued"),
+		ValidFrom:  r.PostFormValue("valid_from"),
+		ValidUntil: r.PostFormValue("valid_until"),
+		Remarks:    r.PostFormValue("remarks"),
+	}
+
+	// check attached file
+	file, header, err := r.FormFile("document")
+	if err != nil {
+		if !strings.Contains(err.Error(), "no such file") {
+			return license, err
+		}
+	} else {
+		defer file.Close()
+		license.DocumentName = header.Filename
+
+		// read file
+		bs, err := io.ReadAll(file)
+		if err != nil {
+			return license, err
+		}
+		license.Document = bs
+	}
+
+	return license, nil
+}
+
+// HandlerLicensingRecordSave is a handler for creating or updating license record
+func (app *application) HandlerApiNewLicensingRecord(w http.ResponseWriter, r *http.Request) {
+
+	err := r.ParseMultipartForm(32 << 20)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
+		app.handleError(w, err)
+		return
+	}
+
+	license := models.License{
+		UUID:       r.PostFormValue("uuid"),
+		Category:   r.PostFormValue("category"),
+		Name:       r.PostFormValue("name"),
+		Number:     r.PostFormValue("number"),
+		Issued:     r.PostFormValue("issued"),
+		ValidFrom:  r.PostFormValue("valid_from"),
+		ValidUntil: r.PostFormValue("valid_until"),
+		Remarks:    r.PostFormValue("remarks"),
+	}
+
+	// check attached file
+	file, header, err := r.FormFile("document")
+	if err != nil {
+		if !strings.Contains(err.Error(), "no such file") {
+			app.handleError(w, err)
+			return
+		}
+	} else {
+		defer file.Close()
+		license.DocumentName = header.Filename
+
+		// read file
+		bs, err := io.ReadAll(file)
+		if err != nil {
+			app.handleError(w, err)
+			return
+		}
+		license.Document = bs
+	}
+
+	// new record
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	license.UUID = uuid.String()
+
+	err = app.db.InsertLicenseRecord(license)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var response models.JSONResponse
+	response.OK = true
+	response.Message = "New License Record created"
+	response.Data = license.UUID
+
+	app.writeJSON(w, http.StatusOK, response)
+}
+
+// HandlerApiUpdateLicensingRecord is a handler for updating license record
+func (app *application) HandlerApiUpdateLicensingRecord(w http.ResponseWriter, r *http.Request) {
+	license, err := app.ParseLicenseFormData(r)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	// just update the license record
+	err = app.db.UpdateLicenseRecord(license)
+	if err != nil {
+		app.handleError(w, err)
+		return
+
+	}
+
+	app.writeOkResponse(w, "License Record has been updated")
+}
+
 //////////////////////////////////////////////
 /////////////////////////////////////////////
 
@@ -55,25 +177,6 @@ func (app *application) HandlerLicensingDownload(w http.ResponseWriter, r *http.
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-}
-
-// HandlerLicensingRecordNew is a handler for creating a new license record
-func (app *application) HandlerLicensingRecordNew(w http.ResponseWriter, r *http.Request) {
-
-	var license models.License
-
-	categories, err := app.db.GetLicensesCategory()
-	if err != nil {
-		app.errorLog.Println(err)
-	}
-
-	data := make(map[string]interface{})
-	data["license"] = license
-	data["categories"] = categories
-
-	if err := app.renderTemplate(w, r, "license-record", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
 	}
 }
 

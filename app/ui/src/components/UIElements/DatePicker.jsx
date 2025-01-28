@@ -14,7 +14,7 @@ export const DatePicker = ({ gsize, id, name = id, label, handleChange, ...props
             label={label}
             format="DD/MM/YYYY"
             onChange={(value) => {
-              handleChange(id, value ? dayjs(value).format("DD/MM/YYYY") : null)
+              handleChange(id, value ? dayjs(value).format("DD/MM/YYYY") : "")
             }}
             fullWidth
             slotProps={{ field: { size: "small", fullWidth: true, clearable: props.clearable } }}

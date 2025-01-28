@@ -1,3 +1,5 @@
+import { fileTypeFromBuffer } from "file-type";
+
 // Convert minutes to HHHH:MM format
 export const convertMinutesToTime = (minutes) => {
   if (!minutes) return "00:00";
