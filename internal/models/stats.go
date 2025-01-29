@@ -79,7 +79,7 @@ func (m *DBModel) CreateDistanceCache() {
 // GetTotals calculates totals
 // startDate and endDate are in the format 20060102
 func (m *DBModel) GetTotals(startDate string, endDate string) (FlightRecord, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	totals := initZeroFlightRecord()
@@ -143,7 +143,7 @@ func (m *DBModel) GenerateFlightRecordMap(start time.Time, end time.Time, groupB
 // It takes a start date, end date, a flag indicating whether to group by month, and a map to store the calculated totals.
 // The function returns the updated totals map and an error, if any.
 func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMonth bool, totals map[string]FlightRecord) (map[string]FlightRecord, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	sqlQuery := "SELECT date, m_date, se_time, me_time, mcc_time, total_time, " +
@@ -183,7 +183,7 @@ func (m *DBModel) GetDetailedTotals(startDate string, endDate string, groupByMon
 // GetYears returns a slice of strings representing the distinct years present in the logbook_view table.
 // If there are no records, the current year is returned.
 func (m *DBModel) GetYears() (years []string, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT DISTINCT m_date FROM logbook_view ORDER BY m_date DESC"
@@ -215,7 +215,7 @@ func (m *DBModel) GetYears() (years []string, err error) {
 
 // GetTotalsByYear calculates totals by year
 func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	totals := make(map[string]FlightRecord)
@@ -257,7 +257,7 @@ func (m *DBModel) GetTotalsByYear() (map[string]FlightRecord, error) {
 // GetTotalsByAircraftType calculates totals by aircraft type
 // startDate and endDate are in the format 20060102
 func (m *DBModel) GetTotalsByAircraftType(startDate string, endDate string) (map[string]FlightRecord, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	totals := make(map[string]FlightRecord)
@@ -302,7 +302,7 @@ func (m *DBModel) GetTotalsByAircraftType(startDate string, endDate string) (map
 // GetTotalsByAircraftClass calculates totals by aircraft class
 // startDate and endDate are in the format 20060102
 func (m *DBModel) GetTotalsByAircraftClass(startDate string, endDate string) (map[string]FlightRecord, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	totals := make(map[string]FlightRecord)

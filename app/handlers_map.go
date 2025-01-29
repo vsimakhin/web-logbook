@@ -23,7 +23,7 @@ func (app *application) HandlerMap(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	regs, err := app.db.GetAircraftRegs()
+	regs, err := app.db.GetAircraftRegs(-1)
 	if err != nil {
 		app.errorLog.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

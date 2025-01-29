@@ -1,13 +1,8 @@
 package models
 
-import (
-	"context"
-	"time"
-)
-
 // GetAttachments returns attachments array for a specific record_id
 func (m *DBModel) GetAttachments(recordID string) (attachments []Attachment, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT uuid, record_id, document_name FROM attachments WHERE record_id = ?"
@@ -30,7 +25,7 @@ func (m *DBModel) GetAttachments(recordID string) (attachments []Attachment, err
 
 // GetAllAttachments returns list of attachments without document body
 func (m *DBModel) GetAllAttachments() (attachments []Attachment, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT uuid, record_id, document_name FROM attachments"
@@ -53,7 +48,7 @@ func (m *DBModel) GetAllAttachments() (attachments []Attachment, err error) {
 
 // InsertLicenseRecord add a new license record to the licensing table
 func (m *DBModel) InsertAttachmentRecord(att Attachment) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "INSERT INTO attachments (uuid, record_id, document_name, document) VALUES (?, ?, ?, ?)"
@@ -64,7 +59,7 @@ func (m *DBModel) InsertAttachmentRecord(att Attachment) (err error) {
 
 // DeleteAttachment removes attachment record
 func (m *DBModel) DeleteAttachment(uuid string) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "DELETE FROM attachments WHERE uuid = ?"
@@ -74,7 +69,7 @@ func (m *DBModel) DeleteAttachment(uuid string) (err error) {
 }
 
 func (m *DBModel) DeleteAttachmentsForFlightRecord(uuid string) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT uuid FROM attachments WHERE record_id = ?"
@@ -97,7 +92,7 @@ func (m *DBModel) DeleteAttachmentsForFlightRecord(uuid string) (err error) {
 
 // GetAttachmentByID returns attachment record
 func (m *DBModel) GetAttachmentByID(uuid string) (att Attachment, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT uuid, record_id, document_name, document FROM attachments WHERE uuid = ?"

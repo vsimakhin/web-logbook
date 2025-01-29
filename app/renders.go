@@ -58,8 +58,6 @@ func (app *application) addDefaultData(td *templateData, req *http.Request) *tem
 	td.Version = app.version
 	td.NewVersion = app.isNewVersion
 
-	td.License.Expired, td.License.Warning = app.db.CheckLicenseExpiration()
-
 	if td.Data == nil {
 		td.Data = make(map[string]interface{})
 	}
