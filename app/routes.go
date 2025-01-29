@@ -10,118 +10,90 @@ import (
 )
 
 const (
-	APIRoot                           = "/"
-	APIPreferences                    = "/preferences"
-	APILogbook                        = "/logbook"
-	APIExport                         = "/export"
-	APIExportPDFA4Page                = "/export-pdf-a4"
-	APIExportPDFA5Page                = "/export-pdf-a5"
-	APIExportCSVXLSPage               = "/export-csv-xls"
-	APIExportFormat                   = "/export/{format}"
-	APIExportRestoreDefaults          = "/export/restore"
-	APIImport                         = "/import"
-	APIImportCreateBackup             = "/import/backup/create"
-	APIImportRun                      = "/import/run"
-	APIAircrafts                      = "/aircrafts/"
-	APIAircraftsFilter                = "/aircrafts/{filter}"
-	APILogbookUUIDAttachments         = "/logbook/{uuid}/attachments"
-	APILogbookAttachmentsDelete       = "/logbook/attachments/delete"
-	APILogbookAttachmentsUpload       = "/logbook/attachments/upload"
-	APILogbookAttachmentsDownload     = "/logbook/attachments/download/"
-	APILogbookAttachmentsDownloadUUID = APILogbookAttachmentsDownload + "{uuid}"
-	APILicensing                      = "/licensing"
-	APILicensingData                  = "/licensing/data"
-	APILicensingUUID                  = "/licensing/{uuid}"
-	APILicensingNew                   = "/licensing/new"
-	APILicensingSave                  = "/licensing/save"
-	APILicensingDelete                = "/licensing/delete"
-	APILicensingAttachmentDelete      = "/licensing/attachment/delete"
-	APILicensingDownload              = "/licensing/download/"
-	APILicensingDownloadUUID          = APILicensingDownload + "{uuid}"
-	APISettings                       = "/settings"
-	APISettingsAirportDB              = "/settings-airportdb"
-	APISettingsAircraftClasses        = "/settings/classes"
-	APIAirport                        = "/airport/"
-	APIAirportID                      = "/airport/{id}"
-	APIAirportUpdate                  = "/airport/update"
-	APIAirportStandardData            = "/airport/standard/"
-	APIAirportCustomData              = "/airport/custom/"
-	APIAirportAddCustom               = "/airport/custom/add"
-	APIAirportDeleteCustom            = "/airport/custom/delete"
-	APIMap                            = "/map"
-	APIMapData                        = "/map/data"
-	APIStatsTotals                    = "/stats/data/totals"
-	APIStatsTotalsByType              = "/stats/data/totals-by-type"
-	APIStatsTotalsByClass             = "/stats/data/totals-by-class"
-	APIStatsLimits                    = "/stats/data/limits"
-	APIStatsTotalsPage                = "/stats-totals"
-	APIStatsTotalsByYearPage          = "/stats-totals-by-year"
-	APIStatsTotalsByMonthPage         = "/stats-totals-by-month"
-	APIStatsTotalsByMonthYearPage     = "/stats-totals-by-month/{year}"
-	APIStatsTotalsByTypePage          = "/stats-totals-by-type"
-	APIStatsTotalsByClassPage         = "/stats-totals-by-class"
-	APIStatsLimitsPage                = "/stats-limits"
-	APILogin                          = "/login"
-	APILogout                         = "/logout"
+	APIRoot                       = "/"
+	APIPreferences                = "/preferences"
+	APILogbook                    = "/logbook"
+	APIExport                     = "/export"
+	APIExportPDFA4Page            = "/export-pdf-a4"
+	APIExportPDFA5Page            = "/export-pdf-a5"
+	APIExportCSVXLSPage           = "/export-csv-xls"
+	APIExportFormat               = "/export/{format}"
+	APIExportRestoreDefaults      = "/export/restore"
+	APIImport                     = "/import"
+	APIImportCreateBackup         = "/import/backup/create"
+	APIImportRun                  = "/import/run"
+	APIAircrafts                  = "/aircrafts/"
+	APIAircraftsFilter            = "/aircrafts/{filter}"
+	APISettings                   = "/settings"
+	APISettingsAirportDB          = "/settings-airportdb"
+	APISettingsAircraftClasses    = "/settings/classes"
+	APIAirport                    = "/airport/"
+	APIAirportID                  = "/airport/{id}"
+	APIAirportUpdate              = "/airport/update"
+	APIAirportStandardData        = "/airport/standard/"
+	APIAirportCustomData          = "/airport/custom/"
+	APIAirportAddCustom           = "/airport/custom/add"
+	APIAirportDeleteCustom        = "/airport/custom/delete"
+	APIMap                        = "/map"
+	APIMapData                    = "/map/data"
+	APIStatsTotals                = "/stats/data/totals"
+	APIStatsTotalsByType          = "/stats/data/totals-by-type"
+	APIStatsTotalsByClass         = "/stats/data/totals-by-class"
+	APIStatsLimits                = "/stats/data/limits"
+	APIStatsTotalsPage            = "/stats-totals"
+	APIStatsTotalsByYearPage      = "/stats-totals-by-year"
+	APIStatsTotalsByMonthPage     = "/stats-totals-by-month"
+	APIStatsTotalsByMonthYearPage = "/stats-totals-by-month/{year}"
+	APIStatsTotalsByTypePage      = "/stats-totals-by-type"
+	APIStatsTotalsByClassPage     = "/stats-totals-by-class"
+	APIStatsLimitsPage            = "/stats-limits"
+	APILogin                      = "/login"
+	APILogout                     = "/logout"
 )
 
 var apiMap = map[string]string{
-	"Root":                           APIRoot,
-	"Preferences":                    APIPreferences,
-	"Logbook":                        APILogbook,
-	"Aircrafts":                      APIAircrafts,
-	"AircraftsFilter":                APIAircraftsFilter,
-	"LogbookUUIDAttachments":         APILogbookUUIDAttachments,
-	"LogbookAttachmentsUpload":       APILogbookAttachmentsUpload,
-	"LogbookAttachmentsDelete":       APILogbookAttachmentsDelete,
-	"LogbookAttachmentsDownload":     APILogbookAttachmentsDownload,
-	"LogbookAttachmentsDownloadUUID": APILogbookAttachmentsDownloadUUID,
-	"Export":                         APIExport,
-	"ExportPDFA4Page":                APIExportPDFA4Page,
-	"ExportPDFA5Page":                APIExportPDFA5Page,
-	"ExportCSVXLSPage":               APIExportCSVXLSPage,
-	"ExportFormat":                   APIExportFormat,
-	"ExportRestoreDefaults":          APIExportRestoreDefaults,
-	"Import":                         APIImport,
-	"ImportCreateBackup":             APIImportCreateBackup,
-	"ImportRun":                      APIImportRun,
-	"Airport":                        APIAirport,
-	"AirportID":                      APIAirportID,
-	"AirportUpdate":                  APIAirportUpdate,
-	"AirportStandardData":            APIAirportStandardData,
-	"AirportCustomData":              APIAirportCustomData,
-	"AirportAddCustom":               APIAirportAddCustom,
-	"AirportDeleteCustom":            APIAirportDeleteCustom,
-	"Settings":                       APISettings,
-	"SettingsAirportDB":              APISettingsAirportDB,
-	"SettingsAircraftClasses":        APISettingsAircraftClasses,
-	"StatsTotals":                    APIStatsTotals,
-	"StatsTotalsByType":              APIStatsTotalsByType,
-	"StatsTotalsByClass":             APIStatsTotalsByClass,
-	"StatsLimits":                    APIStatsLimits,
-	"StatsTotalsPage":                APIStatsTotalsPage,
-	"StatsTotalsByYearPage":          APIStatsTotalsByYearPage,
-	"StatsTotalsByMonthPage":         APIStatsTotalsByMonthPage,
-	"StatsTotalsByMonthYearPage":     APIStatsTotalsByMonthYearPage,
-	"StatsTotalsByTypePage":          APIStatsTotalsByTypePage,
-	"StatsTotalsByClassPage":         APIStatsTotalsByClassPage,
-	"StatsLimitsPage":                APIStatsLimitsPage,
-	"Map":                            APIMap,
-	"MapData":                        APIMapData,
-	"Licensing":                      APILicensing,
-	"LicensingData":                  APILicensingData,
-	"LicensingUUID":                  APILicensingUUID,
-	"LicensingNew":                   APILicensingNew,
-	"LicensingDownload":              APILicensingDownload,
-	"LicensingDownloadUUID":          APILicensingDownloadUUID,
-	"LicensingSave":                  APILicensingSave,
-	"LicensingDelete":                APILicensingDelete,
-	"LicensingAttachmentDelete":      APILicensingAttachmentDelete,
-	"Login":                          APILogin,
-	"Logout":                         APILogout,
-	"ExportFormatA4":                 exportA4,
-	"ExportFormatA5":                 exportA5,
-	"ExportFormatXLS":                exportXLS,
+	"Root":                       APIRoot,
+	"Preferences":                APIPreferences,
+	"Logbook":                    APILogbook,
+	"Aircrafts":                  APIAircrafts,
+	"AircraftsFilter":            APIAircraftsFilter,
+	"Export":                     APIExport,
+	"ExportPDFA4Page":            APIExportPDFA4Page,
+	"ExportPDFA5Page":            APIExportPDFA5Page,
+	"ExportCSVXLSPage":           APIExportCSVXLSPage,
+	"ExportFormat":               APIExportFormat,
+	"ExportRestoreDefaults":      APIExportRestoreDefaults,
+	"Import":                     APIImport,
+	"ImportCreateBackup":         APIImportCreateBackup,
+	"ImportRun":                  APIImportRun,
+	"Airport":                    APIAirport,
+	"AirportID":                  APIAirportID,
+	"AirportUpdate":              APIAirportUpdate,
+	"AirportStandardData":        APIAirportStandardData,
+	"AirportCustomData":          APIAirportCustomData,
+	"AirportAddCustom":           APIAirportAddCustom,
+	"AirportDeleteCustom":        APIAirportDeleteCustom,
+	"Settings":                   APISettings,
+	"SettingsAirportDB":          APISettingsAirportDB,
+	"SettingsAircraftClasses":    APISettingsAircraftClasses,
+	"StatsTotals":                APIStatsTotals,
+	"StatsTotalsByType":          APIStatsTotalsByType,
+	"StatsTotalsByClass":         APIStatsTotalsByClass,
+	"StatsLimits":                APIStatsLimits,
+	"StatsTotalsPage":            APIStatsTotalsPage,
+	"StatsTotalsByYearPage":      APIStatsTotalsByYearPage,
+	"StatsTotalsByMonthPage":     APIStatsTotalsByMonthPage,
+	"StatsTotalsByMonthYearPage": APIStatsTotalsByMonthYearPage,
+	"StatsTotalsByTypePage":      APIStatsTotalsByTypePage,
+	"StatsTotalsByClassPage":     APIStatsTotalsByClassPage,
+	"StatsLimitsPage":            APIStatsLimitsPage,
+	"Map":                        APIMap,
+	"MapData":                    APIMapData,
+	"Login":                      APILogin,
+	"Logout":                     APILogout,
+	"ExportFormatA4":             exportA4,
+	"ExportFormatA5":             exportA5,
+	"ExportFormatXLS":            exportXLS,
 }
 
 var session *scs.SessionManager

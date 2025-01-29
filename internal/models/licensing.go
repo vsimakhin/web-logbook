@@ -1,9 +1,5 @@
 package models
 
-import (
-	"time"
-)
-
 // GetFlightRecords returns the flight records in the logbook table
 func (m *DBModel) GetLicenses() (licenses []License, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
@@ -141,40 +137,4 @@ func (m *DBModel) DeleteLicenseAttachment(uuid string) (err error) {
 	query := `UPDATE licensing SET document_name = "", document = null WHERE uuid = ?`
 	_, err = m.DB.ExecContext(ctx, query, uuid)
 	return err
-}
-
-// CheckLicenseExpiration returns the number of expired and expiring (warning) licenses
-func (m *DBModel) CheckLicenseExpiration() (int, int) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	expired, warning := 0, 0
-	now := time.Now()
-	expiredDate := now
-	warningDate := now.AddDate(0, 1, 0)
-
-	query := "SELECT valid_until FROM licensing where valid_until <> ''"
-	rows, err := m.DB.QueryContext(ctx, query)
-	if err != nil {
-		return expired, warning
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var date string
-		if err := rows.Scan(&date); err != nil {
-			continue
-		}
-		parsedDate, err := time.Parse("02/01/2006", date)
-		if err != nil {
-			continue
-		}
-		if parsedDate.Before(expiredDate) {
-			expired++
-		} else if parsedDate.Before(warningDate) {
-			warning++
-		}
-	}
-
-	return expired, warning
 }

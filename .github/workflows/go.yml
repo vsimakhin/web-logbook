@@ -21,8 +21,8 @@ jobs:
     - name: go vet
       run: go vet ./...
 
-    - name: go fmt
-      run: go fmt ./...
+    - name: build
+      run: make build_ui build_backend
 
-    - name: Test
-      run: go test -v ./...
+    - name: test
+      run: make test
