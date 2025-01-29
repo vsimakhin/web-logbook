@@ -14,6 +14,10 @@ import CardHeader from "../UIElements/CardHeader";
 import LicenseRecordDetails from "./LicenseRecordDetails";
 import LicensePreview from "./LicensePreview";
 import SaveLicenseRecordButton from "./SaveLicenseRecordButton";
+import DeleteLicenseRecordButton from "./DeleteLicenseRecordButton";
+import DeleteLicenseRecordButtonAttachment from "./DeleteLicenseRecordAttachmentButton";
+import DownloadLicenseAttachmentButton from "./DownloadLicenseRecordAttachmentButton";
+import HelpButton from "./HelpButton";
 
 export const LicenseRecord = () => {
   const { id } = useParams();
@@ -24,7 +28,7 @@ export const LicenseRecord = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['license', id],
     queryFn: ({ signal }) => fetchLicense({ signal, id, navigate }),
-    enabled: license.id !== "new",
+    enabled: license.uuid !== "new",
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
 
@@ -48,10 +52,11 @@ export const LicenseRecord = () => {
               <CardHeader title="License & Certification Record"
                 action={
                   <>
-                    {/* <HelpButton /> */}
-                    <SaveLicenseRecordButton license={license} />
-                    {/* Delete button */}
-                    {/* Delete attachment button */}
+                    <HelpButton />
+                    {license.document && <DownloadLicenseAttachmentButton license={license} />}
+                    <SaveLicenseRecordButton license={license} handleChange={handleChange} />
+                    <DeleteLicenseRecordButton license={license} />
+                    <DeleteLicenseRecordButtonAttachment license={license} />
                   </>
                 }
               />

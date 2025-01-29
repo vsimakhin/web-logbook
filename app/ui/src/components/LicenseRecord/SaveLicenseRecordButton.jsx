@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { useNotifications } from "@toolpad/core/useNotifications";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -9,8 +10,9 @@ import { createLicenseRecord, updateLicenseRecord } from "../../util/http/licens
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
 
-export const SaveLicenseRecordButton = ({ license }) => {
+export const SaveLicenseRecordButton = ({ license, handleChange }) => {
   const navigate = useNavigate();
+  const notifications = useNotifications();
 
   const { mutateAsync: saveLicenseRecord, isError, error, isSuccess } = useMutation({
     mutationFn: async ({ payload }) => {
@@ -20,9 +22,11 @@ export const SaveLicenseRecordButton = ({ license }) => {
         return await updateLicenseRecord({ uuid: license.uuid, payload, navigate });
       }
     },
-    onSuccess: async ({ data }) => {
+    onSuccess: async (data) => {
+      const response = JSON.parse(await data.text());
       if (license.uuid === "new") {
-        navigate(`/licensing/${data}`);
+        handleChange("uuid", response.data);
+        navigate(`/licensing/${response.data}`);
       } else {
         await queryClient.invalidateQueries({ queryKey: ["licensing"] })
         await queryClient.invalidateQueries({ queryKey: ["license", license.id] })
@@ -32,7 +36,23 @@ export const SaveLicenseRecordButton = ({ license }) => {
   useErrorNotification({ isError, error, fallbackMessage: "Failed to save license record" });
   useSuccessNotification({ isSuccess, message: "License record saved" });
 
+  const validateFields = () => {
+    if (!license.category || !license.name) {
+      notifications.show("License Category and Name should not be empty", {
+        severity: "error",
+        key: "license-validation",
+        autoHideDuration: 3000,
+      });
+      return false;
+    }
+    return true;
+  }
+
   const handleLicenseRecordSave = async () => {
+    if (!validateFields()) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append("uuid", license.uuid);
     formData.append("number", license.number);

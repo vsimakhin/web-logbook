@@ -80,7 +80,7 @@ export const FlightRecord = () => {
                 action={
                   <>
                     <HelpButton />
-                    <SaveFlightRecordButton flight={flight} />
+                    <SaveFlightRecordButton flight={flight} handleChange={handleChange} />
                     <NewFlightRecordButton setFlight={setFlight} />
                     <CopyFlightRecordButton setFlight={setFlight} />
                     <DeleteFlightRecordButton flight={flight} />

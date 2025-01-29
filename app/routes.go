@@ -161,9 +161,12 @@ func (app *application) routes() *chi.Mux {
 		// licensing
 		r.Route("/licensing", func(r chi.Router) {
 			r.Get("/list", app.HandlerApiGetLicensingRecords)
+			r.Get("/categories", app.HandlerApiGetLicensingCategories)
 			r.With(middleware.Compress(5)).Get("/{uuid}", app.HandlerApiGetLicensingRecord)
 			r.Post("/new", app.HandlerApiNewLicensingRecord)
 			r.Put("/{uuid}", app.HandlerApiUpdateLicensingRecord)
+			r.Delete("/{uuid}", app.HandlerApiDeleteLicensingRecord)
+			r.Delete("/{uuid}/attachment", app.HandlerApiDeleteLicensingAttachment)
 		})
 
 		// attachments
@@ -248,13 +251,6 @@ func (app *application) routes() *chi.Mux {
 		// map
 		r.Get(APIMap, app.HandlerMap)
 		r.Get(APIMapData, app.HandlerMapData)
-
-		// documents
-		r.Get(APILicensingDownloadUUID, app.HandlerLicensingDownload)
-
-		r.Post(APILicensingSave, app.HandlerLicensingRecordSave)
-		r.Post(APILicensingDelete, app.HandlerLicensingRecordDelete)
-		r.Post(APILicensingAttachmentDelete, app.HandlerLicensingDeleteAttachment)
 
 		// api & parameters
 		r.Get(APIPreferences, app.HandlerPreferences)

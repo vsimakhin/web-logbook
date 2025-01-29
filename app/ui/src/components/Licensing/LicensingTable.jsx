@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 // Custom components and libraries
 import { dateFilterFn } from './helpers';
 import CSVExportButton from './CSVExportButton';
+import NewLicenseRecordButton from './NewLicenseRecordButton';
 // import NewFlightRecordButton from './NewFlightRecordButton';
 
 const tablePageKey = 'licensing-table-page-size';
@@ -65,7 +66,7 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        {/* <NewFlightRecordButton /> */}
+        <NewLicenseRecordButton />
         <CSVExportButton table={table} />
       </Box>
     ),

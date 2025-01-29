@@ -7,17 +7,15 @@ import Grid from "@mui/material/Grid2";
 import TextField from "../UIElements/TextField";
 import DatePicker from "../UIElements/DatePicker";
 import IconButton from "@mui/material/IconButton";
+import LicenseCategory from "./LicenseCategory";
 
 export const LicenseRecordDetails = ({ license, handleChange }) => {
   return (
     <>
       <Grid container spacing={1} >
-        <TextField gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
-          id="category"
-          label="Category"
-          handleChange={handleChange}
+        <LicenseCategory gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
           value={license.category ?? ""}
-          tooltip="Category"
+          handleChange={handleChange}
         />
         <TextField gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
           id="name"
@@ -25,6 +23,7 @@ export const LicenseRecordDetails = ({ license, handleChange }) => {
           handleChange={handleChange}
           value={license.name ?? ""}
           tooltip="Name"
+          required
         />
         <TextField gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
           id="number"

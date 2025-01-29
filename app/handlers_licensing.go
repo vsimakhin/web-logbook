@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -77,46 +76,12 @@ func (app *application) ParseLicenseFormData(r *http.Request) (license models.Li
 
 // HandlerLicensingRecordSave is a handler for creating or updating license record
 func (app *application) HandlerApiNewLicensingRecord(w http.ResponseWriter, r *http.Request) {
-
-	err := r.ParseMultipartForm(32 << 20)
+	license, err := app.ParseLicenseFormData(r)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
 		app.handleError(w, err)
 		return
 	}
 
-	license := models.License{
-		UUID:       r.PostFormValue("uuid"),
-		Category:   r.PostFormValue("category"),
-		Name:       r.PostFormValue("name"),
-		Number:     r.PostFormValue("number"),
-		Issued:     r.PostFormValue("issued"),
-		ValidFrom:  r.PostFormValue("valid_from"),
-		ValidUntil: r.PostFormValue("valid_until"),
-		Remarks:    r.PostFormValue("remarks"),
-	}
-
-	// check attached file
-	file, header, err := r.FormFile("document")
-	if err != nil {
-		if !strings.Contains(err.Error(), "no such file") {
-			app.handleError(w, err)
-			return
-		}
-	} else {
-		defer file.Close()
-		license.DocumentName = header.Filename
-
-		// read file
-		bs, err := io.ReadAll(file)
-		if err != nil {
-			app.handleError(w, err)
-			return
-		}
-		license.Document = bs
-	}
-
-	// new record
 	uuid, err := uuid.NewRandom()
 	if err != nil {
 		app.handleError(w, err)
@@ -158,163 +123,38 @@ func (app *application) HandlerApiUpdateLicensingRecord(w http.ResponseWriter, r
 	app.writeOkResponse(w, "License Record has been updated")
 }
 
-//////////////////////////////////////////////
-/////////////////////////////////////////////
+// HandlerApiGetLicensingCategories returns a list of license categories
+func (app *application) HandlerApiGetLicensingCategories(w http.ResponseWriter, r *http.Request) {
+	categories, err := app.db.GetLicensesCategory()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
 
-// HandlerLicensingDownload is a handler for downloading the license files
-func (app *application) HandlerLicensingDownload(w http.ResponseWriter, r *http.Request) {
+	app.writeJSON(w, http.StatusOK, categories)
+}
+
+// HandlerApiDeleteLicensingRecord is a handler for deleting license record
+func (app *application) HandlerApiDeleteLicensingRecord(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 
-	license, err := app.db.GetLicenseRecordByID(uuid)
+	err := app.db.DeleteLicenseRecord(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	_, err = w.Write(license.Document)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	app.writeOkResponse(w, "License Record deleted")
 }
 
-// HandlerLicensingRecordDelete is a handler for deleting license record
-func (app *application) HandlerLicensingRecordDelete(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlerApiDeleteLicensingAttachment(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
 
-	var license models.License
-	var response models.JSONResponse
-
-	err := json.NewDecoder(r.Body).Decode(&license)
+	err := app.db.DeleteLicenseAttachment(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	err = app.db.DeleteLicenseRecord(license.UUID)
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "License Record deleted"
-		response.RedirectURL = APILicensing
-
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-func (app *application) HandlerLicensingDeleteAttachment(w http.ResponseWriter, r *http.Request) {
-
-	var license models.License
-	var response models.JSONResponse
-
-	err := json.NewDecoder(r.Body).Decode(&license)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = app.db.DeleteLicenseAttachment(license.UUID)
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Attachment removed"
-		response.RedirectURL = strings.ReplaceAll(APILicensingUUID, "{uuid}", license.UUID)
-
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerLicensingRecordSave is a handler for creating or updating license record
-func (app *application) HandlerLicensingRecordSave(w http.ResponseWriter, r *http.Request) {
-
-	var response models.JSONResponse
-
-	err := r.ParseMultipartForm(32 << 20)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	license := models.License{
-		UUID:       r.PostFormValue("uuid"),
-		Category:   r.PostFormValue("category"),
-		Name:       r.PostFormValue("name"),
-		Number:     r.PostFormValue("number"),
-		Issued:     r.PostFormValue("issued"),
-		ValidFrom:  r.PostFormValue("valid_from"),
-		ValidUntil: r.PostFormValue("valid_until"),
-		Remarks:    r.PostFormValue("remarks"),
-	}
-
-	// check attached file
-	file, header, err := r.FormFile("document")
-	if err != nil {
-		if !strings.Contains(err.Error(), "no such file") {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	} else {
-		defer file.Close()
-		license.DocumentName = header.Filename
-
-		// read file
-		bs, err := io.ReadAll(file)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		license.Document = bs
-	}
-
-	if license.UUID == "" {
-		// new record
-		uuid, err := uuid.NewRandom()
-		if err != nil {
-			app.errorLog.Println(err)
-			response.OK = false
-			response.Message = err.Error()
-		}
-
-		license.UUID = uuid.String()
-
-		err = app.db.InsertLicenseRecord(license)
-		if err != nil {
-			app.errorLog.Println(err)
-			response.OK = false
-			response.Message = err.Error()
-		} else {
-			response.OK = true
-			response.Message = "New Record has been saved"
-			response.RedirectURL = strings.ReplaceAll(APILicensingUUID, "{uuid}", license.UUID)
-
-		}
-
-	} else {
-		// just update the license record
-		err = app.db.UpdateLicenseRecord(license)
-		if err != nil {
-			app.errorLog.Println(err)
-			response.OK = false
-			response.Message = err.Error()
-		} else {
-			response.OK = true
-			response.Message = "License Record has been updated"
-			response.RedirectURL = strings.ReplaceAll(APILicensingUUID, "{uuid}", license.UUID)
-
-		}
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
+	app.writeOkResponse(w, "License Record Attachment deleted")
 }

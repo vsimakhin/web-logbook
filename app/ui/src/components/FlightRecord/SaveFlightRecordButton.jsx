@@ -5,11 +5,12 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 // MUI Icons
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+// Custom
 import { createFlightRecord, updateFlightRecord } from "../../util/http/logbook";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
 
-export const SaveFlightRecordButton = ({ flight }) => {
+export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   const navigate = useNavigate();
 
   const mutationFn = flight.uuid === "new"
@@ -20,6 +21,7 @@ export const SaveFlightRecordButton = ({ flight }) => {
     mutationFn: () => mutationFn(),
     onSuccess: async ({ data }) => {
       if (flight.uuid === "new") {
+        handleChange("uuid", data);
         navigate(`/logbook/${data}`);
       } else {
         await queryClient.invalidateQueries({ queryKey: ['flight', flight.id] })
@@ -27,7 +29,6 @@ export const SaveFlightRecordButton = ({ flight }) => {
       }
     }
   });
-
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
