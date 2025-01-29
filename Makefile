@@ -17,6 +17,11 @@ clean:
 fmt:
 	@go fmt ./...
 
+npm_install:
+	@echo "Installing npm packages..."
+	@cd app/ui && npm install
+	@cd ../../
+
 ## build ui
 build_ui:
 	@echo "Building UI..."
