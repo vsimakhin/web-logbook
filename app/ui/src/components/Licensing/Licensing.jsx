@@ -17,7 +17,7 @@ export const Licensing = () => {
     queryKey: ['licensing'],
     queryFn: ({ signal }) => fetchLicenses({ signal, navigate }),
   });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load aircrafts list' });
+  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load licenses' });
 
   const columns = useMemo(() => [
     { accessorKey: "category", header: "Category", size: 150 },

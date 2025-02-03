@@ -12,6 +12,8 @@ import LogbookPage from './pages/LogbookPage.jsx';
 import FlightRecordPage from './pages/FlightRecordPage.jsx';
 import LicensingPage from './pages/LicensingPage.jsx';
 import LicenseRecordPage from './pages/LicenseRecordPage.jsx';
+import MapPage from './pages/MapPage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -34,7 +36,9 @@ const router = createBrowserRouter([
               { index: true, element: <LicensingPage /> },
               { path: ":id", element: <LicenseRecordPage /> }
             ]
-          }
+          },
+          { path: 'map', element: <MapPage /> },
+          { path: 'settings', element: <SettingsPage /> },
         ]
       },
     ],

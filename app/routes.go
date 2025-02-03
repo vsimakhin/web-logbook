@@ -156,6 +156,12 @@ func (app *application) routes() *chi.Mux {
 			r.Get("/list/{filter}", app.HandlerAircrafts)
 		})
 
+		// settings
+		r.Route("/settings", func(r chi.Router) {
+			r.Get("/list", app.HandlerApiSettingsList)
+			r.Put("/update", app.HandlerApiSettingsUpdate)
+		})
+
 		// airports
 		r.Route("/airport", func(r chi.Router) {
 			r.Get("/{id}", app.HandlerAirportByID)
@@ -201,8 +207,6 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIAircraftsFilter, app.HandlerAircrafts)
 
 		// settings
-		r.Get(APISettings, app.HandlerSettings)
-		r.Post(APISettings, app.HandlerSettingsSave)
 		r.Get(APISettingsAirportDB, app.HandlerSettingsAirportDB)
 		r.Post(APISettingsAirportDB, app.HandlerSettingsAirportDBSave)
 
@@ -221,8 +225,8 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)
 
 		// map
-		r.Get(APIMap, app.HandlerMap)
-		r.Get(APIMapData, app.HandlerMapData)
+		// r.Get(APIMap, app.HandlerMap)
+		// r.Get(APIMapData, app.HandlerMapData)
 
 		// api & parameters
 		r.Get(APIPreferences, app.HandlerPreferences)
