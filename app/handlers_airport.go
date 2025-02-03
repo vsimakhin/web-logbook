@@ -15,22 +15,27 @@ import (
 
 // HandlerAirportByID returns airport record by ID (ICAO or IATA)
 func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Request) {
-	uuid := chi.URLParam(r, "id")
+	uuid := strings.ToUpper(chi.URLParam(r, "id"))
 
 	airport, err := app.db.GetAirportByID(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	if airport.IATA == "" && airport.ICAO == "" {
 		// looks like there is no such ID in airport database
 		app.warningLog.Printf("cannot find %s in the airport database\n", uuid)
+		app.writeJSON(w, http.StatusNotFound, models.JSONResponse{OK: false, Message: "Airport not found"})
+		return
 	}
 
 	app.writeJSON(w, http.StatusOK, airport)
 }
+
+/////////////////////////////////////////////////
+// for futher review
+/////////////////////////////////////////////////
 
 func (app *application) downloadAirportDB(source string) ([]models.Airport, error) {
 	var airports []models.Airport

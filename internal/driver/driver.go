@@ -45,7 +45,7 @@ func validateDB(db *sql.DB, engine string) error {
 	if isNewSchema {
 		// check tables
 		tables := []*Table{logbookTable, airportsTable, customAirportsTable,
-			settingsTable, licensingTable, attachmentsTable, sessionsTable,
+			settingsTable, licensingTable, attachmentsTable, tokensTable,
 		}
 
 		for _, table := range tables {
@@ -107,13 +107,13 @@ func updateSchemaVersion(db *sql.DB) error {
 	defer cancel()
 
 	query := "INSERT INTO metadata (version, created_at) VALUES (?,?)"
-	_, err := db.ExecContext(ctx, query, schemaVersion, time.Now().Format("02.01.2006 15:04:05"))
+	_, err := db.ExecContext(ctx, query, schemaVersion, time.Now().Format("20060102 15:04:05"))
 	return err
 }
 
 // checkSettingsTable verifies the proper transition to the new settings table
 func checkSettingsTable(db *sql.DB) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	var s models.Settings
