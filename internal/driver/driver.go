@@ -45,7 +45,7 @@ func validateDB(db *sql.DB, engine string) error {
 	if isNewSchema {
 		// check tables
 		tables := []*Table{logbookTable, airportsTable, customAirportsTable,
-			settingsTable, licensingTable, attachmentsTable, sessionsTable,
+			settingsTable, licensingTable, attachmentsTable, tokensTable,
 		}
 
 		for _, table := range tables {

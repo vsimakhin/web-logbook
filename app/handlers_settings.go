@@ -14,6 +14,7 @@ func (app *application) HandlerApiSettingsList(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	settings.Hash = ""
 	app.writeJSON(w, http.StatusOK, settings)
 }
 

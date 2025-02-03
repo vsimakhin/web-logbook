@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -113,12 +111,13 @@ func (app *application) routes() *chi.Mux {
 		MaxAge:           300,
 	}))
 
-	r.Use(SessionLoad) // to review
-
 	r.Post("/api/login", app.HandlerLogin) // to review
 
 	r.Route("/api", func(r chi.Router) {
 		r.Use(app.Auth) // to review
+
+		// logout
+		r.Post("/logout", app.HandlerLogout)
 
 		// logbook
 		r.Route("/logbook", func(r chi.Router) {
@@ -233,27 +232,17 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIPreferences, app.HandlerPreferences)
 	})
 
-	// login & logout
-	r.Get(APILogin, app.HandlerLogin)
-	r.Post(APILogin, app.HandlerLoginPost)
-	r.Get(APILogout, app.HandlerLogout)
-
 	// other stuff
-	if app.config.env == "dev" {
-		r.Handle("/static/*", app.HandlerStatic())
-	} else {
-		r.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
-	}
-	r.HandleFunc("/favicon.ico", app.HandlerFavicon)
-	r.NotFound(app.HandlerNotFound)
-	r.MethodNotAllowed(app.HandlerNotAllowed)
+	// if app.config.env == "dev" {
+	// 	r.Handle("/static/*", app.HandlerStatic())
+	// } else {
+	// 	r.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
+	// }
+	// r.HandleFunc("/favicon.ico", app.HandlerFavicon)
+	// r.NotFound(app.HandlerNotFound)
+	// r.MethodNotAllowed(app.HandlerNotAllowed)
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))
 
 	return r
-}
-
-// SessionLoad peforms the load and save of a session, per request
-func SessionLoad(next http.Handler) http.Handler {
-	return session.LoadAndSave(next)
 }

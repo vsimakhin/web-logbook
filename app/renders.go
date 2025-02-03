@@ -54,7 +54,6 @@ func formatNumber(n int) string {
 // addDefaultData adds default values/consts to all templates
 func (app *application) addDefaultData(td *templateData, req *http.Request) *templateData {
 	td.API = apiMap
-	td.AuthEnabled = app.isAuthEnabled
 	td.Version = app.version
 	td.NewVersion = app.isNewVersion
 

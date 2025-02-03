@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "3.0.4"
+	schemaVersion = "3.0.5"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -93,10 +93,11 @@ var attachmentsTable = NewTable("attachments", "uuid", UUID,
 		{Name: "document", Type: Blob},
 	})
 
-var sessionsTable = NewTable("sessions", "token", ColumnType{SQLite: "TEXT", MySQL: "CHAR(43)"},
+var tokensTable = NewTable("tokens", "id", ColumnType{SQLite: "INTEGER", MySQL: "INT UNSIGNED AUTO_INCREMENT"},
 	[]Column{
-		{Name: "data", Type: ColumnType{SQLite: "BLOB", MySQL: "BLOB"}, Properties: "NOT NULL"},
-		{Name: "expiry", Type: ColumnType{SQLite: "REAL", MySQL: "TIMESTAMP(6)"}, Properties: "NOT NULL"},
+		{Name: "username", Type: UUID, Properties: "NOT NULL", Index: true},
+		{Name: "token", Type: BigText, Properties: "NOT NULL"},
+		{Name: "created_at", Type: DateTime, Properties: "NOT NULL"},
 	})
 
 var logbookView = NewView("logbook_view",

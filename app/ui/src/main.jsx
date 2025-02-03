@@ -7,6 +7,7 @@ import '@fontsource/roboto/700.css';
 import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 // pages
+import { authLoader } from './util/auth.jsx';
 import Root from './pages/Root';
 import LogbookPage from './pages/LogbookPage.jsx';
 import FlightRecordPage from './pages/FlightRecordPage.jsx';
@@ -14,6 +15,8 @@ import LicensingPage from './pages/LicensingPage.jsx';
 import LicenseRecordPage from './pages/LicenseRecordPage.jsx';
 import MapPage from './pages/MapPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
+import SignInPage from './pages/SignInPage.jsx';
+import LogoutPage from './pages/LogoutPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +26,7 @@ const router = createBrowserRouter([
         path: '/',
         Component: Root,
         id: 'root',
+        loader: authLoader,
         children: [
           { index: true, element: <LogbookPage /> },
           {
@@ -41,6 +45,8 @@ const router = createBrowserRouter([
           { path: 'settings', element: <SettingsPage /> },
         ]
       },
+      { path: '/signin', element: <SignInPage /> },
+      { path: '/logout', element: <LogoutPage /> }
     ],
   },
 ]);

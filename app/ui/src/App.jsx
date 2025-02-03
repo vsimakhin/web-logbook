@@ -23,7 +23,7 @@ function App() {
   const theme = { light: lightTheme, dark: darkTheme };
 
   return (
-    <AppProvider theme={theme} navigation={NAV_ITEMS} branding={BRANDING}>
+    <AppProvider theme={theme} navigation={NAV_ITEMS} branding={BRANDING} >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <QueryClientProvider client={queryClient}>
           <NotificationsProvider>

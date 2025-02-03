@@ -193,18 +193,21 @@ type HideFields struct {
 
 // Settings is a type for settings
 type Settings struct {
-	OwnerName               string            `json:"owner_name"`
-	LicenseNumber           string            `json:"license_number"`
-	Address                 string            `json:"address"`
-	SignatureText           string            `json:"signature_text"`
-	SignatureImage          string            `json:"signature_image"`
-	AircraftClasses         map[string]string `json:"aircraft_classes"`
-	AuthEnabled             bool              `json:"auth_enabled"`
-	Login                   string            `json:"login"`
-	Password                string            `json:"password"`
-	Hash                    string            `json:"hash"`
-	DisableFlightRecordHelp bool              `json:"disable_flightrecord_help"`
-	DisableLicenseWarning   bool              `json:"disable_license_warning"`
+	OwnerName       string            `json:"owner_name"`
+	LicenseNumber   string            `json:"license_number"`
+	Address         string            `json:"address"`
+	SignatureText   string            `json:"signature_text"`
+	SignatureImage  string            `json:"signature_image"`
+	AircraftClasses map[string]string `json:"aircraft_classes"`
+
+	AuthEnabled bool   `json:"auth_enabled"`
+	Login       string `json:"login"`
+	Password    string `json:"password"`
+	Hash        string `json:"hash"`
+	SecretKey   string `json:"secret_key"`
+
+	DisableFlightRecordHelp bool `json:"disable_flightrecord_help"`
+	DisableLicenseWarning   bool `json:"disable_license_warning"`
 
 	ExportA4  ExportPDF `json:"export_a4"`
 	ExportA5  ExportPDF `json:"export_a5"`

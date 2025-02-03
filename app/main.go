@@ -10,11 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
-	"github.com/alexedwards/scs/mysqlstore"
-	"github.com/alexedwards/scs/sqlite3store"
-	"github.com/alexedwards/scs/v2"
 	"github.com/vsimakhin/web-logbook/internal/driver"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
@@ -43,15 +39,14 @@ type config struct {
 }
 
 type application struct {
-	config               config
-	infoLog              *log.Logger
-	errorLog             *log.Logger
-	warningLog           *log.Logger
-	templateCache        map[string]*template.Template
-	version              string
-	db                   models.DBModel
-	session              *scs.SessionManager
-	isAuthEnabled        bool
+	config        config
+	infoLog       *log.Logger
+	errorLog      *log.Logger
+	warningLog    *log.Logger
+	templateCache map[string]*template.Template
+	version       string
+	db            models.DBModel
+
 	isNewVersion         bool
 	timeFieldsAutoFormat byte
 }
@@ -125,17 +120,6 @@ func createDBConnection(engine string, dsn string) (*sql.DB, error) {
 	return conn, nil
 }
 
-func createSessionManager(conn *sql.DB, engine string) *scs.SessionManager {
-	session := scs.New()
-	session.Lifetime = 12 * time.Hour
-	if engine == "sqlite" {
-		session.Store = sqlite3store.New(conn)
-	} else {
-		session.Store = mysqlstore.New(conn)
-	}
-	return session
-}
-
 func main() {
 	var err error
 
@@ -163,9 +147,6 @@ func main() {
 	}
 	defer conn.Close()
 
-	// set up session
-	session = createSessionManager(conn, cfg.db.engine)
-
 	app := &application{
 		config:        cfg,
 		infoLog:       infoLog,
@@ -174,7 +155,6 @@ func main() {
 		templateCache: tc,
 		version:       version,
 		db:            models.DBModel{DB: conn},
-		session:       session,
 	}
 
 	// check if we need to disable authentication
@@ -200,7 +180,6 @@ func main() {
 		app.errorLog.Printf("cannot load settings - %s\n", err)
 		// but probably let's continue to run the app as well...
 	}
-	app.isAuthEnabled = settings.AuthEnabled
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 
 	// create distance cache ob background

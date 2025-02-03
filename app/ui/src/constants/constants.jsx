@@ -11,6 +11,9 @@ import dayjs from 'dayjs';
 
 export const DRAWER_WIDTH = 200;
 
+export const TOKEN_KEY = 'token';
+export const USERNAME_KEY = 'username';
+
 export const NAV_ITEMS = [
   { segment: 'logbook', title: 'Logbook', icon: <AutoStoriesOutlinedIcon /> },
   { segment: 'licensing', title: 'Licensing', icon: <ContactPageOutlinedIcon /> },
