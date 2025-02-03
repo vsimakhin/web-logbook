@@ -159,7 +159,8 @@ func (app *application) routes() *chi.Mux {
 		// settings
 		r.Route("/settings", func(r chi.Router) {
 			r.Get("/list", app.HandlerApiSettingsList)
-			r.Put("/update", app.HandlerApiSettingsUpdate)
+			r.Put("/general", app.HandlerApiSettingsUpdate)
+			r.Put("/signature", app.HandlerApiSettingsSignature)
 		})
 
 		// airports

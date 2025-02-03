@@ -36,6 +36,8 @@ func (app *application) HandlerApiSettingsUpdate(w http.ResponseWriter, r *http.
 	settings.ExportA5 = oldsettings.ExportA5
 	settings.ExportXLS = oldsettings.ExportXLS
 	settings.ExportCSV = oldsettings.ExportCSV
+	// Signature image is also updated separately
+	settings.SignatureImage = oldsettings.SignatureImage
 
 	err = app.db.UpdateSettings(settings)
 	if err != nil {
@@ -46,6 +48,30 @@ func (app *application) HandlerApiSettingsUpdate(w http.ResponseWriter, r *http.
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 
 	app.writeOkResponse(w, "Settings updated")
+}
+
+func (app *application) HandlerApiSettingsSignature(w http.ResponseWriter, r *http.Request) {
+	oldsettings, err := app.db.GetSettings()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var settings models.Settings
+	err = json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	oldsettings.SignatureImage = settings.SignatureImage
+	err = app.db.UpdateSettings(oldsettings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Signature updated")
 }
 
 ////////////////////////////////////

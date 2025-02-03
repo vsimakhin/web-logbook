@@ -13,7 +13,7 @@ export const fetchSettings = async ({ signal, navigate }) => {
 }
 
 export const updateSettings = async ({ signal, settings, navigate }) => {
-  const url = `${API_URL}/settings/update`;
+  const url = `${API_URL}/settings/general`;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
@@ -21,4 +21,15 @@ export const updateSettings = async ({ signal, settings, navigate }) => {
     body: JSON.stringify(settings),
   };
   return await handleFetch(url, options, navigate, 'Cannot update settings');
+}
+
+export const updateSignature = async ({ signal, settings, navigate }) => {
+  const url = `${API_URL}/settings/signature`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    signal: signal,
+    body: JSON.stringify(settings),
+  };
+  return await handleFetch(url, options, navigate, 'Cannot update signature');
 }

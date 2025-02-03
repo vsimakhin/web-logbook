@@ -12,6 +12,11 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import CardHeader from "../UIElements/CardHeader";
 import GeneralSettings from "./GeneralSettings";
 import SaveSettingsButton from "./SaveSettingsButton";
+import LogbookSignature from "./LogbookSignature";
+import ClearSignatureButton from "./ClearSignatureButton";
+import PickColorButton from "./PickColorButton";
+import SaveSignatureButton from "./SaveSignatureButton";
+import UploadSignatureButton from "./UploadSignatureButton";
 
 export const Settings = () => {
   const navigate = useNavigate();
@@ -72,6 +77,22 @@ export const Settings = () => {
                 }
               />
               <GeneralSettings settings={settings} handleChange={handleChange} />
+            </CardContent>
+          </Card >
+
+          <Card variant="outlined" sx={{ mb: 1 }}>
+            <CardContent>
+              <CardHeader title="Logbook Signature"
+                action={
+                  <>
+                    <UploadSignatureButton handleChange={handleChange} />
+                    <SaveSignatureButton settings={settings} />
+                    <ClearSignatureButton handleChange={handleChange} />
+                    <PickColorButton handleChange={handleChange} />
+                  </>
+                }
+              />
+              <LogbookSignature settings={settings} handleChange={handleChange} />
             </CardContent>
           </Card >
         </Grid>
