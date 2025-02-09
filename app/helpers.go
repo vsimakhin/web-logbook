@@ -100,7 +100,7 @@ func (app *application) checkNewVersion() {
 
 // lastRegsAndModels returns aircrafts registrations and models for the last 100 flight records
 func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftModels []string) {
-	lastAircrafts, err := app.db.GetAircrafts(models.LastAircrafts)
+	lastAircrafts, err := app.db.GetAircraftsInLogbook(models.LastAircrafts)
 	if err != nil {
 		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
 	}

@@ -17,6 +17,7 @@ import MapPage from './pages/MapPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import SignInPage from './pages/SignInPage.jsx';
 import LogoutPage from './pages/LogoutPage.jsx';
+import AircraftsPage from './pages/AircraftsPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
             ]
           },
           { path: 'map', element: <MapPage /> },
+          { path: 'aircrafts', element: <AircraftsPage /> },
           { path: 'settings', element: <SettingsPage /> },
         ]
       },

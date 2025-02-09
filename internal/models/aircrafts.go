@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-// GetAircrafts returns already recorded aircrafts
-func (m *DBModel) GetAircrafts(condition int) (aircrafts map[string]string, err error) {
+// GetAircraftsInLogbook returns already recorded aircrafts
+func (m *DBModel) GetAircraftsInLogbook(condition int) (aircrafts map[string]string, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
@@ -102,6 +102,50 @@ func (m *DBModel) GetAircraftRegs(records int) (regs []string, err error) {
 
 	return regs, nil
 }
+
+func (m *DBModel) GenerateAircraftTable() (err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := `INSERT INTO aircrafts (reg_name, aircraft_model, categories)
+		SELECT lv.reg_name, lv.aircraft_model, ''
+		FROM logbook_view lv
+		WHERE lv.aircraft_model <> ''
+		AND lv.reg_name NOT IN (
+			SELECT a.reg_name 
+			FROM aircrafts a
+		)
+		GROUP BY lv.aircraft_model, lv.reg_name`
+	_, err = m.DB.ExecContext(ctx, query)
+	return err
+}
+
+func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := `SELECT 
+				reg_name, aircraft_model, categories 
+			FROM aircrafts 
+			ORDER BY aircraft_model, reg_name`
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return aircrafts, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ac Aircraft
+		if err = rows.Scan(&ac.Reg, &ac.Model, &ac.Category); err != nil {
+			return aircrafts, err
+		}
+		aircrafts = append(aircrafts, ac)
+	}
+
+	return aircrafts, nil
+}
+
+/////////////////////////////////
 
 // GetAircraftClasses returns aircraft clasess
 func (m *DBModel) GetAircraftClasses() (map[string]string, error) {

@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "3.0.5"
+	schemaVersion = "3.0.8"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -98,6 +98,12 @@ var tokensTable = NewTable("tokens", "id", ColumnType{SQLite: "INTEGER", MySQL: 
 		{Name: "username", Type: UUID, Properties: "NOT NULL", Index: true},
 		{Name: "token", Type: BigText, Properties: "NOT NULL"},
 		{Name: "created_at", Type: DateTime, Properties: "NOT NULL"},
+	})
+
+var aircraftsTable = NewTable("aircrafts", "reg_name", SmallText,
+	[]Column{
+		{Name: "aircraft_model", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "categories", Type: BigText, Properties: "NOT NULL"},
 	})
 
 var logbookView = NewView("logbook_view",

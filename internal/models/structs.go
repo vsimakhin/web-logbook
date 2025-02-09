@@ -252,6 +252,13 @@ type Attachment struct {
 	Document     []byte `json:"document"`
 }
 
+// Aircraft is a type for aircrafts
+type Aircraft struct {
+	Reg      string `json:"reg"`
+	Model    string `json:"model"`
+	Category string `json:"category"`
+}
+
 // TableData is a type for Datatables
 type TableData struct {
 	Data [][]string `json:"data"`

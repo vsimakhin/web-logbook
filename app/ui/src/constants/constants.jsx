@@ -7,6 +7,7 @@ import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
 import dayjs from 'dayjs';
 
 export const DRAWER_WIDTH = 200;
@@ -18,6 +19,7 @@ export const NAV_ITEMS = [
   { segment: 'logbook', title: 'Logbook', icon: <AutoStoriesOutlinedIcon /> },
   { segment: 'licensing', title: 'Licensing', icon: <ContactPageOutlinedIcon /> },
   { segment: 'map', title: 'Map', icon: <MapOutlinedIcon /> },
+  { segment: 'aircrafts', title: 'Aircrafts', icon: <FlightOutlinedIcon /> },
   { kind: 'divider' },
   {
     segment: 'stats', title: 'Statistics', icon: <QueryStatsOutlinedIcon />, children: [
@@ -131,3 +133,14 @@ export const FLIGHT_TIME_SLOT_PROPS = {
     },
   },
 };
+
+export const tableJSONCodec = {
+  parse: (value) => {
+    try {
+      return JSON.parse(value)
+    } catch {
+      return {};
+    }
+  },
+  stringify: (value) => JSON.stringify(value),
+}

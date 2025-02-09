@@ -1,66 +1,92 @@
 import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer, MRT_ExpandAllButton } from 'material-react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { Link } from "react-router-dom";
+import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import Stack from '@mui/material/Stack';
-
+import Typography from "@mui/material/Typography";
 // Custom components and libraries
 import { dateFilterFn } from './helpers';
 import CSVExportButton from './CSVExportButton';
 import NewLicenseRecordButton from './NewLicenseRecordButton';
-// import NewFlightRecordButton from './NewFlightRecordButton';
+import { calculateExpiry, createDateColumn, getExpireColor } from "./helpers";
+import { tableJSONCodec } from '../../constants/constants';
 
-const tablePageKey = 'licensing-table-page-size';
+const paginationKey = 'licensing-table-page-size';
 const columnVisibilityKey = 'licensing-table-column-visibility';
 
-export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
+const tableOptions = {
+  initialState: {
+    density: 'compact',
+    expanded: true,
+    grouping: ['category']
+  },
+  positionToolbarAlertBanner: 'bottom',
+  groupedColumnMode: 'remove',
+  enableColumnResizing: true,
+  enableGlobalFilterModes: true,
+  enableColumnFilters: true,
+  enableColumnDragging: false,
+  enableColumnPinning: false,
+  enableGrouping: true,
+  enableDensityToggle: false,
+  columnResizeMode: 'onEnd',
+  muiTablePaperProps: { variant: 'outlined', elevation: 0 },
+  columnFilterDisplayMode: 'custom',
+  enableFacetedValues: true,
+  enableSorting: true,
+  enableColumnActions: true,
+}
+
+export const LisencingTable = ({ data, isLoading, ...props }) => {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    const savedVisibility = localStorage.getItem(columnVisibilityKey);
-    return savedVisibility ? JSON.parse(savedVisibility) : {};
-  });
-
-  const initialPageSize = useMemo(() => {
-    return localStorage.getItem(tablePageKey) ? parseInt(localStorage.getItem(tablePageKey)) : 15;
-  }, []);
-
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: initialPageSize,
-  });
-
-  useEffect(() => {
-    localStorage.setItem(tablePageKey, pagination.pageSize);
-  }, [pagination.pageSize]);
-
-  useEffect(() => {
-    localStorage.setItem(columnVisibilityKey, JSON.stringify(columnVisibility));
-  }, [columnVisibility]);
-
+  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
+  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
 
+  const columns = useMemo(() => [
+    { accessorKey: "category", header: "Category", size: 150 },
+    {
+      accessorKey: "name",
+      header: "Name",
+      Cell: ({ renderedCellValue, row }) => (
+        <Typography variant="body2" color="primary">
+          <Link to={`/licensing/${row.original.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>{renderedCellValue}</Link>
+        </Typography>
+      ),
+      size: 250,
+    },
+    { accessorKey: "number", header: "Number" },
+    createDateColumn("issued", "Issued"),
+    createDateColumn("valid_from", "Valid From"),
+    createDateColumn("valid_until", "Valid Until"),
+    {
+      accessorId: "expire",
+      header: "Expire",
+      Cell: ({ row }) => {
+        const expiry = calculateExpiry(row.original.valid_until);
+        if (!expiry) return null;
+
+        return (
+          <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
+            {expiry.diffDays < 0
+              ? 'Expired'
+              : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
+          </Typography>
+        );
+      },
+      size: 150,
+    },
+    { accessorKey: "remarks", header: "Remarks", grow: true },
+  ], []);
+
   const table = useMaterialReactTable({
+    isLoading: isLoading,
     columns: columns,
     data: data ?? [],
-    initialState: {
-      density: 'compact',
-      expanded: true,
-      grouping: ['category']
-    },
-    positionToolbarAlertBanner: 'bottom',
-    groupedColumnMode: 'remove',
-    isLoading: isLoading,
-    enableColumnResizing: true,
-    enableGlobalFilterModes: true,
-    enableColumnFilters: true,
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
-    enableColumnDragging: false,
-    enableColumnPinning: false,
-    enableGrouping: true,
-    enableDensityToggle: false,
-    columnResizeMode: 'onEnd',
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -70,16 +96,12 @@ export const LisencingTable = ({ columns, data, isLoading, ...props }) => {
         <CSVExportButton table={table} />
       </Box>
     ),
-    muiTablePaperProps: { variant: 'outlined', elevation: 0 },
     onPaginationChange: setPagination,
     state: { pagination, columnFilters: columnFilters, columnVisibility },
-    columnFilterDisplayMode: 'custom',
-    enableFacetedValues: true,
     defaultColumn: {
       muiFilterTextFieldProps: ({ column }) => ({ label: `Filter by ${column.columnDef.header}` }),
     },
-    enableSorting: true,
-    enableColumnActions: true,
+    ...tableOptions
   });
 
   return (
