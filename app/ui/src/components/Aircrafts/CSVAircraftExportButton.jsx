@@ -11,24 +11,20 @@ const csvConfig = mkConfig({
   fieldSeparator: ',',
   decimalSeparator: '.',
   useKeysAsHeaders: true,
-  filename: 'licensing',
+  filename: 'aircrafts',
 });
 
 const handleExportRows = (rows) => {
   const rowData = rows.map((row) => ({
+    "Registration": row.original.reg,
+    "Model": row.original.model,
     "Category": row.original.category,
-    "Name": row.original.name,
-    "Number": row.original.number,
-    "Issued": row.original.issued,
-    "Valid From": row.original.valid_from,
-    "Valid Until": row.original.valid_until,
-    "Remarks": row.original.remarks,
   }));
   const csv = generateCsv(csvConfig)(rowData);
   download(csvConfig)(csv);
 };
 
-export const CSVExportButton = ({ table }) => {
+export const CSVAircraftExportButton = ({ table }) => {
   const handleCSVExport = useCallback((table) => {
     handleExportRows(table.getPrePaginationRowModel().rows);
   }, []);
@@ -40,4 +36,4 @@ export const CSVExportButton = ({ table }) => {
   )
 }
 
-export default CSVExportButton;
+export default CSVAircraftExportButton;

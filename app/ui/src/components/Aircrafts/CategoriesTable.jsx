@@ -1,27 +1,29 @@
 import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer, MRT_ExpandAllButton } from 'material-react-table';
 import { useMemo, useState } from 'react';
-import { Link } from "react-router-dom";
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useDialogs } from '@toolpad/core/useDialogs';
+// MUI Icons
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import Typography from "@mui/material/Typography";
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
-import CSVExportButton from './CSVExportButton';
-import NewLicenseRecordButton from './NewLicenseRecordButton';
-import { calculateExpiry, createDateColumn, getExpireColor } from "./helpers";
 import { tableJSONCodec } from '../../constants/constants';
-import { dateFilterFn } from '../../util/helpers';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
+import { useErrorNotification } from '../../hooks/useAppNotifications';
+import EditCategoriesModal from './EditCategoriesModal';
+import CSVCategoriesExportButton from './CSVCategoriesExportButton';
 
-const paginationKey = 'licensing-table-page-size';
-const columnVisibilityKey = 'licensing-table-column-visibility';
+const paginationKey = 'categories-table-page-size';
+const columnVisibilityKey = 'categories-table-column-visibility';
 
 const tableOptions = {
-  initialState: {
-    density: 'compact',
-    expanded: true,
-    grouping: ['category']
-  },
+  initialState: { density: 'compact' },
   positionToolbarAlertBanner: 'bottom',
   groupedColumnMode: 'remove',
   enableColumnResizing: true,
@@ -37,63 +39,50 @@ const tableOptions = {
   enableFacetedValues: true,
   enableSorting: true,
   enableColumnActions: true,
+  enableRowActions: true,
 }
 
-export const LisencingTable = ({ data, isLoading, ...props }) => {
+export const CategoriesTable = ({ ...props }) => {
+  const dialogs = useDialogs();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
+
+  const navigate = useNavigate();
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['models-categories'],
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+  });
+  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load categories' });
 
   const columns = useMemo(() => [
-    { accessorKey: "category", header: "Category", size: 150 },
-    {
-      accessorKey: "name",
-      header: "Name",
-      Cell: ({ renderedCellValue, row }) => (
-        <Typography variant="body2" color="primary">
-          <Link to={`/licensing/${row.original.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>{renderedCellValue}</Link>
-        </Typography>
-      ),
-      size: 250,
-    },
-    { accessorKey: "number", header: "Number" },
-    createDateColumn("issued", "Issued"),
-    createDateColumn("valid_from", "Valid From"),
-    createDateColumn("valid_until", "Valid Until"),
-    {
-      accessorId: "expire",
-      header: "Expire",
-      Cell: ({ row }) => {
-        const expiry = calculateExpiry(row.original.valid_until);
-        if (!expiry) return null;
-
-        return (
-          <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
-            {expiry.diffDays < 0
-              ? 'Expired'
-              : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
-          </Typography>
-        );
-      },
-      size: 150,
-    },
-    { accessorKey: "remarks", header: "Remarks", grow: true },
+    { accessorKey: "model", header: "Type", size: 130 },
+    { accessorKey: "category", header: "Category", grow: true },
   ], []);
+
+  const renderRowActions = ({ row }) => {
+    const payload = row.original;
+    return (
+      <Tooltip title="Edit Category">
+        <IconButton onClick={async () => await dialogs.open(EditCategoriesModal, payload)}>
+          <EditOutlinedIcon fontSize='small' />
+        </IconButton>
+      </Tooltip >
+    );
+  }
 
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
     data: data ?? [],
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
-    filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <NewLicenseRecordButton />
-        <CSVExportButton table={table} />
+        <CSVCategoriesExportButton table={table} />
       </Box>
     ),
     onPaginationChange: setPagination,
@@ -101,11 +90,13 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
     defaultColumn: {
       muiFilterTextFieldProps: ({ column }) => ({ label: `Filter by ${column.columnDef.header}` }),
     },
+    renderRowActions: renderRowActions,
     ...tableOptions
   });
 
   return (
     <>
+      {isLoading && <LinearProgress />}
       <MaterialReactTable table={table} {...props} />
       <Drawer anchor="right" open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} sx={{
         '& .MuiDrawer-paper': {
@@ -124,4 +115,4 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
   );
 }
 
-export default LisencingTable;
+export default CategoriesTable;

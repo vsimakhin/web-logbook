@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { AppProvider } from '@toolpad/core/react-router-dom';
 import { NotificationsProvider } from '@toolpad/core/useNotifications';
+import { DialogsProvider } from '@toolpad/core/useDialogs';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -26,9 +27,11 @@ function App() {
     <AppProvider theme={theme} navigation={NAV_ITEMS} branding={BRANDING} >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <QueryClientProvider client={queryClient}>
-          <NotificationsProvider>
-            <Outlet />
-          </NotificationsProvider>
+          <DialogsProvider>
+            <NotificationsProvider>
+              <Outlet />
+            </NotificationsProvider>
+          </DialogsProvider>
         </QueryClientProvider>
       </LocalizationProvider>
     </AppProvider>

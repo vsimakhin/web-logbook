@@ -107,8 +107,8 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := `INSERT INTO aircrafts (reg_name, aircraft_model, categories)
-		SELECT lv.reg_name, lv.aircraft_model, ''
+	query := `INSERT INTO aircrafts (reg_name, aircraft_model)
+		SELECT lv.reg_name, lv.aircraft_model
 		FROM logbook_view lv
 		WHERE lv.aircraft_model <> ''
 		AND lv.reg_name NOT IN (
@@ -120,14 +120,52 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 	return err
 }
 
+func (m *DBModel) GenerateAircraftCategoriesTable() (err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := `INSERT INTO aircraft_categories (model, categories)
+		SELECT lv.aircraft_model, ''
+		FROM logbook_view lv
+		WHERE lv.aircraft_model <> ''
+		AND lv.aircraft_model NOT IN (
+			SELECT ac.model
+			FROM aircraft_categories ac
+		)
+		GROUP BY lv.aircraft_model`
+	_, err = m.DB.ExecContext(ctx, query)
+	return err
+}
+
+func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := `SELECT model, categories FROM aircraft_categories ORDER BY model`
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return categories, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var cat Category
+		if err = rows.Scan(&cat.Model, &cat.Category); err != nil {
+			return categories, err
+		}
+		categories = append(categories, cat)
+	}
+
+	return categories, nil
+}
+
 func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := `SELECT 
-				reg_name, aircraft_model, categories 
-			FROM aircrafts 
-			ORDER BY aircraft_model, reg_name`
+				reg_name, aircraft_model, categories
+			FROM aircrafts_view av`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return aircrafts, err
@@ -143,6 +181,18 @@ func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
 	}
 
 	return aircrafts, nil
+}
+
+func (m *DBModel) UpdateAircraftModelsCategories(category Category) (err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := `UPDATE aircraft_categories
+		SET categories = ?
+		WHERE model = ?`
+	_, err = m.DB.ExecContext(ctx, query, category.Category, category.Model)
+
+	return nil
 }
 
 /////////////////////////////////

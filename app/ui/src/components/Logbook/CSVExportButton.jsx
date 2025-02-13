@@ -11,6 +11,7 @@ const csvConfig = mkConfig({
   fieldSeparator: ',',
   decimalSeparator: '.',
   useKeysAsHeaders: true,
+  filename: 'logbook',
 });
 
 const handleExportRows = (rows) => {

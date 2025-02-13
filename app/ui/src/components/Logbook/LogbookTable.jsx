@@ -5,12 +5,13 @@ import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 // Custom components and libraries
-import { dateFilterFn, getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
+import { getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 import PDFExportButton from './PDFExportButton';
 import CSVExportButton from './CSVExportButton';
 import NewFlightRecordButton from './NewFlightRecordButton';
 import { tableJSONCodec } from '../../constants/constants';
 import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderHeader, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
+import { dateFilterFn } from '../../util/helpers';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';

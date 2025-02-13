@@ -46,7 +46,7 @@ func validateDB(db *sql.DB, engine string) error {
 		// check tables
 		tables := []*Table{logbookTable, airportsTable, customAirportsTable,
 			settingsTable, licensingTable, attachmentsTable, tokensTable,
-			aircraftsTable,
+			aircraftsTable, aircraftCategoriesTable,
 		}
 
 		for _, table := range tables {
@@ -56,7 +56,7 @@ func validateDB(db *sql.DB, engine string) error {
 		}
 
 		// check views
-		views := []*View{logbookView, airportsView}
+		views := []*View{logbookView, airportsView, aircraftsView}
 		for _, view := range views {
 			if err := view.initView(db, engine); err != nil {
 				return err
