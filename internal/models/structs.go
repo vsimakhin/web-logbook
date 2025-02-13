@@ -16,9 +16,6 @@ type DBModel struct {
 // cache for calculated distance
 var dcache = make(map[string]int)
 
-// cache for airports
-var acache = make(map[string]Airport)
-
 // jsonResponse is a type for post data handlers response
 type JSONResponse struct {
 	OK          bool   `json:"ok"`
@@ -56,7 +53,8 @@ type FlightRecord struct {
 		Dual       string `json:"dual_time"`
 		Instructor string `json:"instructor_time"`
 
-		CrossCountry string
+		// calculated
+		CrossCountry string `json:"cc_time,omitempty"`
 	} `json:"time"`
 	Landings struct {
 		Day   int `json:"day"`
@@ -69,9 +67,10 @@ type FlightRecord struct {
 	PIC     string `json:"pic_name"`
 	Remarks string `json:"remarks"`
 
-	Distance int
-	PrevUUID string
-	NextUUID string
+	// calculated
+	Distance int    `json:"distance,omitempty"`
+	PrevUUID string `json:"prev_uuid,omitempty"`
+	NextUUID string `json:"next_uuid,omitempty"`
 }
 
 // Airpot is a structure for airport record
@@ -194,18 +193,21 @@ type HideFields struct {
 
 // Settings is a type for settings
 type Settings struct {
-	OwnerName               string            `json:"owner_name"`
-	LicenseNumber           string            `json:"license_number"`
-	Address                 string            `json:"address"`
-	SignatureText           string            `json:"signature_text"`
-	SignatureImage          string            `json:"signature_image"`
-	AircraftClasses         map[string]string `json:"aircraft_classes"`
-	AuthEnabled             bool              `json:"auth_enabled"`
-	Login                   string            `json:"login"`
-	Password                string            `json:"password"`
-	Hash                    string            `json:"hash"`
-	DisableFlightRecordHelp bool              `json:"disable_flightrecord_help"`
-	DisableLicenseWarning   bool              `json:"disable_license_warning"`
+	OwnerName       string            `json:"owner_name"`
+	LicenseNumber   string            `json:"license_number"`
+	Address         string            `json:"address"`
+	SignatureText   string            `json:"signature_text"`
+	SignatureImage  string            `json:"signature_image"`
+	AircraftClasses map[string]string `json:"aircraft_classes"`
+
+	AuthEnabled bool   `json:"auth_enabled"`
+	Login       string `json:"login"`
+	Password    string `json:"password"`
+	Hash        string `json:"hash"`
+	SecretKey   string `json:"secret_key"`
+
+	DisableFlightRecordHelp bool `json:"disable_flightrecord_help"`
+	DisableLicenseWarning   bool `json:"disable_license_warning"`
 
 	ExportA4  ExportPDF `json:"export_a4"`
 	ExportA5  ExportPDF `json:"export_a5"`
@@ -250,6 +252,18 @@ type Attachment struct {
 	Document     []byte `json:"document"`
 }
 
+// Aircraft is a type for aircrafts
+type Aircraft struct {
+	Reg      string `json:"reg"`
+	Model    string `json:"model"`
+	Category string `json:"category"`
+}
+
+type Category struct {
+	Model    string `json:"model"`
+	Category string `json:"category"`
+}
+
 // TableData is a type for Datatables
 type TableData struct {
 	Data [][]string `json:"data"`
@@ -261,10 +275,4 @@ type Mock struct {
 	Rows   []string
 	Values []driver.Value
 	Args   []driver.Value
-}
-
-type DeletedItem struct {
-	UUID       string `json:"uuid"`
-	TableName  string `json:"table_name"`
-	DeleteTime string `json:"delete_time"`
 }

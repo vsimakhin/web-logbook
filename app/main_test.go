@@ -41,8 +41,6 @@ func initTestApplication() (*application, sqlmock.Sqlmock) {
 		templateCache: tc,
 		version:       version,
 		db:            models.DBModel{DB: db},
-		session:       session,
-		isAuthEnabled: false,
 	}
 
 	return app, mock

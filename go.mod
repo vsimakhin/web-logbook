@@ -17,14 +17,12 @@ require (
 	modernc.org/sqlite v1.34.5
 )
 
-require github.com/rogpeppe/go-internal v1.13.1 // indirect
-
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/alexedwards/scs/mysqlstore v0.0.0-20240316134038-7e11d57e8885
-	github.com/alexedwards/scs/sqlite3store v0.0.0-20240316134038-7e11d57e8885
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/go-chi/cors v1.2.1
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect

@@ -1,8 +1,10 @@
 package models
 
 import (
+	"context"
 	"math"
 	"strings"
+	"time"
 
 	"golang.org/x/exp/slices"
 )
@@ -75,4 +77,17 @@ func initZeroFlightRecord() FlightRecord {
 	fr.Time.CrossCountry = "0:00"
 
 	return fr
+}
+
+// DefaultTimeout is the default timeout for database queries
+const DefaultTimeout = 60 * time.Second
+
+// ContextWithTimeout creates a new context with a timeout
+func (m *DBModel) ContextWithTimeout(timeout time.Duration) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), timeout)
+}
+
+// ContextWithDefaultTimeout creates a new context with the default timeout
+func (m *DBModel) ContextWithDefaultTimeout() (context.Context, context.CancelFunc) {
+	return m.ContextWithTimeout(DefaultTimeout)
 }
