@@ -3,11 +3,11 @@ import Grid from '@mui/material/Grid2';
 import Autocomplete from '@mui/material/Autocomplete';
 import Tooltip from '@mui/material/Tooltip';
 
-export const Select = ({ gsize, id, name = id, label, children, handleChange, ...props }) => {
+export const Select = ({ gsize, id, name = id, label, children, handleChange, disableClearable = true, ...props }) => {
   return (
     <Grid size={gsize}>
       <Tooltip title={props.tooltip}>
-        <Autocomplete id={id} name={name} disableClearable
+        <Autocomplete id={id} name={name} disableClearable={disableClearable}
           sx={{
             '& .MuiAutocomplete-inputRoot': {
               flexWrap: 'nowrap', // Prevents wrapping

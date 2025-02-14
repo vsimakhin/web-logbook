@@ -31,9 +31,17 @@ import { fetchAirport } from '../../util/http/airport';
 
 const getAirportData = async (id, navigate) => {
   try {
+    // Check cache first
+    const cachedData = queryClient.getQueryData(["airport", id]);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const response = await queryClient.fetchQuery({
       queryKey: ["airport", id],
       queryFn: ({ signal }) => fetchAirport({ signal, id, navigate }),
+      staleTime: 86400000, // 24 hours
+      cacheTime: 86400000, // 24 hours
     });
 
     return response;
@@ -44,6 +52,10 @@ const getAirportData = async (id, navigate) => {
 
 const addMarker = (features, airport) => {
   const code = `${airport.icao}${airport.iata ? '/' + airport.iata : ''}`;
+
+  // Check if marker already exists
+  const exists = features.find(f => f.get('code') === code);
+  if (exists) return;
 
   const feature = new Feature({
     geometry: new Point([airport.lon, airport.lat]).transform('EPSG:4326', 'EPSG:3857'),
@@ -72,7 +84,36 @@ const addMarker = (features, airport) => {
   features.push(feature);
 }
 
-export const FlightMap = ({ data, title = "Flight Map", sx }) => {
+const addGreatCircleLine = (departure, arrival, vectorSource) => {
+  // Create unique key for the line
+  const airports = [departure.icao, arrival.icao].sort();
+  const lineKey = `line-${airports[0]}-${airports[1]}`;
+
+  // Check if line already exists
+  const exists = vectorSource.getFeatures().some(f => f.get('lineKey') === lineKey);
+  if (exists) return;
+
+  const arcGenerator = new GreatCircle(
+    { x: departure.lon, y: departure.lat },
+    { x: arrival.lon, y: arrival.lat }
+  );
+
+  const arcLine = arcGenerator.Arc(100, { offset: 10 });
+  if (arcLine.geometries.length > 0) {
+    const coordinates = arcLine.geometries[0].coords.map((geometry) =>
+      transform([geometry[0], geometry[1]], 'EPSG:4326', 'EPSG:3857')
+    );
+
+    const lineFeature = new LineString(coordinates);
+    const feature = new Feature({
+      geometry: lineFeature,
+      lineKey: lineKey
+    });
+    vectorSource.addFeature(feature);
+  }
+}
+
+export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => {
   const navigate = useNavigate();
   const mapRef = useRef(null);
   const containerRef = useRef(null);
@@ -146,22 +187,9 @@ export const FlightMap = ({ data, title = "Flight Map", sx }) => {
 
             addMarker(features, departure);
             addMarker(features, arrival);
-
-            // Add line between departure and arrival (great circle)
-            const arcGenerator = new GreatCircle(
-              { x: departure.lon, y: departure.lat },
-              { x: arrival.lon, y: arrival.lat }
-            );
-            const arcLine = arcGenerator.Arc(100, { offset: 10 });
-            if (arcLine.geometries.length > 0) {
-              const coordinates = arcLine.geometries[0].coords.map((geometry) =>
-                transform([geometry[0], geometry[1]], 'EPSG:4326', 'EPSG:3857')
-              );
-
-              const lineFeature = new LineString(coordinates);
-              vectorSource.addFeature(new Feature({ geometry: lineFeature }));
+            if (routes) {
+              addGreatCircleLine(departure, arrival, vectorSource);
             }
-
             return { departure, arrival };
           });
 
@@ -195,10 +223,14 @@ export const FlightMap = ({ data, title = "Flight Map", sx }) => {
     <>
       {data && (
         <>
-          <Card variant="outlined" sx={sx}>
-            <CardContent>
+          <Card variant="outlined" sx={{
+            ...sx,
+            height: '85vh',
+            position: 'relative'
+          }}>
+            <CardContent sx={{ height: '100%' }}>
               <CardHeader title={title} />
-              <div ref={mapRef} style={{ width: '100%', height: '500px', borderRadius: '4px', overflow: 'hidden' }}></div>
+              <div ref={mapRef} style={{ width: '100%', height: 'calc(100% - 30px)', borderRadius: '4px', overflow: 'hidden' }}></div>
             </CardContent>
           </Card>
           <Card ref={containerRef} className="ol-popup">

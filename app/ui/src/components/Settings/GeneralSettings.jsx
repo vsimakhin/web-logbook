@@ -1,10 +1,10 @@
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
-// Custom
-import TextField from "../UIElements/TextField";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+// Custom
+import TextField from "../UIElements/TextField";
 
 export const GeneralSettings = ({ settings, handleChange }) => {
   const enableAuth = (enabled) => {

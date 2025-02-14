@@ -43,7 +43,6 @@ export const fetchAircraftCategories = async ({ signal, navigate }) => {
 }
 
 export const updateAircraftModelsCategories = async ({ payload, navigate }) => {
-  console.log(payload)
   const url = `${API_URL}/aircraft/models-categories`;
   const options = {
     method: 'PUT',

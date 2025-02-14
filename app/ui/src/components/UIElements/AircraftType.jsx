@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Select from "../UIElements/Select"
 import { fetchAircraftModels } from "../../util/http/aircraft";
 
-export const AircraftType = ({ gsize, value, handleChange }) => {
+export const AircraftType = ({ gsize, id = "aircraft.model", label = "Aircraft Type", value, handleChange, ...props }) => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([])
 
@@ -22,13 +22,14 @@ export const AircraftType = ({ gsize, value, handleChange }) => {
 
   return (
     <Select gsize={gsize}
-      id="aircraft.model"
-      label="Aircraft Type"
+      id={id}
+      label={label}
       handleChange={handleChange}
       value={value}
       tooltip={"Aircraft type"}
       options={options}
       freeSolo={true}
+      {...props}
     />
   );
 }

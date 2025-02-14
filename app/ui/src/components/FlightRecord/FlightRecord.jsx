@@ -12,7 +12,7 @@ import FlightRecordDetails from "./FlightRecordDetails";
 import { fetchFlightData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
-import FlightMap from "../Map/FlightMap";
+import FlightMap from "../FlightMap/FlightMap";
 import HelpButton from "./HelpButton";
 import NewFlightRecordButton from "./NewFlightRecordButton";
 import CopyFlightRecordButton from "./CopyFlightRecordButton";

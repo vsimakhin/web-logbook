@@ -14,7 +14,7 @@ export const Logbook = () => {
     queryKey: ['logbook'],
     queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
   });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load aircrafts list' });
+  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
   return (
     <>

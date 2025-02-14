@@ -5,8 +5,8 @@ import Divider from '@mui/material/Divider';
 // Custom
 import DatePicker from '../UIElements/DatePicker';
 import TextField from '../UIElements/TextField';
-import AircraftType from './AircraftType';
-import AircraftReg from './AircraftReg';
+import AircraftType from '../UIElements/AircraftType';
+import AircraftReg from '../UIElements/AircraftReg';
 import TimeField from './TimeField';
 import PlaceField from './PlaceField';
 import LandingFields from './LandingFields';

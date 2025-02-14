@@ -56,8 +56,6 @@ export const Settings = () => {
     });
   };
 
-  console.log(settings)
-
   return (
     <>
       {isLoading && <LinearProgress />}

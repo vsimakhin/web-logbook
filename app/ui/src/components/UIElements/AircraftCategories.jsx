@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // Custom
-import Select from "../UIElements/Select";
+import Select from "./Select";
 import { fetchAircraftCategories } from "../../util/http/aircraft";
 
-export const AircraftCategories = ({ gsize, value, handleChange }) => {
+export const AircraftCategories = ({ gsize, id = "category", label = "Category", value, handleChange, ...props }) => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([])
 
@@ -22,14 +22,15 @@ export const AircraftCategories = ({ gsize, value, handleChange }) => {
 
   return (
     <Select gsize={gsize}
-      id="category"
-      label="Category"
+      id={id}
+      label={label}
       handleChange={handleChange}
       value={value}
       tooltip={"Aircraft Category"}
       options={options}
       multiple
       freeSolo={true}
+      {...props}
     />
   );
 }

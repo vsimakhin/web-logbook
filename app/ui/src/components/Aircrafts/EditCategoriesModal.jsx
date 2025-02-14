@@ -5,7 +5,6 @@ import { useMutation } from '@tanstack/react-query';
 import Dialog from '@mui/material/Dialog';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from "../UIElements/CardHeader";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid2";
@@ -13,8 +12,9 @@ import Grid from "@mui/material/Grid2";
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 // Custom
+import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
-import AircraftCategories from './AircraftCategories';
+import AircraftCategories from '../UIElements/AircraftCategories';
 import { updateAircraftModelsCategories } from '../../util/http/aircraft';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
