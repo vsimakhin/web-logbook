@@ -120,6 +120,9 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) 
 		return fr, err
 	}
 
+	// calculate distance
+	m.processFlightrecord(&fr)
+
 	// get previous and next records uuid
 	fr.PrevUUID, fr.NextUUID = m.GetFlightRecordNextAndPrevUUID(uuid)
 
@@ -245,6 +248,7 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks); err != nil {
 			return flightRecords, err
 		}
+		m.processFlightrecord(&fr)
 		flightRecords = append(flightRecords, fr)
 	}
 

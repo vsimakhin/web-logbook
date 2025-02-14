@@ -11,7 +11,9 @@ const getStats = (data) => {
   let totalTimeMinutes = 0;
   let dayLandings = 0;
   let nightLandings = 0;
+  let distance = 0;
 
+  console.log(data);
   data.forEach(flight => {
     if (flight.departure.place) airports.add(flight.departure.place);
     if (flight.arrival.place) airports.add(flight.arrival.place);
@@ -24,6 +26,7 @@ const getStats = (data) => {
     totalTimeMinutes += convertTimeToMinutes(flight.time.total_time);
     dayLandings += parseInt(flight.landings.day) || 0;
     nightLandings += parseInt(flight.landings.night) || 0;
+    distance += parseInt(flight.distance) || 0;
   });
 
   return {
@@ -32,6 +35,7 @@ const getStats = (data) => {
     totalTime: convertMinutesToTime(totalTimeMinutes),
     dayLandings,
     nightLandings,
+    distance
   };
 };
 
@@ -45,6 +49,7 @@ export const SummaryStats = ({ data }) => {
         <Tile title="Airports" value={stats.airports} size={size} />
         <Tile title="Routes" value={stats.routes} size={size} />
         <Tile title="Total Time" value={stats.totalTime} size={size} />
+        <Tile title="Distance (nm)" value={stats.distance.toLocaleString()} size={size} />
         <Tile title="Landings (D/N)" value={`${stats.dayLandings}/${stats.nightLandings}`} size={size} />
       </Grid>
     </>

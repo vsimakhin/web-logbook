@@ -120,17 +120,6 @@ func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftMode
 	return aircraftRegs, aircraftModels
 }
 
-// getFlightRecordHelpSetting returns if help messages on the flight record page are enabled
-func (app *application) isFlightRecordHelpEnabled() bool {
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		return false
-	}
-
-	return !settings.DisableFlightRecordHelp
-}
-
 // parameterFilter is a custom string case insensetive compare function
 func parameterFilter(s string, substr string) bool {
 	if strings.TrimSpace(s) == "" {

@@ -1,80 +1,10 @@
 package models
 
 import (
-	"context"
 	"time"
 
 	"golang.org/x/exp/slices"
 )
-
-// distance calculates distance between 2 airports
-func (m *DBModel) distance(departure, arrival string) int {
-	if departure == arrival {
-		return 0
-	}
-
-	distID := ""
-	if departure > arrival {
-		distID = departure + arrival
-	} else {
-		distID = arrival + departure
-	}
-
-	if value, ok := dcache[distID]; ok {
-		return value
-	} else {
-		dep, err := m.GetAirportByID(departure)
-		if err != nil {
-			dcache[distID] = 0
-			return 0
-		}
-
-		arr, err := m.GetAirportByID(arrival)
-		if err != nil {
-			dcache[distID] = 0
-			return 0
-		}
-
-		d := int(dist(dep.Lat, dep.Lon, arr.Lat, arr.Lon))
-		dcache[distID] = d
-		return d
-	}
-}
-
-func (m *DBModel) processFlightrecord(fr *FlightRecord) {
-	// calculate distance
-	fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
-
-	// check for cross country flights
-	if fr.Departure.Place != fr.Arrival.Place {
-		fr.Time.CrossCountry = fr.Time.Total
-	} else {
-		fr.Time.CrossCountry = "0:00"
-	}
-}
-
-// CreateDistanceCache fills cache map with calculated distances
-func (m *DBModel) CreateDistanceCache() {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	query := "SELECT departure_place, arrival_place FROM logbook_view GROUP BY departure_place, arrival_place"
-	rows, err := m.DB.QueryContext(ctx, query)
-
-	if err != nil {
-		return
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var dep, arr string
-		if err := rows.Scan(&dep, &arr); err != nil {
-			return
-		}
-
-		m.distance(dep, arr)
-	}
-}
 
 // GetTotals calculates totals
 // startDate and endDate are in the format 20060102

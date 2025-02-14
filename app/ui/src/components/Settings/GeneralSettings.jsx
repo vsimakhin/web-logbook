@@ -3,6 +3,9 @@ import Grid from "@mui/material/Grid2";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+
 // Custom
 import TextField from "../UIElements/TextField";
 
@@ -18,7 +21,7 @@ export const GeneralSettings = ({ settings, handleChange }) => {
       handleChange("secret_key", base64Key);
     }
   }
-
+  console.log(settings)
   return (
     <>
       <Grid container spacing={1}>
@@ -51,6 +54,29 @@ export const GeneralSettings = ({ settings, handleChange }) => {
           tooltip="Signature Text"
         />
       </Grid >
+
+      <Divider sx={{ m: 1 }} />
+
+      <Grid container >
+        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+          <FormControlLabel sx={{ m: 0 }}
+            control={
+              <ToggleButtonGroup
+                size="small"
+                sx={{ ml: 1 }}
+                value={parseInt(settings.time_fields_auto_format) || 0}
+                onChange={(_, value) => handleChange('time_fields_auto_format', parseInt(value))}
+                exclusive
+              >
+                <ToggleButton value={0}>None</ToggleButton>
+                <ToggleButton value={1}>HH:MM</ToggleButton>
+                <ToggleButton value={2}>H:MM</ToggleButton>
+              </ToggleButtonGroup>
+            }
+            label="Logbook table time fields autoformat" labelPlacement="start"
+          />
+        </Grid>
+      </Grid>
 
       <Divider sx={{ m: 1 }} />
 
