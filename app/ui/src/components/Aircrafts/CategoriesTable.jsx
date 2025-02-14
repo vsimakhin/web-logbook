@@ -1,4 +1,4 @@
-import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer, MRT_ExpandAllButton } from 'material-react-table';
+import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useDialogs } from '@toolpad/core/useDialogs';
@@ -6,7 +6,6 @@ import { useDialogs } from '@toolpad/core/useDialogs';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -18,6 +17,7 @@ import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
 import EditCategoriesModal from './EditCategoriesModal';
 import CSVExportButton from '../UIElements/CSVExportButton';
+import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 
 const paginationKey = 'categories-table-page-size';
 const columnVisibilityKey = 'categories-table-column-visibility';
@@ -96,19 +96,7 @@ export const CategoriesTable = ({ ...props }) => {
     <>
       {isLoading && <LinearProgress />}
       <MaterialReactTable table={table} {...props} />
-      <Drawer anchor="right" open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} sx={{
-        '& .MuiDrawer-paper': {
-          marginTop: '64px',
-          height: 'calc(100% - 64px)',
-        },
-      }}>
-        <Box sx={{ width: 350, padding: 2 }}>
-          {table.getLeafHeaders().map((header) => {
-            if (header.id.startsWith('mrt-') || header.id.startsWith('Expire') || header.id.startsWith('center_1_')) return null;
-            return < MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
-          })}
-        </Box>
-      </Drawer>
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>
   );
 }

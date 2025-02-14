@@ -1,11 +1,10 @@
-import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer, MRT_ExpandAllButton } from 'material-react-table';
+import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
@@ -13,6 +12,7 @@ import { fetchAircrafts } from "../../util/http/aircraft";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
+import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 
 const paginationKey = 'aircrafts-table-page-size';
 const columnVisibilityKey = 'aircrafts-table-column-visibility';
@@ -80,19 +80,7 @@ export const AircraftsTable = ({ ...props }) => {
     <>
       {isLoading && <LinearProgress />}
       <MaterialReactTable table={table} {...props} />
-      <Drawer anchor="right" open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} sx={{
-        '& .MuiDrawer-paper': {
-          marginTop: '64px',
-          height: 'calc(100% - 64px)',
-        },
-      }}>
-        <Box sx={{ width: 350, padding: 2 }}>
-          {table.getLeafHeaders().map((header) => {
-            if (header.id.startsWith('mrt-') || header.id.startsWith('Expire') || header.id.startsWith('center_1_')) return null;
-            return < MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
-          })}
-        </Box>
-      </Drawer>
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>
   );
 }

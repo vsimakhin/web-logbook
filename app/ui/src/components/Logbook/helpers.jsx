@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 // Custom
 import { convertMinutesToTime, convertTimeToMinutes, getValue } from "../../util/helpers";
+import { LandingFilter } from "../UIElements/LandingsFilter";
 
 export const renderTextProps = {
   muiTableBodyCellProps: { align: "left", sx: { p: 0.5 } },
@@ -77,7 +78,8 @@ export const createLandingColumn = (id, name) => ({
   header: name,
   size: 53,
   ...renderProps,
-  filterVariant: "number-range", filterFn: "landingFilterFn",
+  filterFn: "landingFilterFn",
+  Filter: ({ column }) => <LandingFilter column={column} />, // using custom filter component, otherwise it just goes crazy
   Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue()),
   Footer: ({ table }) => renderLangingFooter(table, id),
 })
@@ -101,6 +103,7 @@ export const createColumn = (id, name, size, isText = false, footer = undefined)
 })
 
 export const getFilterLabel = (column) => {
+
   const id = column.columnDef.id;
   const header = column.columnDef.header;
 
@@ -127,7 +130,11 @@ export const getFilterLabel = (column) => {
     fieldName = `${header} Time`;
   }
 
-  return { label: `Filter by ${fieldName}`, placeholder: '', InputLabelProps: { shrink: true } };
+  return {
+    label: `Filter by ${fieldName}`,
+    placeholder: '',
+    InputLabelProps: { shrink: true },
+  };
 };
 
 // custom filter function for time range
@@ -150,12 +157,12 @@ export const timeFilterFn = (row, columnId, filterValue) => {
 // custom filter function for landing range
 export const landingFilterFn = (row, columnId, filterValue) => {
   const rowValue = parseInt(getValue(row.original, columnId)) || 0;
-  const [min, max] = filterValue || [];
+  const [min, max] = filterValue || ["", ""];
 
   if (!min && !max) return true;
 
-  const isAfterMin = min !== undefined ? rowValue >= min : true;
-  const isBeforeMax = max !== undefined ? rowValue <= max : true;
+  const isAfterMin = min !== "" ? rowValue >= min : true;
+  const isBeforeMax = max !== "" ? rowValue <= max : true;
 
   return isAfterMin && isBeforeMax;
 }

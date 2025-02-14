@@ -1,9 +1,8 @@
-import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer } from 'material-react-table';
+import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
 // Custom components and libraries
 import { getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 import PDFExportButton from './PDFExportButton';
@@ -12,6 +11,7 @@ import { tableJSONCodec } from '../../constants/constants';
 import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderHeader, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
+import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
@@ -148,19 +148,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
   return (
     <>
       <MaterialReactTable table={table} {...props} />
-      <Drawer anchor="right" open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} sx={{
-        '& .MuiDrawer-paper': {
-          marginTop: '64px',
-          height: 'calc(100% - 64px)',
-        },
-      }}>
-        <Box sx={{ width: 350, padding: 2 }}>
-          {table.getLeafHeaders().map((header) => {
-            if (header.id === 'mrt-row-spacer' || header.id === 'mrt-row-actions' || header.id.startsWith('center_1_')) return null;
-            return < MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
-          })}
-        </Box>
-      </Drawer>
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>
   );
 }

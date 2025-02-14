@@ -1,10 +1,9 @@
-import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer, MRT_ExpandAllButton } from 'material-react-table';
+import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { useMemo, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
 import Typography from "@mui/material/Typography";
 // Custom components and libraries
 import NewLicenseRecordButton from './NewLicenseRecordButton';
@@ -12,6 +11,7 @@ import { calculateExpiry, createDateColumn, getExpireColor } from "./helpers";
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
+import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 
 const paginationKey = 'licensing-table-page-size';
 const columnVisibilityKey = 'licensing-table-column-visibility';
@@ -105,19 +105,7 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
   return (
     <>
       <MaterialReactTable table={table} {...props} />
-      <Drawer anchor="right" open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} sx={{
-        '& .MuiDrawer-paper': {
-          marginTop: '64px',
-          height: 'calc(100% - 64px)',
-        },
-      }}>
-        <Box sx={{ width: 350, padding: 2 }}>
-          {table.getLeafHeaders().map((header) => {
-            if (header.id.startsWith('mrt-') || header.id.startsWith('Expire') || header.id.startsWith('center_1_')) return null;
-            return <MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
-          })}
-        </Box>
-      </Drawer>
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>
   );
 }
