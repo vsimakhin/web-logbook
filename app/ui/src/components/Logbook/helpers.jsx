@@ -127,7 +127,7 @@ export const getFilterLabel = (column) => {
     fieldName = `${header} Time`;
   }
 
-  return { label: `Filter by ${fieldName}` };
+  return { label: `Filter by ${fieldName}`, placeholder: '', InputLabelProps: { shrink: true } };
 };
 
 // custom filter function for time range

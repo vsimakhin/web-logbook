@@ -8,6 +8,7 @@ import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
+import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
 import dayjs from 'dayjs';
 
 export const DRAWER_WIDTH = 200;
@@ -20,6 +21,7 @@ export const NAV_ITEMS = [
   { segment: 'licensing', title: 'Licensing', icon: <ContactPageOutlinedIcon /> },
   { segment: 'map', title: 'Map', icon: <MapOutlinedIcon /> },
   { segment: 'aircrafts', title: 'Aircrafts', icon: <FlightOutlinedIcon /> },
+  { segment: 'airports', title: 'Airports', icon: <FlightTakeoffOutlinedIcon /> },
   { kind: 'divider' },
   {
     segment: 'stats', title: 'Statistics', icon: <QueryStatsOutlinedIcon />, children: [
@@ -154,3 +156,9 @@ export const tableJSONCodec = {
   },
   stringify: (value) => JSON.stringify(value),
 }
+
+export const defaultColumnFilterTextFieldProps = ({ column }) => ({
+  label: `Filter by ${column.columnDef.header}`,
+  placeholder: '',
+  InputLabelProps: { shrink: true },
+});

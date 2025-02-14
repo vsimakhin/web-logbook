@@ -7,11 +7,11 @@ import Drawer from '@mui/material/Drawer';
 // Custom components and libraries
 import { getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 import PDFExportButton from './PDFExportButton';
-import CSVExportButton from './CSVExportButton';
 import NewFlightRecordButton from './NewFlightRecordButton';
 import { tableJSONCodec } from '../../constants/constants';
 import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderHeader, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 import { dateFilterFn } from '../../util/helpers';
+import CSVExportButton from '../UIElements/CSVExportButton';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
@@ -133,7 +133,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
         <NewFlightRecordButton />
-        <CSVExportButton table={table} />
+        <CSVExportButton table={table} type="logbook" />
         <PDFExportButton />
       </Box>
     ),

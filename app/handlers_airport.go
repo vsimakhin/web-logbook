@@ -33,6 +33,17 @@ func (app *application) HandlerAirportByID(w http.ResponseWriter, r *http.Reques
 	app.writeJSON(w, http.StatusOK, airport)
 }
 
+// HandlerApiAirportList returns a list of standard airports
+func (app *application) HandlerApiAirportList(w http.ResponseWriter, r *http.Request) {
+	airports, err := app.db.GetStandardAirports()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, airports)
+}
+
 /////////////////////////////////////////////////
 // for futher review
 /////////////////////////////////////////////////
@@ -262,28 +273,3 @@ func (app *application) HandlerAirportCustomData(w http.ResponseWriter, r *http.
 }
 
 // HandlerAirportDBData generates data for the standard airports table
-func (app *application) HandlerAirportDBData(w http.ResponseWriter, r *http.Request) {
-
-	type TableData struct {
-		Data [][]string `json:"data"`
-	}
-
-	var tableData TableData
-
-	airports, err := app.db.GetStandardAirports()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for _, item := range airports {
-		tableRow := []string{item.ICAO, item.IATA, item.Name, item.City, item.Country,
-			fmt.Sprintf("%d", item.Elevation), fmt.Sprintf("%f", item.Lat), fmt.Sprintf("%f", item.Lon), "",
-		}
-
-		tableData.Data = append(tableData.Data, tableRow)
-	}
-
-	app.writeJSON(w, http.StatusOK, tableData)
-}

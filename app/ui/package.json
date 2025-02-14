@@ -22,7 +22,7 @@
     "dayjs": "^1.11.13",
     "export-to-csv": "^1.4.0",
     "file-type": "^20.0.0",
-    "material-react-table": "^3.0.3",
+    "material-react-table": "3.0.3",
     "ol": "^10.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

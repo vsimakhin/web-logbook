@@ -8,11 +8,11 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
-import CSVAircraftExportButton from './CSVAircraftExportButton';
-import { tableJSONCodec } from '../../constants/constants';
+import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import { fetchAircrafts } from "../../util/http/aircraft";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { dateFilterFn } from '../../util/helpers';
+import CSVExportButton from '../UIElements/CSVExportButton';
 
 const paginationKey = 'aircrafts-table-page-size';
 const columnVisibilityKey = 'aircrafts-table-column-visibility';
@@ -67,14 +67,12 @@ export const AircraftsTable = ({ ...props }) => {
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <CSVAircraftExportButton table={table} />
+        <CSVExportButton table={table} type="aircrafts" />
       </Box>
     ),
     onPaginationChange: setPagination,
     state: { pagination, columnFilters: columnFilters, columnVisibility },
-    defaultColumn: {
-      muiFilterTextFieldProps: ({ column }) => ({ label: `Filter by ${column.columnDef.header}` }),
-    },
+    defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     ...tableOptions
   });
 

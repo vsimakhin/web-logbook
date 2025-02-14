@@ -11,13 +11,13 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
-import { tableJSONCodec } from '../../constants/constants';
+import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
 import EditCategoriesModal from './EditCategoriesModal';
-import CSVCategoriesExportButton from './CSVCategoriesExportButton';
+import CSVExportButton from '../UIElements/CSVExportButton';
 
 const paginationKey = 'categories-table-page-size';
 const columnVisibilityKey = 'categories-table-column-visibility';
@@ -82,14 +82,12 @@ export const CategoriesTable = ({ ...props }) => {
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <CSVCategoriesExportButton table={table} />
+        <CSVExportButton table={table} type="categories" />
       </Box>
     ),
     onPaginationChange: setPagination,
     state: { pagination, columnFilters: columnFilters, columnVisibility },
-    defaultColumn: {
-      muiFilterTextFieldProps: ({ column }) => ({ label: `Filter by ${column.columnDef.header}` }),
-    },
+    defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     renderRowActions: renderRowActions,
     ...tableOptions
   });

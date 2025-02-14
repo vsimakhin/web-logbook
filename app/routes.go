@@ -168,6 +168,7 @@ func (app *application) routes() *chi.Mux {
 
 		// airports
 		r.Route("/airport", func(r chi.Router) {
+			r.With(middleware.Compress(5)).Get("/standard-list", app.HandlerApiAirportList)
 			r.Get("/{id}", app.HandlerAirportByID)
 		})
 
@@ -200,7 +201,7 @@ func (app *application) routes() *chi.Mux {
 		// airports
 		r.Get(APIAirportID, app.HandlerAirportByID)
 		r.Get(APIAirportUpdate, app.HandlerAirportUpdate)
-		r.Get(APIAirportStandardData, app.HandlerAirportDBData)
+		// r.Get(APIAirportStandardData, app.HandlerAirportDBData)
 		r.Get(APIAirportCustomData, app.HandlerAirportCustomData)
 		r.Post(APIAirportAddCustom, app.HandlerAirportAddCustom)
 		r.Post(APIAirportDeleteCustom, app.HandlerAirportDeleteCustom)

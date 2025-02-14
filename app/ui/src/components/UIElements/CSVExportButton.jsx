@@ -7,15 +7,48 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 
-const csvConfig = mkConfig({
+const defaultConfig = {
   fieldSeparator: ',',
   decimalSeparator: '.',
   useKeysAsHeaders: true,
-  filename: 'logbook',
-});
+  filename: 'export',
+};
 
-const handleExportRows = (rows) => {
-  const rowData = rows.map((row) => ({
+// Separate mappers for different exports
+const exportMappers = {
+  aircrafts: (rows) => rows.map((row) => ({
+    "Registration": row.original.reg,
+    "Model": row.original.model,
+    "Category": row.original.category,
+  })),
+
+  categories: (rows) => rows.map((row) => ({
+    "Type": row.original.model,
+    "Category": row.original.category,
+  })),
+
+  airports: (rows) => rows.map((row) => ({
+    "ICAO": row.original.icao,
+    "IATA": row.original.iata,
+    "Name": row.original.name,
+    "City": row.original.city,
+    "Country": row.original.country,
+    "Elevation": row.original.elevation,
+    "Lat": row.original.lat,
+    "Lon": row.original.lon,
+  })),
+
+  licensing: (rows) => rows.map((row) => ({
+    "Category": row.original.category,
+    "Name": row.original.name,
+    "Number": row.original.number,
+    "Issued": row.original.issued,
+    "Valid From": row.original.valid_from,
+    "Valid Until": row.original.valid_until,
+    "Remarks": row.original.remarks,
+  })),
+
+  logbook: (rows) => rows.map((row) => ({
     "Date": row.original.date,
     "Departure Place": row.original.departure.place,
     "Departure Time": row.original.departure.time,
@@ -39,19 +72,29 @@ const handleExportRows = (rows) => {
     "SIM Time": row.original.sim.time,
     "PIC Name": row.original.pic_name,
     "Remarks": row.original.remarks,
-  }));
+  })),
+};
+
+const handleExportRows = (rows, type) => {
+  const mapper = exportMappers[type];
+  if (!mapper) return;
+
+  const rowData = mapper(rows);
+  const csvConfig = mkConfig({ ...defaultConfig, filename: type });
   const csv = generateCsv(csvConfig)(rowData);
   download(csvConfig)(csv);
 };
 
-export const CSVExportButton = ({ table }) => {
-  const handleCSVExport = useCallback((table) => {
-    handleExportRows(table.getPrePaginationRowModel().rows);
+export const CSVExportButton = ({ table, type }) => {
+  const handleCSVExport = useCallback((table, type) => {
+    handleExportRows(table.getPrePaginationRowModel().rows, type);
   }, []);
 
   return (
     <Tooltip title="Quick CSV Export">
-      <IconButton onClick={() => handleCSVExport(table)} size="small"><FileDownloadOutlinedIcon /></IconButton>
+      <IconButton onClick={() => handleCSVExport(table, type)} size="small">
+        <FileDownloadOutlinedIcon />
+      </IconButton>
     </Tooltip>
   )
 }

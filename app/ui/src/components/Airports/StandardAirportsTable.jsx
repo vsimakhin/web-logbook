@@ -1,27 +1,23 @@
 import { MaterialReactTable, useMaterialReactTable, MRT_TableHeadCellFilterContainer, MRT_ExpandAllButton } from 'material-react-table';
 import { useMemo, useState } from 'react';
-import { Link } from "react-router-dom";
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import Typography from "@mui/material/Typography";
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
-import NewLicenseRecordButton from './NewLicenseRecordButton';
-import { calculateExpiry, createDateColumn, getExpireColor } from "./helpers";
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import { dateFilterFn } from '../../util/helpers';
+import { useErrorNotification } from "../../hooks/useAppNotifications";
+import { fetchAirports } from '../../util/http/airport';
 import CSVExportButton from '../UIElements/CSVExportButton';
 
-const paginationKey = 'licensing-table-page-size';
-const columnVisibilityKey = 'licensing-table-column-visibility';
+const paginationKey = 'standard-airports-table-page-size';
+const columnVisibilityKey = 'standard-airports-table-column-visibility';
 
 const tableOptions = {
-  initialState: {
-    density: 'compact',
-    expanded: true,
-    grouping: ['category']
-  },
+  initialState: { density: 'compact' },
   positionToolbarAlertBanner: 'bottom',
   groupedColumnMode: 'remove',
   enableColumnResizing: true,
@@ -39,47 +35,29 @@ const tableOptions = {
   enableColumnActions: true,
 }
 
-export const LisencingTable = ({ data, isLoading, ...props }) => {
+export const StandardAirportsTable = ({ ...props }) => {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
+
+  const navigate = useNavigate();
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['airports'],
+    queryFn: ({ signal }) => fetchAirports({ signal, navigate }),
+  });
+  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load airports' });
 
   const columns = useMemo(() => [
-    { accessorKey: "category", header: "Category", size: 150 },
-    {
-      accessorKey: "name",
-      header: "Name",
-      Cell: ({ renderedCellValue, row }) => (
-        <Typography variant="body2" color="primary">
-          <Link to={`/licensing/${row.original.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>{renderedCellValue}</Link>
-        </Typography>
-      ),
-      size: 250,
-    },
-    { accessorKey: "number", header: "Number" },
-    createDateColumn("issued", "Issued"),
-    createDateColumn("valid_from", "Valid From"),
-    createDateColumn("valid_until", "Valid Until"),
-    {
-      accessorId: "expire",
-      header: "Expire",
-      Cell: ({ row }) => {
-        const expiry = calculateExpiry(row.original.valid_until);
-        if (!expiry) return null;
-
-        return (
-          <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
-            {expiry.diffDays < 0
-              ? 'Expired'
-              : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
-          </Typography>
-        );
-      },
-      size: 150,
-    },
-    { accessorKey: "remarks", header: "Remarks", grow: true },
+    { accessorKey: "icao", header: "ICAO", size: 100 },
+    { accessorKey: "iata", header: "IATA", size: 100 },
+    { accessorKey: "name", header: "Name", grow: true },
+    { accessorKey: "city", header: "City", size: 120 },
+    { accessorKey: "country", header: "Country", size: 70 },
+    { accessorKey: "elevation", header: "Elevation", size: 70 },
+    { accessorKey: "lat", header: "Lat", size: 70 },
+    { accessorKey: "lon", header: "Lon", size: 70 },
   ], []);
 
   const table = useMaterialReactTable({
@@ -87,13 +65,11 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
     columns: columns,
     data: data ?? [],
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
-    filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <NewLicenseRecordButton />
-        <CSVExportButton table={table} type="licensing" />
+        <CSVExportButton table={table} type="airports" />
       </Box>
     ),
     onPaginationChange: setPagination,
@@ -104,6 +80,7 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
 
   return (
     <>
+      {isLoading && <LinearProgress />}
       <MaterialReactTable table={table} {...props} />
       <Drawer anchor="right" open={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} sx={{
         '& .MuiDrawer-paper': {
@@ -113,8 +90,8 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
       }}>
         <Box sx={{ width: 350, padding: 2 }}>
           {table.getLeafHeaders().map((header) => {
-            if (header.id.startsWith('mrt-') || header.id.startsWith('Expire') || header.id.startsWith('center_1_')) return null;
-            return <MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
+            if (header.id.startsWith('mrt-') || header.id.startsWith('center_1_')) return null;
+            return < MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
           })}
         </Box>
       </Drawer>
@@ -122,4 +99,4 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
   );
 }
 
-export default LisencingTable;
+export default StandardAirportsTable;
