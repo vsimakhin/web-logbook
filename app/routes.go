@@ -228,23 +228,9 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIStatsTotalsByClassPage, app.HandlerStatsTotalsByClassPage)
 		r.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)
 
-		// map
-		// r.Get(APIMap, app.HandlerMap)
-		// r.Get(APIMapData, app.HandlerMapData)
-
 		// api & parameters
 		r.Get(APIPreferences, app.HandlerPreferences)
 	})
-
-	// other stuff
-	// if app.config.env == "dev" {
-	// 	r.Handle("/static/*", app.HandlerStatic())
-	// } else {
-	// 	r.Handle("/static/*", middleware.SetHeader("Cache-Control", "private, max-age=3600, must-revalidate")(app.HandlerStatic()))
-	// }
-	// r.HandleFunc("/favicon.ico", app.HandlerFavicon)
-	// r.NotFound(app.HandlerNotFound)
-	// r.MethodNotAllowed(app.HandlerNotAllowed)
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))
 
