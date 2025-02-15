@@ -51,7 +51,12 @@ const getAirportData = async (id, navigate) => {
 }
 
 const addMarker = (features, airport) => {
-  const code = `${airport.icao}${airport.iata ? '/' + airport.iata : ''}`;
+  /**
+   * Code string for an airport based on its IATA and ICAO codes.
+   * If the airport has both IATA and ICAO codes and they are different, 
+   * the code will be in the format "ICAO/IATA". Otherwise, it will just be the ICAO code.
+   */
+  const code = airport.iata && airport.iata !== airport.icao ? `${airport.icao}/${airport.iata}` : airport.icao;
 
   // Check if marker already exists
   const exists = features.find(f => f.get('code') === code);

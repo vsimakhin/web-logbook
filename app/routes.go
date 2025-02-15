@@ -164,12 +164,19 @@ func (app *application) routes() *chi.Mux {
 			r.Get("/list", app.HandlerApiSettingsList)
 			r.Put("/general", app.HandlerApiSettingsUpdate)
 			r.Put("/signature", app.HandlerApiSettingsSignature)
+			r.Put("/airports", app.HandlerApiSettingsAirports)
 		})
 
 		// airports
 		r.Route("/airport", func(r chi.Router) {
-			r.With(middleware.Compress(5)).Get("/standard-list", app.HandlerApiAirportList)
-			r.Get("/{id}", app.HandlerAirportByID)
+			r.With(middleware.Compress(5)).Get("/standard-list", app.HandlerApiStandardAirportList)
+			r.With(middleware.Compress(5)).Get("/custom-list", app.HandlerApiCustomAirportList)
+			r.With(middleware.Compress(5)).Get("/list", app.HandlerApiAirportList)
+			r.Post("/custom", app.HandlerApiAirportCustomNew)
+			r.Put("/custom", app.HandlerApiAirportCustomUpdate)
+			r.Delete("/custom", app.HandlerApiAirportCustomDelete)
+			r.Get("/{id}", app.HandlerApiAirportByID)
+			r.Post("/update-db", app.HandlerApiAirportDBUpdate)
 		})
 
 		// export
@@ -198,23 +205,6 @@ func (app *application) routes() *chi.Mux {
 		r.Post(APIImportCreateBackup, app.HandlerImportCreateBackup)
 		r.Post(APIImportRun, app.HandlerImportRun)
 
-		// airports
-		r.Get(APIAirportID, app.HandlerAirportByID)
-		r.Get(APIAirportUpdate, app.HandlerAirportUpdate)
-		// r.Get(APIAirportStandardData, app.HandlerAirportDBData)
-		r.Get(APIAirportCustomData, app.HandlerAirportCustomData)
-		r.Post(APIAirportAddCustom, app.HandlerAirportAddCustom)
-		r.Post(APIAirportDeleteCustom, app.HandlerAirportDeleteCustom)
-
-		// aircrafts
-		r.Get(APISettingsAircraftClasses, app.HandlerSettingsAircraftClasses)
-		r.Get(APIAircrafts, app.HandlerAircrafts)
-		r.Get(APIAircraftsFilter, app.HandlerAircrafts)
-
-		// settings
-		r.Get(APISettingsAirportDB, app.HandlerSettingsAirportDB)
-		r.Post(APISettingsAirportDB, app.HandlerSettingsAirportDBSave)
-
 		// stats
 		r.Get(APIStatsTotals, app.HandlerStatsTotals)
 		r.Get(APIStatsTotalsByType, app.HandlerStatsTotalsByType)
@@ -228,9 +218,6 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIStatsTotalsByTypePage, app.HandlerStatsTotalsByTypePage)
 		r.Get(APIStatsTotalsByClassPage, app.HandlerStatsTotalsByClassPage)
 		r.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)
-
-		// api & parameters
-		r.Get(APIPreferences, app.HandlerPreferences)
 	})
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))

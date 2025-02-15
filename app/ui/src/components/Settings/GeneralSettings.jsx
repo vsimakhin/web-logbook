@@ -21,7 +21,7 @@ export const GeneralSettings = ({ settings, handleChange }) => {
       handleChange("secret_key", base64Key);
     }
   }
-  console.log(settings)
+
   return (
     <>
       <Grid container spacing={1}>
@@ -59,7 +59,7 @@ export const GeneralSettings = ({ settings, handleChange }) => {
 
       <Grid container >
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-          <FormControlLabel sx={{ m: 0 }}
+          <FormControlLabel sx={{ m: 0, width: '100%', display: 'flex', justifyContent: 'space-between' }}
             control={
               <ToggleButtonGroup
                 size="small"

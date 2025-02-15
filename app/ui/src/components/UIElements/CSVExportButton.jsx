@@ -38,6 +38,15 @@ const exportMappers = {
     "Lon": row.original.lon,
   })),
 
+  "custom-airports": (rows) => rows.map((row) => ({
+    "Name": row.original.name,
+    "City": row.original.city,
+    "Country": row.original.country,
+    "Elevation": row.original.elevation,
+    "Lat": row.original.lat,
+    "Lon": row.original.lon,
+  })),
+
   licensing: (rows) => rows.map((row) => ({
     "Category": row.original.category,
     "Name": row.original.name,

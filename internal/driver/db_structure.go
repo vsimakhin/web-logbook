@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "3.0.11"
+	schemaVersion = "3.0.0-alpha11"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -142,12 +142,12 @@ var airportsView = NewView("airports_view",
 		SQLite: `
 			SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports
 			UNION
-			SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom
+			SELECT UPPER(name) as icao, UPPER(name) as iata, name, city, country, elevation, lat, lon FROM airports_custom
 			`,
 		MySQL: `
 			SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports
 			UNION
-			SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom
+			SELECT UPPER(name) as icao, UPPER(name) as iata, name, city, country, elevation, lat, lon FROM airports_custom
 			`,
 	},
 )

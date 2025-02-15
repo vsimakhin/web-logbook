@@ -75,71 +75,27 @@ func (app *application) HandlerApiSettingsSignature(w http.ResponseWriter, r *ht
 	app.writeOkResponse(w, "Signature updated")
 }
 
-////////////////////////////////////
-// for review
-
-func (app *application) HandlerSettingsAirportDB(w http.ResponseWriter, r *http.Request) {
-	records, err := app.db.GetAirportCount()
+func (app *application) HandlerApiSettingsAirports(w http.ResponseWriter, r *http.Request) {
+	oldsettings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data := make(map[string]interface{})
-	data["records"] = records
-	data["activePage"] = "settings"
-	data["activeSubPage"] = "airports"
-	if err := app.renderTemplate(w, r, "settings-airportdb", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
-// HandlerSettingsAirportDBSave serves the POST request for airportdb settings update
-func (app *application) HandlerSettingsAirportDBSave(w http.ResponseWriter, r *http.Request) {
-
-	cursettings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	var settings models.Settings
-	var response models.JSONResponse
-
 	err = json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	cursettings.AirportDBSource = settings.AirportDBSource
-	cursettings.NoICAOFilter = settings.NoICAOFilter
-
-	err = app.db.UpdateSettings(cursettings)
+	oldsettings.AirportDBSource = settings.AirportDBSource
+	oldsettings.NoICAOFilter = settings.NoICAOFilter
+	err = app.db.UpdateSettings(oldsettings)
 	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Settings have been updated"
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerSettingsAircraftClasses is a handler for aircraft groups/classes
-func (app *application) HandlerSettingsAircraftClasses(w http.ResponseWriter, r *http.Request) {
-
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, settings.AircraftClasses)
+	app.writeOkResponse(w, "Airports DB Settings updated")
 }

@@ -10,13 +10,15 @@ import LinearProgress from '@mui/material/LinearProgress';
 import CardHeader from "../UIElements/CardHeader";
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchStandardAirports } from '../../util/http/airport';
+import { fetchCustomAirports } from '../../util/http/airport';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
-import CopyAirportButton from './CopyAirportButton';
+import EditCustomAirportButton from './EditCustomAirportButton';
+import DeleteCustomAirportButton from './DeleteCustomAirportButton';
+import AddCustomAirportButton from './AddCustomAirportButton';
 
-const paginationKey = 'standard-airports-table-page-size';
-const columnVisibilityKey = 'standard-airports-table-column-visibility';
+const paginationKey = 'custom-airports-table-page-size';
+const columnVisibilityKey = 'custom-airports-table-column-visibility';
 
 const tableOptions = {
   initialState: { density: 'compact' },
@@ -38,23 +40,20 @@ const tableOptions = {
   enableRowActions: true,
 }
 
-export const StandardAirportsTable = ({ ...props }) => {
+export const CustomAirportsTable = ({ ...props }) => {
+  const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
 
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['airports'],
-    queryFn: ({ signal }) => fetchStandardAirports({ signal, navigate }),
+    queryKey: ['custom-airports'],
+    queryFn: ({ signal }) => fetchCustomAirports({ signal, navigate }),
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load airports' });
 
   const columns = useMemo(() => [
-    { accessorKey: "icao", header: "ICAO", size: 100 },
-    { accessorKey: "iata", header: "IATA", size: 100 },
     { accessorKey: "name", header: "Name", grow: true },
     { accessorKey: "city", header: "City", size: 120 },
     { accessorKey: "country", header: "Country", size: 70 },
@@ -66,7 +65,10 @@ export const StandardAirportsTable = ({ ...props }) => {
   const renderRowActions = ({ row }) => {
     const payload = row.original;
     return (
-      <CopyAirportButton payload={payload} />
+      <>
+        <EditCustomAirportButton payload={payload} />
+        <DeleteCustomAirportButton payload={payload} />
+      </>
     );
   }
 
@@ -79,11 +81,12 @@ export const StandardAirportsTable = ({ ...props }) => {
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <CSVExportButton table={table} type="airports" />
+        <AddCustomAirportButton />
+        <CSVExportButton table={table} type="custom-airports" />
       </Box>
     ),
-    onPaginationChange: setPagination,
     renderRowActions: renderRowActions,
+    onPaginationChange: setPagination,
     state: { pagination, columnFilters: columnFilters, columnVisibility },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     ...tableOptions
@@ -91,7 +94,7 @@ export const StandardAirportsTable = ({ ...props }) => {
 
   return (
     <>
-      <CardHeader title="Standard Airports" />
+      <CardHeader title="Custom Airports" />
       {isLoading && <LinearProgress />}
       <MaterialReactTable table={table} {...props} />
       <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
@@ -99,4 +102,4 @@ export const StandardAirportsTable = ({ ...props }) => {
   );
 }
 
-export default StandardAirportsTable;
+export default CustomAirportsTable;
