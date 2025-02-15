@@ -185,9 +185,6 @@ func main() {
 	// create distance cache ob background
 	go app.db.CreateDistanceCache()
 
-	// check for the new version
-	go app.checkNewVersion()
-
 	// main app
 	err = app.serve()
 	if err == http.ErrServerClosed {

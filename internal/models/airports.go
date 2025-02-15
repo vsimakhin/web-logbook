@@ -82,6 +82,10 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (err er
 		return err
 	}
 
+	// clear cache
+	airportCache.Clear()
+	go m.CreateDistanceCache()
+
 	return err
 }
 

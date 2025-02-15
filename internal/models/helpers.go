@@ -141,6 +141,9 @@ func (m *DBModel) CreateDistanceCache() {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	// clear cache
+	distanceCache.Clear()
+
 	query := "SELECT departure_place, arrival_place FROM logbook_view GROUP BY departure_place, arrival_place"
 	rows, err := m.DB.QueryContext(ctx, query)
 
