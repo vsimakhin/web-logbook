@@ -12,16 +12,6 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerImport is a handler for /import page
-func (app *application) HandlerImport(w http.ResponseWriter, r *http.Request) {
-
-	data := make(map[string]interface{})
-	data["activePage"] = "import"
-	if err := app.renderTemplate(w, r, "import", &templateData{Data: data}, "import-mapfields-modal"); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
 // HandlerCreateBackup creates backup of the current db file
 func (app *application) HandlerImportCreateBackup(w http.ResponseWriter, r *http.Request) {
 	var response models.JSONResponse

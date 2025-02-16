@@ -13,12 +13,6 @@ type DBModel struct {
 	DB *sql.DB
 }
 
-// cache for calculated distance
-var dcache = make(map[string]int)
-
-// cache for airports
-var acache = make(map[string]Airport)
-
 // jsonResponse is a type for post data handlers response
 type JSONResponse struct {
 	OK          bool   `json:"ok"`
@@ -56,7 +50,8 @@ type FlightRecord struct {
 		Dual       string `json:"dual_time"`
 		Instructor string `json:"instructor_time"`
 
-		CrossCountry string
+		// calculated
+		CrossCountry string `json:"cc_time,omitempty"`
 	} `json:"time"`
 	Landings struct {
 		Day   int `json:"day"`
@@ -69,9 +64,10 @@ type FlightRecord struct {
 	PIC     string `json:"pic_name"`
 	Remarks string `json:"remarks"`
 
-	Distance int
-	PrevUUID string
-	NextUUID string
+	// calculated
+	Distance int    `json:"distance,omitempty"`
+	PrevUUID string `json:"prev_uuid,omitempty"`
+	NextUUID string `json:"next_uuid,omitempty"`
 }
 
 // Airpot is a structure for airport record
@@ -194,38 +190,29 @@ type HideFields struct {
 
 // Settings is a type for settings
 type Settings struct {
-	OwnerName               string            `json:"owner_name"`
-	LicenseNumber           string            `json:"license_number"`
-	Address                 string            `json:"address"`
-	SignatureText           string            `json:"signature_text"`
-	SignatureImage          string            `json:"signature_image"`
-	AircraftClasses         map[string]string `json:"aircraft_classes"`
-	AuthEnabled             bool              `json:"auth_enabled"`
-	Login                   string            `json:"login"`
-	Password                string            `json:"password"`
-	Hash                    string            `json:"hash"`
-	DisableFlightRecordHelp bool              `json:"disable_flightrecord_help"`
-	DisableLicenseWarning   bool              `json:"disable_license_warning"`
+	OwnerName       string            `json:"owner_name"`
+	LicenseNumber   string            `json:"license_number"`
+	Address         string            `json:"address"`
+	SignatureText   string            `json:"signature_text"`
+	SignatureImage  string            `json:"signature_image"`
+	AircraftClasses map[string]string `json:"aircraft_classes"`
+
+	AuthEnabled bool   `json:"auth_enabled"`
+	Login       string `json:"login"`
+	Password    string `json:"password"`
+	Hash        string `json:"hash"`
+	SecretKey   string `json:"secret_key"`
 
 	ExportA4  ExportPDF `json:"export_a4"`
 	ExportA5  ExportPDF `json:"export_a5"`
 	ExportXLS ExportXLS `json:"export_xls"`
 	ExportCSV ExportCSV `json:"export_csv"`
 
-	HideStatsFields        HideFields `json:"hide_stats_fields"`
-	StatsFontSize          string     `json:"stats_font_size"`
-	LogbookFontSize        string     `json:"logbook_font_size"`
-	LogbookRows            string     `json:"logbook_rows"`
-	TimeFieldsAutoFormat   byte       `json:"time_fields_auto_format"`
-	LogbookNoColumnsChnage bool       `json:"logbook_no_columns_change"`
-	LicensingRows          string     `json:"licensing_rows"`
-	DateRangePickerWeek    string     `json:"datepicker_week"`
+	HideStatsFields      HideFields `json:"hide_stats_fields"`
+	TimeFieldsAutoFormat byte       `json:"time_fields_auto_format"`
 
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`
-
-	ColorScheme   byte `json:"color_scheme"`
-	SidebarLayout byte `json:"sidebar_layout"`
 }
 
 // License is a type for licesing
@@ -250,6 +237,18 @@ type Attachment struct {
 	Document     []byte `json:"document"`
 }
 
+// Aircraft is a type for aircrafts
+type Aircraft struct {
+	Reg      string `json:"reg"`
+	Model    string `json:"model"`
+	Category string `json:"category"`
+}
+
+type Category struct {
+	Model    string `json:"model"`
+	Category string `json:"category"`
+}
+
 // TableData is a type for Datatables
 type TableData struct {
 	Data [][]string `json:"data"`
@@ -261,10 +260,4 @@ type Mock struct {
 	Rows   []string
 	Values []driver.Value
 	Args   []driver.Value
-}
-
-type DeletedItem struct {
-	UUID       string `json:"uuid"`
-	TableName  string `json:"table_name"`
-	DeleteTime string `json:"delete_time"`
 }

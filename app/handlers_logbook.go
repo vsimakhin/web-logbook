@@ -6,42 +6,32 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerLogbook is a handler for /logbook page
-func (app *application) HandlerLogbook(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "logbook"
-	if err := app.renderTemplate(w, r, "logbook", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
-// HandlerFlightRecordsData generates data for the logbook table at /logbook page
-func (app *application) HandlerFlightRecordsData(w http.ResponseWriter, r *http.Request) {
-
-	var tableData models.TableData
-
+// HandlerApiLogbookData generates data for the logbook table
+func (app *application) HandlerApiLogbookData(w http.ResponseWriter, r *http.Request) {
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	for _, item := range flightRecords {
-		if item.Time.MCC != "" {
-			item.Time.ME = ""
-		}
+	var formattedFlightRecords []models.FlightRecord
 
-		tableRow := []string{item.UUID, item.Date, item.Departure.Place, item.Departure.Time,
-			item.Arrival.Place, item.Arrival.Time, item.Aircraft.Model, item.Aircraft.Reg,
-			app.formatTimeField(item.Time.SE), app.formatTimeField(item.Time.ME), app.formatTimeField(item.Time.MCC),
-			app.formatTimeField(item.Time.Total), item.PIC, formatLandings(item.Landings.Day), formatLandings(item.Landings.Night),
-			app.formatTimeField(item.Time.Night), app.formatTimeField(item.Time.IFR), app.formatTimeField(item.Time.PIC),
-			app.formatTimeField(item.Time.CoPilot), app.formatTimeField(item.Time.Dual), app.formatTimeField(item.Time.Instructor),
-			item.SIM.Type, app.formatTimeField(item.SIM.Time), item.Remarks}
+	for _, flight := range flightRecords {
+		flight.Time.SE = app.formatTimeField(flight.Time.SE)
+		flight.Time.ME = app.formatTimeField(flight.Time.ME)
+		flight.Time.MCC = app.formatTimeField(flight.Time.MCC)
+		flight.Time.Total = app.formatTimeField(flight.Time.Total)
+		flight.Time.Night = app.formatTimeField(flight.Time.Night)
+		flight.Time.IFR = app.formatTimeField(flight.Time.IFR)
+		flight.Time.PIC = app.formatTimeField(flight.Time.PIC)
+		flight.Time.CoPilot = app.formatTimeField(flight.Time.CoPilot)
+		flight.Time.Dual = app.formatTimeField(flight.Time.Dual)
+		flight.Time.Instructor = app.formatTimeField(flight.Time.Instructor)
+		flight.Time.CrossCountry = app.formatTimeField(flight.Time.CrossCountry)
+		flight.SIM.Time = app.formatTimeField(flight.SIM.Time)
 
-		tableData.Data = append(tableData.Data, tableRow)
+		formattedFlightRecords = append(formattedFlightRecords, flight)
 	}
 
-	app.writeJSON(w, http.StatusOK, tableData)
+	app.writeJSON(w, http.StatusOK, formattedFlightRecords)
 }

@@ -3,9 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
+	"path"
+	"runtime"
 	"strings"
 	"time"
 
@@ -36,41 +37,37 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	}
 }
 
-// checkNewVersion checks if the new version released on github
-func (app *application) checkNewVersion() {
-	type githubResponse struct {
-		Name string `json:"name"`
+func (app *application) writeErrorResponse(w http.ResponseWriter, status int, message string) {
+	response := models.JSONResponse{
+		OK:      false,
+		Message: message,
 	}
+	app.writeJSON(w, status, response)
+}
 
-	resp, err := http.Get("https://api.github.com/repos/vsimakhin/web-logbook/releases/latest")
-	if err != nil {
-		app.infoLog.Println(fmt.Errorf("cannot retrieve the latest release, no internet connection? - %s", err))
-		return
+func (app *application) writeOkResponse(w http.ResponseWriter, message string) {
+	response := models.JSONResponse{
+		OK:      true,
+		Message: message,
 	}
+	app.writeJSON(w, http.StatusOK, response)
+}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot retrieve the latest release - %s", err))
-		return
+func (app *application) handleError(w http.ResponseWriter, err error) {
+	// Capture the file and line number of the original error
+	_, file, line, ok := runtime.Caller(1)
+	if ok {
+		app.errorLog.Printf("%s:%d: %v", path.Base(file), line, err)
+	} else {
+		app.errorLog.Println(err)
 	}
-
-	var release githubResponse
-	err = json.Unmarshal(body, &release)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error decoding github response - %s", err))
-		return
-	}
-
-	// just a simple compare of the versions, if not equal - show the badge
-	if !strings.Contains(release.Name, app.version) {
-		app.infoLog.Printf("new version %s is available https://github.com/vsimakhin/web-logbook\n", release.Name)
-		app.isNewVersion = true
-	}
+	// app.errorLog.Println(err)
+	app.writeErrorResponse(w, http.StatusInternalServerError, err.Error())
 }
 
 // lastRegsAndModels returns aircrafts registrations and models for the last 100 flight records
 func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftModels []string) {
-	lastAircrafts, err := app.db.GetAircrafts(models.LastAircrafts)
+	lastAircrafts, err := app.db.GetAircraftsInLogbook(models.LastAircrafts)
 	if err != nil {
 		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
 	}
@@ -88,17 +85,6 @@ func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftMode
 	slices.Sort(aircraftModels)
 
 	return aircraftRegs, aircraftModels
-}
-
-// getFlightRecordHelpSetting returns if help messages on the flight record page are enabled
-func (app *application) isFlightRecordHelpEnabled() bool {
-	settings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(err)
-		return false
-	}
-
-	return !settings.DisableFlightRecordHelp
 }
 
 // parameterFilter is a custom string case insensetive compare function
