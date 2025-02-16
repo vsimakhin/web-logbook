@@ -5,14 +5,16 @@ import Grid from '@mui/material/Grid2';
 
 export const Tile = ({ title, value, size = { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }) => {
   return (
-    <Grid size={size}>
-      <Card variant="outlined">
-        <CardContent>
-          <Typography variant="caption">{title}</Typography>
-          <Typography variant="h4">{value}</Typography>
-        </CardContent>
-      </Card>
-    </Grid>
+    <>
+      <Grid size={size}>
+        <Card variant="outlined">
+          <CardContent>
+            <Typography variant="caption">{title}</Typography>
+            <Typography variant="h4">{value}</Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    </>
   )
 }
 

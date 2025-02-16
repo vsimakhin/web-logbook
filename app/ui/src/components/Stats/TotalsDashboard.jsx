@@ -9,14 +9,13 @@ import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import CardHeader from "../UIElements/CardHeader";
 import Filters from "../UIElements/Filters";
-import FlightMap from "../FlightMap/FlightMap";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../util/http/logbook";
-import SummaryStats from "./SummaryStats";
+import DashboardTiles from "./DashboardTiles";
 
-export const SummaryFlightMap = () => {
-  const [noRoutes, setNoRoutes] = useState(false);
-  const [mapData, setMapData] = useState([]);
+export const TotalsDashboard = () => {
+  const [dashboardData, setDashboardData] = useState([]);
+  const [filter, setFilter] = useState({});
   const navigate = useNavigate();
 
   const { data, isLoading, isError, error } = useQuery({
@@ -26,8 +25,8 @@ export const SummaryFlightMap = () => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
   const callbackFunction = (filteredData, filter) => {
-    setMapData(filteredData);
-    setNoRoutes(filter.no_routes);
+    setDashboardData(filteredData);
+    setFilter(filter);
   }
 
   return (
@@ -38,23 +37,22 @@ export const SummaryFlightMap = () => {
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Filters" />
-              <Filters data={data} callbackFunction={callbackFunction} />
-            </CardContent>
-          </Card >
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Stats" />
-              <SummaryStats data={mapData} />
+              <Filters data={data} callbackFunction={callbackFunction} options={{ showNoRoutes: false, defaultQuickSelect: "All Time", showStatsFilters: true }} />
             </CardContent>
           </Card >
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <FlightMap data={mapData} routes={!noRoutes} />
+          <Card variant="outlined" sx={{ mb: 1 }}>
+            <CardContent>
+              <CardHeader title="Stats" />
+              <DashboardTiles data={dashboardData} filter={filter} />
+            </CardContent>
+          </Card >
         </Grid>
       </Grid>
     </>
   );
 }
 
-export default SummaryFlightMap;
+export default TotalsDashboard;

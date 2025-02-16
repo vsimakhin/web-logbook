@@ -17,10 +17,6 @@ func (app *application) HandlerApiLogbookData(w http.ResponseWriter, r *http.Req
 	var formattedFlightRecords []models.FlightRecord
 
 	for _, flight := range flightRecords {
-		if flight.Time.MCC != "" {
-			flight.Time.ME = ""
-		}
-
 		flight.Time.SE = app.formatTimeField(flight.Time.SE)
 		flight.Time.ME = app.formatTimeField(flight.Time.ME)
 		flight.Time.MCC = app.formatTimeField(flight.Time.MCC)

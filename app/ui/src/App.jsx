@@ -15,6 +15,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
+import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -36,10 +37,8 @@ const NAV_ITEMS = [
   { segment: 'airports', title: 'Airports', icon: <FlightTakeoffOutlinedIcon /> },
   { kind: 'divider' },
   {
-    segment: 'stats', title: 'Statistics', icon: <QueryStatsOutlinedIcon />, children: [
-      { segment: 'totals', title: 'Totals', icon: <ArrowForwardOutlinedIcon /> },
-      { segment: 'ftl', title: 'Limits', icon: <ArrowForwardOutlinedIcon /> },
-      { segment: 'currency', title: 'Currency', icon: <ArrowForwardOutlinedIcon /> },
+    segment: 'stats', title: 'Stats', icon: <QueryStatsOutlinedIcon />, children: [
+      { segment: 'dashboard', title: 'Dashboard', icon: <GridViewOutlinedIcon /> },
     ],
   },
   { kind: 'divider' },

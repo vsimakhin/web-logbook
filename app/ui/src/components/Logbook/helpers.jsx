@@ -22,6 +22,11 @@ export const renderProps = {
 
 export const timeFieldSize = 60;
 
+const shouldHideTime = (id, row) => {
+  return (id === "time.me_time" || id === "time.se_time") &&
+    row.original.time.mcc_time !== "";
+};
+
 export const renderTotalFooter = () => {
   return (
     <Stack direction="column" spacing={1} >
@@ -32,9 +37,16 @@ export const renderTotalFooter = () => {
 };
 
 const renderTimeFooter = (table, field) => {
-  const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) => total + convertTimeToMinutes(getValue(row.original, field)), 0);
-  const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) => total + convertTimeToMinutes(getValue(row.original, field)), 0);
+  // const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) => total + convertTimeToMinutes(getValue(row.original, field)), 0);
+  // const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) => total + convertTimeToMinutes(getValue(row.original, field)), 0);
 
+  const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) =>
+    total + (shouldHideTime(field, row) ? 0 : convertTimeToMinutes(getValue(row.original, field))), 0
+  );
+
+  const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) =>
+    total + (shouldHideTime(field, row) ? 0 : convertTimeToMinutes(getValue(row.original, field))), 0
+  );
   return (
     <Stack direction="column" spacing={1} alignItems="center" >
       <Typography color="textPrimary" sx={{ fontWeight: 'bold' }}>{convertMinutesToTime(totalForCurrentPage)}</Typography>
@@ -69,6 +81,12 @@ export const createTimeColumn = (id, name) => ({
   size: timeFieldSize,
   ...renderProps,
   filterVariant: "time-range", filterFn: "timeFilterFn",
+  Cell: ({ cell, row }) => {
+    if (shouldHideTime(id, row)) {
+      return "";
+    }
+    return cell.getValue();
+  },
   muiFilterTimePickerProps: { ampm: false },
   Footer: ({ table }) => renderTimeFooter(table, id),
 })

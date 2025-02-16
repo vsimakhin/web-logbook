@@ -38,3 +38,66 @@ export const dateFilterFn = (row, columnId, filterValue) => {
 
   return isAfterStart && isBeforeEnd;
 };
+
+const TIME_FIELDS = [
+  'se_time', 'me_time', 'mcc_time', 'total_time', 'night_time',
+  'ifr_time', 'pic_time', 'co_pilot_time', 'dual_time',
+  'instructor_time', 'cc_time'
+];
+
+// Calculate totals for each field
+const calculateTotals = (totals, flight) => {
+  const { time, landings, sim } = flight;
+
+  TIME_FIELDS.forEach(field => {
+    totals.time[field] += convertTimeToMinutes(time[field]);
+  });
+
+  totals.landings.day += parseInt(landings.day) || 0;
+  totals.landings.night += parseInt(landings.night) || 0;
+  totals.sim.time += convertTimeToMinutes(sim.time);
+  totals.distance += parseInt(flight.distance) || 0;
+};
+
+export const getStats = (data) => {
+  const airports = new Set();
+  const routes = new Set();
+  const aircraftRegs = new Set();
+  const aircraftModels = new Set();
+
+  // totals in munutes
+  const totals = {
+    time: Object.fromEntries(TIME_FIELDS.map(field => [field, 0])),
+    landings: { day: 0, night: 0 },
+    sim: { time: 0 },
+    distance: 0
+  };
+
+  data.forEach(flight => {
+    if (flight.departure.place) airports.add(flight.departure.place);
+    if (flight.arrival.place) airports.add(flight.arrival.place);
+    if (flight.aircraft.reg_name) aircraftRegs.add(flight.aircraft.reg_name);
+    if (flight.aircraft.model) aircraftModels.add(flight.aircraft.model);
+
+    if (flight.departure.place && flight.arrival.place) {
+      routes.add(`${flight.departure.place}-${flight.arrival.place}`);
+    }
+
+    calculateTotals(totals, flight);
+  });
+
+  return {
+    airports: airports.size,
+    routes: routes.size,
+    aircraftRegs: aircraftRegs.size,
+    aircraftModels: aircraftModels.size,
+    totals: {
+      time: Object.fromEntries(
+        TIME_FIELDS.map(field => [field, convertMinutesToTime(totals.time[field])])
+      ),
+      landings: totals.landings,
+      sim: { time: convertMinutesToTime(totals.sim.time) },
+      distance: totals.distance
+    }
+  };
+};

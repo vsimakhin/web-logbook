@@ -62,16 +62,6 @@ export const LICENSE_INITIAL_STATE = {
   remarks: ""
 };
 
-export const MAP_FILTER_INITIAL_STATE = {
-  start_date: dayjs().startOf('year'),
-  end_date: dayjs().endOf('year'),
-  aircraft_reg: "",
-  aircraft_model: "",
-  aircraft_category: "",
-  place: "",
-  no_routes: false,
-};
-
 export const PLACE_SLOT_PROPS = {
   htmlInput: { maxLength: 32, style: { textTransform: 'uppercase' }, onInput: (e) => { e.target.value = e.target.value.toUpperCase() } }
 }

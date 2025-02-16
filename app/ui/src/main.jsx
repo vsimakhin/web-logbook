@@ -19,6 +19,7 @@ import SignInPage from './pages/SignInPage.jsx';
 import LogoutPage from './pages/LogoutPage.jsx';
 import AircraftsPage from './pages/AircraftsPage.jsx';
 import AirportsPage from './pages/AirportsPage.jsx';
+import StatsDashboardPage from './pages/StatsDashboardPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,12 @@ const router = createBrowserRouter([
           { path: 'map', element: <MapPage /> },
           { path: 'aircrafts', element: <AircraftsPage /> },
           { path: 'airports', element: <AirportsPage /> },
+          {
+            path: 'stats', children: [
+              { index: true, element: <StatsDashboardPage /> },
+              { path: 'dashboard', element: <StatsDashboardPage /> }
+            ]
+          },
           { path: 'settings', element: <SettingsPage /> },
         ]
       },
