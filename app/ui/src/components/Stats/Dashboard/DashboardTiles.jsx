@@ -1,8 +1,8 @@
 import Grid from "@mui/material/Grid2";
 import Divider from "@mui/material/Divider";
 // Custom
-import Tile from "../UIElements/Tile";
-import { getStats, getValue } from "../../util/helpers";
+import Tile from "../../UIElements/Tile";
+import { getStats, getValue } from "../../../util/helpers";
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 

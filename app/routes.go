@@ -196,7 +196,6 @@ func (app *application) routes() *chi.Mux {
 		r.Get(APIExportPDFA5Page, app.HandlerExportPDFA5Page)
 		r.Get(APIExportCSVXLSPage, app.HandlerExportCSVXLSPage)
 
-		// r.Get(APIExportFormat, app.HandlerExportLogbook)
 		r.Post(APIExportFormat, app.HandlerExportSettingsSave)
 		r.Post(APIExportRestoreDefaults, app.HandlerExportRestoreDefaults)
 
@@ -206,15 +205,10 @@ func (app *application) routes() *chi.Mux {
 		r.Post(APIImportRun, app.HandlerImportRun)
 
 		// stats
-		r.Get(APIStatsTotals, app.HandlerStatsTotals)
 		r.Get(APIStatsTotalsByType, app.HandlerStatsTotalsByType)
 		r.Get(APIStatsTotalsByClass, app.HandlerStatsTotalsByClass)
 		r.Get(APIStatsLimits, app.HandlerStatsLimits)
 
-		r.Get(APIStatsTotalsPage, app.HandlerStatsTotalsPage)
-		r.Get(APIStatsTotalsByYearPage, app.HandlerStatsTotalsByYearPage)
-		r.Get(APIStatsTotalsByMonthPage, app.HandlerStatsTotalsByMonthPage)
-		r.Get(APIStatsTotalsByMonthYearPage, app.HandlerStatsTotalsByMonthPage)
 		r.Get(APIStatsTotalsByTypePage, app.HandlerStatsTotalsByTypePage)
 		r.Get(APIStatsTotalsByClassPage, app.HandlerStatsTotalsByClassPage)
 		r.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)

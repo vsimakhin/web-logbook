@@ -8,7 +8,6 @@ import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import ContactPageOutlinedIcon from '@mui/icons-material/ContactPageOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import QueryStatsOutlinedIcon from '@mui/icons-material/QueryStatsOutlined';
-import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -16,6 +15,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -39,6 +39,7 @@ const NAV_ITEMS = [
   {
     segment: 'stats', title: 'Stats', icon: <QueryStatsOutlinedIcon />, children: [
       { segment: 'dashboard', title: 'Dashboard', icon: <GridViewOutlinedIcon /> },
+      { segment: 'by-year', title: 'Totals by Year', icon: <CalendarMonthOutlinedIcon /> },
     ],
   },
   { kind: 'divider' },

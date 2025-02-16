@@ -1,4 +1,4 @@
-import TotalsDashboard from "../components/Stats/TotalsDashboard"
+import TotalsDashboard from "../components/Stats/Dashboard/TotalsDashboard"
 
 export const StatsDashboardPage = () => {
   return (

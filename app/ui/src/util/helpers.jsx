@@ -101,3 +101,41 @@ export const getStats = (data) => {
     }
   };
 };
+
+export const getTotalsByMonthAndYear = (flights) => {
+  const totalsByMonthYear = {};
+
+  flights.forEach(flight => {
+    const { date, time, landings, sim, distance } = flight;
+    const [day, month, year] = date.split('/'); // Assuming format 'DD/MM/YYYY'
+    const key = `${year}-${month}`; // Format: YYYY-MM
+
+    if (!totalsByMonthYear[key]) {
+      totalsByMonthYear[key] = {
+        year: year,
+        month: month,
+        time: Object.fromEntries(TIME_FIELDS.map(field => [field, 0])),
+        landings: { day: 0, night: 0 },
+        sim: { time: 0 },
+        distance: 0
+      };
+    }
+
+    TIME_FIELDS.forEach(field => {
+      totalsByMonthYear[key].time[field] += convertTimeToMinutes(time[field]);
+    });
+
+    totalsByMonthYear[key].landings.day += parseInt(landings.day) || 0;
+    totalsByMonthYear[key].landings.night += parseInt(landings.night) || 0;
+    totalsByMonthYear[key].sim.time += convertTimeToMinutes(sim.time);
+    totalsByMonthYear[key].distance += parseInt(distance) || 0;
+  });
+
+  // return array of objects in descending order
+  return Object.values(totalsByMonthYear).sort((a, b) => {
+    if (a.year === b.year) {
+      return a.month - b.month;
+    }
+    return b.year - a.year;
+  });
+};

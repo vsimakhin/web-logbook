@@ -7,10 +7,10 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import LinearProgress from "@mui/material/LinearProgress";
 // Custom
-import CardHeader from "../UIElements/CardHeader";
-import Filters from "../UIElements/Filters";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchLogbookData } from "../../util/http/logbook";
+import CardHeader from "../../UIElements/CardHeader";
+import Filters from "../../UIElements/Filters";
+import { useErrorNotification } from "../../../hooks/useAppNotifications";
+import { fetchLogbookData } from "../../../util/http/logbook";
 import DashboardTiles from "./DashboardTiles";
 
 export const TotalsDashboard = () => {

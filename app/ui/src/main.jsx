@@ -20,6 +20,7 @@ import LogoutPage from './pages/LogoutPage.jsx';
 import AircraftsPage from './pages/AircraftsPage.jsx';
 import AirportsPage from './pages/AirportsPage.jsx';
 import StatsDashboardPage from './pages/StatsDashboardPage.jsx';
+import StatsByYearPage from './pages/StatsByYearPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -50,7 +51,8 @@ const router = createBrowserRouter([
           {
             path: 'stats', children: [
               { index: true, element: <StatsDashboardPage /> },
-              { path: 'dashboard', element: <StatsDashboardPage /> }
+              { path: 'dashboard', element: <StatsDashboardPage /> },
+              { path: 'by-year', element: <StatsByYearPage /> },
             ]
           },
           { path: 'settings', element: <SettingsPage /> },

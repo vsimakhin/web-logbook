@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
 import { mkConfig, generateCsv, download } from 'export-to-csv';
+import { convertMinutesToTime } from '../../util/helpers';
 
 const defaultConfig = {
   fieldSeparator: ',',
@@ -81,6 +82,25 @@ const exportMappers = {
     "SIM Time": row.original.sim.time,
     "PIC Name": row.original.pic_name,
     "Remarks": row.original.remarks,
+  })),
+
+  "totals-by-year": (rows) => rows.map((row) => ({
+    "Year": row.original.year,
+    "Month": row.original.month,
+    "SE": convertMinutesToTime(row.original.time.se_time),
+    "ME": convertMinutesToTime(row.original.time.me_time),
+    "MCC": convertMinutesToTime(row.original.time.mcc_time),
+    "Night": convertMinutesToTime(row.original.time.night_time),
+    "IFR": convertMinutesToTime(row.original.time.ifr_time),
+    "PIC": convertMinutesToTime(row.original.time.pic_time),
+    "Co-Pilot": convertMinutesToTime(row.original.time.copilot_time),
+    "Dual": convertMinutesToTime(row.original.time.dual_time),
+    "Instructor": convertMinutesToTime(row.original.time.instructor_time),
+    "CC": convertMinutesToTime(row.original.time.cc_time),
+    "Sim": convertMinutesToTime(row.original.sim.time),
+    "D/N": `${row.original.landings.day}/${row.original.landings.night}`,
+    "Distance": row.original.distance,
+    "Total": convertMinutesToTime(row.original.time.total_time),
   })),
 };
 
