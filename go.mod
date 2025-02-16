@@ -4,7 +4,6 @@ go 1.23.4
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/alexedwards/scs/v2 v2.8.0
 	github.com/go-chi/chi/v5 v5.2.0
 	github.com/go-pdf/fpdf v0.9.0
 	github.com/go-sql-driver/mysql v1.8.1

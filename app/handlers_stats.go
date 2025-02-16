@@ -117,26 +117,6 @@ func (app *application) HandlerStatsLimits(w http.ResponseWriter, r *http.Reques
 	app.writeJSON(w, http.StatusOK, data)
 }
 
-// HandlerStatsTotalsByTypePage is a handler for Stats Totals by Type page
-func (app *application) HandlerStatsTotalsByTypePage(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "stats"
-	data["activeSubPage"] = "totalsByType"
-	if err := app.renderTemplate(w, r, "stats-totals-type", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
-// HandlerStatsTotalsByClassPage is a handler for Stats Totals by Class page
-func (app *application) HandlerStatsTotalsByClassPage(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "stats"
-	data["activeSubPage"] = "totalsByClass"
-	if err := app.renderTemplate(w, r, "stats-totals-class", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
 // HandlerStatsLimitsPage is a handler for Stats Limits page
 func (app *application) HandlerStatsLimitsPage(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
@@ -154,7 +134,7 @@ func (app *application) HandlerStatsLimitsPage(w http.ResponseWriter, r *http.Re
 
 	data["activePage"] = "stats"
 	data["activeSubPage"] = "limits"
-	if err := app.renderTemplate(w, r, "stats-limits", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
+	// if err := app.renderTemplate(w, r, "stats-limits", &templateData{Data: data}); err != nil {
+	// 	app.errorLog.Println(err)
+	// }
 }

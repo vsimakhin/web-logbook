@@ -15,36 +15,6 @@ const exportA4 = "A4"
 const exportA5 = "A5"
 const exportXLS = "xls"
 
-// HandlerExportPDFA4Page is a handler for /export-pdf-a4 page
-func (app *application) HandlerExportPDFA4Page(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "export"
-	data["activeSubPage"] = "pdfa4"
-	if err := app.renderTemplate(w, r, "export-pdf-a4", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
-// HandlerExportPDFA5Page is a handler for /export-pdf-a5 page
-func (app *application) HandlerExportPDFA5Page(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "export"
-	data["activeSubPage"] = "pdfa5"
-	if err := app.renderTemplate(w, r, "export-pdf-a5", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
-// HandlerExportPDFA5Page is a handler for /export-pdf-a5 page
-func (app *application) HandlerExportCSVXLSPage(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "export"
-	data["activeSubPage"] = "csv"
-	if err := app.renderTemplate(w, r, "export-csv-xls", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
 // HandlerExportLogbook serves the GET request for logbook export
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
