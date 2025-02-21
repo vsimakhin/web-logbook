@@ -8,12 +8,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/pdfexport"
-	"github.com/vsimakhin/web-logbook/internal/xlsexport"
 )
 
 const exportA4 = "A4"
 const exportA5 = "A5"
-const exportXLS = "xls"
 
 // HandlerExportLogbook serves the GET request for logbook export
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
@@ -71,14 +69,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 			return pdfExporter.ExportA5(flightRecords, w)
 		}
 
-	case exportXLS:
-		contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-		fileName = "logbook.xlsx"
-		var xls xlsexport.ExportXLS
-		xls.ExportXLS = settings.ExportXLS
-		exportFunc = func() error {
-			return xls.Export(flightRecords, w)
-		}
 	}
 
 	w.Header().Set("Content-Type", contentType)
@@ -118,9 +108,6 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 
 	} else if format == exportA5 {
 		currsettings.ExportA5 = settings.ExportA5
-
-	} else if format == exportXLS {
-		currsettings.ExportXLS = settings.ExportXLS
 
 	}
 
