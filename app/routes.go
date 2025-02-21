@@ -7,44 +7,32 @@ import (
 )
 
 const (
-	APIRoot                   = "/"
-	APIExport                 = "/export"
-	APIExportPDFA4Page        = "/export-pdf-a4"
-	APIExportPDFA5Page        = "/export-pdf-a5"
-	APIExportCSVXLSPage       = "/export-csv-xls"
-	APIExportFormat           = "/export/{format}"
-	APIExportRestoreDefaults  = "/export/restore"
-	APIImport                 = "/import"
-	APIImportCreateBackup     = "/import/backup/create"
-	APIImportRun              = "/import/run"
-	APIStatsTotalsByType      = "/stats/data/totals-by-type"
-	APIStatsTotalsByClass     = "/stats/data/totals-by-class"
-	APIStatsLimits            = "/stats/data/limits"
-	APIStatsTotalsByTypePage  = "/stats-totals-by-type"
-	APIStatsTotalsByClassPage = "/stats-totals-by-class"
-	APIStatsLimitsPage        = "/stats-limits"
+	APIRoot                  = "/"
+	APIExport                = "/export"
+	APIExportPDFA4Page       = "/export-pdf-a4"
+	APIExportPDFA5Page       = "/export-pdf-a5"
+	APIExportCSVXLSPage      = "/export-csv-xls"
+	APIExportFormat          = "/export/{format}"
+	APIExportRestoreDefaults = "/export/restore"
+	APIImport                = "/import"
+	APIImportCreateBackup    = "/import/backup/create"
+	APIImportRun             = "/import/run"
 )
 
 var apiMap = map[string]string{
-	"Root":                   APIRoot,
-	"Export":                 APIExport,
-	"ExportPDFA4Page":        APIExportPDFA4Page,
-	"ExportPDFA5Page":        APIExportPDFA5Page,
-	"ExportCSVXLSPage":       APIExportCSVXLSPage,
-	"ExportFormat":           APIExportFormat,
-	"ExportRestoreDefaults":  APIExportRestoreDefaults,
-	"Import":                 APIImport,
-	"ImportCreateBackup":     APIImportCreateBackup,
-	"ImportRun":              APIImportRun,
-	"StatsTotalsByType":      APIStatsTotalsByType,
-	"StatsTotalsByClass":     APIStatsTotalsByClass,
-	"StatsLimits":            APIStatsLimits,
-	"StatsTotalsByTypePage":  APIStatsTotalsByTypePage,
-	"StatsTotalsByClassPage": APIStatsTotalsByClassPage,
-	"StatsLimitsPage":        APIStatsLimitsPage,
-	"ExportFormatA4":         exportA4,
-	"ExportFormatA5":         exportA5,
-	"ExportFormatXLS":        exportXLS,
+	"Root":                  APIRoot,
+	"Export":                APIExport,
+	"ExportPDFA4Page":       APIExportPDFA4Page,
+	"ExportPDFA5Page":       APIExportPDFA5Page,
+	"ExportCSVXLSPage":      APIExportCSVXLSPage,
+	"ExportFormat":          APIExportFormat,
+	"ExportRestoreDefaults": APIExportRestoreDefaults,
+	"Import":                APIImport,
+	"ImportCreateBackup":    APIImportCreateBackup,
+	"ImportRun":             APIImportRun,
+	"ExportFormatA4":        exportA4,
+	"ExportFormatA5":        exportA5,
+	"ExportFormatXLS":       exportXLS,
 }
 
 func (app *application) routes() *chi.Mux {
@@ -140,8 +128,6 @@ func (app *application) routes() *chi.Mux {
 	})
 
 	r.Route("/", func(r chi.Router) {
-		r.Use(app.Auth)
-
 		// export
 		r.Post(APIExportFormat, app.HandlerExportSettingsSave)
 		r.Post(APIExportRestoreDefaults, app.HandlerExportRestoreDefaults)
@@ -149,12 +135,6 @@ func (app *application) routes() *chi.Mux {
 		// import
 		r.Post(APIImportCreateBackup, app.HandlerImportCreateBackup)
 		r.Post(APIImportRun, app.HandlerImportRun)
-
-		// stats
-		r.Get(APIStatsTotalsByType, app.HandlerStatsTotalsByType)
-		r.Get(APIStatsTotalsByClass, app.HandlerStatsTotalsByClass)
-		r.Get(APIStatsLimits, app.HandlerStatsLimits)
-		r.Get(APIStatsLimitsPage, app.HandlerStatsLimitsPage)
 	})
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))

@@ -3,21 +3,18 @@ import { useMemo } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
-import Typography from "@mui/material/Typography";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
 import { convertMinutesToTime } from '../../../util/helpers';
 import CSVExportButton from '../../UIElements/CSVExportButton';
 
-const paginationKey = 'totals-stats-year-table-page-size';
-const columnVisibilityKey = 'totals-stats-year-table-column-visibility';
-
 const tableOptions = {
   initialState: {
     density: 'compact',
-    expanded: false,
-    grouping: ['year']
+    columnPinning: {
+      left: ['model'],
+    },
   },
   positionToolbarAlertBanner: 'bottom',
   groupedColumnMode: 'remove',
@@ -25,14 +22,14 @@ const tableOptions = {
   enableGlobalFilterModes: true,
   enableColumnFilters: false,
   enableColumnDragging: false,
-  enableColumnPinning: false,
+  enableColumnPinning: true,
   enableGrouping: true,
   enableDensityToggle: false,
   columnResizeMode: 'onEnd',
   muiTablePaperProps: { variant: 'outlined', elevation: 0 },
   columnFilterDisplayMode: 'custom',
   enableFacetedValues: false,
-  enableSorting: false,
+  enableSorting: true,
   enableColumnActions: true,
   enableStickyHeader: true,
   enablePagination: false,
@@ -50,26 +47,17 @@ const createTimeColumn = (id, name) => ({
   size: timeFieldSize,
   ...renderProps,
   Cell: ({ cell }) => (convertMinutesToTime(cell.getValue())),
-  aggregationFn: "sum",
-  AggregatedCell: ({ cell }) => (
-    <Typography variant="body2" color="primary" >
-      {convertMinutesToTime(cell.getValue())}
-    </Typography>
-  ),
 })
 
-export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
+export const TotalsByAircraftTable = ({ data, isLoading, type, ...props }) => {
+  const paginationKey = `totals-stats-${type}-table-page-size`;
+  const columnVisibilityKey = `totals-stats-${type}-table-column-visibility`;
+
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
 
   const columns = useMemo(() => [
-    { accessorKey: "year", header: "Year", size: 100 },
-    {
-      accessorKey: "month", header: "Month", size: 100,
-      Cell: ({ cell }) => (
-        new Date(0, parseInt(cell.getValue()) - 1).toLocaleString('default', { month: 'short' })
-      ),
-    },
+    { accessorKey: "model", header: type === "type" ? "Type" : "Category", size: 100 },
     createTimeColumn("time.se_time", "SE"),
     createTimeColumn("time.me_time", "ME"),
     createTimeColumn("time.mcc_time", "MCC"),
@@ -83,26 +71,11 @@ export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
     createTimeColumn("sim.time", "Sim"),
     {
       accessorFn: row => `${row.landings.day}/${row.landings.night}`, header: "D/N", size: 120,
-      aggregationFn: (columnId, leafRows) => {
-        const dayTotal = leafRows.reduce((sum, row) => sum + (parseInt(row.original.landings.day) || 0), 0);
-        const nightTotal = leafRows.reduce((sum, row) => sum + (parseInt(row.original.landings.night) || 0), 0);
-        return `${dayTotal}/${nightTotal}`;
-      },
-      AggregatedCell: ({ cell }) => (
-        <Typography variant="body2" color="primary">
-          {cell.getValue()}
-        </Typography>
-      ),
     },
     {
       accessorKey: "distance", header: "Distance", size: 100,
       aggregationFn: "sum",
       Cell: ({ cell }) => (cell.getValue().toLocaleString()),
-      AggregatedCell: ({ cell }) => (
-        <Typography variant="body2" color="primary">
-          {cell.getValue().toLocaleString()}
-        </Typography>
-      ),
     },
     createTimeColumn("time.total_time", "Total"),
   ], []);
@@ -111,13 +84,10 @@ export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
     isLoading: isLoading,
     columns: columns,
     data: data ?? [],
-    displayColumnDefOptions: {
-      'mrt-row-expand': { size: 120 }
-    },
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <CSVExportButton table={table} type="totals-by-year" />
+        <CSVExportButton table={table} type="totals-by-aircraft" />
       </Box>
     ),
     onPaginationChange: setPagination,
@@ -134,4 +104,4 @@ export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
   );
 }
 
-export default TotalsByYearTable;
+export default TotalsByAircraftTable;

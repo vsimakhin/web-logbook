@@ -16,6 +16,7 @@ import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -39,7 +40,9 @@ const NAV_ITEMS = [
   {
     segment: 'stats', title: 'Stats', icon: <QueryStatsOutlinedIcon />, children: [
       { segment: 'dashboard', title: 'Dashboard', icon: <GridViewOutlinedIcon /> },
-      { segment: 'by-year', title: 'Totals by Year', icon: <CalendarMonthOutlinedIcon /> },
+      { segment: 'by-year', title: 'Year', icon: <CalendarMonthOutlinedIcon /> },
+      { segment: 'by-type', title: 'Type', icon: <FlightOutlinedIcon /> },
+      { segment: 'by-category', title: 'Category', icon: <CategoryOutlinedIcon /> },
     ],
   },
   { kind: 'divider' },

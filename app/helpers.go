@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"path"
 	"runtime"
 	"strings"
@@ -12,7 +11,6 @@ import (
 
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/nighttime"
-	"golang.org/x/exp/slices"
 )
 
 // writeJSON writes arbitrary data out as JSON
@@ -65,132 +63,6 @@ func (app *application) handleError(w http.ResponseWriter, err error) {
 	app.writeErrorResponse(w, http.StatusInternalServerError, err.Error())
 }
 
-// lastRegsAndModels returns aircrafts registrations and models for the last 100 flight records
-func (app *application) lastRegsAndModels() (aircraftRegs []string, aircraftModels []string) {
-	lastAircrafts, err := app.db.GetAircraftsInLogbook(models.LastAircrafts)
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot get aircrafts list - %s", err))
-	}
-
-	for key, val := range lastAircrafts {
-		if !slices.Contains(aircraftRegs, key) {
-			aircraftRegs = append(aircraftRegs, key)
-		}
-		if !slices.Contains(aircraftModels, val) {
-			aircraftModels = append(aircraftModels, val)
-		}
-	}
-
-	slices.Sort(aircraftRegs)
-	slices.Sort(aircraftModels)
-
-	return aircraftRegs, aircraftModels
-}
-
-// parameterFilter is a custom string case insensetive compare function
-func parameterFilter(s string, substr string) bool {
-	if strings.TrimSpace(s) == "" {
-		return true
-	}
-
-	return strings.Contains(strings.ToLower(s), strings.ToLower(substr))
-}
-
-func parameterClassFilter(classes map[string]string, model string, filter string) bool {
-	if strings.TrimSpace(filter) == "" {
-		return true
-	}
-
-	var ac []string
-
-	for key, element := range classes {
-		if slices.Contains(strings.Split(element, ","), model) {
-			ac = append(ac, key)
-		}
-	}
-
-	// aircraft is not classified
-	if len(ac) == 0 {
-		ac = append(ac, model)
-	}
-
-	return slices.Contains(ac, filter)
-}
-
-// func getTotalStats returns set of flight statistics which is used by stats handlers
-func (app *application) getTotalStats(startDate string, endDate string) (map[string]models.FlightRecord, error) {
-	totals := make(map[string]models.FlightRecord)
-
-	now := time.Now().UTC()
-	minus12m := now.AddDate(0, -11, 0).UTC()
-
-	dates := map[string][]string{
-		"Totals":  {startDate, endDate},
-		"Last28":  {now.AddDate(0, 0, -27).UTC().Format("20060102"), farFuture},
-		"Last90":  {now.AddDate(0, 0, -89).UTC().Format("20060102"), farFuture},
-		"Month":   {now.AddDate(0, 0, -now.Day()+1).Format("20060102"), now.AddDate(0, 1, -now.Day()).Format("20060102")},
-		"Last12M": {time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC).Format("20060102"), farFuture},
-		"Year":    {time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC).Format("20060102"), time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, time.UTC).Format("20060102")},
-	}
-
-	if startDate == "" || endDate == "" {
-		dates["Totals"] = []string{farPast, farFuture}
-	}
-
-	for key, dateRange := range dates {
-		total, err := app.db.GetTotals(dateRange[0], dateRange[1])
-		if err != nil {
-			return nil, err
-		}
-		totals[key] = total
-	}
-
-	return totals, nil
-}
-
-// getDetailedLimitsStats retrieves detailed limit statistics for different time periods.
-// It returns a map of limit statistics, where the keys represent the time periods and the values represent the statistics.
-// It returns the map of limit statistics and an error if any occurred during the retrieval process.
-func (app *application) getDetailedLimitsStats() (map[string]map[string]string, error) {
-	totals := make(map[string]map[string]string)
-
-	now := time.Now().UTC()
-	minus12m := now.AddDate(0, -11, 0).UTC()
-
-	getData := func(key string, startDate time.Time, groupByMonth bool) error {
-		total, err := app.db.GetDetailedTotals(
-			startDate.Format("20060102"), farFuture,
-			groupByMonth, app.db.GenerateFlightRecordMap(startDate, now, groupByMonth),
-		)
-		if err != nil {
-			return err
-		}
-
-		totalTimeMap := make(map[string]string)
-		for key, record := range total {
-			totalTimeMap[key] = record.Time.Total
-		}
-
-		totals[key] = totalTimeMap
-		return nil
-	}
-
-	if err := getData("Last28", now.AddDate(0, 0, -27), false); err != nil {
-		return nil, err
-	}
-	if err := getData("Last90", now.AddDate(0, 0, -89), false); err != nil {
-		return nil, err
-	}
-	if err := getData("Last12m", time.Date(minus12m.Year(), minus12m.Month(), 1, 0, 0, 0, 0, time.UTC), true); err != nil {
-		return nil, err
-	}
-	if err := getData("Last1y", time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC), true); err != nil {
-		return nil, err
-	}
-
-	return totals, nil
-}
-
 // calculateNightTime returns the nighttime.Route object which later can be called
 // to calculate night time, like obj.NightTime()
 func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duration, error) {
@@ -236,16 +108,6 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duratio
 	night = route.NightTime()
 
 	return night, nil
-}
-
-func decodeParameter(r *http.Request, parameter string) string {
-	encoded := r.URL.Query().Get(parameter)
-	decoded, err := url.QueryUnescape(encoded)
-	if err != nil {
-		return encoded
-	}
-
-	return strings.TrimSpace(decoded)
 }
 
 func (app *application) formatTimeField(timeField string) string {

@@ -194,15 +194,3 @@ func (m *DBModel) UpdateAircraftModelsCategories(category Category) (err error) 
 
 	return nil
 }
-
-/////////////////////////////////
-
-// GetAircraftClasses returns aircraft clasess
-func (m *DBModel) GetAircraftClasses() (map[string]string, error) {
-
-	settings, err := m.GetSettings()
-	if err != nil {
-		return nil, err
-	}
-	return settings.AircraftClasses, err
-}

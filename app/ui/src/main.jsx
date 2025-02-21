@@ -21,6 +21,8 @@ import AircraftsPage from './pages/AircraftsPage.jsx';
 import AirportsPage from './pages/AirportsPage.jsx';
 import StatsDashboardPage from './pages/StatsDashboardPage.jsx';
 import StatsByYearPage from './pages/StatsByYearPage.jsx';
+import StatsByTypePage from './pages/StatsByTypePage.jsx';
+import StatsByCategoryPage from './pages/StatsByCategoryPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -53,6 +55,8 @@ const router = createBrowserRouter([
               { index: true, element: <StatsDashboardPage /> },
               { path: 'dashboard', element: <StatsDashboardPage /> },
               { path: 'by-year', element: <StatsByYearPage /> },
+              { path: 'by-type', element: <StatsByTypePage /> },
+              { path: 'by-category', element: <StatsByCategoryPage /> },
             ]
           },
           { path: 'settings', element: <SettingsPage /> },

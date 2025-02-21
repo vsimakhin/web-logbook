@@ -45,9 +45,18 @@ const TIME_FIELDS = [
   'instructor_time', 'cc_time'
 ];
 
-// Calculate totals for each field
-const calculateTotals = (totals, flight) => {
-  const { time, landings, sim } = flight;
+// Helper function to create initial totals object
+const createInitialTotals = (additionalFields = {}) => ({
+  time: Object.fromEntries(TIME_FIELDS.map(field => [field, 0])),
+  landings: { day: 0, night: 0 },
+  sim: { time: 0 },
+  distance: 0,
+  ...additionalFields
+});
+
+// Helper function to update totals
+const updateTotals = (totals, flight) => {
+  const { time, landings, sim, distance } = flight;
 
   TIME_FIELDS.forEach(field => {
     totals.time[field] += convertTimeToMinutes(time[field]);
@@ -56,86 +65,95 @@ const calculateTotals = (totals, flight) => {
   totals.landings.day += parseInt(landings.day) || 0;
   totals.landings.night += parseInt(landings.night) || 0;
   totals.sim.time += convertTimeToMinutes(sim.time);
-  totals.distance += parseInt(flight.distance) || 0;
+  totals.distance += parseInt(distance) || 0;
+
+  return totals;
 };
 
-export const getStats = (data) => {
-  const airports = new Set();
-  const routes = new Set();
-  const aircraftRegs = new Set();
-  const aircraftModels = new Set();
+// Helper function to format time totals
+const formatTimeTotals = (totals) => ({
+  time: Object.fromEntries(
+    TIME_FIELDS.map(field => [field, convertMinutesToTime(totals.time[field])])
+  ),
+  landings: totals.landings,
+  sim: { time: convertMinutesToTime(totals.sim.time) },
+  distance: totals.distance
+});
 
-  // totals in munutes
-  const totals = {
-    time: Object.fromEntries(TIME_FIELDS.map(field => [field, 0])),
-    landings: { day: 0, night: 0 },
-    sim: { time: 0 },
-    distance: 0
+export const getStats = (data) => {
+  const sets = {
+    airports: new Set(),
+    routes: new Set(),
+    aircraftRegs: new Set(),
+    aircraftModels: new Set()
   };
 
-  data.forEach(flight => {
-    if (flight.departure.place) airports.add(flight.departure.place);
-    if (flight.arrival.place) airports.add(flight.arrival.place);
-    if (flight.aircraft.reg_name) aircraftRegs.add(flight.aircraft.reg_name);
-    if (flight.aircraft.model) aircraftModels.add(flight.aircraft.model);
+  const totals = createInitialTotals();
 
-    if (flight.departure.place && flight.arrival.place) {
-      routes.add(`${flight.departure.place}-${flight.arrival.place}`);
+  data.forEach(flight => {
+    const { departure, arrival, aircraft } = flight;
+
+    if (departure.place) sets.airports.add(departure.place);
+    if (arrival.place) sets.airports.add(arrival.place);
+    if (aircraft.reg_name) sets.aircraftRegs.add(aircraft.reg_name);
+    if (aircraft.model) sets.aircraftModels.add(aircraft.model);
+    if (departure.place && arrival.place) {
+      sets.routes.add(`${departure.place}-${arrival.place}`);
     }
 
-    calculateTotals(totals, flight);
+    updateTotals(totals, flight);
   });
 
   return {
-    airports: airports.size,
-    routes: routes.size,
-    aircraftRegs: aircraftRegs.size,
-    aircraftModels: aircraftModels.size,
-    totals: {
-      time: Object.fromEntries(
-        TIME_FIELDS.map(field => [field, convertMinutesToTime(totals.time[field])])
-      ),
-      landings: totals.landings,
-      sim: { time: convertMinutesToTime(totals.sim.time) },
-      distance: totals.distance
-    }
+    ...Object.fromEntries(
+      Object.entries(sets).map(([key, set]) => [key, set.size])
+    ),
+    totals: formatTimeTotals(totals)
   };
 };
 
 export const getTotalsByMonthAndYear = (flights) => {
-  const totalsByMonthYear = {};
+  const totals = flights.reduce((acc, flight) => {
+    const [, month, year] = flight.date.split('/');
+    const key = `${year}-${month}`;
 
-  flights.forEach(flight => {
-    const { date, time, landings, sim, distance } = flight;
-    const [day, month, year] = date.split('/'); // Assuming format 'DD/MM/YYYY'
-    const key = `${year}-${month}`; // Format: YYYY-MM
-
-    if (!totalsByMonthYear[key]) {
-      totalsByMonthYear[key] = {
-        year: year,
-        month: month,
-        time: Object.fromEntries(TIME_FIELDS.map(field => [field, 0])),
-        landings: { day: 0, night: 0 },
-        sim: { time: 0 },
-        distance: 0
-      };
+    if (!acc[key]) {
+      acc[key] = createInitialTotals({ year, month });
     }
 
-    TIME_FIELDS.forEach(field => {
-      totalsByMonthYear[key].time[field] += convertTimeToMinutes(time[field]);
+    updateTotals(acc[key], flight);
+    return acc;
+  }, {});
+
+  return Object.values(totals).sort((a, b) =>
+    a.year === b.year ? a.month - b.month : b.year - a.year
+  );
+};
+
+export const getTotalsByAircraft = (flights, type, models) => {
+  const modelCategories = type === "category" ?
+    models.reduce((acc, { model, category }) => {
+      acc[model] = category.split(',').map(c => c.trim());
+      return acc;
+    }, {}) : {};
+
+  const totals = flights.reduce((acc, flight) => {
+    const aircraftType = flight.aircraft.model || "Simulator";
+    const keys = type === "category" ?
+      (modelCategories[aircraftType] ?? [aircraftType]) :
+      [aircraftType];
+
+    keys.forEach(key => {
+      if (!acc[key]) {
+        acc[key] = createInitialTotals({ model: key });
+      }
+      updateTotals(acc[key], flight);
     });
 
-    totalsByMonthYear[key].landings.day += parseInt(landings.day) || 0;
-    totalsByMonthYear[key].landings.night += parseInt(landings.night) || 0;
-    totalsByMonthYear[key].sim.time += convertTimeToMinutes(sim.time);
-    totalsByMonthYear[key].distance += parseInt(distance) || 0;
-  });
+    return acc;
+  }, {});
 
-  // return array of objects in descending order
-  return Object.values(totalsByMonthYear).sort((a, b) => {
-    if (a.year === b.year) {
-      return a.month - b.month;
-    }
-    return b.year - a.year;
-  });
+  return Object.values(totals).sort((a, b) =>
+    a.model.localeCompare(b.model)
+  );
 };
