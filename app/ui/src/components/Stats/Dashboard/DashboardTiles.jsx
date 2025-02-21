@@ -42,6 +42,13 @@ export const DashboardTiles = ({ data, filter }) => {
         <Tile title="Aircraft Types" value={stats.aircraftModels} size={size} />
         <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString()} size={size} />
       </Grid>
+      <Divider orientation="horizontal" sx={{ m: 1 }} />
+      <Grid container spacing={1}>
+        <Tile title="Last 28 days (limit 90:00)" value={stats.limits.last28Days} size={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }} />
+        <Tile title="Last 90 days (limit 280:00)" value={stats.limits.last90Days} size={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }} />
+        <Tile title="Last 12 months (limit 1000:00)" value={stats.limits.last12Months} size={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }} />
+        <Tile title="This calendar year (limit 900:00)" value={stats.limits.thisYear} size={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }} />
+      </Grid>
     </>
   );
 }

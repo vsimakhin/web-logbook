@@ -85,14 +85,30 @@ export const getStats = (data) => {
     airports: new Set(),
     routes: new Set(),
     aircraftRegs: new Set(),
-    aircraftModels: new Set()
+    aircraftModels: new Set(),
   };
 
-  const totals = createInitialTotals();
+  const periods = {
+    totals: createInitialTotals(),
+    last28Days: createInitialTotals(),
+    last90Days: createInitialTotals(),
+    last12Months: createInitialTotals(),
+    thisYear: createInitialTotals(),
+  };
 
-  data.forEach(flight => {
-    const { departure, arrival, aircraft } = flight;
+  const today = dayjs();
+  const startDates = {
+    last28Days: today.subtract(28, "day"),
+    last90Days: today.subtract(90, "day"),
+    last12Months: today.subtract(12, "month"),
+    thisYear: today.startOf("year"),
+  };
 
+  data.forEach((flight) => {
+    const { departure, arrival, aircraft, date } = flight;
+    const flightDate = dayjs(date, "DD/MM/YYYY");
+
+    // Update sets
     if (departure.place) sets.airports.add(departure.place);
     if (arrival.place) sets.airports.add(arrival.place);
     if (aircraft.reg_name) sets.aircraftRegs.add(aircraft.reg_name);
@@ -101,14 +117,27 @@ export const getStats = (data) => {
       sets.routes.add(`${departure.place}-${arrival.place}`);
     }
 
-    updateTotals(totals, flight);
+    // Update totals
+    updateTotals(periods.totals, flight);
+
+    // Update time-based limits dynamically
+    Object.entries(startDates).forEach(([key, startDate]) => {
+      if (flightDate.isAfter(startDate)) {
+        updateTotals(periods[key], flight);
+      }
+    });
   });
 
   return {
     ...Object.fromEntries(
       Object.entries(sets).map(([key, set]) => [key, set.size])
     ),
-    totals: formatTimeTotals(totals)
+    totals: formatTimeTotals(periods.totals),
+    limits: Object.fromEntries(
+      Object.entries(periods)
+        .filter(([key]) => key !== "totals") // Exclude overall totals
+        .map(([key, period]) => [key, convertMinutesToTime(period.time.total_time)])
+    ),
   };
 };
 
