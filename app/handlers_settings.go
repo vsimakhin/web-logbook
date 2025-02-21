@@ -35,8 +35,6 @@ func (app *application) HandlerApiSettingsUpdate(w http.ResponseWriter, r *http.
 	// rewrite export settings since they are set from /export page
 	settings.ExportA4 = oldsettings.ExportA4
 	settings.ExportA5 = oldsettings.ExportA5
-	settings.ExportXLS = oldsettings.ExportXLS
-	settings.ExportCSV = oldsettings.ExportCSV
 	// Signature image is also updated separately
 	settings.SignatureImage = oldsettings.SignatureImage
 

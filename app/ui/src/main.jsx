@@ -23,6 +23,8 @@ import StatsDashboardPage from './pages/StatsDashboardPage.jsx';
 import StatsByYearPage from './pages/StatsByYearPage.jsx';
 import StatsByTypePage from './pages/StatsByTypePage.jsx';
 import StatsByCategoryPage from './pages/StatsByCategoryPage.jsx';
+import PdfExportA4Page from './pages/PdfExportA4Page.jsx';
+import PdfExportA5Page from './pages/PdfExportA5Page.jsx';
 
 const router = createBrowserRouter([
   {
@@ -57,6 +59,13 @@ const router = createBrowserRouter([
               { path: 'by-year', element: <StatsByYearPage /> },
               { path: 'by-type', element: <StatsByTypePage /> },
               { path: 'by-category', element: <StatsByCategoryPage /> },
+            ]
+          },
+          {
+            path: 'export', children: [
+              { index: true, element: <PdfExportA4Page /> },
+              { path: 'a4', element: <PdfExportA4Page /> },
+              { path: 'a5', element: <PdfExportA5Page /> },
             ]
           },
           { path: 'settings', element: <SettingsPage /> },

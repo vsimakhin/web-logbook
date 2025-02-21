@@ -17,6 +17,7 @@ import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -46,7 +47,12 @@ const NAV_ITEMS = [
     ],
   },
   { kind: 'divider' },
-  { segment: 'export', title: 'Export', icon: <SaveAltOutlinedIcon /> },
+  {
+    segment: 'export', title: 'Export', icon: <SaveAltOutlinedIcon />, children: [
+      { segment: 'a4', title: 'PDF A4', icon: <PictureAsPdfOutlinedIcon /> },
+      { segment: 'a5', title: 'PDF A5', icon: <PictureAsPdfOutlinedIcon /> },
+    ]
+  },
   { segment: 'import', title: 'Import', icon: <FileUploadOutlinedIcon /> },
   { kind: 'divider' },
   { segment: 'settings', title: 'Settings', icon: <SettingsIcon /> },

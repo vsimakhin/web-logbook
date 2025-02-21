@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -16,7 +15,7 @@ import (
 )
 
 const (
-	version = "3.0.1-alpha"
+	version = "3.0.0-alpha1"
 
 	infoLogPrefix    = "INFO\t"
 	errorLogPrefix   = "ERROR\t"
@@ -39,15 +38,12 @@ type config struct {
 }
 
 type application struct {
-	config        config
-	infoLog       *log.Logger
-	errorLog      *log.Logger
-	warningLog    *log.Logger
-	templateCache map[string]*template.Template
-	version       string
-	db            models.DBModel
-
-	isNewVersion         bool
+	config               config
+	infoLog              *log.Logger
+	errorLog             *log.Logger
+	warningLog           *log.Logger
+	version              string
+	db                   models.DBModel
 	timeFieldsAutoFormat byte
 }
 
@@ -138,8 +134,6 @@ func main() {
 	}
 	defer logf.Close()
 
-	tc := make(map[string]*template.Template)
-
 	// create db connection
 	conn, err := createDBConnection(cfg.db.engine, cfg.db.dsn)
 	if err != nil {
@@ -148,13 +142,12 @@ func main() {
 	defer conn.Close()
 
 	app := &application{
-		config:        cfg,
-		infoLog:       infoLog,
-		errorLog:      errorLog,
-		warningLog:    warningLog,
-		templateCache: tc,
-		version:       version,
-		db:            models.DBModel{DB: conn},
+		config:     cfg,
+		infoLog:    infoLog,
+		errorLog:   errorLog,
+		warningLog: warningLog,
+		version:    version,
+		db:         models.DBModel{DB: conn},
 	}
 
 	// check if we need to disable authentication

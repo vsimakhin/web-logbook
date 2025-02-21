@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"database/sql/driver"
 )
 
 const AllAircrafts = 0
@@ -162,32 +161,6 @@ type ExportPDF struct {
 	CustomTitleBlob      []byte
 }
 
-type ExportXLS struct {
-	ConvertTime bool `json:"convert_time"`
-}
-
-type ExportCSV struct {
-	Delimeter string `json:"delimeter"`
-	CRLF      bool   `json:"crlf"`
-}
-
-// HideFields is a type to keep whish fields are hidden
-type HideFields struct {
-	SE           bool `json:"hide_se"`
-	ME           bool `json:"hide_me"`
-	MCC          bool `json:"hide_mcc"`
-	Night        bool `json:"hide_night"`
-	IFR          bool `json:"hide_ifr"`
-	PIC          bool `json:"hide_pic"`
-	CoPilot      bool `json:"hide_copilot"`
-	Dual         bool `json:"hide_dual"`
-	Instructor   bool `json:"hide_instructor"`
-	Sim          bool `json:"hide_sim"`
-	CrossCountry bool `json:"hide_cc"`
-	Landings     bool `json:"hide_landings"`
-	Distance     bool `json:"hide_distance"`
-}
-
 // Settings is a type for settings
 type Settings struct {
 	OwnerName       string            `json:"owner_name"`
@@ -203,13 +176,10 @@ type Settings struct {
 	Hash        string `json:"hash"`
 	SecretKey   string `json:"secret_key"`
 
-	ExportA4  ExportPDF `json:"export_a4"`
-	ExportA5  ExportPDF `json:"export_a5"`
-	ExportXLS ExportXLS `json:"export_xls"`
-	ExportCSV ExportCSV `json:"export_csv"`
+	ExportA4 ExportPDF `json:"export_a4"`
+	ExportA5 ExportPDF `json:"export_a5"`
 
-	HideStatsFields      HideFields `json:"hide_stats_fields"`
-	TimeFieldsAutoFormat byte       `json:"time_fields_auto_format"`
+	TimeFieldsAutoFormat byte `json:"time_fields_auto_format"`
 
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`
@@ -252,12 +222,4 @@ type Category struct {
 // TableData is a type for Datatables
 type TableData struct {
 	Data [][]string `json:"data"`
-}
-
-// Mock is a type for mocking sql requests
-type Mock struct {
-	Query  string
-	Rows   []string
-	Values []driver.Value
-	Args   []driver.Value
 }
