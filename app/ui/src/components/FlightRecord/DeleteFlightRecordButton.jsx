@@ -21,11 +21,7 @@ export const DeleteFlightRecordButton = ({ flight }) => {
   useSuccessNotification({ isSuccess: isSuccess, message: 'Flight record deleted successfully' });
 
   const handleConfirmDelete = async () => {
-    const confirmed = await dialogs.confirm('Are you sure you want to remove this flight record?', {
-      okText: 'Yes',
-      cancelText: 'No',
-    });
-
+    const confirmed = await dialogs.confirm('Are you sure you want to remove this flight record?');
     if (confirmed) {
       await deleteFlight();
     }

@@ -41,3 +41,13 @@ export const updateAirportsDBSettings = async ({ settings, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot update airports DB settings');
 }
+
+export const fetchPdfDefaults = async ({ signal, format, navigate }) => {
+  const url = `${API_URL}/settings/export/defaults/${format}`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch defaults');
+}

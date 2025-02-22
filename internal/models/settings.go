@@ -64,3 +64,55 @@ func (m *DBModel) UpdateSettings(settings Settings) error {
 
 	return nil
 }
+
+func (m *DBModel) GetPdfDefaults(format string) (pdfDefaults ExportPDF) {
+	if format == "A4" {
+		pdfDefaults = pdfA4Defaults
+		pdfDefaults.Columns = pdfA4DefaultColumns
+	} else if format == "A5" {
+		pdfDefaults = pdfA5Defaults
+		pdfDefaults.Columns = pdfA5DefaultColumns
+	}
+	pdfDefaults.Headers = pdfDefaultHeaders
+
+	return pdfDefaults
+}
+
+func (m *DBModel) RestorePDFSettingsDefaults(format string, section string) error {
+	s, err := m.GetSettings()
+	if err != nil {
+		return err
+	}
+
+	if format == "A4" {
+		if section == "page" {
+			s.ExportA4.LogbookRows = pdfA4Defaults.LogbookRows
+			s.ExportA4.Fill = pdfA4Defaults.Fill
+			s.ExportA4.LeftMargin = pdfA4Defaults.LeftMargin
+			s.ExportA4.TopMargin = pdfA4Defaults.TopMargin
+			s.ExportA4.BodyRow = pdfA4Defaults.BodyRow
+			s.ExportA4.FooterRow = pdfA4Defaults.FooterRow
+		} else if section == "headers" {
+			s.ExportA4.Headers = pdfDefaultHeaders
+		} else if section == "columns" {
+			s.ExportA4.Columns = pdfA4DefaultColumns
+		}
+	} else if format == "A5" {
+		if section == "page" {
+			s.ExportA5.LogbookRows = pdfA5Defaults.LogbookRows
+			s.ExportA5.Fill = pdfA5Defaults.Fill
+			s.ExportA5.LeftMarginA = pdfA5Defaults.LeftMarginA
+			s.ExportA5.LeftMarginB = pdfA5Defaults.LeftMarginB
+			s.ExportA5.TopMargin = pdfA5Defaults.TopMargin
+			s.ExportA5.BodyRow = pdfA5Defaults.BodyRow
+			s.ExportA5.FooterRow = pdfA5Defaults.FooterRow
+		} else if section == "headers" {
+			s.ExportA5.Headers = pdfDefaultHeaders
+		} else if section == "columns" {
+			s.ExportA5.Columns = pdfA5DefaultColumns
+		}
+	}
+
+	err = m.UpdateSettings(s)
+	return err
+}

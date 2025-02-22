@@ -75,6 +75,8 @@ func (app *application) routes() *chi.Mux {
 			r.Put("/general", app.HandlerApiSettingsUpdate)
 			r.Put("/signature", app.HandlerApiSettingsSignature)
 			r.Put("/airports", app.HandlerApiSettingsAirports)
+			r.Post("/export/restore/{format}/{section}", app.HandlerApiSettingsRestoreDefaults)
+			r.Get("/export/defaults/{format}", app.HandlerApiSettingsExportDefaults)
 		})
 
 		// airports
