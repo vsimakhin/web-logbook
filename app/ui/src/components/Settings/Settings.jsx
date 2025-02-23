@@ -67,10 +67,7 @@ export const Settings = () => {
                 action={
                   <>
                     <SaveSettingsButton settings={settings} />
-                    {/* <HelpButton />
-                    <SaveLicenseRecordButton license={license} handleChange={handleChange} />
-                    <DeleteLicenseRecordButton license={license} />
-                    <DeleteLicenseRecordButtonAttachment license={license} /> */}
+                    {/* <HelpButton /> */}
                   </>
                 }
               />

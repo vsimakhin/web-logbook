@@ -76,8 +76,7 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 
 	err = exportFunc()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 	}
 }
 
@@ -120,32 +119,6 @@ func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http
 		response.OK = true
 		response.Message = "Export settings have been updated"
 
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerRestoreDefaults restores default values
-func (app *application) HandlerExportRestoreDefaults(w http.ResponseWriter, r *http.Request) {
-	var response models.JSONResponse
-
-	param := ""
-	err := json.NewDecoder(r.Body).Decode(&param)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = app.db.UpdateDefaults(param)
-
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Export settings have been restored. Refresh the page to see the changes."
 	}
 
 	app.writeJSON(w, http.StatusOK, response)

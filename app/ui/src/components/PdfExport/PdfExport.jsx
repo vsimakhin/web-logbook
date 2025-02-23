@@ -14,6 +14,7 @@ import RestoreDefaultsButton, { SECTION_PAGE_SETTINGS, SECTION_COLUMN_WIDTH, SEC
 import PageSettings from "./PageSettings";
 import LogbookColumnWidth from "./LogbookColumnWidth";
 import LogbookHeaders from "./LogbookHeaders";
+import OtherSettings from "./OtherSettings";
 
 export const PdfExport = ({ format }) => {
   const navigate = useNavigate();
@@ -31,17 +32,9 @@ export const PdfExport = ({ format }) => {
     }
   }, [data]);
 
-  const handleChange = (key, value) => {
-    setPdfSettings((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleColumnChange = (key, value) => {
-    setPdfSettings((prev) => ({ ...prev, columns: { ...prev.columns, [key]: value } }));
-  }
-
-  const handleHeaderChange = (key, value) => {
-    setPdfSettings((prev) => ({ ...prev, headers: { ...prev.headers, [key]: value } }));
-  }
+  const handleChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, [key]: value })) };
+  const handleColumnChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, columns: { ...prev.columns, [key]: value } })) };
+  const handleHeaderChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, headers: { ...prev.headers, [key]: value } })) };
 
   return (
     <>
@@ -65,7 +58,8 @@ export const PdfExport = ({ format }) => {
                 <>
                   <RestoreDefaultsButton format={format} section={SECTION_COLUMN_WIDTH} handleChange={handleChange} />
                 </>
-              } />
+              }
+              />
               <LogbookColumnWidth format={format} columnSettings={pdfSettings.columns} handleChange={handleColumnChange} />
             </CardContent>
           </Card >
@@ -76,16 +70,29 @@ export const PdfExport = ({ format }) => {
                 <>
                   <RestoreDefaultsButton format={format} section={SECTION_COLUMN_HEADER} handleChange={handleChange} />
                 </>
-              } />
+              }
+              />
               <LogbookHeaders headerSettings={pdfSettings.headers} handleChange={handleHeaderChange} />
+            </CardContent>
+          </Card >
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+
+          <Card variant="outlined" sx={{ mb: 1 }}>
+            <CardContent>
+              <CardHeader title="Other Settings" action={
+                <>
+                </>
+              }
+              />
+              <OtherSettings pdfSettings={pdfSettings} handleChange={handleChange} />
             </CardContent>
           </Card >
         </Grid>
       </Grid>
 
-      <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
 
-      </Grid>
     </>
   );
 }

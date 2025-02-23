@@ -1,5 +1,6 @@
 // MUI
 import Grid from "@mui/material/Grid2";
+import { useTheme } from '@mui/material/styles';
 // Custom
 import TextField from "../UIElements/TextField";
 
@@ -93,6 +94,9 @@ const HEADERS_CONFIG = [
 ];
 
 export const LogbookHeaders = ({ headerSettings, handleChange }) => {
+  const theme = useTheme();
+  const borderRadius = theme.shape.borderRadius;
+
   return (
     <Grid container spacing={1}>
       {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
@@ -109,11 +113,10 @@ export const LogbookHeaders = ({ headerSettings, handleChange }) => {
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 0,
-                    borderRight: fieldIndex === group.length - 1 ? undefined : 0,
-                    borderTopLeftRadius: fieldIndex === 0 ? 8 : 0,
-                    borderBottomLeftRadius: fieldIndex === 0 ? 8 : 0,
-                    borderTopRightRadius: fieldIndex === group.length - 1 ? 8 : 0,
-                    borderBottomRightRadius: fieldIndex === group.length - 1 ? 8 : 0,
+                    borderTopLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                    borderBottomLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                    borderTopRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
+                    borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
                   }
                 }}
               />

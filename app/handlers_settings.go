@@ -99,19 +99,6 @@ func (app *application) HandlerApiSettingsAirports(w http.ResponseWriter, r *htt
 	app.writeOkResponse(w, "Airports DB Settings updated")
 }
 
-func (app *application) HandlerApiSettingsRestoreDefaults(w http.ResponseWriter, r *http.Request) {
-	format := chi.URLParam(r, "format")
-	section := chi.URLParam(r, "section")
-
-	err := app.db.RestorePDFSettingsDefaults(format, section)
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
-	app.writeOkResponse(w, "Restored")
-}
-
 func (app *application) HandlerApiSettingsExportDefaults(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
 	defaults := app.db.GetPdfDefaults(format)
