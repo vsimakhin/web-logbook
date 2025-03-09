@@ -4,9 +4,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-// Custom
-import TextField from "../UIElements/TextField";
-
 
 export const OtherSettings = ({ pdfSettings, handleChange }) => {
 

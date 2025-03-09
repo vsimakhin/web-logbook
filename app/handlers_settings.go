@@ -107,7 +107,6 @@ func (app *application) HandlerApiSettingsExportDefaults(w http.ResponseWriter, 
 
 func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
-	section := chi.URLParam(r, "section")
 
 	s, err := app.db.GetSettings()
 	if err != nil {
@@ -130,28 +129,20 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 		targetExport = &s.ExportA5
 	}
 
-	switch section {
-	case "page":
-		targetExport.LogbookRows = updated.LogbookRows
-		targetExport.Fill = updated.Fill
-		targetExport.LeftMargin = updated.LeftMargin
-		targetExport.TopMargin = updated.TopMargin
-		targetExport.BodyRow = updated.BodyRow
-		targetExport.FooterRow = updated.FooterRow
-		if format == "A5" {
-			targetExport.LeftMarginA = updated.LeftMarginA
-			targetExport.LeftMarginB = updated.LeftMarginB
-		}
-	case "headers":
-		targetExport.Headers = updated.Headers
-	case "columns":
-		targetExport.Columns = updated.Columns
-	case "other":
-		targetExport.ReplaceSPTime = updated.ReplaceSPTime
-		targetExport.IncludeSignature = updated.IncludeSignature
-		targetExport.IsExtended = updated.IsExtended
-		targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
-	}
+	targetExport.LogbookRows = updated.LogbookRows
+	targetExport.Fill = updated.Fill
+	targetExport.LeftMargin = updated.LeftMargin
+	targetExport.TopMargin = updated.TopMargin
+	targetExport.BodyRow = updated.BodyRow
+	targetExport.FooterRow = updated.FooterRow
+	targetExport.LeftMarginA = updated.LeftMarginA
+	targetExport.LeftMarginB = updated.LeftMarginB
+	targetExport.Headers = updated.Headers
+	targetExport.Columns = updated.Columns
+	targetExport.ReplaceSPTime = updated.ReplaceSPTime
+	targetExport.IncludeSignature = updated.IncludeSignature
+	targetExport.IsExtended = updated.IsExtended
+	targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
 
 	err = app.db.UpdateSettings(s)
 	if err != nil {

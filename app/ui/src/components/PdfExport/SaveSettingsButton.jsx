@@ -30,11 +30,11 @@ const parseColumns = (columns) => {
     }, {});
 };
 
-export const SaveSettingsButton = ({ settings, format, section }) => {
+export const SaveSettingsButton = ({ settings, format }) => {
   const navigate = useNavigate();
 
   const { mutateAsync: saveSettings, isError, error, isSuccess } = useMutation({
-    mutationFn: ({ settings, format, section }) => updatePdfSettings({ settings, format, section, navigate }),
+    mutationFn: ({ settings, format }) => updatePdfSettings({ settings, format, navigate }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['settings'] })
     }
@@ -48,7 +48,7 @@ export const SaveSettingsButton = ({ settings, format, section }) => {
       ...parseNumericFields(settings, INT_FIELDS, parseInt),
       columns: parseColumns(settings.columns)
     };
-    await saveSettings({ settings: parsedSettings, format, section });
+    await saveSettings({ settings: parsedSettings, format });
   }
   return (
     <>
