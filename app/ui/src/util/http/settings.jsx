@@ -51,3 +51,13 @@ export const fetchPdfDefaults = async ({ signal, format, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot fetch defaults');
 }
+
+export const updatePdfSettings = async ({ settings, format, section, navigate }) => {
+  const url = `${API_URL}/settings/export/${format}/${section}`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(settings),
+  };
+  return await handleFetch(url, options, navigate, 'Cannot update export settings');
+}

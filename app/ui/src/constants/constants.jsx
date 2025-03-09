@@ -118,3 +118,8 @@ export const defaultColumnFilterTextFieldProps = ({ column }) => ({
   placeholder: '',
   InputLabelProps: { shrink: true },
 });
+
+export const SECTION_PAGE_SETTINGS = "page";
+export const SECTION_COLUMN_WIDTH = "columns";
+export const SECTION_COLUMN_HEADER = "headers";
+export const SECTION_OTHER_SETTINGS = "other";

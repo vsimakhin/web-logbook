@@ -20,7 +20,7 @@ const PAGE_SETTINGS_CONFIG = [
 export const PageSettings = ({ format, pdfSettings, handleChange }) => {
   return (
     <>
-      <Grid container spacing={1} >
+      <Grid container spacing={1} columns={16} >
         {PAGE_SETTINGS_CONFIG.map(({ id, label, tooltip, placeholder, showIf }) => (
           (!showIf || showIf(format)) && (
             <TextField

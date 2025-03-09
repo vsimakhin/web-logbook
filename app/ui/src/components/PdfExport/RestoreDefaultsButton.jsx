@@ -8,10 +8,7 @@ import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBacku
 // Custom
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchPdfDefaults } from "../../util/http/settings";
-
-export const SECTION_PAGE_SETTINGS = "page";
-export const SECTION_COLUMN_WIDTH = "columns";
-export const SECTION_COLUMN_HEADER = "headers";
+import { SECTION_PAGE_SETTINGS, SECTION_COLUMN_WIDTH, SECTION_COLUMN_HEADER } from "../../constants/constants";
 
 const TOOLTIP_MESSAGES = {
   [SECTION_PAGE_SETTINGS]: "Restore page settings defaults",

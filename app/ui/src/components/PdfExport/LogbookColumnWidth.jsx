@@ -35,7 +35,7 @@ const COLUMN_CONFIG = [
 export const LogbookColumnWidth = ({ columnSettings, handleChange }) => {
   return (
     <>
-      <Grid container spacing={1} >
+      <Grid container spacing={1} columns={16} >
         {COLUMN_CONFIG.map(({ id, label }) => (
           <TextField key={id}
             gsize={size}

@@ -10,11 +10,13 @@ import { LinearProgress } from "@mui/material";
 import CardHeader from "../UIElements/CardHeader";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchSettings } from "../../util/http/settings";
-import RestoreDefaultsButton, { SECTION_PAGE_SETTINGS, SECTION_COLUMN_WIDTH, SECTION_COLUMN_HEADER } from "./RestoreDefaultsButton";
+import RestoreDefaultsButton from "./RestoreDefaultsButton";
 import PageSettings from "./PageSettings";
 import LogbookColumnWidth from "./LogbookColumnWidth";
 import LogbookHeaders from "./LogbookHeaders";
 import OtherSettings from "./OtherSettings";
+import { SECTION_PAGE_SETTINGS, SECTION_COLUMN_WIDTH, SECTION_COLUMN_HEADER, SECTION_OTHER_SETTINGS } from "../../constants/constants";
+import SaveSettingsButton from "./SaveSettingsButton";
 
 export const PdfExport = ({ format }) => {
   const navigate = useNavigate();
@@ -45,6 +47,7 @@ export const PdfExport = ({ format }) => {
             <CardContent>
               <CardHeader title="Page Settings" action={
                 <>
+                  <SaveSettingsButton settings={pdfSettings} format={format} section={SECTION_PAGE_SETTINGS} />
                   <RestoreDefaultsButton format={format} section={SECTION_PAGE_SETTINGS} handleChange={handleChange} />
                 </>
               } />
@@ -56,10 +59,10 @@ export const PdfExport = ({ format }) => {
             <CardContent>
               <CardHeader title="Logbook Columns Width" action={
                 <>
+                  <SaveSettingsButton settings={pdfSettings} format={format} section={SECTION_COLUMN_WIDTH} />
                   <RestoreDefaultsButton format={format} section={SECTION_COLUMN_WIDTH} handleChange={handleChange} />
                 </>
-              }
-              />
+              } />
               <LogbookColumnWidth format={format} columnSettings={pdfSettings.columns} handleChange={handleColumnChange} />
             </CardContent>
           </Card >
@@ -68,10 +71,10 @@ export const PdfExport = ({ format }) => {
             <CardContent>
               <CardHeader title="Logbook Columns Header" action={
                 <>
+                  <SaveSettingsButton settings={pdfSettings} format={format} section={SECTION_COLUMN_HEADER} />
                   <RestoreDefaultsButton format={format} section={SECTION_COLUMN_HEADER} handleChange={handleChange} />
                 </>
-              }
-              />
+              } />
               <LogbookHeaders headerSettings={pdfSettings.headers} handleChange={handleHeaderChange} />
             </CardContent>
           </Card >
@@ -83,16 +86,14 @@ export const PdfExport = ({ format }) => {
             <CardContent>
               <CardHeader title="Other Settings" action={
                 <>
+                  <SaveSettingsButton settings={pdfSettings} format={format} section={SECTION_OTHER_SETTINGS} />
                 </>
-              }
-              />
+              } />
               <OtherSettings pdfSettings={pdfSettings} handleChange={handleChange} />
             </CardContent>
           </Card >
         </Grid>
       </Grid>
-
-
     </>
   );
 }

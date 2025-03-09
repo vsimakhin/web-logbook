@@ -104,3 +104,60 @@ func (app *application) HandlerApiSettingsExportDefaults(w http.ResponseWriter, 
 	defaults := app.db.GetPdfDefaults(format)
 	app.writeJSON(w, http.StatusOK, defaults)
 }
+
+func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r *http.Request) {
+	format := chi.URLParam(r, "format")
+	section := chi.URLParam(r, "section")
+
+	s, err := app.db.GetSettings()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var updated models.ExportPDF
+	err = json.NewDecoder(r.Body).Decode(&updated)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var targetExport *models.ExportPDF
+	switch format {
+	case "A4":
+		targetExport = &s.ExportA4
+	case "A5":
+		targetExport = &s.ExportA5
+	}
+
+	switch section {
+	case "page":
+		targetExport.LogbookRows = updated.LogbookRows
+		targetExport.Fill = updated.Fill
+		targetExport.LeftMargin = updated.LeftMargin
+		targetExport.TopMargin = updated.TopMargin
+		targetExport.BodyRow = updated.BodyRow
+		targetExport.FooterRow = updated.FooterRow
+		if format == "A5" {
+			targetExport.LeftMarginA = updated.LeftMarginA
+			targetExport.LeftMarginB = updated.LeftMarginB
+		}
+	case "headers":
+		targetExport.Headers = updated.Headers
+	case "columns":
+		targetExport.Columns = updated.Columns
+	case "other":
+		targetExport.ReplaceSPTime = updated.ReplaceSPTime
+		targetExport.IncludeSignature = updated.IncludeSignature
+		targetExport.IsExtended = updated.IsExtended
+		targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
+	}
+
+	err = app.db.UpdateSettings(s)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Export settings updated")
+}
