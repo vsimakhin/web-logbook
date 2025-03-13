@@ -45,8 +45,15 @@ const renderTimeFooter = (table, field) => {
 };
 
 const renderLangingFooter = (table, field) => {
-  const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) => total + getValue(row.original, field), 0);
-  const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) => total + getValue(row.original, field), 0);
+  const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) => {
+    const value = parseInt(getValue(row.original, field)) || 0;
+    return total + value;
+  }, 0);
+
+  const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) => {
+    const value = parseInt(getValue(row.original, field)) || 0;
+    return total + value;
+  }, 0);
 
   return (
     <Stack direction="column" spacing={1} alignItems="center">
@@ -69,9 +76,6 @@ export const createTimeColumn = (id, name) => ({
   header: name,
   size: timeFieldSize,
   ...renderProps,
-  // Cell: ({ cell, row }) => {
-  //   return cell.getValue();
-  // },
   Footer: ({ table }) => renderTimeFooter(table, id),
 })
 
@@ -80,14 +84,12 @@ export const createLandingColumn = (id, name) => ({
   header: name,
   size: 53,
   ...renderProps,
-  // Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue()),
   Footer: ({ table }) => renderLangingFooter(table, id),
 })
 
 export const createDateColumn = (id, name, size) => ({
   accessorKey: id,
   header: name,
-  // Cell: ({ renderedCellValue, row }) => (<Typography variant="body2" color="primary">{renderedCellValue}</Typography>),
   size: size,
   ...renderTextProps,
 })

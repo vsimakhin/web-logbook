@@ -250,25 +250,18 @@ In case you'd like to add some other features to the logbook or you found a bug,
 
 # Used libraries
 
-* Adminkit.io https://adminkit.io (AdminKit PRO License Agreement for Hobby License - https://adminkit.io/licenses/)
-* Bootstrap https://getbootstrap.com/
-* Datatables https://datatables.net/
-* Openlayers https://openlayers.org/
+Backend:
 * Golang go-pdf https://github.com/go-pdf/fpdf
 * Golang chi web-server https://github.com/go-chi/chi
-* Golang Excelize https://github.com/xuri/excelize
-* Chart.js https://www.chartjs.org/
-* Date Range Picker https://www.daterangepicker.com/
-* Signature Pad https://github.com/szimek/signature_pad
-* PapaParse https://github.com/mholt/PapaParse
-* arc.js https://github.com/springmeyer/arc.js
 
-
-* Golang go-pdf https://github.com/go-pdf/fpdf
-* Golang chi web-server https://github.com/go-chi/chi
+Frontend:
 * React https://react.dev/
 * Material UI https://mui.com/material-ui/
 * Material React Table https://material-react-table.com
+* Openlayers https://openlayers.org/
 * dayjs https://github.com/iamkun/dayjs
 * TanStack Query https://tanstack.com/query/
 * export-to-csv https://github.com/alexcaza/export-to-csv
+* Signature Pad https://github.com/szimek/signature_pad
+* PapaParse https://github.com/mholt/PapaParse
+* arc.js https://github.com/springmeyer/arc.js

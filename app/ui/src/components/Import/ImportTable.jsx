@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import { tableJSONCodec } from '../../constants/constants';
 import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 import OpenCSVButton from './OpenCSVButton';
+import ClearTableButton from './ClearTableButton';
 
 const paginationKey = 'import-table-page-size';
 const columnVisibilityKey = 'import-table-column-visibility';
@@ -27,7 +28,9 @@ const tableOptions = {
   enableColumnActions: false,
 };
 
-export const ImportTable = ({ data, isLoading }) => {
+export const ImportTable = () => {
+  const [data, setData] = useState([]);
+
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
 
@@ -96,11 +99,11 @@ export const ImportTable = ({ data, isLoading }) => {
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
-    isLoading: isLoading,
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <OpenCSVButton />
+        <OpenCSVButton setData={setData} />
+        <ClearTableButton setData={setData} />
       </Box>
     ),
     onPaginationChange: setPagination,
