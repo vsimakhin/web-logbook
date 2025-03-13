@@ -1,11 +1,15 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-pdf/fpdf"
+	"github.com/go-pdf/fpdf/contrib/gofpdi"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/pdfexport"
 )
@@ -13,21 +17,92 @@ import (
 const exportA4 = "A4"
 const exportA5 = "A5"
 
+// validateCustomTitlePdf checks if the uploaded PDF file is supported by fpdf library
+func validateCustomTitlePdf(bs []byte) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("This PDF file is not supported by pdf library")
+		}
+	}()
+
+	var pdf *fpdf.Fpdf
+	pdf = fpdf.New("L", "mm", "A4", "")
+	imp := gofpdi.NewImporter()
+
+	readSeeker := io.ReadSeeker(bytes.NewReader(bs))
+	imp.ImportPageFromStream(pdf, &readSeeker, 1, "/MediaBox")
+
+	return nil
+}
+
+// HandlerApiUploadAttachment handles attachments upload
+func (app *application) HandlerApiUploadCustomTitle(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseMultipartForm(32 << 20)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
+		app.handleError(w, err)
+		return
+	}
+
+	attachment := models.Attachment{
+		UUID:     r.PostFormValue("id"),
+		RecordID: r.PostFormValue("id"),
+	}
+
+	// check attached file
+	file, header, err := r.FormFile("document")
+	if err != nil {
+		if !strings.Contains(err.Error(), "no such file") {
+			app.handleError(w, err)
+			return
+		}
+	} else {
+		defer file.Close()
+		attachment.DocumentName = header.Filename
+
+		// read file
+		bs, err := io.ReadAll(file)
+		if err != nil {
+			app.handleError(w, err)
+			return
+		}
+		attachment.Document = bs
+		err = validateCustomTitlePdf(attachment.Document)
+		if err != nil {
+			app.handleError(w, err)
+			return
+		}
+	}
+
+	// drop the old custom title
+	err = app.db.DeleteAttachment(attachment.UUID)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	err = app.db.InsertAttachmentRecord(attachment)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Attachment has been uploaded")
+}
+
 // HandlerExportLogbook serves the GET request for logbook export
 func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
 
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	settings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
@@ -47,18 +122,17 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 			exportSettings = settings.ExportA5
 		}
 
-		if exportSettings.CustomTitle != "" {
-			att, _ := app.db.GetAttachmentByID(exportSettings.CustomTitle)
-			exportSettings.CustomTitleBlob = att.Document
-		}
+		// custom title
+		id := fmt.Sprintf("custom_title_%s", strings.ToLower(format))
+		att, _ := app.db.GetAttachmentByID(id)
+		exportSettings.CustomTitleBlob = att.Document
 
 		pdfExporter, err := pdfexport.NewPDFExporter(format,
 			settings.OwnerName, settings.LicenseNumber, settings.Address,
 			settings.SignatureText, settings.SignatureImage, exportSettings)
 
 		if err != nil {
-			app.errorLog.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			app.handleError(w, err)
 			return
 		}
 
@@ -78,48 +152,4 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		app.handleError(w, err)
 	}
-}
-
-// HandlerExportSettingsSave serves the POST request for export settings update
-func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http.Request) {
-	format := chi.URLParam(r, "format")
-
-	currsettings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot get the export settings - %s", err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	var settings models.Settings
-	var response models.JSONResponse
-
-	err = json.NewDecoder(r.Body).Decode(&settings)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// rewrite only export settings since the others are set from /settings page
-	if format == exportA4 {
-		currsettings.ExportA4 = settings.ExportA4
-
-	} else if format == exportA5 {
-		currsettings.ExportA5 = settings.ExportA5
-
-	}
-
-	err = app.db.UpdateSettings(currsettings)
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Export settings have been updated"
-
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
 }

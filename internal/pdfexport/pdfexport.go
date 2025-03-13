@@ -397,6 +397,7 @@ func (p *PDFExporter) printCustomTitle() {
 
 	// import first page and determine page sizes
 	imp.ImportPageFromStream(p.pdf, &readSeeker, 1, "/MediaBox")
+
 	pageSizes := imp.GetPageSizes()
 	nrPages := len(imp.GetPageSizes())
 

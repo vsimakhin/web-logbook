@@ -94,16 +94,12 @@ func (app *application) routes() *chi.Mux {
 		// export
 		r.Route("/export", func(r chi.Router) {
 			r.Get("/{format}", app.HandlerExportLogbook)
+			r.Post("/custom-title", app.HandlerApiUploadCustomTitle)
 		})
 
 		// logout
 		r.Post("/logout", app.HandlerLogout) // to review
 	})
-
-	// r.Route("/", func(r chi.Router) {
-	// 	// export
-	// 	r.Post(APIExportFormat, app.HandlerExportSettingsSave)
-	// 	r.Post(APIExportRestoreDefaults, app.HandlerExportRestoreDefaults)
 
 	// 	// import
 	// 	r.Post(APIImportCreateBackup, app.HandlerImportCreateBackup)

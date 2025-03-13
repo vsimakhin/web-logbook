@@ -15,6 +15,9 @@ import PageSettings from "./PageSettings";
 import OtherSettings from "./OtherSettings";
 import SaveSettingsButton from "./SaveSettingsButton";
 import ExportButton from "./ExportButton";
+import CustomTitlePreview from "./CustomTitlePreview";
+import AddCustomTitleButton from "./AddCustomTitleButton";
+import DeleteCustomTitleButton from "./DeleteCustomTitleButton";
 
 export const PdfExport = ({ format }) => {
   const navigate = useNavigate();
@@ -54,9 +57,6 @@ export const PdfExport = ({ format }) => {
                 handleChange={handleChange} handleColumnChange={handleColumnChange} handleHeaderChange={handleHeaderChange} />
             </CardContent>
           </Card >
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
 
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
@@ -66,6 +66,20 @@ export const PdfExport = ({ format }) => {
                 </>
               } />
               <OtherSettings pdfSettings={pdfSettings} handleChange={handleChange} />
+            </CardContent>
+          </Card >
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+          <Card variant="outlined" sx={{ mb: 1 }}>
+            <CardContent>
+              <CardHeader title="Custom title page" action={
+                <>
+                  <AddCustomTitleButton format={format} />
+                  <DeleteCustomTitleButton format={format} />
+                </>
+              } />
+              <CustomTitlePreview format={format} />
             </CardContent>
           </Card >
         </Grid>

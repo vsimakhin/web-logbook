@@ -1,5 +1,10 @@
 package models
 
+import (
+	"database/sql"
+	"errors"
+)
+
 // GetAttachments returns attachments array for a specific record_id
 func (m *DBModel) GetAttachments(recordID string) (attachments []Attachment, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
@@ -98,5 +103,10 @@ func (m *DBModel) GetAttachmentByID(uuid string) (att Attachment, err error) {
 	query := "SELECT uuid, record_id, document_name, document FROM attachments WHERE uuid = ?"
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 	err = row.Scan(&att.UUID, &att.RecordID, &att.DocumentName, &att.Document)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return att, nil
+		}
+	}
 	return att, err
 }
