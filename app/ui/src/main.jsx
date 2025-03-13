@@ -25,6 +25,7 @@ import StatsByTypePage from './pages/StatsByTypePage.jsx';
 import StatsByCategoryPage from './pages/StatsByCategoryPage.jsx';
 import PdfExportA4Page from './pages/PdfExportA4Page.jsx';
 import PdfExportA5Page from './pages/PdfExportA5Page.jsx';
+import ImportPage from './pages/ImportPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,9 @@ const router = createBrowserRouter([
               { path: 'a4', element: <PdfExportA4Page /> },
               { path: 'a5', element: <PdfExportA5Page /> },
             ]
+          },
+          {
+            path: 'import', element: <ImportPage />,
           },
           { path: 'settings', element: <SettingsPage /> },
         ]
