@@ -71,3 +71,13 @@ export const fetchVersion = async ({ signal, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot fetch version');
 }
+
+export const fetchAuthEnabled = async ({ signal, navigate }) => {
+  const url = `${API_URL}/auth-enabled`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch auth enabled property');
+}

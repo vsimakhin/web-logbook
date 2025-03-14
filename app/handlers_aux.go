@@ -30,3 +30,8 @@ func (app *application) HandlerUI() http.Handler {
 func (app *application) HandlerVersion(w http.ResponseWriter, r *http.Request) {
 	app.writeJSON(w, http.StatusOK, app.version)
 }
+
+func (app *application) HandlerAuthEnabled(w http.ResponseWriter, r *http.Request) {
+	isAuth, _ := app.db.IsAuthEnabled()
+	app.writeJSON(w, http.StatusOK, isAuth)
+}

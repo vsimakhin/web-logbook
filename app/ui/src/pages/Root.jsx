@@ -1,14 +1,18 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 // MUI elements
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import { DashboardLayout, ThemeSwitcher } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+// MUI Icon
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 // Custom
 import { DRAWER_WIDTH } from '../constants/constants';
-import { fetchVersion } from '../util/http/settings';
+import { fetchAuthEnabled, fetchVersion } from '../util/http/settings';
 
 const CustomAppTitle = () => {
   const navigate = useNavigate();
@@ -30,9 +34,41 @@ const CustomAppTitle = () => {
   );
 }
 
+const ToolbarActions = () => {
+  const navigate = useNavigate();
+
+  const { data: auth } = useQuery({
+    queryKey: ['auth-enabled'],
+    queryFn: ({ signal }) => fetchAuthEnabled({ signal, navigate }),
+    placeholderData: false,
+    staleTime: 86400000,
+    cacheTime: 86400000,
+    refetchOnWindowFocus: false,
+  });
+
+  const handleLogout = () => {
+    navigate('/logout');
+  }
+
+  return (
+    <Stack direction="row" spacing={0}>
+      {auth &&
+        <Tooltip title="Logout">
+          <IconButton onClick={handleLogout}><MeetingRoomIcon htmlColor="rgb(0, 89, 179)" /></IconButton>
+        </Tooltip>
+      }
+      <ThemeSwitcher />
+    </Stack>
+  );
+}
+
 export const Root = () => {
   return (
-    <DashboardLayout sidebarExpandedWidth={DRAWER_WIDTH} slots={{ appTitle: CustomAppTitle }}>
+    <DashboardLayout sidebarExpandedWidth={DRAWER_WIDTH}
+      slots={{
+        appTitle: CustomAppTitle,
+        toolbarActions: ToolbarActions
+      }}>
       <PageContainer maxWidth={false} title="" breadcrumbs={[]}>
         <Outlet />
       </PageContainer>

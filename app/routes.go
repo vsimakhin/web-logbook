@@ -21,7 +21,6 @@ func (app *application) routes() *chi.Mux {
 		MaxAge:           300,
 	}))
 
-	r.Get("/api/version", app.HandlerVersion)
 	r.Post("/api/login", app.HandlerLogin)
 
 	r.Route("/api", func(r chi.Router) {
@@ -105,6 +104,10 @@ func (app *application) routes() *chi.Mux {
 
 		// logout
 		r.Post("/logout", app.HandlerLogout)
+
+		// aux
+		r.Get("/version", app.HandlerVersion)
+		r.Get("/auth-enabled", app.HandlerAuthEnabled)
 	})
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))

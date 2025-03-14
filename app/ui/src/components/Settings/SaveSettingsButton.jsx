@@ -16,6 +16,7 @@ export const SaveSettingsButton = ({ settings }) => {
     mutationFn: () => updateSettings({ settings, navigate }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['settings'] })
+      await queryClient.invalidateQueries({ queryKey: ['auth-enabled'] })
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save settings' });
