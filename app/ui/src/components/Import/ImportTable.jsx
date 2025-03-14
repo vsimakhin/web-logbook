@@ -8,6 +8,8 @@ import { tableJSONCodec } from '../../constants/constants';
 import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 import OpenCSVButton from './OpenCSVButton';
 import ClearTableButton from './ClearTableButton';
+import RunImportButton from './RunImportButton';
+import { LinearProgress } from '@mui/material';
 
 const paginationKey = 'import-table-page-size';
 const columnVisibilityKey = 'import-table-column-visibility';
@@ -30,6 +32,7 @@ const tableOptions = {
 
 export const ImportTable = () => {
   const [data, setData] = useState([]);
+  const [inProgress, setInProgress] = useState(false);
 
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
@@ -100,10 +103,11 @@ export const ImportTable = () => {
     columns: columns,
     data: data ?? [],
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: ({ table }) => (
+    renderTopToolbarCustomActions: () => (
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <OpenCSVButton setData={setData} />
         <ClearTableButton setData={setData} />
+        <OpenCSVButton setData={setData} />
+        <RunImportButton data={data} inProgress={inProgress} setInProgress={setInProgress} />
       </Box>
     ),
     onPaginationChange: setPagination,
@@ -117,6 +121,7 @@ export const ImportTable = () => {
 
   return (
     <>
+      {inProgress && <LinearProgress />}
       <MaterialReactTable table={table} />
     </>
   );

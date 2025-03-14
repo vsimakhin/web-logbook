@@ -93,18 +93,18 @@ func (app *application) routes() *chi.Mux {
 
 		// export
 		r.Route("/export", func(r chi.Router) {
-			r.Get("/{format}", app.HandlerExportLogbook)
+			r.Get("/{format}", app.HandlerApiExportLogbook)
 			r.Post("/custom-title", app.HandlerApiUploadCustomTitle)
+		})
+
+		// import
+		r.Route("/import", func(r chi.Router) {
+			r.Post("/run", app.HandlerApiImportRun)
 		})
 
 		// logout
 		r.Post("/logout", app.HandlerLogout) // to review
 	})
-
-	// 	// import
-	// 	r.Post(APIImportCreateBackup, app.HandlerImportCreateBackup)
-	// 	r.Post(APIImportRun, app.HandlerImportRun)
-	// })
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))
 

@@ -101,3 +101,65 @@ export const createColumn = (id, name, size, isText = false, footer = undefined)
   ...(isText ? renderTextProps : renderProps),
   Footer: () => footer,
 })
+
+export const convertToDDMMYYYY = (date) => {
+  if (date === "") {
+    return "";
+  }
+
+  const parts = date.replace(/[.]/g, '/').split('/');
+
+  const day = parts[0].padStart(2, '0');
+  const month = parts[1].padStart(2, '0');
+  const year = parts[2];
+
+  return `${day}/${month}/${year}`;
+}
+
+export const autoTimeRecog = (time) => {
+  if (!time || time === "") {
+    return "";
+  }
+  return time.replace(/[^0-9]/g, '').padStart(4, '0');
+}
+
+export const marshallItem = (item) => {
+  return {
+    uuid: "",
+    date: item.date,
+    departure: {
+      place: item.departure_place,
+      time: item.departure_time,
+    },
+    arrival: {
+      place: item.arrival_place,
+      time: item.arrival_time,
+    },
+    aircraft: {
+      model: item.aircraft_model,
+      reg_name: item.aircraft_reg_name,
+    },
+    time: {
+      se_time: item.se_time,
+      me_time: item.me_time,
+      mcc_time: item.mcc_time,
+      total_time: item.total_time,
+      night_time: item.night_time,
+      ifr_time: item.ifr_time,
+      pic_time: item.pic_time,
+      co_pilot_time: item.sic_time,
+      dual_time: item.dual_time,
+      instructor_time: item.instr_time,
+    },
+    landings: {
+      day: parseInt(item.landings_day) || 0,
+      night: parseInt(item.landings_night) || 0,
+    },
+    sim: {
+      type: item.sim_type,
+      time: item.sim_time,
+    },
+    pic_name: item.pic_name,
+    remarks: item.remarks,
+  };
+}

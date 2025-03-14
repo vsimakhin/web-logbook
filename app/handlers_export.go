@@ -91,7 +91,7 @@ func (app *application) HandlerApiUploadCustomTitle(w http.ResponseWriter, r *ht
 }
 
 // HandlerExportLogbook serves the GET request for logbook export
-func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlerApiExportLogbook(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
 
 	flightRecords, err := app.db.GetFlightRecords()
