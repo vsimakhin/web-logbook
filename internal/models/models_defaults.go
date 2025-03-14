@@ -139,13 +139,9 @@ func (m *DBModel) CheckDefaultValues() error {
 		applyDefaults = true
 	}
 
-	// let's explicitly check headers, since this functionality was added later
-	if s.ExportA4.Headers.Date == "" {
-		s.ExportA4.Headers = pdfDefaultHeaders
-		applyDefaults = true
-	}
-	if s.ExportA5.Headers.Date == "" {
-		s.ExportA5.Headers = pdfDefaultHeaders
+	if s.AirportDBSource == "" {
+		s.AirportDBSource = "https://github.com/vsimakhin/Airports/raw/master/airports.json"
+		s.NoICAOFilter = false
 		applyDefaults = true
 	}
 

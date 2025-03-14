@@ -26,3 +26,7 @@ func (app *application) HandlerUI() http.Handler {
 		fileServer.ServeHTTP(w, r)
 	})
 }
+
+func (app *application) HandlerVersion(w http.ResponseWriter, r *http.Request) {
+	app.writeJSON(w, http.StatusOK, app.version)
+}

@@ -167,11 +167,34 @@ func main() {
 		// but probably let's continue to run the app...
 	}
 
+	// check airport db
+	count, err := app.db.GetAirportDBRecordsCount()
+	if err != nil {
+		app.errorLog.Printf("error checking airport db - %s\n", err)
+		return
+	}
+	if count == 0 {
+		app.infoLog.Println("no records in the airport db, updating...")
+		airports, err := app.downloadAirportDB("")
+		if err != nil {
+			app.errorLog.Printf("error downloading airport db - %s\n", err)
+			return
+		}
+		app.infoLog.Printf("downloaded %d records\n", len(airports))
+
+		err = app.db.UpdateAirportDB(airports, false)
+		if err != nil {
+			app.errorLog.Printf("error updating airport db - %s\n", err)
+			return
+		}
+		app.infoLog.Println("airport db has been updated")
+	}
+
 	// check settings
 	settings, err := app.db.GetSettings()
 	if err != nil {
 		app.errorLog.Printf("cannot load settings - %s\n", err)
-		// but probably let's continue to run the app as well...
+		return
 	}
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 

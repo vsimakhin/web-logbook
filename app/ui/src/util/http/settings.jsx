@@ -61,3 +61,13 @@ export const updatePdfSettings = async ({ settings, format, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot update export settings');
 }
+
+export const fetchVersion = async ({ signal, navigate }) => {
+  const url = `${API_URL}/version`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch version');
+}

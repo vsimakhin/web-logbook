@@ -218,8 +218,3 @@ type Category struct {
 	Model    string `json:"model"`
 	Category string `json:"category"`
 }
-
-// TableData is a type for Datatables
-type TableData struct {
-	Data [][]string `json:"data"`
-}

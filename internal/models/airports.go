@@ -42,6 +42,15 @@ func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 	return airport, nil
 }
 
+// GetAirportDBRecordsCount returns the number of records in the airports table
+func (m *DBModel) GetAirportDBRecordsCount() (count int, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	err = m.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM airports").Scan(&count)
+	return count, nil
+}
+
 // UpdateAirportDB updates airports table
 func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)

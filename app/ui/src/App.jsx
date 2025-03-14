@@ -57,7 +57,7 @@ const NAV_ITEMS = [
   { kind: 'divider' },
   { segment: 'settings', title: 'Settings', icon: <SettingsIcon /> },
   { kind: 'divider' },
-  { segment: 'version', title: 'v3.0.0-alpha', icon: <GitHubIcon /> },
+  { segment: 'about', title: 'Web Logbook', icon: <GitHubIcon /> },
 ];
 
 function App() {

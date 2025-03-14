@@ -21,10 +21,11 @@ func (app *application) routes() *chi.Mux {
 		MaxAge:           300,
 	}))
 
-	r.Post("/api/login", app.HandlerLogin) // to review
+	r.Get("/api/version", app.HandlerVersion)
+	r.Post("/api/login", app.HandlerLogin)
 
 	r.Route("/api", func(r chi.Router) {
-		r.Use(app.Auth) // to review
+		r.Use(app.Auth)
 
 		// logout
 		r.Post("/logout", app.HandlerLogout)
@@ -103,7 +104,7 @@ func (app *application) routes() *chi.Mux {
 		})
 
 		// logout
-		r.Post("/logout", app.HandlerLogout) // to review
+		r.Post("/logout", app.HandlerLogout)
 	})
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))

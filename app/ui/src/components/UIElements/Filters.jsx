@@ -193,7 +193,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
           />
         }
         {options.showStatsFilters &&
-          <Grid xs={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
             <Accordion variant="outlined" sx={{ width: '100%' }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography>Stats Filters</Typography>
