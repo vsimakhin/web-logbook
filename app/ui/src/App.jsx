@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { AppProvider } from '@toolpad/core/react-router-dom';
+import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { NotificationsProvider } from '@toolpad/core/useNotifications';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
 // MUI Icons
@@ -67,7 +67,7 @@ function App() {
   const theme = { light: lightTheme, dark: darkTheme };
 
   return (
-    <AppProvider theme={theme} navigation={NAV_ITEMS} branding={BRANDING} >
+    <ReactRouterAppProvider theme={theme} navigation={NAV_ITEMS} branding={BRANDING} >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <QueryClientProvider client={queryClient}>
           <DialogsProvider>
@@ -77,7 +77,7 @@ function App() {
           </DialogsProvider>
         </QueryClientProvider>
       </LocalizationProvider>
-    </AppProvider>
+    </ReactRouterAppProvider>
   )
 }
 
