@@ -1,7 +1,7 @@
 import { useNotifications } from "@toolpad/core/useNotifications";
 import { useEffect } from "react";
 
-export function useErrorNotification({ isError, error, fallbackMessage, options }) {
+export function useErrorNotification({ isError, error, fallbackMessage }) {
   const notifications = useNotifications();
 
   useEffect(() => {
@@ -9,23 +9,23 @@ export function useErrorNotification({ isError, error, fallbackMessage, options 
       const errorMessage = error.info?.message || error?.message || fallbackMessage;
       notifications.show(errorMessage, {
         severity: "error",
-        key: options?.key || fallbackMessage,
+        key: fallbackMessage,
         autoHideDuration: 3000,
       });
     }
-  }, [isError, error, notifications, fallbackMessage, options]);
+  }, [isError, error, notifications, fallbackMessage]);
 }
 
-export function useSuccessNotification({ isSuccess, message, options }) {
+export function useSuccessNotification({ isSuccess, message }) {
   const notifications = useNotifications();
 
   useEffect(() => {
     if (isSuccess) {
       notifications.show(message, {
         severity: "success",
-        key: options?.key || message,
+        key: message,
         autoHideDuration: 3000,
       });
     }
-  }, [isSuccess, notifications, message, options]);
+  }, [isSuccess, notifications, message]);
 }

@@ -67,7 +67,6 @@ export const Settings = () => {
                 action={
                   <>
                     <SaveSettingsButton settings={settings} />
-                    {/* <HelpButton /> */}
                   </>
                 }
               />
