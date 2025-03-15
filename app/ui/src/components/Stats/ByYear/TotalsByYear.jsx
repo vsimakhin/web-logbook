@@ -12,6 +12,8 @@ export const TotalsByYear = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook'],
     queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    staleTime: 3600000,
+    cacheTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 

@@ -28,9 +28,9 @@ export const SaveLicenseRecordButton = ({ license, handleChange }) => {
         handleChange("uuid", response.data);
         navigate(`/licensing/${response.data}`);
       } else {
-        await queryClient.invalidateQueries({ queryKey: ["licensing"] })
         await queryClient.invalidateQueries({ queryKey: ["license", license.id] })
       }
+      await queryClient.invalidateQueries({ queryKey: ["licensing"] })
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: "Failed to save license record" });

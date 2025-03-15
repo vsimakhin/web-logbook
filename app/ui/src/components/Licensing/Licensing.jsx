@@ -13,6 +13,8 @@ export const Licensing = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['licensing'],
     queryFn: ({ signal }) => fetchLicenses({ signal, navigate }),
+    staleTime: 3600000,
+    cacheTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load licenses' });
 
