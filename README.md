@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [2.45.0] - 15.03.2025
+
+- Update: This is the final release of the v2.x series, including Golang library and security updates, before the rollout of v3.x.
+
 ## [2.44.1] - 17.01.2025
 
 - Fix: Resolved an issue with the query for retrieving created indexes in MySQL.
@@ -42,28 +46,6 @@ You also can easily export all flight records into EASA style pdf format, print 
   ERROR	2024/12/14 20:33:01 main.go:162: SQL logic error: view logbook_view already exists (1)
 
   ```
-
-## [2.43.3] - 04.11.2024
-
-- Fix: Resolved SQL syntax error that occurred when creating a new license record.
-
-## [2.43.2] - 21.10.2024
-
-- Fix: Error on `Total by Month` page when changing a year in Chrome and MS Edge browsers.
-
-## [2.43.1] - 21.10.2024
-
-- Fix: Attachments not uploaded if the new record saved and page wasn't reloaded
-
-## [2.43.0] - 10.10.2024
-
-- Update: Updated golang version to the latest 1.23.2 and required packages.
-- Update: removed update_time field from tables and some small code optimization. No UI change.
-
-## [2.42.0] - 30.08.2024
-
-- Update: No longer shorten the remarks field for small screens if the option "Do not adjust logbook columns for small screens" is selected
-- Fix: Recreate the database view during startup in case changes didn't propagate after a version change.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
