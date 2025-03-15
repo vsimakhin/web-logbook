@@ -1,28 +1,28 @@
 module github.com/vsimakhin/web-logbook
 
-go 1.23.4
+go 1.23.7
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/alexedwards/scs/v2 v2.8.0
-	github.com/go-chi/chi/v5 v5.2.0
+	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-pdf/fpdf v0.9.0
-	github.com/go-sql-driver/mysql v1.8.1
+	github.com/go-sql-driver/mysql v1.9.0
 	github.com/google/uuid v1.6.0
 	github.com/nathan-osman/go-sunrise v1.1.0
 	github.com/stretchr/testify v1.10.0
 	github.com/xuri/excelize/v2 v2.9.0
-	golang.org/x/crypto v0.32.0
-	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8
-	modernc.org/sqlite v1.34.5
+	golang.org/x/crypto v0.36.0
+	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394
+	modernc.org/sqlite v1.36.1
 )
 
-require github.com/rogpeppe/go-internal v1.13.1 // indirect
+require github.com/rogpeppe/go-internal v1.14.1 // indirect
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/alexedwards/scs/mysqlstore v0.0.0-20240316134038-7e11d57e8885
-	github.com/alexedwards/scs/sqlite3store v0.0.0-20240316134038-7e11d57e8885
+	github.com/alexedwards/scs/mysqlstore v0.0.0-20250212122300-421ef1d8611c
+	github.com/alexedwards/scs/sqlite3store v0.0.0-20250212122300-421ef1d8611c
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
@@ -35,14 +35,14 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
-	github.com/xuri/efp v0.0.0-20241211021726-c4e992084aa6 // indirect
-	github.com/xuri/nfp v0.0.0-20250111060730-82a408b9aa71 // indirect
-	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	github.com/xuri/efp v0.0.0-20250227110027-3491fafc2b79 // indirect
+	github.com/xuri/nfp v0.0.0-20250226145837-86d5fc24b2ba // indirect
+	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/libc v1.61.8 // indirect
+	modernc.org/libc v1.61.13 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.8.2 // indirect
 )
