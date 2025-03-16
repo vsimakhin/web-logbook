@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.45.0] - 15.03.2025
+
+- Update: This is the final release of the v2.x series, including Golang library and security updates, before the rollout of v3.x.
+
 ## [2.44.1] - 17.01.2025
 
 - Fix: Resolved an issue with the query for retrieving created indexes in MySQL.
