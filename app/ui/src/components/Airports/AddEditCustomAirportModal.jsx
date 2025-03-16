@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
@@ -48,10 +48,10 @@ const SaveButton = ({ airport, isNew, onClose }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to custom save airport' });
   useSuccessNotification({ isSuccess, message: 'Custom airport saved' });
 
-  const handleOnClick = async () => {
+  const handleOnClick = useCallback(async () => {
     await saveAirport();
     onClose();
-  }
+  }, [saveAirport, onClose]);
 
   return (
     <Tooltip title="Save">

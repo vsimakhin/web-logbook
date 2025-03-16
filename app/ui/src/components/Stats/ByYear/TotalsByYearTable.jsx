@@ -1,5 +1,5 @@
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -58,7 +58,7 @@ const createTimeColumn = (id, name) => ({
   ),
 })
 
-export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
+export const TotalsByYearTable = ({ data, isLoading }) => {
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
 
@@ -107,6 +107,12 @@ export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
     createTimeColumn("time.total_time", "Total"),
   ], []);
 
+  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <CSVExportButton table={table} type="totals-by-year" />
+    </Box>
+  ), []);
+
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
@@ -115,11 +121,7 @@ export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
       'mrt-row-expand': { size: 120 }
     },
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <CSVExportButton table={table} type="totals-by-year" />
-      </Box>
-    ),
+    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
     state: { pagination, columnVisibility },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
@@ -129,7 +131,7 @@ export const TotalsByYearTable = ({ data, isLoading, ...props }) => {
   return (
     <>
       {isLoading && <LinearProgress />}
-      <MaterialReactTable table={table} {...props} />
+      <MaterialReactTable table={table} />
     </>
   );
 }

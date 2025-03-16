@@ -1,5 +1,5 @@
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -40,7 +40,7 @@ const tableOptions = {
   enableRowActions: true,
 }
 
-export const CustomAirportsTable = ({ ...props }) => {
+export const CustomAirportsTable = () => {
   const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -62,7 +62,7 @@ export const CustomAirportsTable = ({ ...props }) => {
     { accessorKey: "lon", header: "Lon", size: 70 },
   ], []);
 
-  const renderRowActions = ({ row }) => {
+  const renderRowActions = useCallback(({ row }) => {
     const payload = row.original;
     return (
       <>
@@ -70,21 +70,31 @@ export const CustomAirportsTable = ({ ...props }) => {
         <DeleteCustomAirportButton payload={payload} />
       </>
     );
-  }
+  }, []);
+
+  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <AddCustomAirportButton />
+      <CSVExportButton table={table} type="custom-airports" />
+    </Box>
+  ), []);
+
+  const filterDrawOpen = useCallback(() => {
+    setIsFilterDrawerOpen(true);
+  }, []);
+
+  const filterDrawClose = useCallback(() => {
+    setIsFilterDrawerOpen(false);
+  }, []);
 
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
     data: data ?? [],
-    onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
+    onShowColumnFiltersChange: filterDrawOpen,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <AddCustomAirportButton />
-        <CSVExportButton table={table} type="custom-airports" />
-      </Box>
-    ),
+    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     renderRowActions: renderRowActions,
     onPaginationChange: setPagination,
     state: { pagination, columnFilters: columnFilters, columnVisibility },
@@ -96,8 +106,8 @@ export const CustomAirportsTable = ({ ...props }) => {
     <>
       <CardHeader title="Custom Airports" />
       {isLoading && <LinearProgress />}
-      <MaterialReactTable table={table} {...props} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
+      <MaterialReactTable table={table} />
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
     </>
   );
 }

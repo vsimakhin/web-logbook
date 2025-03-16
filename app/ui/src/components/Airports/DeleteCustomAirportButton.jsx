@@ -6,10 +6,10 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 // Custom components and libraries
-import CardHeader from "../UIElements/CardHeader";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { deleteCustomAirport } from '../../util/http/airport';
 import { queryClient } from '../../util/http/http';
+import { useCallback } from "react";
 
 export const DeleteCustomAirportButton = ({ payload }) => {
   const dialogs = useDialogs();
@@ -22,11 +22,11 @@ export const DeleteCustomAirportButton = ({ payload }) => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to delete custom airport' });
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (await dialogs.confirm('Are you sure you want to delete this airport?')) {
       await deleteAirport({ payload });
     }
-  }
+  }, [dialogs, deleteAirport, payload]);
 
   return (
     <>

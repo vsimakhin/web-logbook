@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
@@ -33,13 +33,18 @@ export const PDFExportButton = () => {
   useErrorNotification({ isError: isExportError, error: exportError, fallbackMessage: 'Failed to export PDF' });
   useSuccessNotification({ isSuccess: isExporting, message: 'PDF Exported successfully' });
 
-  const handleClick = (event) => { setAnchorEl(event.currentTarget) };
-  const handleClose = () => { setAnchorEl(null) };
+  const handleClick = useCallback((event) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
 
-  const handleExport = (format) => {
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleExport = useCallback((format) => {
     runExport(format);
     handleClose();
-  };
+  }, [runExport, handleClose]);
 
   return (
     <>

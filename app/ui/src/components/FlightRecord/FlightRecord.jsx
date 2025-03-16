@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
@@ -19,6 +19,16 @@ import CopyFlightRecordButton from "./CopyFlightRecordButton";
 import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import Attachments from "../Attachment/Attachments";
+
+const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
+  <>
+    <HelpButton />
+    <SaveFlightRecordButton flight={flight} handleChange={handleChange} />
+    <NewFlightRecordButton setFlight={setFlight} />
+    <CopyFlightRecordButton setFlight={setFlight} />
+    <DeleteFlightRecordButton flight={flight} />
+  </>
+));
 
 export const FlightRecord = () => {
   const { id } = useParams();
@@ -47,7 +57,7 @@ export const FlightRecord = () => {
     }
   }, [flight.map]);
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setFlight((flight) => {
       const keys = key.split('.'); // Split key by dots to handle nesting
       let updatedFlight = { ...flight }; // Create a shallow copy of the flight object
@@ -67,25 +77,21 @@ export const FlightRecord = () => {
 
       return updatedFlight;
     });
-  };
+  }, []);
+
+  const gridSize = useMemo(() => ({
+    xs: 12, sm: 12, md: 6, lg: 6, xl: 6
+  }), []);
 
   return (
     <>
       {isLoading && <LinearProgress />}
       <Grid container spacing={1} >
-        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+        <Grid size={gridSize}>
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Flight Record"
-                action={
-                  <>
-                    <HelpButton />
-                    <SaveFlightRecordButton flight={flight} handleChange={handleChange} />
-                    <NewFlightRecordButton setFlight={setFlight} />
-                    <CopyFlightRecordButton setFlight={setFlight} />
-                    <DeleteFlightRecordButton flight={flight} />
-                  </>
-                }
+                action={<ActionButtons flight={flight} handleChange={handleChange} setFlight={setFlight} />}
               />
               <FlightRecordDetails flight={flight} handleChange={handleChange} />
             </CardContent>
@@ -94,7 +100,7 @@ export const FlightRecord = () => {
           <Attachments id={id} />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+        <Grid size={gridSize}>
           <FlightMap data={mapData} />
         </Grid>
       </Grid>

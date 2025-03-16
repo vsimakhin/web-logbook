@@ -1,4 +1,5 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
+import { useCallback } from 'react';
 // MUI Icons
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 // MUI UI elements
@@ -10,10 +11,14 @@ import AddEditCustomAirportModal from './AddEditCustomAirportModal';
 export const CopyAirportButton = ({ payload }) => {
   const dialogs = useDialogs();
 
+  const handleOnClick = useCallback(async () => {
+    await dialogs.open(AddEditCustomAirportModal, { ...payload, isNew: true });
+  }, [dialogs, payload]);
+
   return (
     <>
       <Tooltip title="Copy to Custom Airport">
-        <IconButton onClick={async () => await dialogs.open(AddEditCustomAirportModal, { ...payload, isNew: true })}>
+        <IconButton onClick={handleOnClick}>
           <ContentCopyOutlinedIcon fontSize='small' />
         </IconButton>
       </Tooltip >

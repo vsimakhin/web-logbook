@@ -27,11 +27,7 @@ export const Attachments = ({ id }) => {
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
           <CardHeader title="Attachments"
-            action={
-              <>
-                <AddAttachmentButton id={id} />
-              </>
-            }
+            action={<AddAttachmentButton id={id} />}
           />
           {data && data.map((attachment) => (
             <Attachment key={attachment.uuid} attachment={attachment} />

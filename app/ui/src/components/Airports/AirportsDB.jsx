@@ -52,11 +52,7 @@ export const AirportsDB = () => {
 
   return (
     <>
-      <CardHeader title="Airports DB Source" action={
-        <>
-          <UpdateAirportsDBButton />
-        </>
-      }
+      <CardHeader title="Airports DB Source" action={<UpdateAirportsDBButton />}
       />
       <Grid container spacing={1} >
         <Select gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}

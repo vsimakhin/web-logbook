@@ -1,5 +1,5 @@
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -49,7 +49,7 @@ const createTimeColumn = (id, name) => ({
   Cell: ({ cell }) => (convertMinutesToTime(cell.getValue())),
 })
 
-export const TotalsByAircraftTable = ({ data, isLoading, type, ...props }) => {
+export const TotalsByAircraftTable = ({ data, isLoading, type }) => {
   const paginationKey = `totals-stats-${type}-table-page-size`;
   const columnVisibilityKey = `totals-stats-${type}-table-column-visibility`;
 
@@ -80,16 +80,18 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, ...props }) => {
     createTimeColumn("time.total_time", "Total"),
   ], []);
 
+  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <CSVExportButton table={table} type="totals-by-aircraft" />
+    </Box>
+  ), []);
+
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
     data: data ?? [],
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <CSVExportButton table={table} type="totals-by-aircraft" />
-      </Box>
-    ),
+    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
     state: { pagination, columnVisibility },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
@@ -99,7 +101,7 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, ...props }) => {
   return (
     <>
       {isLoading && <LinearProgress />}
-      <MaterialReactTable table={table} {...props} />
+      <MaterialReactTable table={table} />
     </>
   );
 }

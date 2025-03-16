@@ -1,5 +1,5 @@
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
@@ -39,7 +39,7 @@ const tableOptions = {
   enableColumnActions: true,
 }
 
-export const LisencingTable = ({ data, isLoading, ...props }) => {
+export const LisencingTable = ({ data, isLoading }) => {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
@@ -82,20 +82,30 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
     { accessorKey: "remarks", header: "Remarks", grow: true },
   ], []);
 
+  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <NewLicenseRecordButton />
+      <CSVExportButton table={table} type="licensing" />
+    </Box>
+  ), []);
+
+  const filterDrawOpen = useCallback(() => {
+    setIsFilterDrawerOpen(true);
+  }, []);
+
+  const filterDrawClose = useCallback(() => {
+    setIsFilterDrawerOpen(false);
+  }, []);
+
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
     data: data ?? [],
-    onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
+    onShowColumnFiltersChange: filterDrawOpen,
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <NewLicenseRecordButton />
-        <CSVExportButton table={table} type="licensing" />
-      </Box>
-    ),
+    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
     state: { pagination, columnFilters: columnFilters, columnVisibility },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
@@ -104,8 +114,8 @@ export const LisencingTable = ({ data, isLoading, ...props }) => {
 
   return (
     <>
-      <MaterialReactTable table={table} {...props} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
+      <MaterialReactTable table={table} />
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
     </>
   );
 }

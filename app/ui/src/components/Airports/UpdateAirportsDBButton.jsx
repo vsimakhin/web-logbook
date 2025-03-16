@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { useCallback } from "react";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -22,10 +23,14 @@ export const UpdateAirportsDBButton = () => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to update airports database' });
   useSuccessNotification({ isSuccess, message: 'Airports database updated' });
 
+  const handleOnUpdate = useCallback(async () => {
+    await updateDB();
+  }, [updateDB]);
+
   return (
     <>
       <Tooltip title="Update Airports Database">
-        <IconButton size="small" onClick={() => updateDB()} disabled={isPending}>
+        <IconButton size="small" onClick={handleOnUpdate} disabled={isPending}>
           {isPending && <CircularProgress size={20} />}
           {!isPending && <RefreshOutlinedIcon />}
         </IconButton>

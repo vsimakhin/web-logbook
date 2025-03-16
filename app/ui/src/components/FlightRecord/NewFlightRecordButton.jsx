@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -10,7 +11,7 @@ import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 export const NewFlightRecordButton = ({ setFlight }) => {
   const navigate = useNavigate();
 
-  const handleNewFlight = () => {
+  const handleNewFlight = useCallback(() => {
     navigate("/logbook/new");
     setFlight((flight) => (
       {
@@ -23,14 +24,15 @@ export const NewFlightRecordButton = ({ setFlight }) => {
         },
       }
     ));
-  }
+  }, [navigate, setFlight]);
 
   return (
     <Tooltip title="New flight record">
-      <IconButton size="small" onClick={handleNewFlight}><AddBoxOutlinedIcon /></IconButton>
+      <IconButton size="small" onClick={handleNewFlight}>
+        <AddBoxOutlinedIcon />
+      </IconButton>
     </Tooltip>
   )
 }
-
 
 export default NewFlightRecordButton;

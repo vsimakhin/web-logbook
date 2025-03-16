@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { useCallback } from "react";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -22,10 +23,14 @@ export const SaveSettingsButton = ({ settings }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save settings' });
   useSuccessNotification({ isSuccess, message: 'Settings saved' });
 
+  const handleOnClick = useCallback(async () => {
+    saveSettings();
+  }, [saveSettings]);
+
   return (
     <>
       <Tooltip title="Save settings">
-        <IconButton size="small" onClick={() => saveSettings()}><SaveOutlinedIcon /></IconButton>
+        <IconButton size="small" onClick={handleOnClick}><SaveOutlinedIcon /></IconButton>
       </Tooltip>
     </>
   );

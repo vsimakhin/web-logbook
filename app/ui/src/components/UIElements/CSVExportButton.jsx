@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-
-import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { convertMinutesToTime } from '../../util/helpers';
 
 const defaultConfig = {

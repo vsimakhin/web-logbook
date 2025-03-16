@@ -1,4 +1,5 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
+import { useCallback } from 'react';
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // MUI UI elements
@@ -9,12 +10,16 @@ import AddEditCustomAirportModal from './AddEditCustomAirportModal';
 
 export const AddCustomAirportButton = () => {
   const dialogs = useDialogs();
-  const payload = { name: '', city: '', country: '', elevation: '', lat: '', lon: '', isNew: true };
+
+  const handleOnClick = useCallback(async () => {
+    const payload = { name: '', city: '', country: '', elevation: '', lat: '', lon: '', isNew: true };
+    await dialogs.open(AddEditCustomAirportModal, payload);
+  }, [dialogs]);
 
   return (
     <>
       <Tooltip title="New Custom Airport">
-        <IconButton onClick={async () => await dialogs.open(AddEditCustomAirportModal, payload)}>
+        <IconButton onClick={handleOnClick}>
           <AddBoxOutlinedIcon fontSize='small' />
         </IconButton>
       </Tooltip >

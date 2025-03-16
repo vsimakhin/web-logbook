@@ -1,6 +1,7 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -20,7 +21,7 @@ export const DeleteLicenseRecordButton = ({ license }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to delete license record' });
   useSuccessNotification({ isSuccess: isSuccess, message: 'License record deleted successfully' });
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = useCallback(async () => {
     const confirmed = await dialogs.confirm('Are you sure you want to remove this license record?', {
       okText: 'Yes',
       cancelText: 'No',
@@ -29,7 +30,7 @@ export const DeleteLicenseRecordButton = ({ license }) => {
     if (confirmed) {
       await deleteLicense();
     }
-  }
+  }, [dialogs, deleteLicense]);
 
   return (
     <>

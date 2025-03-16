@@ -1,5 +1,5 @@
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -32,11 +32,12 @@ const tableOptions = {
   enableColumnActions: false,
 };
 
-export const LogbookTable = ({ data, isLoading, ...props }) => {
+export const LogbookTable = ({ data, isLoading }) => {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
     timeFilterFn: timeFilterFn,
@@ -122,33 +123,46 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
     }
   ], []);
 
+  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <NewFlightRecordButton />
+      <CSVExportButton table={table} type="logbook" />
+      <PDFExportButton />
+    </Box>
+  ), []);
+
+  const filterDrawOpen = useCallback(() => {
+    setIsFilterDrawerOpen(true);
+  }, []);
+
+  const filterDrawClose = useCallback(() => {
+    setIsFilterDrawerOpen(false);
+  }, []);
+
+  const getMuiFilterTextFieldProps = useCallback(({ column }) => (
+    getFilterLabel(column)
+  ), []);
+
+
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
     isLoading: isLoading,
-    onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
+    onShowColumnFiltersChange: filterDrawOpen,
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <NewFlightRecordButton />
-        <CSVExportButton table={table} type="logbook" />
-        <PDFExportButton />
-      </Box>
-    ),
+    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
     state: { pagination, columnFilters: columnFilters, columnVisibility },
-    defaultColumn: {
-      muiFilterTextFieldProps: ({ column }) => (getFilterLabel(column)),
-    },
+    defaultColumn: { muiFilterTextFieldProps: getMuiFilterTextFieldProps },
     ...tableOptions,
   });
 
   return (
     <>
-      <MaterialReactTable table={table} {...props} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
+      <MaterialReactTable table={table} />
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
     </>
   );
 }

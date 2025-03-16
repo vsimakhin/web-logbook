@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
+import { useCallback } from 'react';
 // MUI UI elements
 import MenuItem from '@mui/material/MenuItem';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -27,18 +28,17 @@ export const DownloadAttachmentButton = ({ attachment, handleClose }) => {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = data.document_name;
-      document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
     }
   });
   useErrorNotification({ isError: isDownloadError, error: downloadError, fallbackMessage: 'Failed to download attachment' });
   useSuccessNotification({ isSuccess: isDownloadSuccess, message: 'Attachment downloaded' });
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     await downloadAttachment();
     handleClose();
-  }
+  }, [downloadAttachment, handleClose]);
 
   return (
     <MenuItem onClick={handleDownload} sx={{ p: 0 }} disabled={isDownloadPending}>

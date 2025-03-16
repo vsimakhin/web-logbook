@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -23,7 +24,7 @@ export const AddAttachmentButton = ({ id }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to upload attachment' });
   useSuccessNotification({ isSuccess, message: 'Attachment uploaded' });
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = useCallback(async (event) => {
     for (const file of event.target.files) {
       if (file) {
         const formData = new FormData();
@@ -33,7 +34,7 @@ export const AddAttachmentButton = ({ id }) => {
         await upload({ data: formData });
       }
     }
-  };
+  }, [upload, id]);
 
   return (
     <>

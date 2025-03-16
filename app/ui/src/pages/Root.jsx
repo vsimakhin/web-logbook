@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 // MUI elements
 import { DashboardLayout, ThemeSwitcher } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
@@ -46,9 +47,9 @@ const ToolbarActions = () => {
     refetchOnWindowFocus: false,
   });
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     navigate('/logout');
-  }
+  }, [navigate]);
 
   return (
     <Stack direction="row" spacing={0}>

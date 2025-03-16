@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 // MUI UI elements
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -12,8 +12,8 @@ import DeleteAttachmentButton from './DeleteAttachmentButton';
 export const Attachment = ({ attachment }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event) => { setAnchorEl(event.currentTarget) };
-  const handleClose = () => { setAnchorEl(null) };
+  const handleClick = useCallback((event) => { setAnchorEl(event.currentTarget) }, []);
+  const handleClose = useCallback(() => { setAnchorEl(null) }, []);
 
   return (
     <>

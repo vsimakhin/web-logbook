@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
@@ -17,7 +18,7 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
     ? () => createFlightRecord({ flight, navigate })
     : () => updateFlightRecord({ flight, navigate });
 
-  const { mutateAsync: saveFlightRecord, isError, error, isSuccess } = useMutation({
+  const { mutateAsync: saveFlightRecord, isError, error, isSuccess, isPending } = useMutation({
     mutationFn: () => mutationFn(),
     onSuccess: async ({ data }) => {
       if (flight.uuid === "new") {
@@ -32,12 +33,16 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
+  const handleClick = useCallback(() => {
+    saveFlightRecord({ flight, navigate });
+  }, [saveFlightRecord, flight, navigate]);
+
   return (
-    <>
-      <Tooltip title="Save flight record">
-        <IconButton size="small" onClick={() => saveFlightRecord()}><SaveOutlinedIcon /></IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Save flight record">
+      <IconButton size="small" onClick={handleClick} disabled={isPending}>
+        <SaveOutlinedIcon />
+      </IconButton>
+    </Tooltip>
   );
 }
 
