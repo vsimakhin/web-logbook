@@ -10,7 +10,7 @@ require (
 	github.com/nathan-osman/go-sunrise v1.1.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.36.0
-	modernc.org/sqlite v1.36.0
+	modernc.org/sqlite v1.36.1
 )
 
 require (
