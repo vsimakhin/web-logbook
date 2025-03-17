@@ -23,7 +23,7 @@ npm_install:
 	@cd ../../
 
 ## build ui
-build_ui:
+build_ui: npm_install
 	@echo "Building UI..."
 	@cd app/ui && npm run build
 	@cd ../../
