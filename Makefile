@@ -96,4 +96,4 @@ build_windows_amd64: build_ui
 	go build $(OPTIONS) -o=$(BIN)/$(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) ./app; \
 	cd $(BIN); mv $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME) $(BINARY_NAME)-$$OS-$$ARCH/$(BINARY_NAME).exe; zip -r $(BINARY_NAME)-$$OS-$$ARCH.zip $(BINARY_NAME)-$$OS-$$ARCH; 
 
-build_all: test clean build_ui build_linux_amd64 build_linux_arm64 build_linux_arm_6 build_linux_arm_7 build_darwin_amd64 build_darwin_arm64 build_windows_amd64
+build_all: clean build_ui test build_linux_amd64 build_linux_arm64 build_linux_arm_6 build_linux_arm_7 build_darwin_amd64 build_darwin_arm64 build_windows_amd64
