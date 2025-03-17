@@ -140,7 +140,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
           options={dateRanges.map((range) => (range.label))}
         />
         <DatePicker
-          gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+          gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
           id="start_date"
           label="Start Date"
           handleChange={handleChange}
@@ -148,7 +148,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
           tooltip="Start Date"
         />
         <DatePicker
-          gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+          gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
           id="end_date"
           label="End Date"
           handleChange={handleChange}
@@ -156,21 +156,21 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
           tooltip="End Date"
         />
         <AircraftReg
-          gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
           id="aircraft_reg"
           handleChange={handleChange}
           value={filter?.aircraft_reg}
           last={false} disableClearable={false}
         />
         <AircraftType
-          gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
           id="aircraft_model"
           handleChange={handleChange}
           value={filter?.aircraft_model}
           disableClearable={false}
         />
         <AircraftCategories
-          gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
           id="aircraft_category"
           multiple={false}
           handleChange={handleChange}
@@ -178,7 +178,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
           disableClearable={false}
         />
         <TextField
-          gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
           id="place"
           label="Departure/Arrival"
           handleChange={handleChange}
