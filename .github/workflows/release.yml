@@ -86,4 +86,4 @@ jobs:
           push: true
           tags: |
             vsimakhin/web-logbook:${{ env.TAG }}
-            vsimakhin/web-logbook:latest
+            vsimakhin/web-logbook:2
