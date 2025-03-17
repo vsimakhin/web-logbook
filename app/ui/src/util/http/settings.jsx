@@ -81,3 +81,12 @@ export const fetchAuthEnabled = async ({ signal, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot fetch auth enabled property');
 }
+
+export const fetchLatestRelease = async ({ signal }) => {
+  const url = 'https://api.github.com/repos/vsimakhin/web-logbook/releases/latest'
+  const options = {
+    method: 'GET',
+    signal: signal,
+  };
+  return await handleFetch(url, options, null, 'Cannot fetch latest release');
+}

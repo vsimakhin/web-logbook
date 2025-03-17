@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { compareVersions } from 'compare-versions';
 // MUI elements
 import { DashboardLayout, ThemeSwitcher } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
@@ -9,14 +10,16 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import Badge from '@mui/material/Badge';
 // MUI Icon
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 // Custom
 import { DRAWER_WIDTH } from '../constants/constants';
-import { fetchAuthEnabled, fetchVersion } from '../util/http/settings';
+import { fetchAuthEnabled, fetchLatestRelease, fetchVersion } from '../util/http/settings';
 
 const CustomAppTitle = () => {
   const navigate = useNavigate();
+  const [isNewReleaseAvailable, setIsNewReleaseAvailable] = useState(false);
 
   const { data: version } = useQuery({
     queryKey: ['version'],
@@ -27,10 +30,26 @@ const CustomAppTitle = () => {
     refetchOnWindowFocus: false,
   });
 
+  const { data: latestRelease } = useQuery({
+    queryKey: ['latestRelease'],
+    queryFn: ({ signal }) => fetchLatestRelease({ signal }),
+    staleTime: 604800000, // 7 days
+    cacheTime: 604800000,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (version && latestRelease?.tag_name) {
+      setIsNewReleaseAvailable(compareVersions(latestRelease.tag_name, version) === 1);
+    }
+  }, [version, latestRelease?.tag_name]);
+
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
       <Typography variant="h6">Logbook</Typography>
-      <Chip size="small" label={version} color="error" />
+      <Badge color="primary" badgeContent={"New"} invisible={!isNewReleaseAvailable}>
+        <Chip size="small" label={version} color="error" />
+      </Badge>
     </Stack>
   );
 }

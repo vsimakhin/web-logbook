@@ -37,16 +37,13 @@ export const renderTotalFooter = () => {
 };
 
 const renderTimeFooter = (table, field) => {
-  // const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) => total + convertTimeToMinutes(getValue(row.original, field)), 0);
-  // const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) => total + convertTimeToMinutes(getValue(row.original, field)), 0);
-
   const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) =>
     total + (shouldHideTime(field, row) ? 0 : convertTimeToMinutes(getValue(row.original, field))), 0
   );
-
   const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) =>
     total + (shouldHideTime(field, row) ? 0 : convertTimeToMinutes(getValue(row.original, field))), 0
   );
+
   return (
     <Stack direction="column" spacing={1} alignItems="center" >
       <Typography color="textPrimary" sx={{ fontWeight: 'bold' }}>{convertMinutesToTime(totalForCurrentPage)}</Typography>
