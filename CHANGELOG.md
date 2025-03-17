@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.0-alpha1] - 17.03.2025
+
+- Caution: This is an early release and still in test, please create a backup of your db file (`weblogbook.sql`) before switching to this version
+- Update: Completely new user interface
+- Update (**breaking change**): The category list has a new format and should be recreated
+- Note: The Docker image for this release is tagged with its version only and doesn't use the standard `latest` tag until it exits alpha status
+
 ## [2.45.0] - 15.03.2025
 
 - Update: This is the final release of the v2.x series, including Golang library and security updates, before the rollout of v3.x.

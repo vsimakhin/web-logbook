@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [3.0.0-alpha1] 
+## [3.0.0-alpha1] - 17.03.2025
 
 - Caution: This is an early release and still in test, please create a backup of your db file (`weblogbook.sql`) before switching to this version
 - Update: Completely new user interface
@@ -27,6 +27,13 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: This is the final release of the v2.x series, including Golang library and security updates, before the rollout of v3.x.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
+
+## Old v2.x version
+If you still would like to use v2.x version:
+* Latest v2 release https://github.com/vsimakhin/web-logbook/releases/tag/v2.45.0
+* Docker `docker pull vsimakhin/web-logbook:v2.45.0`
+* Github branch https://github.com/vsimakhin/web-logbook/tree/v2-security-patches
+
 
 # Usage
 
