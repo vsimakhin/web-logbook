@@ -11,7 +11,6 @@ import QueryStatsOutlinedIcon from '@mui/icons-material/QueryStatsOutlined';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
-import GitHubIcon from '@mui/icons-material/GitHub';
 import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
@@ -57,7 +56,6 @@ const NAV_ITEMS = [
   { kind: 'divider' },
   { segment: 'settings', title: 'Settings', icon: <SettingsIcon /> },
   { kind: 'divider' },
-  { segment: 'about', title: 'Web Logbook', icon: <GitHubIcon /> },
 ];
 
 function App() {
