@@ -4,126 +4,151 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerSettings is a handler for Settings page
-func (app *application) HandlerSettings(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "settings"
-	data["activeSubPage"] = "general"
-	if err := app.renderTemplate(w, r, "settings", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
-}
-
-func (app *application) HandlerSettingsAirportDB(w http.ResponseWriter, r *http.Request) {
-	records, err := app.db.GetAirportCount()
+func (app *application) HandlerApiSettingsList(w http.ResponseWriter, r *http.Request) {
+	settings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	data := make(map[string]interface{})
-	data["records"] = records
-	data["activePage"] = "settings"
-	data["activeSubPage"] = "airports"
-	if err := app.renderTemplate(w, r, "settings-airportdb", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
+	settings.Hash = ""
+	app.writeJSON(w, http.StatusOK, settings)
 }
 
-// HandlerSettingsSave serves the POST request for settings update
-func (app *application) HandlerSettingsSave(w http.ResponseWriter, r *http.Request) {
-
+func (app *application) HandlerApiSettingsUpdate(w http.ResponseWriter, r *http.Request) {
 	oldsettings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	var settings models.Settings
-	var response models.JSONResponse
-
 	err = json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	// rewrite export settings since they are set from /export page
 	settings.ExportA4 = oldsettings.ExportA4
 	settings.ExportA5 = oldsettings.ExportA5
-	settings.ExportXLS = oldsettings.ExportXLS
-	settings.ExportCSV = oldsettings.ExportCSV
+	// Signature image is also updated separately
+	settings.SignatureImage = oldsettings.SignatureImage
 
 	err = app.db.UpdateSettings(settings)
 	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Settings have been updated. You may refresh the page to see the changes."
+		app.handleError(w, err)
+		return
 	}
 
-	if app.isAuthEnabled != settings.AuthEnabled && settings.AuthEnabled {
-		response.RedirectURL = "/login"
-	}
-	app.isAuthEnabled = settings.AuthEnabled
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 
-	app.writeJSON(w, http.StatusOK, response)
+	app.writeOkResponse(w, "Settings updated")
 }
 
-// HandlerSettingsAirportDBSave serves the POST request for airportdb settings update
-func (app *application) HandlerSettingsAirportDBSave(w http.ResponseWriter, r *http.Request) {
-
-	cursettings, err := app.db.GetSettings()
+func (app *application) HandlerApiSettingsSignature(w http.ResponseWriter, r *http.Request) {
+	oldsettings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	var settings models.Settings
-	var response models.JSONResponse
-
 	err = json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	cursettings.AirportDBSource = settings.AirportDBSource
-	cursettings.NoICAOFilter = settings.NoICAOFilter
-
-	err = app.db.UpdateSettings(cursettings)
+	oldsettings.SignatureImage = settings.SignatureImage
+	err = app.db.UpdateSettings(oldsettings)
 	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Settings have been updated"
+		app.handleError(w, err)
+		return
 	}
 
-	app.writeJSON(w, http.StatusOK, response)
+	app.writeOkResponse(w, "Signature updated")
 }
 
-// HandlerSettingsAircraftClasses is a handler for aircraft groups/classes
-func (app *application) HandlerSettingsAircraftClasses(w http.ResponseWriter, r *http.Request) {
-
-	settings, err := app.db.GetSettings()
+func (app *application) HandlerApiSettingsAirports(w http.ResponseWriter, r *http.Request) {
+	oldsettings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, settings.AircraftClasses)
+	var settings models.Settings
+	err = json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	oldsettings.AirportDBSource = settings.AirportDBSource
+	oldsettings.NoICAOFilter = settings.NoICAOFilter
+	err = app.db.UpdateSettings(oldsettings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Airports DB Settings updated")
+}
+
+func (app *application) HandlerApiSettingsExportDefaults(w http.ResponseWriter, r *http.Request) {
+	format := chi.URLParam(r, "format")
+	defaults := app.db.GetPdfDefaults(format)
+	app.writeJSON(w, http.StatusOK, defaults)
+}
+
+func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r *http.Request) {
+	format := chi.URLParam(r, "format")
+
+	s, err := app.db.GetSettings()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var updated models.ExportPDF
+	err = json.NewDecoder(r.Body).Decode(&updated)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var targetExport *models.ExportPDF
+	switch format {
+	case "A4":
+		targetExport = &s.ExportA4
+	case "A5":
+		targetExport = &s.ExportA5
+	}
+
+	targetExport.LogbookRows = updated.LogbookRows
+	targetExport.Fill = updated.Fill
+	targetExport.LeftMargin = updated.LeftMargin
+	targetExport.TopMargin = updated.TopMargin
+	targetExport.BodyRow = updated.BodyRow
+	targetExport.FooterRow = updated.FooterRow
+	targetExport.LeftMarginA = updated.LeftMarginA
+	targetExport.LeftMarginB = updated.LeftMarginB
+	targetExport.Headers = updated.Headers
+	targetExport.Columns = updated.Columns
+	targetExport.ReplaceSPTime = updated.ReplaceSPTime
+	targetExport.IncludeSignature = updated.IncludeSignature
+	targetExport.IsExtended = updated.IsExtended
+	targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
+
+	err = app.db.UpdateSettings(s)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Export settings updated")
 }

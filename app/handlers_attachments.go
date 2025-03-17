@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,40 +12,63 @@ import (
 )
 
 // HandlerGetAttachments generates attachments
-func (app *application) HandlerGetAttachments(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlerApiGetAttachments(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 
 	attachments, err := app.db.GetAttachments(uuid)
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	app.writeJSON(w, http.StatusOK, attachments)
 }
 
-// HandlerUploadAttachment handles attachments upload
-func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.Request) {
+// HandlerApiGetAttachment is a hadnler for attachment download
+func (app *application) HandlerApiGetAttachment(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
 
-	var response models.JSONResponse
+	att, err := app.db.GetAttachmentByID(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, att)
+}
+
+// HandlerApiDeleteAttachment is a handler for removing attachments
+func (app *application) HandlerApiDeleteAttachment(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	err := app.db.DeleteAttachment(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Attachment removed")
+}
+
+// HandlerApiUploadAttachment handles attachments upload
+func (app *application) HandlerApiUploadAttachment(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	attachment := models.Attachment{
-		RecordID: r.PostFormValue("record_id"),
+		RecordID: r.PostFormValue("id"),
 	}
 
 	// check attached file
 	file, header, err := r.FormFile("document")
 	if err != nil {
 		if !strings.Contains(err.Error(), "no such file") {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			app.handleError(w, err)
 			return
 		}
 	} else {
@@ -56,7 +78,7 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 		// read file
 		bs, err := io.ReadAll(file)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			app.handleError(w, err)
 			return
 		}
 		attachment.Document = bs
@@ -65,70 +87,17 @@ func (app *application) HandlerUploadAttachment(w http.ResponseWriter, r *http.R
 	// new record
 	uuid, err := uuid.NewRandom()
 	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
+		app.handleError(w, err)
+		return
 	}
 
 	attachment.UUID = uuid.String()
 
 	err = app.db.InsertAttachmentRecord(attachment)
 	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Attachment has been uploaded"
-
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerDeleteAttachment is a handler for removing attachments
-func (app *application) HandlerDeleteAttachment(w http.ResponseWriter, r *http.Request) {
-
-	var att models.Attachment
-	var response models.JSONResponse
-
-	err := json.NewDecoder(r.Body).Decode(&att)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
-	err = app.db.DeleteAttachment(att.UUID)
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerAttachmentDownload is a hadnler for attachment download
-func (app *application) HandlerAttachmentDownload(w http.ResponseWriter, r *http.Request) {
-	uuid := chi.URLParam(r, "uuid")
-
-	att, err := app.db.GetAttachmentByID(uuid)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", att.DocumentName))
-
-	_, err = w.Write(att.Document)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	app.writeOkResponse(w, "Attachment has been uploaded")
 }

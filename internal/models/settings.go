@@ -1,17 +1,15 @@
 package models
 
 import (
-	"context"
 	"encoding/json"
 	"strings"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 // GetSettings returns settings parameters
 func (m *DBModel) GetSettings() (settings Settings, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	var raw string
@@ -31,7 +29,7 @@ func (m *DBModel) GetSettings() (settings Settings, err error) {
 
 // UpdateSettings writes new settings values
 func (m *DBModel) UpdateSettings(settings Settings) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	// check password field
@@ -65,4 +63,17 @@ func (m *DBModel) UpdateSettings(settings Settings) error {
 	}
 
 	return nil
+}
+
+func (m *DBModel) GetPdfDefaults(format string) (pdfDefaults ExportPDF) {
+	if format == "A4" {
+		pdfDefaults = pdfA4Defaults
+		pdfDefaults.Columns = pdfA4DefaultColumns
+	} else if format == "A5" {
+		pdfDefaults = pdfA5Defaults
+		pdfDefaults.Columns = pdfA5DefaultColumns
+	}
+	pdfDefaults.Headers = pdfDefaultHeaders
+
+	return pdfDefaults
 }

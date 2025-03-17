@@ -3,20 +3,24 @@ package models
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
+
+var airportCache sync.Map
 
 // GetAirportByID return airport record by ID (ICAO or IATA)
 func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 	// check airport id in cache first
 	id = strings.TrimSpace(id)
-	if value, ok := acache[id]; ok {
-		return value, nil
+	if cachedAirport, ok := airportCache.Load(id); ok {
+		return cachedAirport.(Airport), nil
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := "SELECT icao, iata, name, city, country, elevation, lat, lon " +
@@ -33,55 +37,35 @@ func (m *DBModel) GetAirportByID(id string) (airport Airport, err error) {
 	}
 
 	// add to cache
-	acache[id] = airport
+	airportCache.Store(id, airport)
 
 	return airport, nil
 }
 
-// GetAirports generates Airports DB for rendering maps
-func (m *DBModel) GetAirports() (airports map[string]Airport, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// GetAirportDBRecordsCount returns the number of records in the airports table
+func (m *DBModel) GetAirportDBRecordsCount() (count int, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	airports = make(map[string]Airport)
-
-	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports_view"
-	rows, err := m.DB.QueryContext(ctx, query)
-	if err != nil {
-		return airports, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var airport Airport
-		if err = rows.Scan(&airport.ICAO, &airport.IATA, &airport.Name, &airport.City,
-			&airport.Country, &airport.Elevation, &airport.Lat, &airport.Lon); err != nil {
-			return airports, err
-		}
-
-		airports[airport.ICAO] = airport
-		airports[airport.IATA] = airport
-	}
-
-	return airports, nil
+	err = m.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM airports").Scan(&count)
+	return count, nil
 }
 
 // UpdateAirportDB updates airports table
-func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (records int, err error) {
+func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-
-	records = 0
-
-	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports;")
-	if err != nil {
-		return records, err
-	}
 
 	// let's make it in transaction
 	tx, err := m.DB.Begin()
 	if err != nil {
-		return records, err
+		return err
+	}
+
+	_, err = tx.ExecContext(ctx, "DELETE FROM airports;")
+	if err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	isAlpha := regexp.MustCompile(`^[A-Z]+$`).MatchString
@@ -98,39 +82,25 @@ func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (record
 			airport.ICAO, airport.IATA, airport.Name, airport.City,
 			airport.Country, airport.Elevation, airport.Lat, airport.Lon); err != nil {
 			tx.Rollback()
-			return records, err
+			return err
 		}
 	}
 
 	// commit transaction
 	if err = tx.Commit(); err != nil {
-		return records, err
+		return err
 	}
 
-	records, err = m.GetAirportCount()
-	if err != nil {
-		return records, err
-	}
+	// clear cache
+	airportCache.Clear()
+	go m.CreateDistanceCache()
 
-	return records, err
-}
-
-// GetAirportCount returns amount of records in the airports table
-func (m *DBModel) GetAirportCount() (records int, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	row := m.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM airports")
-	if err = row.Scan(&records); err != nil {
-		return 0, err
-	}
-
-	return records, nil
+	return err
 }
 
 // fetchAirports is a helper function to fetch airports based on a query and a scan function
 func (m *DBModel) fetchAirports(query string) (airports []Airport, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	rows, err := m.DB.QueryContext(ctx, query)
@@ -171,12 +141,18 @@ func (m *DBModel) GetCustomAirports() (airports []Airport, err error) {
 
 // AddCustomAirport adds new custom/user airport
 func (m *DBModel) AddCustomAirport(arpt Airport) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "INSERT INTO airports_custom " +
-		"(name, city, country, elevation, lat, lon) " +
-		"VALUES (?, ?, ?, ?, ?, ?)"
+	// check if custom airport already exists
+	query := "SELECT name FROM airports_custom WHERE name = ?"
+	row := m.DB.QueryRowContext(ctx, query, arpt.Name)
+	if err := row.Scan(&arpt.Name); err == nil {
+		return fmt.Errorf("custom airport %s already exists", arpt.Name)
+	}
+
+	query = `INSERT INTO airports_custom (name, city, country, elevation, lat, lon)
+		VALUES (?, ?, ?, ?, ?, ?)`
 	_, err := m.DB.ExecContext(ctx, query,
 		arpt.Name, arpt.City, arpt.Country, arpt.Elevation, arpt.Lat, arpt.Lon,
 	)
@@ -188,9 +164,19 @@ func (m *DBModel) AddCustomAirport(arpt Airport) error {
 	return nil
 }
 
+// UpdateCustomAirport updates custom/user airport
+func (m *DBModel) UpdateCustomAirport(arpt Airport) error {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := "UPDATE airports_custom SET city = ?, country = ?, elevation = ?, lat = ?, lon = ? WHERE name = ?"
+	_, err := m.DB.ExecContext(ctx, query, arpt.City, arpt.Country, arpt.Elevation, arpt.Lat, arpt.Lon, arpt.Name)
+	return err
+}
+
 // RemoveCustomAirport removes custom/user airport
 func (m *DBModel) RemoveCustomAirport(airport string) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	_, err = m.DB.ExecContext(ctx, "DELETE FROM airports_custom WHERE name = ?", airport)

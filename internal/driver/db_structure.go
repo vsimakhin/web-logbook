@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "2.0.3"
+	schemaVersion = "3.0.0-alpha11"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -93,10 +93,21 @@ var attachmentsTable = NewTable("attachments", "uuid", UUID,
 		{Name: "document", Type: Blob},
 	})
 
-var sessionsTable = NewTable("sessions", "token", ColumnType{SQLite: "TEXT", MySQL: "CHAR(43)"},
+var tokensTable = NewTable("tokens", "id", ColumnType{SQLite: "INTEGER", MySQL: "INT UNSIGNED AUTO_INCREMENT"},
 	[]Column{
-		{Name: "data", Type: ColumnType{SQLite: "BLOB", MySQL: "BLOB"}, Properties: "NOT NULL"},
-		{Name: "expiry", Type: ColumnType{SQLite: "REAL", MySQL: "TIMESTAMP(6)"}, Properties: "NOT NULL"},
+		{Name: "username", Type: UUID, Properties: "NOT NULL", Index: true},
+		{Name: "token", Type: BigText, Properties: "NOT NULL"},
+		{Name: "created_at", Type: DateTime, Properties: "NOT NULL"},
+	})
+
+var aircraftsTable = NewTable("aircrafts", "reg_name", SmallText,
+	[]Column{
+		{Name: "aircraft_model", Type: SmallText, Properties: "NOT NULL"},
+	})
+
+var aircraftCategoriesTable = NewTable("aircraft_categories", "model", SmallText,
+	[]Column{
+		{Name: "categories", Type: BigText, Properties: "NOT NULL"},
 	})
 
 var logbookView = NewView("logbook_view",
@@ -131,12 +142,27 @@ var airportsView = NewView("airports_view",
 		SQLite: `
 			SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports
 			UNION
-			SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom
+			SELECT UPPER(name) as icao, UPPER(name) as iata, name, city, country, elevation, lat, lon FROM airports_custom
 			`,
 		MySQL: `
 			SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports
 			UNION
-			SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom
+			SELECT UPPER(name) as icao, UPPER(name) as iata, name, city, country, elevation, lat, lon FROM airports_custom
 			`,
+	},
+)
+
+var aircraftsView = NewView("aircrafts_view",
+	SQLQuery{
+		SQLite: `SELECT 
+				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories
+			FROM aircrafts a
+			LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
+			ORDER BY aircraft_model, reg_name`,
+		MySQL: `SELECT 
+				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories
+			FROM aircrafts a
+			LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
+			ORDER BY aircraft_model, reg_name`,
 	},
 )

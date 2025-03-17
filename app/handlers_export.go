@@ -1,67 +1,108 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/vsimakhin/web-logbook/internal/csvexport"
+	"github.com/go-pdf/fpdf"
+	"github.com/go-pdf/fpdf/contrib/gofpdi"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/pdfexport"
-	"github.com/vsimakhin/web-logbook/internal/xlsexport"
 )
 
 const exportA4 = "A4"
 const exportA5 = "A5"
-const exportCSV = "csv"
-const exportXLS = "xls"
 
-// HandlerExportPDFA4Page is a handler for /export-pdf-a4 page
-func (app *application) HandlerExportPDFA4Page(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "export"
-	data["activeSubPage"] = "pdfa4"
-	if err := app.renderTemplate(w, r, "export-pdf-a4", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
-	}
+// validateCustomTitlePdf checks if the uploaded PDF file is supported by fpdf library
+func validateCustomTitlePdf(bs []byte) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("This PDF file is not supported by pdf library")
+		}
+	}()
+
+	var pdf *fpdf.Fpdf
+	pdf = fpdf.New("L", "mm", "A4", "")
+	imp := gofpdi.NewImporter()
+
+	readSeeker := io.ReadSeeker(bytes.NewReader(bs))
+	imp.ImportPageFromStream(pdf, &readSeeker, 1, "/MediaBox")
+
+	return nil
 }
 
-// HandlerExportPDFA5Page is a handler for /export-pdf-a5 page
-func (app *application) HandlerExportPDFA5Page(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "export"
-	data["activeSubPage"] = "pdfa5"
-	if err := app.renderTemplate(w, r, "export-pdf-a5", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
+// HandlerApiUploadAttachment handles attachments upload
+func (app *application) HandlerApiUploadCustomTitle(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseMultipartForm(32 << 20)
+	if err != nil {
+		app.errorLog.Println(fmt.Errorf("cannot parse the data, probably the attachment is too big - %s", err))
+		app.handleError(w, err)
+		return
 	}
-}
 
-// HandlerExportPDFA5Page is a handler for /export-pdf-a5 page
-func (app *application) HandlerExportCSVXLSPage(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["activePage"] = "export"
-	data["activeSubPage"] = "csv"
-	if err := app.renderTemplate(w, r, "export-csv-xls", &templateData{Data: data}); err != nil {
-		app.errorLog.Println(err)
+	attachment := models.Attachment{
+		UUID:     r.PostFormValue("id"),
+		RecordID: r.PostFormValue("id"),
 	}
+
+	// check attached file
+	file, header, err := r.FormFile("document")
+	if err != nil {
+		if !strings.Contains(err.Error(), "no such file") {
+			app.handleError(w, err)
+			return
+		}
+	} else {
+		defer file.Close()
+		attachment.DocumentName = header.Filename
+
+		// read file
+		bs, err := io.ReadAll(file)
+		if err != nil {
+			app.handleError(w, err)
+			return
+		}
+		attachment.Document = bs
+		err = validateCustomTitlePdf(attachment.Document)
+		if err != nil {
+			app.handleError(w, err)
+			return
+		}
+	}
+
+	// drop the old custom title
+	err = app.db.DeleteAttachment(attachment.UUID)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	err = app.db.InsertAttachmentRecord(attachment)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Attachment has been uploaded")
 }
 
 // HandlerExportLogbook serves the GET request for logbook export
-func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlerApiExportLogbook(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
 
 	flightRecords, err := app.db.GetFlightRecords()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
 	settings, err := app.db.GetSettings()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
@@ -81,18 +122,17 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 			exportSettings = settings.ExportA5
 		}
 
-		if exportSettings.CustomTitle != "" {
-			att, _ := app.db.GetAttachmentByID(exportSettings.CustomTitle)
-			exportSettings.CustomTitleBlob = att.Document
-		}
+		// custom title
+		id := fmt.Sprintf("custom_title_%s", strings.ToLower(format))
+		att, _ := app.db.GetAttachmentByID(id)
+		exportSettings.CustomTitleBlob = att.Document
 
 		pdfExporter, err := pdfexport.NewPDFExporter(format,
 			settings.OwnerName, settings.LicenseNumber, settings.Address,
 			settings.SignatureText, settings.SignatureImage, exportSettings)
 
 		if err != nil {
-			app.errorLog.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			app.handleError(w, err)
 			return
 		}
 
@@ -103,23 +143,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 			return pdfExporter.ExportA5(flightRecords, w)
 		}
 
-	case exportCSV:
-		contentType = "text/csv"
-		fileName = "logbook.csv"
-		var e csvexport.ExportCSV
-		e.ExportCSV = settings.ExportCSV
-		exportFunc = func() error {
-			return e.Export(flightRecords, w)
-		}
-
-	case exportXLS:
-		contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-		fileName = "logbook.xlsx"
-		var xls xlsexport.ExportXLS
-		xls.ExportXLS = settings.ExportXLS
-		exportFunc = func() error {
-			return xls.Export(flightRecords, w)
-		}
 	}
 
 	w.Header().Set("Content-Type", contentType)
@@ -127,83 +150,6 @@ func (app *application) HandlerExportLogbook(w http.ResponseWriter, r *http.Requ
 
 	err = exportFunc()
 	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 	}
-}
-
-// HandlerExportSettingsSave serves the POST request for export settings update
-func (app *application) HandlerExportSettingsSave(w http.ResponseWriter, r *http.Request) {
-	format := chi.URLParam(r, "format")
-
-	currsettings, err := app.db.GetSettings()
-	if err != nil {
-		app.errorLog.Println(fmt.Errorf("cannot get the export settings - %s", err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	var settings models.Settings
-	var response models.JSONResponse
-
-	err = json.NewDecoder(r.Body).Decode(&settings)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// rewrite only export settings since the others are set from /settings page
-	if format == exportA4 {
-		currsettings.ExportA4 = settings.ExportA4
-
-	} else if format == exportA5 {
-		currsettings.ExportA5 = settings.ExportA5
-
-	} else if format == exportCSV {
-		currsettings.ExportCSV = settings.ExportCSV
-
-	} else if format == exportXLS {
-		currsettings.ExportXLS = settings.ExportXLS
-
-	}
-
-	err = app.db.UpdateSettings(currsettings)
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Export settings have been updated"
-
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
-}
-
-// HandlerRestoreDefaults restores default values
-func (app *application) HandlerExportRestoreDefaults(w http.ResponseWriter, r *http.Request) {
-	var response models.JSONResponse
-
-	param := ""
-	err := json.NewDecoder(r.Body).Decode(&param)
-	if err != nil {
-		app.errorLog.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = app.db.UpdateDefaults(param)
-
-	if err != nil {
-		app.errorLog.Println(err)
-		response.OK = false
-		response.Message = err.Error()
-	} else {
-		response.OK = true
-		response.Message = "Export settings have been restored. Refresh the page to see the changes."
-	}
-
-	app.writeJSON(w, http.StatusOK, response)
 }

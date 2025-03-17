@@ -5,22 +5,17 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
-	"github.com/alexedwards/scs/mysqlstore"
-	"github.com/alexedwards/scs/sqlite3store"
-	"github.com/alexedwards/scs/v2"
 	"github.com/vsimakhin/web-logbook/internal/driver"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
 const (
-	version = "2.45.0"
+	version = "3.0.0-alpha1"
 
 	infoLogPrefix    = "INFO\t"
 	errorLogPrefix   = "ERROR\t"
@@ -47,12 +42,8 @@ type application struct {
 	infoLog              *log.Logger
 	errorLog             *log.Logger
 	warningLog           *log.Logger
-	templateCache        map[string]*template.Template
 	version              string
 	db                   models.DBModel
-	session              *scs.SessionManager
-	isAuthEnabled        bool
-	isNewVersion         bool
 	timeFieldsAutoFormat byte
 }
 
@@ -125,17 +116,6 @@ func createDBConnection(engine string, dsn string) (*sql.DB, error) {
 	return conn, nil
 }
 
-func createSessionManager(conn *sql.DB, engine string) *scs.SessionManager {
-	session := scs.New()
-	session.Lifetime = 12 * time.Hour
-	if engine == "sqlite" {
-		session.Store = sqlite3store.New(conn)
-	} else {
-		session.Store = mysqlstore.New(conn)
-	}
-	return session
-}
-
 func main() {
 	var err error
 
@@ -154,8 +134,6 @@ func main() {
 	}
 	defer logf.Close()
 
-	tc := make(map[string]*template.Template)
-
 	// create db connection
 	conn, err := createDBConnection(cfg.db.engine, cfg.db.dsn)
 	if err != nil {
@@ -163,18 +141,13 @@ func main() {
 	}
 	defer conn.Close()
 
-	// set up session
-	session = createSessionManager(conn, cfg.db.engine)
-
 	app := &application{
-		config:        cfg,
-		infoLog:       infoLog,
-		errorLog:      errorLog,
-		warningLog:    warningLog,
-		templateCache: tc,
-		version:       version,
-		db:            models.DBModel{DB: conn},
-		session:       session,
+		config:     cfg,
+		infoLog:    infoLog,
+		errorLog:   errorLog,
+		warningLog: warningLog,
+		version:    version,
+		db:         models.DBModel{DB: conn},
 	}
 
 	// check if we need to disable authentication
@@ -194,20 +167,39 @@ func main() {
 		// but probably let's continue to run the app...
 	}
 
+	// check airport db
+	count, err := app.db.GetAirportDBRecordsCount()
+	if err != nil {
+		app.errorLog.Printf("error checking airport db - %s\n", err)
+		return
+	}
+	if count == 0 {
+		app.infoLog.Println("no records in the airport db, updating...")
+		airports, err := app.downloadAirportDB("")
+		if err != nil {
+			app.errorLog.Printf("error downloading airport db - %s\n", err)
+			return
+		}
+		app.infoLog.Printf("downloaded %d records\n", len(airports))
+
+		err = app.db.UpdateAirportDB(airports, false)
+		if err != nil {
+			app.errorLog.Printf("error updating airport db - %s\n", err)
+			return
+		}
+		app.infoLog.Println("airport db has been updated")
+	}
+
 	// check settings
 	settings, err := app.db.GetSettings()
 	if err != nil {
 		app.errorLog.Printf("cannot load settings - %s\n", err)
-		// but probably let's continue to run the app as well...
+		return
 	}
-	app.isAuthEnabled = settings.AuthEnabled
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 
 	// create distance cache ob background
 	go app.db.CreateDistanceCache()
-
-	// check for the new version
-	go app.checkNewVersion()
 
 	// main app
 	err = app.serve()

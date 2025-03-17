@@ -18,11 +18,14 @@ jobs:
       with:
         go-version: 1.23.7
 
+    - name: build_ui
+      run: make npm_install build_ui
+
     - name: go vet
       run: go vet ./...
 
-    - name: go fmt
-      run: go fmt ./...
+    - name: test
+      run: make test
 
-    - name: Test
-      run: go test -v ./...
+    - name: build backend
+      run: make build_backend
