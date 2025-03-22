@@ -10,6 +10,7 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchAttachments } from "../../util/http/attachment";
 import Attachment from "./Attachment";
 import AddAttachmentButton from "./AddAttachmentButton";
+import AddKMLButton from "./AddKMLButton";
 
 export const Attachments = ({ id }) => {
   const navigate = useNavigate();
@@ -24,16 +25,23 @@ export const Attachments = ({ id }) => {
   return (
     <>
       {isLoading && <LinearProgress />}
-      <Card variant="outlined" sx={{ mb: 1 }}>
-        <CardContent>
-          <CardHeader title="Attachments"
-            action={<AddAttachmentButton id={id} />}
-          />
-          {data && data.map((attachment) => (
-            <Attachment key={attachment.uuid} attachment={attachment} />
-          ))}
-        </CardContent>
-      </Card >
+      {id !== "new" &&
+        <Card variant="outlined" sx={{ mb: 1 }}>
+          <CardContent>
+            <CardHeader title="Attachments"
+              action={
+                <>
+                  <AddKMLButton id={id} />
+                  <AddAttachmentButton id={id} />
+                </>
+              }
+            />
+            {data && data.map((attachment) => (
+              <Attachment key={attachment.uuid} attachment={attachment} />
+            ))}
+          </CardContent>
+        </Card >
+      }
     </>
   );
 }

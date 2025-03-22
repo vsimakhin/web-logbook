@@ -26,7 +26,6 @@ func (app *application) HandlerApiFlightRecordByID(w http.ResponseWriter, r *htt
 
 // HandlerNightTime is a handler for calculating night time
 func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request) {
-
 	var fr models.FlightRecord
 	var response models.JSONResponse
 
@@ -69,7 +68,6 @@ func (app *application) HandlerApiFlightRecordDelete(w http.ResponseWriter, r *h
 
 // HandlerApiFlightRecordNew creates a new flight record
 func (app *application) HandlerApiFlightRecordNew(w http.ResponseWriter, r *http.Request) {
-
 	var flightRecord models.FlightRecord
 	err := json.NewDecoder(r.Body).Decode(&flightRecord)
 	if err != nil {
@@ -100,7 +98,6 @@ func (app *application) HandlerApiFlightRecordNew(w http.ResponseWriter, r *http
 
 // HandlerApiFlightRecordUpdate updates the flight record
 func (app *application) HandlerApiFlightRecordUpdate(w http.ResponseWriter, r *http.Request) {
-
 	var flightRecord models.FlightRecord
 	err := json.NewDecoder(r.Body).Decode(&flightRecord)
 	if err != nil {
@@ -115,4 +112,19 @@ func (app *application) HandlerApiFlightRecordUpdate(w http.ResponseWriter, r *h
 	}
 
 	app.writeOkResponse(w, "Flight Record has been updated")
+}
+
+func (app *application) HandlerApiTrackLogNew(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	var track [][]float64
+	err := json.NewDecoder(r.Body).Decode(&track)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	fmt.Println(uuid, track)
+
+	app.writeOkResponse(w, "Track Log uploaded")
 }

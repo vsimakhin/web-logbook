@@ -37,6 +37,11 @@ func (app *application) routes() *chi.Mux {
 			r.Post("/new", app.HandlerApiFlightRecordNew)
 			r.Put("/{uuid}", app.HandlerApiFlightRecordUpdate)
 			r.Post("/night", app.HandlerNightTime)
+
+			// track log
+			r.Route("/track", func(r chi.Router) {
+				r.Post("/{uuid}", app.HandlerApiTrackLogNew)
+			})
 		})
 
 		// licensing
