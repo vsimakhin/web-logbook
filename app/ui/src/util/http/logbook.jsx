@@ -72,3 +72,13 @@ export const updateFlightRecord = async ({ signal, flight, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot update flight record');
 }
+
+export const uploadTrackLog = async ({ id, track, navigate }) => {
+  const url = `${API_URL}/logbook/track/${id}`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(track),
+  };
+  return await handleFetch(url, options, navigate, 'Cannot upload track log');
+}
