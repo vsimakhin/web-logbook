@@ -2,31 +2,53 @@ package models
 
 import (
 	"errors"
+	"sync"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
+var authCache sync.Map
+
 func (m *DBModel) GetSecretKey() (string, error) {
+	id := "secretKey"
+	if secretKey, ok := authCache.Load(id); ok {
+		return secretKey.(string), nil
+	}
+
 	settings, err := m.GetSettings()
 	if err != nil {
 		return "", err
 	}
 
+	authCache.Store(id, settings.SecretKey)
 	return settings.SecretKey, nil
 }
 
 func (m *DBModel) IsAuthEnabled() (bool, error) {
+	id := "isAuthEnabled"
+	if isAuthEnabled, ok := authCache.Load(id); ok {
+		return isAuthEnabled.(bool), nil
+	}
+
 	settings, err := m.GetSettings()
 	if err != nil {
 		return false, err
 	}
 
+	authCache.Store(id, settings.AuthEnabled)
 	return settings.AuthEnabled, nil
 }
 
 func (m *DBModel) VerifyToken(token string, username string) error {
-	// check if token is valid
+	// checked cached token
+	id := "token"
+	if userToken, ok := authCache.Load(id); ok {
+		if userToken == token {
+			return nil
+		}
+	}
+
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
@@ -44,6 +66,7 @@ func (m *DBModel) VerifyToken(token string, username string) error {
 		}
 
 		if userToken == token {
+			authCache.Store(id, token)
 			return nil
 		}
 	}
