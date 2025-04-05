@@ -41,66 +41,72 @@ export const AddKMLButton = ({ id }) => {
   useSuccessNotification({ isSuccess: isTrackSuccess, message: 'Track log uploaded' });
 
   const handleFileChange = useCallback(async (event) => {
-    const file = event.target.files[0]
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = async function (e) {
-        try {
-          const parser = new DOMParser();
-          const kml = parser.parseFromString(e.target.result, "text/xml");
-          const geojson = toGeoJSON.kml(kml);
+    const file = event.target.files[0];
+    if (!file) return;
 
-          const extractedCoordinates = [];
+    try {
+      // Read the file as text
+      const fileText = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
 
-          const processCoordinates = (coords, isPoint = false) => {
-            if (isPoint) {
-              const [lng, lat] = coords;
-              extractedCoordinates.push([lat, lng]);
-            } else {
-              coords.forEach(coordinate => {
-                const [lng, lat] = coordinate;
-                extractedCoordinates.push([lat, lng]);
-              });
-            }
-          };
+      // Parse KML to GeoJSON
+      const parser = new DOMParser();
+      const kml = parser.parseFromString(fileText, "text/xml");
+      const geojson = toGeoJSON.kml(kml);
 
-          geojson.features.forEach(feature => {
-            if (feature.geometry.type === 'Point') {
-              processCoordinates(feature.geometry.coordinates, true);
-            } else if (feature.geometry.type === 'LineString') {
-              processCoordinates(feature.geometry.coordinates);
-            } else if (feature.geometry.type === 'MultiGeometry') {
-              feature.geometry.geometries.forEach(geometry => {
-                if (geometry.type === 'Point') {
-                  processCoordinates(geometry.coordinates, true);
-                } else if (geometry.type === 'LineString') {
-                  processCoordinates(geometry.coordinates);
-                }
-              });
-            }
+      const extractedCoordinates = [];
+
+      const processCoordinates = (coords, isPoint = false) => {
+        if (isPoint) {
+          const [lng, lat] = coords;
+          extractedCoordinates.push([lat, lng]);
+        } else {
+          coords.forEach(([lng, lat]) => {
+            extractedCoordinates.push([lat, lng]);
           });
-
-          await uploadTrack({ data: extractedCoordinates });
-        } catch (error) {
-          notifications.show("Error parsing KML file", {
-            severity: "error",
-            key: "kml-parse-error",
-            autoHideDuration: 3000,
-          });
-          console.log(error);
         }
-      }
-      reader.readAsText(file);
+      };
 
-      // upload kml as attachment
+      geojson.features.forEach((feature) => {
+        const { geometry } = feature;
+        if (!geometry) return;
+
+        if (geometry.type === 'Point') {
+          processCoordinates(geometry.coordinates, true);
+        } else if (geometry.type === 'LineString') {
+          processCoordinates(geometry.coordinates);
+        } else if (geometry.type === 'MultiGeometry' && geometry.geometries) {
+          geometry.geometries.forEach((g) => {
+            if (g.type === 'Point') {
+              processCoordinates(g.coordinates, true);
+            } else if (g.type === 'LineString') {
+              processCoordinates(g.coordinates);
+            }
+          });
+        }
+      });
+
+      // Upload KML as attachment
       const formData = new FormData();
-      formData.append('document', file);
-      formData.append('id', id);
+      formData.append("document", file);
+      formData.append("id", id);
 
+      // Run uploads sequentially to avoid DB lock
       await upload({ data: formData });
+      await uploadTrack({ data: extractedCoordinates });
+    } catch (error) {
+      notifications.show("Error parsing or uploading KML file", {
+        severity: "error",
+        key: "kml-parse-error",
+        autoHideDuration: 3000,
+      });
+      console.error(error);
     }
-
-  }, [upload, id]);
+  }, [upload, uploadTrack, id]);
 
   return (
     <>
