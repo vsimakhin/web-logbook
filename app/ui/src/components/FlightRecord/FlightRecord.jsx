@@ -46,16 +46,16 @@ export const FlightRecord = () => {
 
   useEffect(() => {
     if (data) {
+      data.redraw = Math.random(); // trigger map redraw
       setFlight(data);
-      setMapData([{ departure: data.departure, arrival: data.arrival }]);
     }
   }, [data]);
 
   useEffect(() => {
-    if (flight.map) {
-      setMapData([flight.map]);
+    if (flight) {
+      setMapData([flight]);
     }
-  }, [flight.map]);
+  }, [flight.redraw]);
 
   const handleChange = useCallback((key, value) => {
     setFlight((flight) => {

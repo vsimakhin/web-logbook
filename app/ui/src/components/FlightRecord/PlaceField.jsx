@@ -37,13 +37,9 @@ export const PlaceField = ({ flight, handleChange, type }) => {
   const navigate = useNavigate();
 
   const handlePlaceChange = () => {
-    // it's a trick to update the map when the place filed is left
+    // it's a trick to update the map when the place field is left
     // otherwise the map will be refreshed on each flight field change
-    const map = {
-      departure: flight.departure,
-      arrival: flight.arrival
-    }
-    handleChange("map", map);
+    handleChange("redraw", Math.random());
   }
 
   const { mutateAsync: getNightTime, isError, error } = useMutation({

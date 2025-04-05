@@ -34,6 +34,7 @@ export const AddKMLButton = ({ id }) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', id] });
       await queryClient.invalidateQueries({ queryKey: ['flight', id] });
+      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] })
     }
   });
   useErrorNotification({ isError: isTrackError, error: trackError, fallbackMessage: 'Failed to upload track log' });

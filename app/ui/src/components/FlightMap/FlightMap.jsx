@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // css
 import 'ol/ol.css';
@@ -28,6 +28,8 @@ import { CardHeader } from '../UIElements/CardHeader';
 
 import icon from "../../assets/favicon.ico";
 import { fetchAirport } from '../../util/http/airport';
+import { set } from 'ol/transform';
+import { Typography } from '@mui/material';
 
 const getAirportData = async (id, navigate) => {
   try {
@@ -89,7 +91,7 @@ const addMarker = (features, airport) => {
   features.push(feature);
 }
 
-const addGreatCircleLine = (departure, arrival, vectorSource) => {
+const drawGreatCircleLine = (departure, arrival, vectorSource) => {
   // Create unique key for the line
   const airports = [departure.icao, arrival.icao].sort();
   const lineKey = `line-${airports[0]}-${airports[1]}`;
@@ -118,12 +120,29 @@ const addGreatCircleLine = (departure, arrival, vectorSource) => {
   }
 }
 
+const drawTrackLog = (flightTrack, vectorSource) => {
+  const track = JSON.parse(atob(flightTrack));
+
+  const coordinates = track.map((geometry) =>
+    transform([geometry[1], geometry[0]], 'EPSG:4326', 'EPSG:3857')
+  );
+
+  const lineFeature = new LineString(coordinates);
+  const feature = new Feature({
+    geometry: lineFeature,
+    lineKey: Math.random(),
+  });
+  vectorSource.addFeature(feature);
+}
+
 export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => {
   const navigate = useNavigate();
   const mapRef = useRef(null);
   const containerRef = useRef(null);
   const closerRef = useRef(null);
   const contentRef = useRef(null);
+
+  const [distance, setDistance] = useState(0);
 
   const handleMapClick = useCallback((evt, map, overlay) => {
     const coordinate = evt.coordinate;
@@ -178,6 +197,8 @@ export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => 
       });
 
       if (data) {
+        setDistance(0);
+
         (async () => {
           const features = [];
           const airportPromises = data.map(async (flight) => {
@@ -190,10 +211,17 @@ export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => 
 
             if (!departure || !arrival) return null;
 
-            addMarker(features, departure);
-            addMarker(features, arrival);
+            // addMarker(features, departure);
+            // addMarker(features, arrival);
+
             if (routes) {
-              addGreatCircleLine(departure, arrival, vectorSource);
+              setDistance((prev) => prev + flight.distance);
+
+              if (flight.track) {
+                drawTrackLog(flight.track, vectorSource);
+              } else {
+                drawGreatCircleLine(departure, arrival, vectorSource);
+              }
             }
             return { departure, arrival };
           });
@@ -235,7 +263,10 @@ export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => 
           }}>
             <CardContent sx={{ height: '100%' }}>
               <CardHeader title={title} />
-              <div ref={mapRef} style={{ width: '100%', height: 'calc(100% - 30px)', borderRadius: '4px', overflow: 'hidden' }}></div>
+              <div ref={mapRef} style={{ width: '100%', height: 'calc(100% - 35px)', borderRadius: '4px', overflow: 'hidden' }}></div>
+              {distance >= 0 && (
+                <Typography>{`Distance: ${distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} nm / ${(distance * 1.852).toLocaleString(undefined, { maximumFractionDigits: 2 })} km`}</Typography>
+              )}
             </CardContent>
           </Card>
           <Card ref={containerRef} className="ol-popup">

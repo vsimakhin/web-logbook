@@ -28,6 +28,7 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
         await queryClient.invalidateQueries({ queryKey: ['flight', flight.id] })
       }
       await queryClient.invalidateQueries({ queryKey: ['logbook'] })
+      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] })
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });

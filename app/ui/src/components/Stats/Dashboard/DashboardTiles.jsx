@@ -40,7 +40,7 @@ export const DashboardTiles = ({ data, filter }) => {
         <Tile title="Routes" value={stats.routes} size={size} />
         <Tile title="Aircrafts" value={stats.aircraftRegs} size={size} />
         <Tile title="Aircraft Types" value={stats.aircraftModels} size={size} />
-        <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString()} size={size} />
+        <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString(undefined, { maximumFractionDigits: 0 })} size={size} />
       </Grid>
       <Divider orientation="horizontal" sx={{ m: 1 }} />
       <Grid container spacing={1}>

@@ -63,8 +63,10 @@ type FlightRecord struct {
 	PIC     string `json:"pic_name"`
 	Remarks string `json:"remarks"`
 
+	Distance float64 `json:"distance"`
+	Track    []byte  `json:"track"`
+
 	// calculated
-	Distance int    `json:"distance,omitempty"`
 	PrevUUID string `json:"prev_uuid,omitempty"`
 	NextUUID string `json:"next_uuid,omitempty"`
 }

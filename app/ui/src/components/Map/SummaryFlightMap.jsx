@@ -11,7 +11,7 @@ import CardHeader from "../UIElements/CardHeader";
 import Filters from "../UIElements/Filters";
 import FlightMap from "../FlightMap/FlightMap";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchLogbookData } from "../../util/http/logbook";
+import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
 
 export const SummaryFlightMap = () => {
@@ -20,8 +20,8 @@ export const SummaryFlightMap = () => {
   const navigate = useNavigate();
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    queryKey: ['map-logbook'],
+    queryFn: ({ signal }) => fetchLogbookMapData({ signal, navigate }),
     staleTime: 3600000,
     cacheTime: 3600000,
   });

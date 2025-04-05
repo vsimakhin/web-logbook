@@ -198,8 +198,12 @@ func main() {
 	}
 	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
 
-	// create distance cache ob background
+	// create distance cache on background
 	go app.db.CreateDistanceCache()
+
+	// calculate distance for the records that don't have it
+	// this is needed for the first run or if some records were imported
+	app.db.UpdateFlightRecordsDistance()
 
 	// main app
 	err = app.serve()

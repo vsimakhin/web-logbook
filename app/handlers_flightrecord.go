@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/vsimakhin/web-logbook/internal/models"
+	"github.com/vsimakhin/web-logbook/internal/utils"
 )
 
 // HandlerFlightRecordByID shows flight record by UUID
@@ -124,7 +125,22 @@ func (app *application) HandlerApiTrackLogNew(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	fmt.Println(uuid, track)
+	distance := 0.0
+	for i := range len(track) - 1 {
+		distance += utils.Distance(track[i][0], track[i][1], track[i+1][0], track[i+1][1])
+	}
+
+	bTrack, err := json.Marshal(track)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	err = app.db.UpdateFlightRecordTrack(uuid, distance, bTrack)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
 
 	app.writeOkResponse(w, "Track Log uploaded")
 }
