@@ -226,15 +226,7 @@ func (m *DBModel) DeleteFlightRecord(uuid string) error {
 	defer cancel()
 
 	_, err := m.DB.ExecContext(ctx, "DELETE FROM logbook WHERE uuid = ?", uuid)
-	if err != nil {
-		return err
-	}
-	_, err = m.DB.ExecContext(ctx, "DELETE FROM attachments WHERE record_id = ?", uuid)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // GetFlightRecords returns the flight records in the logbook table
