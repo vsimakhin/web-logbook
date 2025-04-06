@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 // MUI
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 // Custom
 import { convertMinutesToTime, convertTimeToMinutes, getValue } from "../../util/helpers";
 import { LandingFilter } from "../UIElements/LandingsFilter";
@@ -63,14 +62,6 @@ const renderLangingFooter = (table, field) => {
     </Stack>
   );
 };
-
-export const renderHeader = (header) => {
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      {header.map((item, key) => (<Typography key={key} color="textPrimary" sx={{ fontWeight: 'bold' }}>{item}</Typography>))}
-    </Box>
-  );
-}
 
 export const createTimeColumn = (id, name) => ({
   accessorKey: id,
