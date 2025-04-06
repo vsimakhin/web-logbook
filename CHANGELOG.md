@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - New: Track log support added. You can now upload KML files as attachments or convert existing ones to display flight tracks on the map page. The flight distance is automatically calculated from the track log. Tracks are also visible on the overall Map page.
+- Update: Updated npm and Go packages with security fixes and version bumps.
 
 ## [3.0.0-alpha1] - 17.03.2025
 
