@@ -1,5 +1,5 @@
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -15,6 +15,7 @@ import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
+const columnSizingKey = 'logbook-table-column-sizing';
 const tableOptions = {
   initialState: { density: 'compact' },
   enableColumnResizing: true,
@@ -37,7 +38,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
     timeFilterFn: timeFilterFn,
@@ -143,7 +144,6 @@ export const LogbookTable = ({ data, isLoading }) => {
     getFilterLabel(column)
   ), []);
 
-
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
@@ -152,9 +152,10 @@ export const LogbookTable = ({ data, isLoading }) => {
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnSizingChange: setColumnSizing,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility },
+    state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing: columnSizing },
     defaultColumn: { muiFilterTextFieldProps: getMuiFilterTextFieldProps },
     ...tableOptions,
   });
