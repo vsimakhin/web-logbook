@@ -1,5 +1,5 @@
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -8,10 +8,11 @@ import { getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 import PDFExportButton from './PDFExportButton';
 import NewFlightRecordButton from './NewFlightRecordButton';
 import { tableJSONCodec } from '../../constants/constants';
-import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderHeader, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
+import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
+import TableHeader from '../UIElements/TableHeader';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
@@ -70,7 +71,8 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      header: "Single Pilot", columns: [
+      header: <TableHeader title="Single Pilot" />,
+      columns: [
         createTimeColumn("time.se_time", "SE"),
         createTimeColumn("time.me_time", "ME"),
       ]
@@ -86,7 +88,8 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      header: "PIC Name", columns: [
+      header: <TableHeader title="PIC Name" />,
+      columns: [
         createColumn("pic_name", "", 150, true)
       ]
     },
@@ -97,14 +100,15 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      Header: renderHeader(["Operation", "Condition Time"]),
-      header: "Operation Condition Time", columns: [
+      header: <TableHeader title="Operation Condition Time" />,
+      columns: [
         createTimeColumn("time.night_time", "Night"),
         createTimeColumn("time.ifr_time", "IFR"),
       ]
     },
     {
-      header: "Pilot Function Time", columns: [
+      header: <TableHeader title="Pilot Function Time" />,
+      columns: [
         createTimeColumn("time.pic_time", "PIC"),
         createTimeColumn("time.co_pilot_time", "COP"),
         createTimeColumn("time.dual_time", "Dual"),
@@ -112,7 +116,8 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      header: "FSTD Session", columns: [
+      header: <TableHeader title="FSTD Session" />,
+      columns: [
         createColumn("sim.type", "Type", 70),
         createTimeColumn("sim.time", "Time")
       ]
