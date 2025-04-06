@@ -211,8 +211,8 @@ export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => 
 
             if (!departure || !arrival) return null;
 
-            // addMarker(features, departure);
-            // addMarker(features, arrival);
+            addMarker(features, departure);
+            addMarker(features, arrival);
 
             if (routes) {
               setDistance((prev) => prev + flight.distance);

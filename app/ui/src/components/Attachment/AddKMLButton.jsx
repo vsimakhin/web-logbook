@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import { useNotifications } from "@toolpad/core/useNotifications";
-import * as toGeoJSON from "@mapbox/togeojson";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -14,7 +13,7 @@ import { queryClient } from "../../util/http/http";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { uploadAttachement } from "../../util/http/attachment";
 import { uploadTrackLog } from "../../util/http/logbook";
-
+import { parseKML } from "./helpers";
 
 export const AddKMLButton = ({ id }) => {
   const navigate = useNavigate();
@@ -53,42 +52,15 @@ export const AddKMLButton = ({ id }) => {
         reader.readAsText(file);
       });
 
-      // Parse KML to GeoJSON
-      const parser = new DOMParser();
-      const kml = parser.parseFromString(fileText, "text/xml");
-      const geojson = toGeoJSON.kml(kml);
-
-      const extractedCoordinates = [];
-
-      const processCoordinates = (coords, isPoint = false) => {
-        if (isPoint) {
-          const [lng, lat] = coords;
-          extractedCoordinates.push([lat, lng]);
-        } else {
-          coords.forEach(([lng, lat]) => {
-            extractedCoordinates.push([lat, lng]);
-          });
-        }
-      };
-
-      geojson.features.forEach((feature) => {
-        const { geometry } = feature;
-        if (!geometry) return;
-
-        if (geometry.type === 'Point') {
-          processCoordinates(geometry.coordinates, true);
-        } else if (geometry.type === 'LineString') {
-          processCoordinates(geometry.coordinates);
-        } else if (geometry.type === 'MultiGeometry' && geometry.geometries) {
-          geometry.geometries.forEach((g) => {
-            if (g.type === 'Point') {
-              processCoordinates(g.coordinates, true);
-            } else if (g.type === 'LineString') {
-              processCoordinates(g.coordinates);
-            }
-          });
-        }
-      });
+      const extractedCoordinates = parseKML(fileText);
+      if (extractedCoordinates.length === 0) {
+        notifications.show("No coordinates found in KML file", {
+          severity: "error",
+          key: "kml-parse-error",
+          autoHideDuration: 3000,
+        });
+        return;
+      }
 
       // Upload KML as attachment
       const formData = new FormData();
@@ -112,7 +84,7 @@ export const AddKMLButton = ({ id }) => {
     <>
       {(isPending || isTrackPending) && <CircularProgress size={24} />}
       {!(isPending && isTrackPending) &&
-        <Tooltip title="Add Track Log">
+        <Tooltip title="Add track log">
           <IconButton size="small" component="label" ><MapOutlinedIcon />
             <input hidden type="file" name="document" id="document" onChange={handleFileChange} accept=".kml" />
           </IconButton>

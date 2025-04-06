@@ -52,10 +52,11 @@ export const FlightRecord = () => {
   }, [data]);
 
   useEffect(() => {
+    console.log(flight.distance)
     if (flight) {
       setMapData([flight]);
     }
-  }, [flight.redraw]);
+  }, [flight.redraw, flight.distance]);
 
   const handleChange = useCallback((key, value) => {
     setFlight((flight) => {

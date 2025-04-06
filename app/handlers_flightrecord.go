@@ -106,6 +106,12 @@ func (app *application) HandlerApiFlightRecordUpdate(w http.ResponseWriter, r *h
 		return
 	}
 
+	// recalculate distance in case departure or arrival place has been changed
+	// but not if track log is present
+	if flightRecord.Track == nil {
+		flightRecord.Distance = app.db.Distance(flightRecord.Departure.Place, flightRecord.Arrival.Place)
+	}
+
 	err = app.db.UpdateFlightRecord(flightRecord)
 	if err != nil {
 		app.handleError(w, err)
@@ -115,6 +121,7 @@ func (app *application) HandlerApiFlightRecordUpdate(w http.ResponseWriter, r *h
 	app.writeOkResponse(w, "Flight Record has been updated")
 }
 
+// HandlerApiTrackLogNew is a handler for uploading track log
 func (app *application) HandlerApiTrackLogNew(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 
@@ -143,4 +150,26 @@ func (app *application) HandlerApiTrackLogNew(w http.ResponseWriter, r *http.Req
 	}
 
 	app.writeOkResponse(w, "Track Log uploaded")
+}
+
+// HandlerApiTrackLogReset is a handler for deleting track log
+func (app *application) HandlerApiTrackLogReset(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	fr, err := app.db.GetFlightRecordByID(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	// recalculate distance
+	fr.Distance = app.db.Distance(fr.Departure.Place, fr.Arrival.Place)
+
+	err = app.db.UpdateFlightRecordTrack(uuid, fr.Distance, nil)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Track Log reset")
 }

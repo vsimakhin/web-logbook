@@ -26,7 +26,7 @@ func (m *DBModel) ContextWithDefaultTimeout() (context.Context, context.CancelFu
 var distanceCache sync.Map
 
 // distance calculates distance between 2 airports
-func (m *DBModel) distance(departure, arrival string) float64 {
+func (m *DBModel) Distance(departure, arrival string) float64 {
 	if departure == arrival {
 		return 0
 	}
@@ -86,7 +86,7 @@ func (m *DBModel) UpdateFlightRecordsDistance() {
 			return
 		}
 
-		fr.Distance = m.distance(fr.Departure.Place, fr.Arrival.Place)
+		fr.Distance = m.Distance(fr.Departure.Place, fr.Arrival.Place)
 
 		query = "UPDATE logbook SET distance = ? WHERE uuid = ?"
 		_, err := tx.ExecContext(ctx, query, fr.Distance, fr.UUID)
@@ -124,6 +124,6 @@ func (m *DBModel) CreateDistanceCache() {
 			return
 		}
 
-		m.distance(dep, arr)
+		m.Distance(dep, arr)
 	}
 }

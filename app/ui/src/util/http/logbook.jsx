@@ -92,3 +92,22 @@ export const uploadTrackLog = async ({ id, track, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot upload track log');
 }
+
+export const resetTrackLog = async ({ id, navigate }) => {
+  const url = `${API_URL}/logbook/track/${id}`;
+  const options = {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+  };
+  return await handleFetch(url, options, navigate, 'Cannot reset track log');
+}
+
+export const fetchDistance = async ({ signal, departure, arrival, navigate }) => {
+  const url = `${API_URL}/distance/${departure}/${arrival}`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch distance');
+}

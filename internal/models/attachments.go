@@ -77,22 +77,9 @@ func (m *DBModel) DeleteAttachmentsForFlightRecord(uuid string) (err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "SELECT uuid FROM attachments WHERE record_id = ?"
-	rows, err := m.DB.QueryContext(ctx, query, uuid)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var id string
-		if err = rows.Scan(&id); err != nil {
-			return err
-		}
-		m.DeleteAttachment(id)
-	}
-
-	return nil
+	query := "DELETE FROM attachments WHERE record_id = ?"
+	_, err = m.DB.ExecContext(ctx, query, uuid)
+	return err
 }
 
 // GetAttachmentByID returns attachment record

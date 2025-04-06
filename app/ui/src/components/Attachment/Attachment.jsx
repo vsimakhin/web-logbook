@@ -8,6 +8,7 @@ import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 // Custom
 import { DownloadAttachmentButton } from './DownloadAttachmentButton';
 import DeleteAttachmentButton from './DeleteAttachmentButton';
+import ConvertAttachmentToTrackButton from './ConvertAttachmentToTrackButton';
 
 export const Attachment = ({ attachment }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -28,6 +29,9 @@ export const Attachment = ({ attachment }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
+        {attachment.document_name.endsWith(".kml") && (
+          <ConvertAttachmentToTrackButton attachment={attachment} handleClose={handleClose} />
+        )}
         <DownloadAttachmentButton attachment={attachment} handleClose={handleClose} />
         <DeleteAttachmentButton attachment={attachment} handleClose={handleClose} />
       </Menu>

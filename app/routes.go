@@ -42,6 +42,7 @@ func (app *application) routes() *chi.Mux {
 			// track log
 			r.Route("/track", func(r chi.Router) {
 				r.Post("/{uuid}", app.HandlerApiTrackLogNew)
+				r.Delete("/{uuid}", app.HandlerApiTrackLogReset)
 			})
 		})
 
@@ -114,6 +115,7 @@ func (app *application) routes() *chi.Mux {
 		// aux
 		r.Get("/version", app.HandlerVersion)
 		r.Get("/auth-enabled", app.HandlerAuthEnabled)
+		r.Get("/distance/{departure}/{arrival}", app.HandlerDistance)
 	})
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))

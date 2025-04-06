@@ -5,6 +5,8 @@ import (
 	"io/fs"
 	"net/http"
 	"strings"
+
+	"github.com/go-chi/chi/v5"
 )
 
 //go:embed ui/dist/*
@@ -34,4 +36,11 @@ func (app *application) HandlerVersion(w http.ResponseWriter, r *http.Request) {
 func (app *application) HandlerAuthEnabled(w http.ResponseWriter, r *http.Request) {
 	isAuth, _ := app.db.IsAuthEnabled()
 	app.writeJSON(w, http.StatusOK, isAuth)
+}
+
+func (app *application) HandlerDistance(w http.ResponseWriter, r *http.Request) {
+	dep := chi.URLParam(r, "departure")
+	arr := chi.URLParam(r, "arrival")
+	distance := app.db.Distance(dep, arr)
+	app.writeJSON(w, http.StatusOK, distance)
 }
