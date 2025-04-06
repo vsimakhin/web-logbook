@@ -17,19 +17,16 @@ import LineString from 'ol/geom/LineString';
 import { Style, Icon, Fill, Text } from 'ol/style';
 import Overlay from 'ol/Overlay';
 import { transform } from 'ol/proj';
+import { GreatCircle } from 'arc/arc';
 // MUI UI elements
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 // Custom components and libraries
 import { queryClient } from '../../util/http/http';
-
-import { GreatCircle } from 'arc/arc';
 import { CardHeader } from '../UIElements/CardHeader';
-
 import icon from "../../assets/favicon.ico";
 import { fetchAirport } from '../../util/http/airport';
-import { set } from 'ol/transform';
-import { Typography } from '@mui/material';
 
 const getAirportData = async (id, navigate) => {
   try {

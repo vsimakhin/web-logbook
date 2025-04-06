@@ -19,14 +19,16 @@ import CopyFlightRecordButton from "./CopyFlightRecordButton";
 import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import Attachments from "../Attachment/Attachments";
+import ResetTrackButton from "./ResetTrackButton";
 
 const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
   <>
     <HelpButton />
     <SaveFlightRecordButton flight={flight} handleChange={handleChange} />
-    <NewFlightRecordButton setFlight={setFlight} />
-    <CopyFlightRecordButton setFlight={setFlight} />
-    <DeleteFlightRecordButton flight={flight} />
+    {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} />}
+    {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} />}
+    {flight.track && <ResetTrackButton flight={flight} handleChange={handleChange} />}
+    {flight.uuid !== "new" && <DeleteFlightRecordButton flight={flight} />}
   </>
 ));
 
@@ -52,7 +54,6 @@ export const FlightRecord = () => {
   }, [data]);
 
   useEffect(() => {
-    console.log(flight.distance)
     if (flight) {
       setMapData([flight]);
     }

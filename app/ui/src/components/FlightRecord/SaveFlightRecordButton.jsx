@@ -34,8 +34,8 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
-  const handleClick = useCallback(() => {
-    saveFlightRecord({ flight, navigate });
+  const handleClick = useCallback(async () => {
+    await saveFlightRecord({ flight, navigate });
   }, [saveFlightRecord, flight, navigate]);
 
   return (

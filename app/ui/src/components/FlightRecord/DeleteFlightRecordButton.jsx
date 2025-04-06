@@ -1,6 +1,7 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -20,21 +21,17 @@ export const DeleteFlightRecordButton = ({ flight }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to delete flight record' });
   useSuccessNotification({ isSuccess: isSuccess, message: 'Flight record deleted successfully' });
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = useCallback(async () => {
     const confirmed = await dialogs.confirm('Are you sure you want to remove this flight record?');
     if (confirmed) {
       await deleteFlight();
     }
-  }
+  });
 
   return (
-    <>
-      {flight.uuid !== "new" &&
-        <Tooltip title="Delete flight">
-          <IconButton size="small" onClick={handleConfirmDelete}><DeleteOutlinedIcon /></IconButton>
-        </Tooltip>
-      }
-    </>
+    <Tooltip title="Delete flight">
+      <IconButton size="small" onClick={handleConfirmDelete}><DeleteOutlinedIcon /></IconButton>
+    </Tooltip>
   );
 }
 

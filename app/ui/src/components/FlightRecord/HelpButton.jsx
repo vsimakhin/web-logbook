@@ -2,6 +2,7 @@
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 // Custom
 import HelpButtonDrawer from "../UIElements/HelpButtonDrawer";
 
@@ -36,6 +37,11 @@ const HELP_CONTENT = [
     description: `Add a new track log (KML) to the flight record as attachment.
       It will update the flight map and recalculate the distance.
       If the track log attachment is removed, you will have an option to reset the map and recalculate the distance`,
+  },
+  {
+    title: 'Reset track log',
+    icon: RouteOutlinedIcon,
+    description: `Reset the flight track and recalculate the distance as a great circle between departure and arrival`
   }
 ];
 
