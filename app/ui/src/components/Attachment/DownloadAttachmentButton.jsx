@@ -41,7 +41,7 @@ export const DownloadAttachmentButton = ({ attachment, handleClose }) => {
   }, [downloadAttachment, handleClose]);
 
   return (
-    <MenuItem onClick={handleDownload} sx={{ p: 0 }} disabled={isDownloadPending}>
+    <MenuItem onClick={handleDownload} sx={{ p: 0, pr: 1 }} disabled={isDownloadPending}>
       <CloudDownloadOutlinedIcon sx={{ m: 1 }} color="action" />{isDownloadPending && <CircularProgress size={24} />}Download
     </MenuItem>
   )

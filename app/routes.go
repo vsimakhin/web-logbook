@@ -32,11 +32,18 @@ func (app *application) routes() *chi.Mux {
 		// logbook
 		r.Route("/logbook", func(r chi.Router) {
 			r.With(middleware.Compress(5)).Get("/data", app.HandlerApiLogbookData)
+			r.With(middleware.Compress(5)).Get("/mapdata", app.HandlerApiLogbookMapData)
 			r.Get("/{uuid}", app.HandlerApiFlightRecordByID)
 			r.Delete("/{uuid}", app.HandlerApiFlightRecordDelete)
 			r.Post("/new", app.HandlerApiFlightRecordNew)
 			r.Put("/{uuid}", app.HandlerApiFlightRecordUpdate)
 			r.Post("/night", app.HandlerNightTime)
+
+			// track log
+			r.Route("/track", func(r chi.Router) {
+				r.Post("/{uuid}", app.HandlerApiTrackLogNew)
+				r.Delete("/{uuid}", app.HandlerApiTrackLogReset)
+			})
 		})
 
 		// licensing
@@ -108,6 +115,7 @@ func (app *application) routes() *chi.Mux {
 		// aux
 		r.Get("/version", app.HandlerVersion)
 		r.Get("/auth-enabled", app.HandlerAuthEnabled)
+		r.Get("/distance/{departure}/{arrival}", app.HandlerDistance)
 	})
 
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))

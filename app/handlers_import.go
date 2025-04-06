@@ -23,7 +23,7 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	for _, flightRecord := range frs {
+	for _, fr := range frs {
 		uuid, err := uuid.NewRandom()
 		if err != nil {
 			app.errorLog.Println(err)
@@ -32,20 +32,21 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 		}
 
 		infoMsg := ""
-		if flightRecord.Departure.Place != "" && flightRecord.Arrival.Place != "" {
+		if fr.Departure.Place != "" && fr.Arrival.Place != "" {
 			infoMsg = fmt.Sprintf("Flight %s %s-%s %s %s",
-				flightRecord.Date, flightRecord.Departure.Place, flightRecord.Arrival.Place, flightRecord.Aircraft.Model, flightRecord.Aircraft.Reg)
+				fr.Date, fr.Departure.Place, fr.Arrival.Place, fr.Aircraft.Model, fr.Aircraft.Reg)
 		} else {
-			infoMsg = fmt.Sprintf("Simulator record %s %s", flightRecord.Date, flightRecord.SIM.Type)
+			infoMsg = fmt.Sprintf("Simulator record %s %s", fr.Date, fr.SIM.Type)
 		}
 
 		// let's double check if the record alredy exists
-		if app.db.IsFlightRecordExists(flightRecord) {
+		if app.db.IsFlightRecordExists(fr) {
 			importLog = append(importLog, fmt.Sprintf("%s already exists, skipping", infoMsg))
 		} else {
-			flightRecord.UUID = uuid.String()
+			fr.UUID = uuid.String()
+			fr.Distance = app.db.Distance(fr.Departure.Place, fr.Arrival.Place)
 
-			err = app.db.InsertFlightRecord(flightRecord)
+			err = app.db.InsertFlightRecord(fr)
 			if err != nil {
 				importLog = append(importLog, fmt.Sprintf("Cannot create a new record for %s - %s", infoMsg, err))
 			}

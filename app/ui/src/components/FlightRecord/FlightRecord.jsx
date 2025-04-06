@@ -19,14 +19,16 @@ import CopyFlightRecordButton from "./CopyFlightRecordButton";
 import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import Attachments from "../Attachment/Attachments";
+import ResetTrackButton from "./ResetTrackButton";
 
 const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
   <>
     <HelpButton />
     <SaveFlightRecordButton flight={flight} handleChange={handleChange} />
-    <NewFlightRecordButton setFlight={setFlight} />
-    <CopyFlightRecordButton setFlight={setFlight} />
-    <DeleteFlightRecordButton flight={flight} />
+    {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} />}
+    {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} />}
+    {flight.track && <ResetTrackButton flight={flight} handleChange={handleChange} />}
+    {flight.uuid !== "new" && <DeleteFlightRecordButton flight={flight} />}
   </>
 ));
 
@@ -46,16 +48,16 @@ export const FlightRecord = () => {
 
   useEffect(() => {
     if (data) {
+      data.redraw = Math.random(); // trigger map redraw
       setFlight(data);
-      setMapData([{ departure: data.departure, arrival: data.arrival }]);
     }
   }, [data]);
 
   useEffect(() => {
-    if (flight.map) {
-      setMapData([flight.map]);
+    if (flight) {
+      setMapData([flight]);
     }
-  }, [flight.map]);
+  }, [flight.redraw, flight.distance]);
 
   const handleChange = useCallback((key, value) => {
     setFlight((flight) => {

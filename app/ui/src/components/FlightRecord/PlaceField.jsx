@@ -8,7 +8,7 @@ import FlightLandIcon from '@mui/icons-material/FlightLand';
 import Label from "../UIElements/Label"
 import TextField from "../UIElements/TextField"
 import { PLACE_SLOT_PROPS, TIME_SLOT_PROPS } from '../../constants/constants';
-import { fetchNightTime } from '../../util/http/logbook';
+import { fetchDistance, fetchNightTime } from '../../util/http/logbook';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
 import { convertMinutesToTime } from '../../util/helpers';
 
@@ -36,14 +36,19 @@ export const PlaceField = ({ flight, handleChange, type }) => {
   const icon = type === "departure" ? FlightTakeoffIcon : FlightLandIcon;
   const navigate = useNavigate();
 
-  const handlePlaceChange = () => {
-    // it's a trick to update the map when the place filed is left
-    // otherwise the map will be refreshed on each flight field change
-    const map = {
-      departure: flight.departure,
-      arrival: flight.arrival
+  const { mutateAsync: calculateDistance } = useMutation({
+    mutationFn: ({ departure, arrival }) => fetchDistance({ departure, arrival, navigate }),
+  });
+
+  const handlePlaceChange = async () => {
+    // quickly recalculate the distance to show on map
+    const distance = await calculateDistance({ departure: flight.departure.place, arrival: flight.arrival.place });
+    if (distance && flight.track === null) {
+      handleChange("distance", distance);
     }
-    handleChange("map", map);
+    // it's a trick to update the map when the place field is left
+    // otherwise the map will be refreshed on each flight field change
+    handleChange("redraw", Math.random());
   }
 
   const { mutateAsync: getNightTime, isError, error } = useMutation({

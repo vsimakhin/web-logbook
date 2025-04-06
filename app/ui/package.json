@@ -13,6 +13,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.1.0",
+    "@mapbox/togeojson": "^0.16.2",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
     "@mui/x-date-pickers": "^7.23.2",

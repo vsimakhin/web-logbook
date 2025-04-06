@@ -62,6 +62,8 @@ func (m *DBModel) UpdateSettings(settings Settings) error {
 		return err
 	}
 
+	authCache.Clear()
+
 	return nil
 }
 

@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "3.0.0-alpha11"
+	schemaVersion = "3.0.0-beta2"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -45,6 +45,8 @@ var logbookTable = NewTable("logbook", "uuid", UUID,
 		{Name: "sim_time", Type: DateTime},
 		{Name: "pic_name", Type: SmallText},
 		{Name: "remarks", Type: FullText},
+		{Name: "distance", Type: Real},
+		{Name: "track", Type: Blob},
 	})
 
 var airportsTable = NewTable("airports", "icao", SmallText,
@@ -120,7 +122,8 @@ var logbookView = NewView("logbook_view",
 				iif(day_landings='',0,day_landings) as day_landings, 
 				iif(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks
+				instructor_time, sim_type, sim_time, pic_name, remarks,
+				IFNULL(distance, 0) distance, track
 			FROM logbook;
 			`,
 		MySQL: `
@@ -131,7 +134,8 @@ var logbookView = NewView("logbook_view",
 				IF(day_landings='',0,day_landings) as day_landings, 
 				IF(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks
+				instructor_time, sim_type, sim_time, pic_name, remarks,
+				IFNULL(distance, 0) distance, track
 			FROM logbook;
 		`,
 	},

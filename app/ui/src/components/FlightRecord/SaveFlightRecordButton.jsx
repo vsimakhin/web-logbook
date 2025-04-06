@@ -25,16 +25,17 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
         handleChange("uuid", data);
         navigate(`/logbook/${data}`);
       } else {
-        await queryClient.invalidateQueries({ queryKey: ['flight', flight.id] })
+        await queryClient.invalidateQueries({ queryKey: ['flight', flight.id] });
       }
-      await queryClient.invalidateQueries({ queryKey: ['logbook'] })
+      await queryClient.invalidateQueries({ queryKey: ['logbook'] });
+      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
-  const handleClick = useCallback(() => {
-    saveFlightRecord({ flight, navigate });
+  const handleClick = useCallback(async () => {
+    await saveFlightRecord({ flight, navigate });
   }, [saveFlightRecord, flight, navigate]);
 
   return (

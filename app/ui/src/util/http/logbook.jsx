@@ -12,6 +12,16 @@ export const fetchLogbookData = async ({ signal, navigate }) => {
   return await handleFetch(url, options, navigate, 'Cannot fetch logbook data');
 }
 
+export const fetchLogbookMapData = async ({ signal, navigate }) => {
+  const url = `${API_URL}/logbook/mapdata`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch logbook map data');
+}
+
 export const fetchFlightData = async ({ signal, id, navigate }) => {
   const url = `${API_URL}/logbook/${id}`;
   const options = {
@@ -71,4 +81,33 @@ export const updateFlightRecord = async ({ signal, flight, navigate }) => {
     body: JSON.stringify(flight),
   };
   return await handleFetch(url, options, navigate, 'Cannot update flight record');
+}
+
+export const uploadTrackLog = async ({ id, track, navigate }) => {
+  const url = `${API_URL}/logbook/track/${id}`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(track),
+  };
+  return await handleFetch(url, options, navigate, 'Cannot upload track log');
+}
+
+export const resetTrackLog = async ({ id, navigate }) => {
+  const url = `${API_URL}/logbook/track/${id}`;
+  const options = {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+  };
+  return await handleFetch(url, options, navigate, 'Cannot reset track log');
+}
+
+export const fetchDistance = async ({ signal, departure, arrival, navigate }) => {
+  const url = `${API_URL}/distance/${departure}/${arrival}`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch distance');
 }

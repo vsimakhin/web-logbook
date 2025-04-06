@@ -65,7 +65,7 @@ const updateTotals = (totals, flight) => {
   totals.landings.day += parseInt(landings.day) || 0;
   totals.landings.night += parseInt(landings.night) || 0;
   totals.sim.time += convertTimeToMinutes(sim.time);
-  totals.distance += parseInt(distance) || 0;
+  totals.distance += parseFloat(distance) || 0;
 
   return totals;
 };
