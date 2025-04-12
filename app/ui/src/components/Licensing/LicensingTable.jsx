@@ -1,4 +1,7 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import {
+  MaterialReactTable, useMaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
+  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton
+} from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
@@ -12,9 +15,11 @@ import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constan
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
+import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 
 const paginationKey = 'licensing-table-page-size';
 const columnVisibilityKey = 'licensing-table-column-visibility';
+const columnSizingKey = 'licensing-table-column-sizing';
 
 const tableOptions = {
   initialState: {
@@ -44,6 +49,7 @@ export const LisencingTable = ({ data, isLoading }) => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
 
   const columns = useMemo(() => [
@@ -89,6 +95,17 @@ export const LisencingTable = ({ data, isLoading }) => {
     </Box>
   ), []);
 
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ToggleFiltersButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), []);
+
+
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);
   }, []);
@@ -105,10 +122,17 @@ export const LisencingTable = ({ data, isLoading }) => {
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnSizingChange: setColumnSizing,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility },
+    state: {
+      pagination,
+      columnFilters: columnFilters,
+      columnVisibility,
+      columnSizing: columnSizing
+    },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
+    renderToolbarInternalActions: renderToolbarInternalActions,
     ...tableOptions
   });
 

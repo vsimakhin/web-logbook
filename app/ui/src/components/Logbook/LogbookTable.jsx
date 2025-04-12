@@ -1,4 +1,7 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import {
+  MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
+  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton, useMaterialReactTable
+} from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
@@ -8,13 +11,20 @@ import { getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 import PDFExportButton from './PDFExportButton';
 import NewFlightRecordButton from './NewFlightRecordButton';
 import { tableJSONCodec } from '../../constants/constants';
-import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderHeader, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
+import {
+  createColumn, createDateColumn, createLandingColumn, createTimeColumn,
+  renderProps, renderTextProps, renderTotalFooter
+} from "./helpers";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
+import TableHeader from '../UIElements/TableHeader';
+import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
+const columnSizingKey = 'logbook-table-column-sizing';
+
 const tableOptions = {
   initialState: { density: 'compact' },
   enableColumnResizing: true,
@@ -37,7 +47,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
     timeFilterFn: timeFilterFn,
@@ -69,7 +79,8 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      header: "Single Pilot", columns: [
+      header: <TableHeader title="Single Pilot" />,
+      columns: [
         createTimeColumn("time.se_time", "SE"),
         createTimeColumn("time.me_time", "ME"),
       ]
@@ -85,7 +96,8 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      header: "PIC Name", columns: [
+      header: <TableHeader title="PIC Name" />,
+      columns: [
         createColumn("pic_name", "", 150, true)
       ]
     },
@@ -96,14 +108,15 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      Header: renderHeader(["Operation", "Condition Time"]),
-      header: "Operation Condition Time", columns: [
+      header: <TableHeader title="Operation Condition Time" />,
+      columns: [
         createTimeColumn("time.night_time", "Night"),
         createTimeColumn("time.ifr_time", "IFR"),
       ]
     },
     {
-      header: "Pilot Function Time", columns: [
+      header: <TableHeader title="Pilot Function Time" />,
+      columns: [
         createTimeColumn("time.pic_time", "PIC"),
         createTimeColumn("time.co_pilot_time", "COP"),
         createTimeColumn("time.dual_time", "Dual"),
@@ -111,7 +124,8 @@ export const LogbookTable = ({ data, isLoading }) => {
       ]
     },
     {
-      header: "FSTD Session", columns: [
+      header: <TableHeader title="FSTD Session" />,
+      columns: [
         createColumn("sim.type", "Type", 70),
         createTimeColumn("sim.time", "Time")
       ]
@@ -131,6 +145,16 @@ export const LogbookTable = ({ data, isLoading }) => {
     </Box>
   ), []);
 
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ToggleFiltersButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), []);
+
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);
   }, []);
@@ -143,7 +167,6 @@ export const LogbookTable = ({ data, isLoading }) => {
     getFilterLabel(column)
   ), []);
 
-
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
@@ -152,10 +175,17 @@ export const LogbookTable = ({ data, isLoading }) => {
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnSizingChange: setColumnSizing,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility },
+    state: {
+      pagination,
+      columnFilters: columnFilters,
+      columnVisibility,
+      columnSizing: columnSizing
+    },
     defaultColumn: { muiFilterTextFieldProps: getMuiFilterTextFieldProps },
+    renderToolbarInternalActions: renderToolbarInternalActions,
     ...tableOptions,
   });
 
