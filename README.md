@@ -15,10 +15,12 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.0.0-beta1] - 12.04.2025
 
+- New: Column sizing preferences for the Logbook and Licensing tables are now saved (in a browser local storage). A Reset Column Sizing button has also been added to the right toolbar.
 - New: Track log support added. You can now upload KML files as attachments or convert existing ones to display flight tracks on the map page. The flight distance is automatically calculated from the track log. Tracks are also visible on the overall Map page.
 - Update: Updated npm and Go packages with security fixes and version bumps.
+- Note: The Docker image for this release is still tagged with its version only and doesn't use the standard `latest` tag until it exits beta status
 
 ## [3.0.0-alpha1] - 17.03.2025
 
