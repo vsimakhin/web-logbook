@@ -1,4 +1,7 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import {
+  MaterialReactTable, useMaterialReactTable, MRT_ShowHideColumnsButton,
+  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton
+} from 'material-react-table';
 import { useCallback, useMemo } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
@@ -8,6 +11,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
 import { convertMinutesToTime } from '../../../util/helpers';
 import CSVExportButton from '../../UIElements/CSVExportButton';
+import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
 
 const tableOptions = {
   initialState: {
@@ -52,9 +56,11 @@ const createTimeColumn = (id, name) => ({
 export const TotalsByAircraftTable = ({ data, isLoading, type }) => {
   const paginationKey = `totals-stats-${type}-table-page-size`;
   const columnVisibilityKey = `totals-stats-${type}-table-column-visibility`;
+  const columnSizingKey = `totals-stats-${type}-table-column-sizing`;
 
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const columns = useMemo(() => [
     { accessorKey: "model", header: type === "type" ? "Type" : "Category", size: 100 },
@@ -70,12 +76,14 @@ export const TotalsByAircraftTable = ({ data, isLoading, type }) => {
     createTimeColumn("time.cc_time", "CC"),
     createTimeColumn("sim.time", "Sim"),
     {
-      accessorFn: row => `${row.landings.day}/${row.landings.night}`, header: "D/N", size: 120,
+      accessorFn: row => `${row.landings.day}/${row.landings.night}`, header: "D/N", size: 90,
+      muiTableBodyCellProps: { align: "right", sx: { p: 0.5 } },
     },
     {
       accessorKey: "distance", header: "Distance", size: 100,
       aggregationFn: "sum",
-      Cell: ({ cell }) => (cell.getValue().toLocaleString()),
+      Cell: ({ cell }) => (cell.getValue().toLocaleString(undefined, { maximumFractionDigits: 0 })),
+      muiTableBodyCellProps: { align: "right", sx: { p: 0.5 } },
     },
     createTimeColumn("time.total_time", "Total"),
   ], []);
@@ -86,6 +94,15 @@ export const TotalsByAircraftTable = ({ data, isLoading, type }) => {
     </Box>
   ), []);
 
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), []);
+
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
@@ -93,8 +110,10 @@ export const TotalsByAircraftTable = ({ data, isLoading, type }) => {
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
-    state: { pagination, columnVisibility },
+    onColumnSizingChange: setColumnSizing,
+    state: { pagination, columnVisibility, columnSizing },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
+    renderToolbarInternalActions: renderToolbarInternalActions,
     ...tableOptions
   });
 
