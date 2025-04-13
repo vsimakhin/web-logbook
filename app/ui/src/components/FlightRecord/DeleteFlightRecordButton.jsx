@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { deleteFlightRecord } from '../../util/http/logbook';
+import { queryClient } from '../../util/http/http';
 
 export const DeleteFlightRecordButton = ({ flight }) => {
   const dialogs = useDialogs();
@@ -16,7 +17,14 @@ export const DeleteFlightRecordButton = ({ flight }) => {
 
   const { mutateAsync: deleteFlight, isError, error, isSuccess } = useMutation({
     mutationFn: () => deleteFlightRecord({ id: flight.uuid, navigate }),
-    onSuccess: () => navigate('/logbook'),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['logbook'] });
+      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
+      await queryClient.invalidateQueries({ queryKey: ['aircraft-models'] });
+      await queryClient.invalidateQueries({ queryKey: ['aircraft-regs'] });
+
+      navigate('/logbook');
+    }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to delete flight record' });
   useSuccessNotification({ isSuccess: isSuccess, message: 'Flight record deleted successfully' });

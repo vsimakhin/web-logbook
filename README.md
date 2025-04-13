@@ -15,6 +15,12 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [3.0.0-beta2] - 13.04.2025
+
+- Fix: Fix issue adding new aircraft types and regs
+- Update: Optimize UI elements
+- Note: The Docker image for this release is still tagged with its version only and doesn't use the standard `latest` tag until it exits beta status
+
 ## [3.0.0-beta1] - 12.04.2025
 
 - New: Column sizing preferences for the Logbook and Licensing tables are now saved (in a browser local storage). A Reset Column Sizing button has also been added to the right toolbar.

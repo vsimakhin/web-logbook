@@ -3,22 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 // Custom components
 import Select from "./Select"
 import { fetchAircraftRegs } from "../../util/http/aircraft";
-import { useEffect, useState } from "react";
 
 export const AircraftReg = ({ gsize, id = "aircraft.reg_name", label = "Registration", value, handleChange, last = true, ...props }) => {
   const navigate = useNavigate();
-  const [options, setOptions] = useState([])
 
-  const { data: regs } = useQuery({
+  const { data: regs = {} } = useQuery({
     queryFn: ({ signal }) => fetchAircraftRegs({ signal, navigate, last }),
     queryKey: ['aircraft-regs', 'last', last],
+    staleTime: 3600000,
+    gcTime: 3600000,
   })
 
-  useEffect(() => {
-    if (regs) {
-      setOptions(Object.keys(regs));
-    }
-  }, [regs])
+  const options = Object.keys(regs);
 
   const handleRegChange = (key, value) => {
     handleChange(key, value)
@@ -36,6 +32,7 @@ export const AircraftReg = ({ gsize, id = "aircraft.reg_name", label = "Registra
       value={value}
       tooltip={"Aircraft Registration Number"}
       options={options}
+      onBlur={(e) => handleRegChange(id, e.target.value)}
       freeSolo={true}
       {...props}
     />

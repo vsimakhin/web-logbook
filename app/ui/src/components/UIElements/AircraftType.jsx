@@ -1,30 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 // Custom components
 import Select from "../UIElements/Select"
 import { fetchAircraftModels } from "../../util/http/aircraft";
 
 export const AircraftType = ({ gsize, id = "aircraft.model", label = "Aircraft Type", value, handleChange, ...props }) => {
   const navigate = useNavigate();
-  const [options, setOptions] = useState([])
 
-  const { data } = useQuery({
+  const { data: options = [] } = useQuery({
     queryFn: ({ signal }) => fetchAircraftModels({ signal, navigate }),
     queryKey: ['aircraft-models'],
+    staleTime: 3600000,
+    gcTime: 3600000,
   })
-
-  useEffect(() => {
-    if (data) {
-      setOptions(data);
-    }
-  }, [data])
 
   return (
     <Select gsize={gsize}
       id={id}
       label={label}
       handleChange={handleChange}
+      onBlur={(e) => handleChange(id, e.target.value)}
       value={value}
       tooltip={"Aircraft type"}
       options={options}
