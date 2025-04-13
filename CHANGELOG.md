@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Avoid redundant request triggered during new record creation
+
 ## [3.0.0-beta2] - 13.04.2025
 
 - Fix: Fix issue adding new aircraft types and regs

@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Avoid redundant request triggered during new record creation
+
 ## [3.0.0-beta2] - 13.04.2025
 
 - Fix: Fix issue adding new aircraft types and regs

@@ -42,7 +42,7 @@ export const FlightRecord = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['flight', id],
     queryFn: ({ signal }) => fetchFlightData({ signal, id, navigate }),
-    enabled: !(flight.uuid === "new"),
+    enabled: id !== "new",
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
 
