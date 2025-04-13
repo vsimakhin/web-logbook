@@ -1,4 +1,7 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import {
+  MaterialReactTable, useMaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
+  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton
+} from 'material-react-table';
 import { useCallback, useMemo } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
@@ -9,9 +12,11 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
 import { convertMinutesToTime } from '../../../util/helpers';
 import CSVExportButton from '../../UIElements/CSVExportButton';
+import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
 
 const paginationKey = 'totals-stats-year-table-page-size';
 const columnVisibilityKey = 'totals-stats-year-table-column-visibility';
+const columnSizingKey = 'totals-stats-year-table-column-sizing';
 
 const tableOptions = {
   initialState: {
@@ -61,6 +66,7 @@ const createTimeColumn = (id, name) => ({
 export const TotalsByYearTable = ({ data, isLoading }) => {
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const columns = useMemo(() => [
     { accessorKey: "year", header: "Year", size: 100 },
@@ -82,7 +88,7 @@ export const TotalsByYearTable = ({ data, isLoading }) => {
     createTimeColumn("time.cc_time", "CC"),
     createTimeColumn("sim.time", "Sim"),
     {
-      accessorFn: row => `${row.landings.day}/${row.landings.night}`, header: "D/N", size: 120,
+      accessorFn: row => `${row.landings.day}/${row.landings.night}`, header: "D/N", size: 90,
       aggregationFn: (columnId, leafRows) => {
         const dayTotal = leafRows.reduce((sum, row) => sum + (parseInt(row.original.landings.day) || 0), 0);
         const nightTotal = leafRows.reduce((sum, row) => sum + (parseInt(row.original.landings.night) || 0), 0);
@@ -93,16 +99,18 @@ export const TotalsByYearTable = ({ data, isLoading }) => {
           {cell.getValue()}
         </Typography>
       ),
+      muiTableBodyCellProps: { align: "right", sx: { p: 0.5 } },
     },
     {
       accessorKey: "distance", header: "Distance", size: 100,
       aggregationFn: "sum",
-      Cell: ({ cell }) => (cell.getValue().toLocaleString()),
+      Cell: ({ cell }) => (cell.getValue().toLocaleString(undefined, { maximumFractionDigits: 0 })),
       AggregatedCell: ({ cell }) => (
         <Typography variant="body2" color="primary">
-          {cell.getValue().toLocaleString()}
+          {cell.getValue().toLocaleString(undefined, { maximumFractionDigits: 0 })}
         </Typography>
       ),
+      muiTableBodyCellProps: { align: "right", sx: { p: 0.5 } },
     },
     createTimeColumn("time.total_time", "Total"),
   ], []);
@@ -113,6 +121,15 @@ export const TotalsByYearTable = ({ data, isLoading }) => {
     </Box>
   ), []);
 
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), []);
+
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
@@ -120,11 +137,13 @@ export const TotalsByYearTable = ({ data, isLoading }) => {
     displayColumnDefOptions: {
       'mrt-row-expand': { size: 120 }
     },
+    onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
     onPaginationChange: setPagination,
-    state: { pagination, columnVisibility },
+    state: { pagination, columnVisibility, columnSizing },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
+    renderToolbarInternalActions: renderToolbarInternalActions,
     ...tableOptions
   });
 
