@@ -23,7 +23,7 @@ export const SummaryFlightMap = () => {
     queryKey: ['map-logbook'],
     queryFn: ({ signal }) => fetchLogbookMapData({ signal, navigate }),
     staleTime: 3600000,
-    cacheTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 

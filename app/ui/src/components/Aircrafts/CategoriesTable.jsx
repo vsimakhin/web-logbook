@@ -54,6 +54,8 @@ export const CategoriesTable = ({ ...props }) => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['models-categories'],
     queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load categories' });
 

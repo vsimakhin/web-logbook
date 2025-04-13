@@ -40,7 +40,7 @@ const getAirportData = async (id, navigate) => {
       queryKey: ["airport", id],
       queryFn: ({ signal }) => fetchAirport({ signal, id, navigate }),
       staleTime: 86400000, // 24 hours
-      cacheTime: 86400000, // 24 hours
+      gcTime: 86400000, // 24 hours
     });
 
     return response;

@@ -12,6 +12,8 @@ export const AircraftCategories = ({ gsize, id = "category", label = "Category",
   const { data: categories } = useQuery({
     queryFn: ({ signal }) => fetchAircraftCategories({ signal, navigate }),
     queryKey: ['aircraft-categories'],
+    staleTime: 3600000,
+    gcTime: 3600000,
   })
 
   useEffect(() => {

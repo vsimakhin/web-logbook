@@ -26,7 +26,7 @@ const CustomAppTitle = () => {
     queryFn: ({ signal }) => fetchVersion({ signal, navigate }),
     placeholderData: "",
     staleTime: 86400000,
-    cacheTime: 86400000,
+    gcTime: 86400000,
     refetchOnWindowFocus: false,
   });
 
@@ -34,7 +34,7 @@ const CustomAppTitle = () => {
     queryKey: ['latestRelease'],
     queryFn: ({ signal }) => fetchLatestRelease({ signal }),
     staleTime: 604800000, // 7 days
-    cacheTime: 604800000,
+    gcTime: 604800000,
     refetchOnWindowFocus: false,
   });
 
@@ -65,7 +65,7 @@ const ToolbarActions = () => {
     queryFn: ({ signal }) => fetchAuthEnabled({ signal, navigate }),
     placeholderData: false,
     staleTime: 86400000,
-    cacheTime: 86400000,
+    gcTime: 86400000,
     refetchOnWindowFocus: false,
   });
 
