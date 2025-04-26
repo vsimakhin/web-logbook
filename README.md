@@ -229,19 +229,19 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
 
 <p align="left">
   <a href="https://github.com/Jacopx" title="Jacopx">
-    <img src="https://github.com/Jacopx.png" width="40" height="40" style="border-radius:50%" alt="Jacopx" />
+    <img src="https://github.com/Jacopx.png?size=40" width="40" height="40"  alt="Jacopx" />
   </a>
   <a href="https://github.com/dimoniet" title="dimoniet">
-    <img src="https://github.com/dimoniet.png" width="40" height="40" style="border-radius:50%" alt="dimoniet" />
+    <img src="https://github.com/dimoniet.png?size=40" width="40" height="40"  alt="dimoniet" />
   </a>
   <a href="https://github.com/maesteve" title="maesteve">
-    <img src="https://github.com/maesteve.png" width="40" height="40" style="border-radius:50%" alt="maesteve" />
+    <img src="https://github.com/maesteve.png?size=40" width="40" height="40"  alt="maesteve" />
   </a>
   <a href="https://github.com/ken340" title="ken340">
-    <img src="https://github.com/ken340.png" width="40" height="40" style="border-radius:50%" alt="ken340" />
+    <img src="https://github.com/ken340.png?size=40" width="40" height="40"  alt="ken340" />
   </a>
   <a href="https://github.com/morremeyer" title="morremeyer">
-    <img src="https://github.com/morremeyer.png" width="40" height="40" style="border-radius:50%" alt="morremeyer" />
+    <img src="https://github.com/morremeyer.png?size=40" width="40" height="40" alt="morremeyer" />
   </a>
 </p>
 
