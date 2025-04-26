@@ -115,6 +115,11 @@ Since it's written in Golang, it can run on any system after compiling the sourc
 * Attachments for the flight records
 * Automatic night-time calculation
 * Flight map
+* Track log
+
+### Track Logs
+
+If you download track logs from Flightradar24, reported distances are double the actual distance. Use [morremeyer/fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) to remove the unneeded data.
 
 ![Flight record](./readme-assets/flight-record.png)
 
@@ -188,7 +193,7 @@ So in real life the logbook could look like
 The app supports 3 sources:
 * https://github.com/mwgg/Airports/raw/master/airports.json - main JSON database of 28k+ airports.
 * (default) https://github.com/vsimakhin/Airports/raw/master/airports.json - my local fork of the main JSON database,  to ensure that the app remains functional even if there are any breaking changes in the upstream.
-* https://davidmegginson.github.io/ourairports-data/airports.csv - an alternate set of airports from https://ourairports.com/, which contains over 78k records, including small airfields and heliports. 
+* https://davidmegginson.github.io/ourairports-data/airports.csv - an alternate set of airports from https://ourairports.com/, which contains over 78k records, including small airfields and heliports.
 
 If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
 
@@ -206,12 +211,12 @@ You can generate your own certificate and key and store it in the different dire
 
 To store all data, you can use MySQL database. To get started, create a database and a user with access to it. On the first run, the application will create all necessary tables and views. If you want to migrate your data from SQLite to MySQL, you can use the export to CSV function first and then import from CSV.
 
-The DSN format for MySQL connections 
+The DSN format for MySQL connections
 ```
 user:password@protocol(address)/dbname?param=value
 ```
 
-For example, 
+For example,
 ```
 ./web-logbook -engine mysql -dsn "web-logbook-user:pwd@tcp(192.168.0.222)/web-logbook"
 ```
