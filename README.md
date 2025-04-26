@@ -115,6 +115,7 @@ Since it's written in Golang, it can run on any system after compiling the sourc
 * Attachments for the flight records
 * Automatic night-time calculation
 * Flight map
+  * KML track support (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
 
 ![Flight record](./readme-assets/flight-record.png)
 
@@ -224,7 +225,25 @@ In case you'd like to add some other features to the logbook or you found a bug,
 
 # Contributors
 
-* [@Jacopx](https://github.com/Jacopx), [@dimoniet](https://github.com/dimoniet), [@maesteve](https://github.com/maesteve), [@ken340](https://github.com/ken340) - bug reports, testing, and new functionality suggestions
+Thanks for bug reports, testing, improvements, and feature suggestions:
+
+<p align="left">
+  <a href="https://github.com/Jacopx" title="Jacopx">
+    <img src="https://github.com/Jacopx.png" width="40" height="40" style="border-radius:50%" alt="Jacopx" />
+  </a>
+  <a href="https://github.com/dimoniet" title="dimoniet">
+    <img src="https://github.com/dimoniet.png" width="40" height="40" style="border-radius:50%" alt="dimoniet" />
+  </a>
+  <a href="https://github.com/maesteve" title="maesteve">
+    <img src="https://github.com/maesteve.png" width="40" height="40" style="border-radius:50%" alt="maesteve" />
+  </a>
+  <a href="https://github.com/ken340" title="ken340">
+    <img src="https://github.com/ken340.png" width="40" height="40" style="border-radius:50%" alt="ken340" />
+  </a>
+  <a href="https://github.com/morremeyer" title="morremeyer">
+    <img src="https://github.com/morremeyer.png" width="40" height="40" style="border-radius:50%" alt="morremeyer" />
+  </a>
+</p>
 
 # Used libraries
 
