@@ -220,3 +220,17 @@ type Category struct {
 	Model    string `json:"model"`
 	Category string `json:"category"`
 }
+
+// Currency is a type for tracking pilot currencies
+type Currency struct {
+	UUID        string `json:"uuid"`
+	Name        string `json:"name"`
+	Metric      string `json:"metric"`
+	TargetValue int    `json:"target_value"`
+	TimeFrame   struct {
+		Unit  string `json:"unit"`
+		Value int    `json:"value"`
+	} `json:"time_frame"`
+	Comparison string            `json:"comparison"`
+	Filters    map[string]string `json:"filters"`
+}

@@ -46,7 +46,7 @@ func validateDB(db *sql.DB, engine string) error {
 		// check tables
 		tables := []*Table{logbookTable, airportsTable, customAirportsTable,
 			settingsTable, licensingTable, attachmentsTable, tokensTable,
-			aircraftsTable, aircraftCategoriesTable,
+			aircraftsTable, aircraftCategoriesTable, currencyTable,
 		}
 
 		for _, table := range tables {

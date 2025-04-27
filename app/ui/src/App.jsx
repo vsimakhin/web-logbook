@@ -17,6 +17,7 @@ import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
+import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -45,6 +46,7 @@ const NAV_ITEMS = [
       { segment: 'by-category', title: 'Category', icon: <CategoryOutlinedIcon /> },
     ],
   },
+  { segment: 'currency', title: 'Currency', icon: <SecurityUpdateGoodOutlinedIcon /> },
   { kind: 'divider' },
   {
     segment: 'export', title: 'Export', icon: <SaveAltOutlinedIcon />, children: [

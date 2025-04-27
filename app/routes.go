@@ -109,6 +109,15 @@ func (app *application) routes() *chi.Mux {
 			r.Post("/run", app.HandlerApiImportRun)
 		})
 
+		// currency
+		r.Route("/currency", func(r chi.Router) {
+			r.Get("/list", app.HandlerApiCurrencytList)
+			r.Get("/{uuid}", app.HandlerApiCurrencyGet)
+			r.Post("/new", app.HandlerApiCurrencyNew)
+			r.Put("/{uuid}", app.HandlerApiCurrencyUpdate)
+			r.Delete("/{uuid}", app.HandlerApiCurrencyDelete)
+		})
+
 		// logout
 		r.Post("/logout", app.HandlerLogout)
 
