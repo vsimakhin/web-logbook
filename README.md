@@ -17,6 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Tracking currency and flight experience
 - Fix: Avoid redundant request triggered during new record creation
 
 ## [3.0.0-beta2] - 13.04.2025
@@ -153,6 +154,11 @@ Since it's written in Golang, it can run on any system after compiling the sourc
 
 ![Dashboard](./readme-assets/dashboard.png)
 ![Stats](./readme-assets/stats-by-category.png)
+
+## Currency
+* Tracking currency and flight exprerience
+
+![Currency](./readme-assets/currency.png)
 
 ## Export
 * Export to EASA PDF format (A4 and A5)
