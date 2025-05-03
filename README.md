@@ -17,8 +17,9 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Avoid redundant request triggered during new license record creation
 - New: Tracking currency and flight experience
-- Fix: Avoid redundant request triggered during new record creation
+- Fix: Avoid redundant request triggered during new flight record creation
 
 ## [3.0.0-beta2] - 13.04.2025
 

@@ -28,7 +28,7 @@ export const LicenseRecord = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['license', id],
     queryFn: ({ signal }) => fetchLicense({ signal, id, navigate }),
-    enabled: license.uuid !== "new",
+    enabled: id !== "new",
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
 
