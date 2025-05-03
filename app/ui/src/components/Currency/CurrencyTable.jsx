@@ -7,7 +7,8 @@ import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
-// MUI Icons
+import LinearProgress from '@mui/material/LinearProgress';
+import Chip from '@mui/material/Chip';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import { useErrorNotification } from "../../hooks/useAppNotifications";
@@ -20,7 +21,6 @@ import NewCurrencyButton from './NewCurrencyButton';
 import EditCurrencyButton from './EditCurrencyButton';
 import DeleteCurrencyButton from './DeleteCurrencyButton';
 import { fetchLogbookData } from '../../util/http/logbook';
-import { Chip } from '@mui/material';
 import HelpButton from './HelpButton';
 
 const paginationKey = 'currency-table-page-size';
