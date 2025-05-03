@@ -125,7 +125,7 @@ export const CURRENCY_INITIAL_STATE = {
   metric: "time.total_time",
   target_value: 0,
   comparison: ">=",
-  timeframe: {
+  time_frame: {
     unit: "days",
     value: 90
   },

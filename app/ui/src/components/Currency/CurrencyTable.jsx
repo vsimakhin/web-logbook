@@ -1,31 +1,27 @@
 import {
-  MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
+  MaterialReactTable, MRT_ShowHideColumnsButton,
   MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton, useMaterialReactTable
 } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-// MUI Icons
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
-
 // MUI UI elements
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
+// MUI Icons
 // Custom components and libraries
-import { CURRENCY_INITIAL_STATE, defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
+import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { dateFilterFn } from '../../util/helpers';
-import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import { fetchCurrency } from '../../util/http/currency';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import CurrencyModal from './CurrencyModal';
-import { metricOptions, timeframeUnitOptions } from './helpers';
+import { evaluateCurrency, formatCurrencyValue, metricOptions, timeframeUnitOptions } from './helpers';
+import NewCurrencyButton from './NewCurrencyButton';
+import EditCurrencyButton from './EditCurrencyButton';
+import DeleteCurrencyButton from './DeleteCurrencyButton';
+import { fetchLogbookData } from '../../util/http/logbook';
+import { Chip } from '@mui/material';
+import HelpButton from './HelpButton';
 
 const paginationKey = 'currency-table-page-size';
 const columnVisibilityKey = 'currency-table-column-visibility';
@@ -57,10 +53,23 @@ export const CurrencyTable = () => {
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-  const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
 
   const navigate = useNavigate();
   const dialogs = useDialogs();
+
+  // load all data
+  const { data: logbookData, isLoading: isLogbookDataLoading, isError: isLogbookDataError, error: logbookDataError } = useQuery({
+    queryKey: ['logbook'],
+    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+  });
+  useErrorNotification({ isLogbookDataError, logbookDataError, fallbackMessage: 'Failed to load logbook data' });
+
+  const { data: modelsData } = useQuery({
+    queryKey: ['models-categories'],
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+  });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['currency'],
@@ -81,7 +90,7 @@ export const CurrencyTable = () => {
       }
     },
     { accessorKey: "comparison", header: "Comparison", size: 130 },
-    { accessorKey: "target_value", header: "Target Value", size: 150 },
+    { accessorKey: "target_value", header: "Target", size: 110 },
     {
       id: "time_frame_combined",
       header: "Time Frame",
@@ -91,18 +100,31 @@ export const CurrencyTable = () => {
         const data = cell.getValue();
         const unitOption = timeframeUnitOptions.find(opt => opt.value === data.unit);
         const unitLabel = unitOption ? unitOption.label : data.unit;
-
         return `${data.value} ${unitLabel}`;
       }
     },
-
-    { accessorKey: "filters", header: "Filters", size: 200 },
-  ], []);
+    { accessorKey: "filters", header: "Filters", size: 120 },
+    {
+      id: "status", header: "Status", grow: true,
+      accessorFn: (row) => {
+        return evaluateCurrency(logbookData, row, modelsData);
+      },
+      Cell: ({ cell }) => {
+        const data = cell.getValue();
+        return (
+          <Chip size='small'
+            label={formatCurrencyValue(data?.current, data?.rule.metric)}
+            color={data?.meetsRequirement ? 'success' : 'error'}
+          />
+        )
+      }
+    }
+  ], [logbookData, modelsData, data]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
+      <HelpButton />
       <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ToggleFiltersButton table={table} />
       <MRT_ShowHideColumnsButton table={table} />
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
@@ -110,24 +132,16 @@ export const CurrencyTable = () => {
   ), []);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-      <Tooltip title="New Currency">
-        <IconButton onClick={async () => await dialogs.open(CurrencyModal, CURRENCY_INITIAL_STATE)}>
-          <AddBoxOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    </Box>
+    <NewCurrencyButton />
   ), []);
 
   const renderRowActions = useCallback(({ row }) => {
     const payload = row.original;
-    console.log(payload);
     return (
-      <Tooltip title="Edit Currency">
-        <IconButton onClick={async () => await dialogs.open(CurrencyModal, payload)}>
-          <EditOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
+      <>
+        <EditCurrencyButton payload={payload} />
+        <DeleteCurrencyButton payload={payload} />
+      </>
     );
   }, []);
 
@@ -136,7 +150,6 @@ export const CurrencyTable = () => {
     columns: columns,
     data: data ?? [],
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
-    filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onColumnSizingChange: setColumnSizing,
@@ -151,7 +164,7 @@ export const CurrencyTable = () => {
 
   return (
     <>
-      {isLoading && <LinearProgress />}
+      {(isLoading || isLogbookDataLoading) && <LinearProgress />}
       <MaterialReactTable table={table} />
       <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>
