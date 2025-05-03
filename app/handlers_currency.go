@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
@@ -34,6 +35,14 @@ func (app *application) HandlerApiCurrencyNew(w http.ResponseWriter, r *http.Req
 		app.handleError(w, err)
 		return
 	}
+
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+	c.UUID = uuid.String()
+
 	err = app.db.InsertCurrency(c)
 	if err != nil {
 		app.handleError(w, err)

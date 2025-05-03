@@ -10,27 +10,62 @@ import CardHeader from "../UIElements/CardHeader";
 import { fetchLogbookData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { useEffect } from "react";
+import CurrencyTable from "./CurrencyTable";
 
-
-const evaluateCurrency = (flights, rule) => {
+const getStartDate = (unit, value) => {
   const now = dayjs();
-  const since = now.subtract(rule.timeframe.value, rule.timeframe.unit);
+  switch (unit) {
+    case "calendar_months":
+      return now.startOf("day").subtract(value, "month");
+    case "calendar_years":
+      return now.startOf("day").subtract(value, "year");
+    case "days":
+    default:
+      return now.subtract(value, "day");
+  }
+};
 
-  const total = flights
+const parseMetricValue = (value) => {
+  if (typeof value === "string" && value.includes(":")) {
+    const [hours, minutes] = value.split(":").map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return 0;
+    return hours + minutes / 60;
+  }
+  return parseFloat(value) || 0;
+};
+
+const evaluateCurrency = (flights, rule, modelsData) => {
+  const models = resolveModelsFromFilters(userCurrencyRule.filters, modelsData);
+
+  const filteredFlights = flights.filter(flight => {
+    const matchesModel = models.length === 0 || models.includes(flight.aircraft.model);
+    return matchesModel;
+  });
+
+  const since = getStartDate(rule.timeframe.unit, rule.timeframe.value);
+
+  // const now = dayjs();
+  // const since = now.subtract(rule.timeframe.value, rule.timeframe.unit);
+
+  const total = filteredFlights
     .filter(flight => {
       const flightDate = dayjs(flight.date, "DD/MM/YYYY");
       if (!flightDate.isValid() || flightDate.isBefore(since)) return false;
-
-      for (const [key, expected] of Object.entries(rule.filters || {})) {
-        const value = key.split('.').reduce((obj, k) => obj?.[k], flight);
-        if (value !== expected) return false;
-      }
-
       return true;
     })
     .reduce((sum, flight) => {
-      const value = rule.metric.split('.').reduce((obj, k) => obj?.[k], flight);
-      return sum + (parseFloat(value) || 0);
+      // const value = rule.metric.split('.').reduce((obj, k) => obj?.[k], flight);
+      // return sum + parseMetricValue(value);
+      let value;
+      if (rule.metric === "landings.all") {
+        const day = parseMetricValue(flight.landings?.day);
+        const night = parseMetricValue(flight.landings?.night);
+        value = day + night;
+      } else {
+        value = rule.metric.split('.').reduce((obj, k) => obj?.[k], flight);
+        value = parseMetricValue(value);
+      }
+      return sum + value;
     }, 0);
 
   const result = {
@@ -44,16 +79,43 @@ const evaluateCurrency = (flights, rule) => {
 const userCurrencyRule = {
   id: "rule-1",
   name: "90-Day Landing Currency",
-  metric: "landings.day", // dot-notation path to value
+  metric: "landings.all",
   targetValue: 3,
+  timeframe: {
+    unit: "days",
+    value: 180
+  },
+  comparison: ">=",
+  filters: "PC-24, C525"
+};
+
+const userCurrencyRule1 = {
+  id: "rule-1",
+  name: "90-Day Landing Currency",
+  metric: "time.total_time",
+  targetValue: 12,
   timeframe: {
     unit: "days",
     value: 90
   },
-  comparison: ">=", // could be '>=', '=', '<'
-  filters: {
-    "aircraft.model": "PC-24" // supports nested paths
-  }
+  comparison: ">=",
+  filters: "PC-24, C525"
+};
+
+const getModelsByCategory = (modelsData, category) => {
+  if (!category || !modelsData) return [];
+  return modelsData
+    .filter(item => item.category.split(',').map(c => c.trim()).includes(category))
+    .map(item => item.model);
+};
+
+const resolveModelsFromFilters = (filters, modelsData) => {
+  const categories = filters.split(',').map(c => c.trim());
+  const models = new Set();
+  categories.forEach(cat => {
+    getModelsByCategory(modelsData, cat).forEach(model => models.add(model));
+  });
+  return Array.from(models);
 };
 
 export const Currency = () => {
@@ -67,10 +129,17 @@ export const Currency = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
+  const { data: modelsData } = useQuery({
+    queryKey: ['models-categories'],
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+  });
+
   useEffect(() => {
     if (data) {
-      const status = evaluateCurrency(data, userCurrencyRule);
-      console.log("Currency status:", status);
+
+      console.log(evaluateCurrency(data, userCurrencyRule, modelsData));
+      console.log(evaluateCurrency(data, userCurrencyRule1, modelsData));
+
     }
 
   }, [data]);
@@ -78,11 +147,11 @@ export const Currency = () => {
   return (
     <>
       <Grid container spacing={1} >
-        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Currency" />
-
+              <CurrencyTable />
             </CardContent>
           </Card >
         </Grid>

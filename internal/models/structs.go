@@ -231,6 +231,6 @@ type Currency struct {
 		Unit  string `json:"unit"`
 		Value int    `json:"value"`
 	} `json:"time_frame"`
-	Comparison string            `json:"comparison"`
-	Filters    map[string]string `json:"filters"`
+	Comparison string `json:"comparison"`
+	Filters    string `json:"filters"`
 }
