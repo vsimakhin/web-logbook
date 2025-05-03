@@ -15,7 +15,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.0.0-beta3] - 03.05.2025
 
 - Update: Updated npm and Go packages with security fixes and version bumps.
 - Fix: Avoid redundant request triggered during new license record creation
