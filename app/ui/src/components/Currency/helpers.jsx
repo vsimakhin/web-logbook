@@ -66,6 +66,19 @@ const resolveModelsFromFilters = (filters, modelsData) => {
   return Array.from(models);
 };
 
+const compareValues = (leftValue, operator, rightValue) => {
+  const rightNum = Number(rightValue);
+
+  switch (operator) {
+    case '>=': return leftValue >= rightNum;
+    case '>': return leftValue > rightNum;
+    case '=': return leftValue === rightNum;
+    case '<': return leftValue < rightNum;
+    case '<=': return leftValue <= rightNum;
+    default: return false;
+  }
+};
+
 export const evaluateCurrency = (flights, rule, modelsData) => {
   if (!flights || flights.length === 0) return null;
   const models = resolveModelsFromFilters(rule.filters, modelsData);
@@ -98,7 +111,7 @@ export const evaluateCurrency = (flights, rule, modelsData) => {
 
   const result = {
     current: total,
-    meetsRequirement: eval(`${total} ${rule.comparison} ${rule.target_value}`),
+    meetsRequirement: compareValues(total, rule.comparison, rule.target_value),
     rule: rule,
   };
 
