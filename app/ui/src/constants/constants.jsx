@@ -118,3 +118,16 @@ export const defaultColumnFilterTextFieldProps = ({ column }) => ({
   placeholder: '',
   InputLabelProps: { shrink: true },
 });
+
+export const CURRENCY_INITIAL_STATE = {
+  uuid: "new",
+  name: "New Currency",
+  metric: "time.total_time",
+  target_value: 0,
+  comparison: ">=",
+  time_frame: {
+    unit: "days",
+    value: 90
+  },
+  filters: "",
+};

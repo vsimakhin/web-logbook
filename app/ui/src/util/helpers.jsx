@@ -9,6 +9,14 @@ export const convertMinutesToTime = (minutes) => {
   return `${hours}:${mins}`;
 };
 
+// Convert hours to HHHH:MM format
+export const convertHoursToTime = (hours) => {
+  if (!hours) return "00:00";
+  const totalMinutes = Math.floor(hours * 60);
+  const formattedTime = convertMinutesToTime(totalMinutes);
+  return formattedTime;
+};
+
 // Convert HHHH:MM format back to minutes if needed
 export const convertTimeToMinutes = (time) => {
   if (!time) return 0;
@@ -88,25 +96,10 @@ export const getStats = (data) => {
     aircraftModels: new Set(),
   };
 
-  const periods = {
-    totals: createInitialTotals(),
-    last28Days: createInitialTotals(),
-    last90Days: createInitialTotals(),
-    last12Months: createInitialTotals(),
-    thisYear: createInitialTotals(),
-  };
-
-  const today = dayjs();
-  const startDates = {
-    last28Days: today.subtract(28, "day"),
-    last90Days: today.subtract(90, "day"),
-    last12Months: today.subtract(12, "month"),
-    thisYear: today.startOf("year"),
-  };
+  const totals = createInitialTotals();
 
   data.forEach((flight) => {
-    const { departure, arrival, aircraft, date } = flight;
-    const flightDate = dayjs(date, "DD/MM/YYYY");
+    const { departure, arrival, aircraft } = flight;
 
     // Update sets
     if (departure.place) sets.airports.add(departure.place);
@@ -118,26 +111,14 @@ export const getStats = (data) => {
     }
 
     // Update totals
-    updateTotals(periods.totals, flight);
-
-    // Update time-based limits dynamically
-    Object.entries(startDates).forEach(([key, startDate]) => {
-      if (flightDate.isAfter(startDate)) {
-        updateTotals(periods[key], flight);
-      }
-    });
+    updateTotals(totals, flight);
   });
 
   return {
     ...Object.fromEntries(
       Object.entries(sets).map(([key, set]) => [key, set.size])
     ),
-    totals: formatTimeTotals(periods.totals),
-    limits: Object.fromEntries(
-      Object.entries(periods)
-        .filter(([key]) => key !== "totals") // Exclude overall totals
-        .map(([key, period]) => [key, convertMinutesToTime(period.time.total_time)])
-    ),
+    totals: formatTimeTotals(totals),
   };
 };
 

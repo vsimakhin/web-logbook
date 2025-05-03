@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Tracking currency and flight experience
 - Fix: Avoid redundant request triggered during new record creation
 
 ## [3.0.0-beta2] - 13.04.2025
