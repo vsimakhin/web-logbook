@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Updated npm and Go packages with security fixes and version bumps.
 - Fix: Avoid redundant request triggered during new license record creation
 - New: Tracking currency and flight experience
 - Fix: Avoid redundant request triggered during new flight record creation
