@@ -17,7 +17,7 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
   const dialogs = useDialogs();
   const navigate = useNavigate();
 
-  const { mutateAsync: importFlightRecords, isError, error, isSuccess } = useMutation({
+  const { mutateAsync: importFlightRecords, isError, error } = useMutation({
     mutationFn: ({ payload }) => runImport({ payload, navigate }),
     onSuccess: async (payload) => {
       if (payload) {
@@ -28,7 +28,7 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to import flight records' });
 
-  const importData = async () => {
+  const importData = async (recalculate) => {
     setInProgress(true);
 
     const convertedData = [];
@@ -36,8 +36,13 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
       convertedData.push(marshallItem(item));
     }
 
+    const payload = {
+      recalculate_night_time: recalculate,
+      data: convertedData,
+    };
+
     try {
-      await importFlightRecords({ payload: convertedData });
+      await importFlightRecords({ payload });
     } finally {
       setInProgress(false);
     }
@@ -45,12 +50,20 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
 
   const handleImportClick = async () => {
     const confirmed = await dialogs.confirm('Have you created a backup before import data?', {
+      title: 'Backup data',
+      severity: 'error',
       okText: 'Yes, continue',
       cancelText: 'Arrr, no',
     });
 
     if (confirmed) {
-      await importData();
+      const recalculate = await dialogs.confirm('Do you want to recalculate night time for the imported records?', {
+        title: 'Recalculate night time',
+        severity: 'error',
+        okText: 'Yes, recalculate',
+        cancelText: 'No, leave as is',
+      });
+      await importData(recalculate);
     }
   };
 

@@ -112,13 +112,54 @@ func (place *Place) Elevation() float64 {
 }
 
 func (route *Route) NightTime() time.Duration {
-	speed := route.FlightSpeed()
-	speedPerMinute := speed / 60
+	if route.Departure.Lat == route.Arrival.Lat && route.Departure.Lon == route.Arrival.Lon {
+		// same place, training flights
+		return nightCircuits(route.Departure, route.Arrival)
+	} else {
+		speed := route.FlightSpeed()
+		speedPerMinute := speed / 60
 
-	// assumed we split the route for the segments, not longer then 1 minute of flight
-	milesPerMinute := speed / 60 * 1 // miles per 1 minutes
+		// assumed we split the route for the segments, not longer then 1 minute of flight
+		milesPerMinute := speed / 60 * 1 // miles per 1 minutes
 
-	return nightSegment(route.Departure, route.Arrival, milesPerMinute, speedPerMinute)
+		return nightSegment(route.Departure, route.Arrival, milesPerMinute, speedPerMinute)
+	}
+}
+
+func nightCircuits(start Place, end Place) time.Duration {
+	sr, ss, _ := start.SunriseSunset()
+
+	totalTime := end.Time.Sub(start.Time)
+
+	if sr.IsZero() && ss.IsZero() {
+		_, _, elevation := start.SunriseSunset()
+		if elevation > 0 {
+			return 0 // Polar day
+		}
+		return totalTime // Polar night
+	}
+
+	if sr.After(ss) {
+		sr, ss = ss, sr // ensure sr is before ss
+	}
+
+	if start.Time.After(sr) && end.Time.Before(ss) {
+		return 0 // fully within day
+	}
+
+	if (start.Time.Before(sr) && end.Time.Before(sr)) || (start.Time.After(ss) && end.Time.After(ss)) {
+		return totalTime // fully in night
+	}
+
+	var nightTime time.Duration
+	if start.Time.Before(sr) {
+		nightTime += sr.Sub(start.Time)
+	}
+	if end.Time.After(ss) {
+		nightTime += end.Time.Sub(ss)
+	}
+
+	return nightTime
 }
 
 func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute float64) time.Duration {

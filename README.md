@@ -15,6 +15,11 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Added recalculation of night time during flight record import.
+- Fix: Corrected night time calculation for flights with identical departure and arrival locations (e.g., training circuits).
+
 ## [3.0.0-beta3] - 03.05.2025
 
 - Update: Updated npm and Go packages with security fixes and version bumps.
@@ -28,23 +33,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Optimize UI elements
 - Note: The Docker image for this release is still tagged with its version only and doesn't use the standard `latest` tag until it exits beta status
 
-## [3.0.0-beta1] - 12.04.2025
-
-- New: Column sizing preferences for the Logbook and Licensing tables are now saved (in a browser local storage). A Reset Column Sizing button has also been added to the right toolbar.
-- New: Track log support added. You can now upload KML files as attachments or convert existing ones to display flight tracks on the map page. The flight distance is automatically calculated from the track log. Tracks are also visible on the overall Map page.
-- Update: Updated npm and Go packages with security fixes and version bumps.
-- Note: The Docker image for this release is still tagged with its version only and doesn't use the standard `latest` tag until it exits beta status
-
-## [3.0.0-alpha1] - 17.03.2025
-
-- Caution: This is an early release and still in test, please create a backup of your db file (`weblogbook.sql`) before switching to this version
-- Update: Completely new user interface
-- Update (**breaking change**): The category list has a new format and should be recreated
-- Note: The Docker image for this release is tagged with its version only and doesn't use the standard `latest` tag until it exits alpha status
-
-## [2.45.0] - 15.03.2025
-
-- Update: This is the final release of the v2.x series, including Golang library and security updates, before the rollout of v3.x.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
