@@ -67,6 +67,9 @@ func (app *application) handleError(w http.ResponseWriter, err error) {
 // to calculate night time, like obj.NightTime()
 func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duration, error) {
 	night := time.Duration(0)
+	if fr.Departure.Place == "" || fr.Arrival.Place == "" || fr.Departure.Time == "" || fr.Arrival.Time == "" {
+		return night, nil
+	}
 
 	departure_place, err := app.db.GetAirportByID(fr.Departure.Place)
 	if err != nil {

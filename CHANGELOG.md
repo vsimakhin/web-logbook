@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Added recalculation of night time during flight record import.
+- Fix: Corrected night time calculation for flights with identical departure and arrival locations (e.g., training circuits).
+
 ## [3.0.0-beta3] - 03.05.2025
 
 - Update: Updated npm and Go packages with security fixes and version bumps.
