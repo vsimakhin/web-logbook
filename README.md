@@ -17,6 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Error when updating day or night landings in a flight record.
 - Update: Added recalculation of night time during flight record import.
 - Fix: Corrected night time calculation for flights with identical departure and arrival locations (e.g., training circuits).
 
