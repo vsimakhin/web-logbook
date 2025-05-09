@@ -242,6 +242,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/morremeyer" title="morremeyer">
     <img src="https://github.com/morremeyer.png?size=40" width="40" height="40" alt="morremeyer" />
   </a>
+  <a href="https://github.com/bbqman7089" title="bbqman7089">
+    <img src="https://github.com/bbqman7089.png?size=40" width="40" height="40" alt="bbqman7089" />
+  </a>
 </p>
 
 # Used libraries
