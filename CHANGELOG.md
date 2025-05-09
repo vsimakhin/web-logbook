@@ -1,11 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [3.0.0-beta4] - 09.05.2025
 
 - Fix: Columns layout for currency table.
 - Fix: Error when updating day or night landings in a flight record.
 - Update: Added recalculation of night time during flight record import.
 - Fix: Corrected night time calculation for flights with identical departure and arrival locations (e.g., training circuits).
+- Note: I expect this to be the last beta release; the next versions will be production releases.
 
 ## [3.0.0-beta3] - 03.05.2025
 
