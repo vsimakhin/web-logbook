@@ -74,6 +74,10 @@ export const createFlightRecord = async ({ signal, flight, navigate }) => {
 
 export const updateFlightRecord = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/${flight.uuid}`;
+
+  flight.landings.day = parseInt(flight.landings.day) || 0;
+  flight.landings.night = parseInt(flight.landings.night) || 0;
+
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
