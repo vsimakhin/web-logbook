@@ -44,7 +44,6 @@ const tableOptions = {
   enableFacetedValues: true,
   enableSorting: true,
   enableColumnActions: true,
-  enableRowActions: true,
 }
 
 export const CurrencyTable = () => {
@@ -80,6 +79,17 @@ export const CurrencyTable = () => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load currencies' });
 
   const columns = useMemo(() => [
+    {
+      id: 'actions',
+      header: 'Actions',
+      size: 90,
+      Cell: ({ row }) => (
+        <>
+          <EditCurrencyButton payload={row.original} />
+          <DeleteCurrencyButton payload={row.original} />
+        </>
+      ),
+    },
     { accessorKey: "name", header: "Name", size: 200 },
     {
       accessorKey: "metric", header: "Metric", size: 140,
@@ -89,7 +99,7 @@ export const CurrencyTable = () => {
         return option ? option.label : metricValue;
       }
     },
-    { accessorKey: "comparison", header: "Comparison", size: 130 },
+    { accessorKey: "comparison", header: "Comparison", size: 150 },
     { accessorKey: "target_value", header: "Target", size: 110 },
     {
       id: "time_frame_combined",
@@ -135,16 +145,6 @@ export const CurrencyTable = () => {
     <NewCurrencyButton />
   ), []);
 
-  const renderRowActions = useCallback(({ row }) => {
-    const payload = row.original;
-    return (
-      <>
-        <EditCurrencyButton payload={payload} />
-        <DeleteCurrencyButton payload={payload} />
-      </>
-    );
-  }, []);
-
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
@@ -158,7 +158,6 @@ export const CurrencyTable = () => {
     state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing: columnSizing },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     renderToolbarInternalActions: renderToolbarInternalActions,
-    renderRowActions: renderRowActions,
     ...tableOptions
   });
 
