@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Fix bug with aircraft type autocomplete box if there are no records yet @danielkappelle
+
 ## [3.0.0-beta4] - 09.05.2025
 
 - Fix: Columns layout for currency table.
@@ -244,6 +248,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   </a>
   <a href="https://github.com/bbqman7089" title="bbqman7089">
     <img src="https://github.com/bbqman7089.png?size=40" width="40" height="40" alt="bbqman7089" />
+  </a>
+  <a href="https://github.com/danielkappelle" title="danielkappelle">
+    <img src="https://github.com/danielkappelle.png?size=40" width="40" height="40" alt="danielkappelle" />
   </a>
 </p>
 
