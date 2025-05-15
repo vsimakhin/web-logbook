@@ -66,37 +66,40 @@ func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
 	return totals
 }
 
-// GetFlightRecordNextAndPrevUUID parse through all records with additional lag and lead functions
-// to get previous and next records ids for pagination on the flight record page
 func (m *DBModel) GetFlightRecordNextAndPrevUUID(uuid string) (prevUUID string, nextUUID string) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "SELECT uuid, " +
-		"lag(uuid, 1,0) over (order by m_date, departure_time) as prev_uuid, " +
-		"lead(uuid,1,0) over (order by m_date, departure_time) as next_uuid " +
-		"FROM logbook_view order by m_date, departure_time"
+	query := `
+		WITH numbered AS (
+			SELECT
+				uuid,
+				ROW_NUMBER() OVER (ORDER BY m_date, departure_time) AS rn
+			FROM logbook_view
+		),
+		current AS (
+			SELECT rn FROM numbered WHERE uuid = ?
+		)
+		SELECT
+			(SELECT uuid FROM numbered WHERE rn = current.rn - 1) AS prev_uuid,
+			(SELECT uuid FROM numbered WHERE rn = current.rn + 1) AS next_uuid
+		FROM current
+		`
+	var prev, next sql.NullString
+	row := m.DB.QueryRowContext(ctx, query, uuid)
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	err := row.Scan(&prev, &next)
 	if err != nil {
-		return "0", "0"
-	}
-	defer rows.Close()
-
-	record_uuid := ""
-
-	for rows.Next() {
-		if err = rows.Scan(&record_uuid, &prevUUID, &nextUUID); err != nil {
-			return "0", "0"
-		}
-
-		if record_uuid == uuid {
-			return prevUUID, nextUUID
-		}
+		return prevUUID, nextUUID
 	}
 
-	// rare case if uuid is not found
-	return "0", "0"
+	if prev.Valid {
+		prevUUID = prev.String
+	}
+	if next.Valid {
+		nextUUID = next.String
+	}
+	return prevUUID, nextUUID
 }
 
 // GetFlightRecordByID returns flight record by UUID

@@ -67,8 +67,8 @@ type FlightRecord struct {
 	Track    []byte  `json:"track"`
 
 	// calculated
-	PrevUUID string `json:"prev_uuid,omitempty"`
-	NextUUID string `json:"next_uuid,omitempty"`
+	PrevUUID string `json:"prev_uuid"`
+	NextUUID string `json:"next_uuid"`
 }
 
 // Airpot is a structure for airport record
