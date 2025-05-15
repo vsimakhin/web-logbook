@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Fix an issue when changing or adding new license category.
 - Fix: Fix bug with aircraft type autocomplete box if there are no records yet @danielkappelle
 
 ## [3.0.0-beta4] - 09.05.2025
