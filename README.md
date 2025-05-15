@@ -17,8 +17,9 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
-- Fix: Fix an issue when changing or adding new license category.
-- Fix: Fix bug with aircraft type autocomplete box if there are no records yet @danielkappelle
+- Update: Added navigation buttons to move to the previous and next flights on the flight record page.
+- Fix: Resolved an issue when changing or adding a new license category.
+- Fix: Fixed a bug with the aircraft type autocomplete when no records are present. @danielkappelle
 
 ## [3.0.0-beta4] - 09.05.2025
 
