@@ -107,6 +107,10 @@ export const resetTrackLog = async ({ id, navigate }) => {
 }
 
 export const fetchDistance = async ({ signal, departure, arrival, navigate }) => {
+  if (!departure || !arrival) {
+    return 0;
+  }
+
   const url = `${API_URL}/distance/${departure}/${arrival}`;
   const options = {
     method: 'GET',
