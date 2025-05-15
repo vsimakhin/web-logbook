@@ -20,6 +20,7 @@ import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import Attachments from "../Attachment/Attachments";
 import ResetTrackButton from "./ResetTrackButton";
+import FlightTitle from "./FlightTitle";
 
 const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
   <>
@@ -85,14 +86,16 @@ export const FlightRecord = () => {
     xs: 12, sm: 12, md: 6, lg: 6, xl: 6
   }), []);
 
+  const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
+
   return (
     <>
       {isLoading && <LinearProgress />}
-      <Grid container spacing={1} >
+      <Grid container spacing={1}>
         <Grid size={gridSize}>
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
-              <CardHeader title="Flight Record"
+              <CardHeader title={title}
                 action={<ActionButtons flight={flight} handleChange={handleChange} setFlight={setFlight} />}
               />
               <FlightRecordDetails flight={flight} handleChange={handleChange} />
