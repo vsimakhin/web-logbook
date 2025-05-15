@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { deleteLicenseRecord } from '../../util/http/licensing';
+import { queryClient } from '../../util/http/http';
 
 export const DeleteLicenseRecordButton = ({ license }) => {
   const dialogs = useDialogs();
@@ -16,7 +17,12 @@ export const DeleteLicenseRecordButton = ({ license }) => {
 
   const { mutateAsync: deleteLicense, isError, error, isSuccess } = useMutation({
     mutationFn: () => deleteLicenseRecord({ id: license.uuid, navigate }),
-    onSuccess: () => navigate('/licensing'),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['licensing'] });
+      await queryClient.invalidateQueries({ queryKey: ['licensing-categories'] });
+
+      navigate('/licensing');
+    }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to delete license record' });
   useSuccessNotification({ isSuccess: isSuccess, message: 'License record deleted successfully' });

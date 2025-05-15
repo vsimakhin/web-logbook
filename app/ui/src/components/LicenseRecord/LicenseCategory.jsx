@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import Select from "../UIElements/Select"
 import { fetchLicenseCategory } from "../../util/http/licensing";
 
-
-export const LicenseCategory = ({ gsize, value, handleChange }) => {
+export const LicenseCategory = ({ gsize, value, handleChange, id = "category" }) => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([])
 
@@ -23,12 +22,13 @@ export const LicenseCategory = ({ gsize, value, handleChange }) => {
 
   return (
     <Select gsize={gsize}
-      id="category"
+      id={id}
       label="Category"
       handleChange={handleChange}
+      onBlur={(e) => handleChange(id, e.target.value)}
       value={value}
       tooltip="Category"
-      options={options}
+      options={options || []}
       freeSolo={true}
     />
   );
