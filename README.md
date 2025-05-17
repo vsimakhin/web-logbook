@@ -17,6 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Added preview support for flight record attachments.
 - Update: Added navigation buttons to move to the previous and next flights on the flight record page.
 - Fix: Resolved an issue when changing or adding a new license category.
 - Fix: Fixed a bug with the aircraft type autocomplete when no records are present. @danielkappelle
