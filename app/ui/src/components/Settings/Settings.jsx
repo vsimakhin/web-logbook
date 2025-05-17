@@ -4,19 +4,12 @@ import { useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 // Custom
 import { fetchSettings } from "../../util/http/settings";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import CardHeader from "../UIElements/CardHeader";
 import GeneralSettings from "./GeneralSettings";
-import SaveSettingsButton from "./SaveSettingsButton";
 import LogbookSignature from "./LogbookSignature";
-import ClearSignatureButton from "./ClearSignatureButton";
-import PickColorButton from "./PickColorButton";
-import SaveSignatureButton from "./SaveSignatureButton";
-import UploadSignatureButton from "./UploadSignatureButton";
+import CustomFields from "./CustomFields";
 
 export const Settings = () => {
   const navigate = useNavigate();
@@ -61,38 +54,12 @@ export const Settings = () => {
       {isLoading && <LinearProgress />}
       <Grid container spacing={1} >
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Settings"
-                action={
-                  <>
-                    <SaveSettingsButton settings={settings} />
-                  </>
-                }
-              />
-              <GeneralSettings settings={settings} handleChange={handleChange} />
-            </CardContent>
-          </Card >
-
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Logbook Signature"
-                action={
-                  <>
-                    <UploadSignatureButton handleChange={handleChange} />
-                    <SaveSignatureButton settings={settings} />
-                    <ClearSignatureButton handleChange={handleChange} />
-                    <PickColorButton handleChange={handleChange} />
-                  </>
-                }
-              />
-              <LogbookSignature settings={settings} handleChange={handleChange} />
-            </CardContent>
-          </Card >
+          <GeneralSettings settings={settings} handleChange={handleChange} />
+          <LogbookSignature settings={settings} handleChange={handleChange} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-
+          <CustomFields />
         </Grid>
       </Grid>
     </>
