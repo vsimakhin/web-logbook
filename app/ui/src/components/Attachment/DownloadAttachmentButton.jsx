@@ -46,3 +46,5 @@ export const DownloadAttachmentButton = ({ attachment, handleClose }) => {
     </MenuItem>
   )
 }
+
+export default DownloadAttachmentButton;
