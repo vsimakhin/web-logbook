@@ -1,7 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [3.1.0] - 17.05.2025
 
+- Note: Version 3 is now stable and released to production. The Docker image is also available under the `latest` tag.
 - New: Added preview support for flight record attachments.
 - Update: Added navigation buttons to move to the previous and next flights on the flight record page.
 - Fix: Resolved an issue when changing or adding a new license category.

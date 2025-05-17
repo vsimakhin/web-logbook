@@ -15,8 +15,9 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.1.0] - 17.05.2025
 
+- Note: Version 3 is now stable and released to production. The Docker image is also available under the `latest` tag.
 - New: Added preview support for flight record attachments.
 - Update: Added navigation buttons to move to the previous and next flights on the flight record page.
 - Fix: Resolved an issue when changing or adding a new license category.
@@ -29,20 +30,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Added recalculation of night time during flight record import.
 - Fix: Corrected night time calculation for flights with identical departure and arrival locations (e.g., training circuits).
 - Note: I expect this to be the last beta release; the next versions will be production releases.
-
-## [3.0.0-beta3] - 03.05.2025
-
-- Update: Updated npm and Go packages with security fixes and version bumps.
-- Fix: Avoid redundant request triggered during new license record creation
-- New: Tracking currency and flight experience
-- Fix: Avoid redundant request triggered during new flight record creation
-
-## [3.0.0-beta2] - 13.04.2025
-
-- Fix: Fix issue adding new aircraft types and regs
-- Update: Optimize UI elements
-- Note: The Docker image for this release is still tagged with its version only and doesn't use the standard `latest` tag until it exits beta status
-
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
@@ -240,8 +227,8 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/dimoniet" title="dimoniet">
     <img src="https://github.com/dimoniet.png?size=40" width="40" height="40"  alt="dimoniet" />
   </a>
-  <a href="https://github.com/maesteve" title="maesteve">
-    <img src="https://github.com/maesteve.png?size=40" width="40" height="40"  alt="maesteve" />
+  <a href="https://github.com/ghost" title="maesteve">
+    <img src="https://github.com/ghost.png?size=40" width="40" height="40"  alt="maesteve" />
   </a>
   <a href="https://github.com/ken340" title="ken340">
     <img src="https://github.com/ken340.png?size=40" width="40" height="40"  alt="ken340" />
