@@ -227,8 +227,8 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/dimoniet" title="dimoniet">
     <img src="https://github.com/dimoniet.png?size=40" width="40" height="40"  alt="dimoniet" />
   </a>
-  <a href="https://github.com/maesteve" title="maesteve">
-    <img src="https://github.com/maesteve.png?size=40" width="40" height="40"  alt="maesteve" />
+  <a href="https://github.com/ghost" title="maesteve">
+    <img src="https://github.com/ghost.png?size=40" width="40" height="40"  alt="maesteve" />
   </a>
   <a href="https://github.com/ken340" title="ken340">
     <img src="https://github.com/ken340.png?size=40" width="40" height="40"  alt="ken340" />
