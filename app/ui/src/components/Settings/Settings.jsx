@@ -9,7 +9,7 @@ import { fetchSettings } from "../../util/http/settings";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import GeneralSettings from "./GeneralSettings";
 import LogbookSignature from "./LogbookSignature";
-import CustomFields from "./CustomFields";
+import CustomFields from "./CustomFields/CustomFields";
 
 export const Settings = () => {
   const navigate = useNavigate();

@@ -3,7 +3,8 @@ import { memo } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 // Custom
-import CardHeader from "../UIElements/CardHeader";
+import CardHeader from "../../UIElements/CardHeader";
+import CustomFieldsTable from './CustomFieldsTable';
 
 const ActionButtons = memo(({ }) => (
   <></>
@@ -16,7 +17,7 @@ export const CustomFields = () => {
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
           <CardHeader title="Custom Fields" action={<ActionButtons />} />
-          {"table of custom fields"}
+          <CustomFieldsTable />
         </CardContent>
       </Card >
     </>

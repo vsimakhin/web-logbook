@@ -118,6 +118,11 @@ func (app *application) routes() *chi.Mux {
 			r.Delete("/{uuid}", app.HandlerApiCurrencyDelete)
 		})
 
+		// custom fields
+		r.Route("/custom-fields", func(r chi.Router) {
+			r.Get("/list", app.HandlerApiCustomFieldsList)
+		})
+
 		// logout
 		r.Post("/logout", app.HandlerLogout)
 

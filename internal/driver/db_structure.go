@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "3.1.0"
+	schemaVersion = "6"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -121,6 +121,18 @@ var currencyTable = NewTable("currency", "uuid", UUID,
 		{Name: "time_frame_value", Type: Int, Properties: "NOT NULL"},
 		{Name: "comparison", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "filters", Type: FullText},
+	})
+
+var customFieldsTable = NewTable("custom_fields", "uuid", UUID,
+	[]Column{
+		{Name: "name", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "description", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "type", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "stats_function", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "size_xs", Type: SmallInt, Properties: "NOT NULL"},
+		{Name: "size_md", Type: SmallInt, Properties: "NOT NULL"},
+		{Name: "size_lg", Type: SmallInt, Properties: "NOT NULL"},
+		{Name: "display_order", Type: SmallInt, Properties: "NOT NULL"},
 	})
 
 var logbookView = NewView("logbook_view",
