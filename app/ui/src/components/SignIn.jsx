@@ -49,8 +49,9 @@ export const SignIn = () => {
         }
       }}
       slotProps={{
-        emailField: { variant: 'standard' },
+        emailField: { variant: 'standard', label: 'Login', },
         passwordField: { variant: 'standard' },
+        form: { noValidate: true },
         submitButton: { variant: 'outlined' },
       }}
       providers={providers}
