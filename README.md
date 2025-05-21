@@ -15,6 +15,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [3.1.1] - 21.05.2025
+
+- Fix: Potential user lockout when the username was not provided in email format.
+
 ## [3.1.0] - 17.05.2025
 
 - Note: Version 3 is now stable and released to production. The Docker image is also available under the `latest` tag.
