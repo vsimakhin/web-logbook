@@ -246,6 +246,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/danielkappelle" title="danielkappelle">
     <img src="https://github.com/danielkappelle.png?size=40" width="40" height="40" alt="danielkappelle" />
   </a>
+  <a href="https://github.com/jvandergeer" title="jvandergeer">
+    <img src="https://github.com/jvandergeer.png?size=40" width="40" height="40" alt="jvandergeer" />
+  </a>
 </p>
 
 # Used libraries
