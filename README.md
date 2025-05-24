@@ -1,6 +1,5 @@
 ![GitHub Release](https://img.shields.io/github/v/release/vsimakhin/web-logbook) ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/vsimakhin/web-logbook/latest/total?color=green)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/vsimakhin/web-logbook/total?label=all%20downloads) ![GitHub License](https://img.shields.io/github/license/vsimakhin/web-logbook)
-[!["Buy Me A Coffee"](https://img.shields.io/badge/-buy_me_a%C2%A0coffee-gray?logo=coffeescript)](https://buymeacoffee.com/vsimakhin)
 
 
 # Web-logbook
@@ -14,6 +13,10 @@ Once you start the app it automatically creates an SQLite local DB and starts li
 You also can easily export all flight records into EASA style pdf format, print it, sign and use it as a usual paper logbook.
 
 # Changelog
+
+## [3.1.2] - 24.05.2025
+
+- Fix: Copilot time was not added to the logbook during import.
 
 ## [3.1.1] - 21.05.2025
 
@@ -218,8 +221,6 @@ For example,
 
 In case you'd like to add some other features to the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix it at a reasonable time but at least I can take a look.
 
-<a href="https://www.buymeacoffee.com/vsimakhin" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-
 # Contributors
 
 Thanks for bug reports, testing, improvements, and feature suggestions:
@@ -248,6 +249,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   </a>
   <a href="https://github.com/jvandergeer" title="jvandergeer">
     <img src="https://github.com/jvandergeer.png?size=40" width="40" height="40" alt="jvandergeer" />
+  </a>
+  <a href="https://github.com/eagleone84" title="eagleone84">
+    <img src="https://github.com/eagleone84.png?size=40" width="40" height="40" alt="eagleone84" />
   </a>
 </p>
 

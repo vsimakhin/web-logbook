@@ -94,5 +94,9 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 		response.OK = true
 	}
 
+	// update aircrafts table
+	_ = app.db.GenerateAircraftTable()
+	_ = app.db.GenerateAircraftCategoriesTable()
+
 	app.writeJSON(w, http.StatusOK, response)
 }
