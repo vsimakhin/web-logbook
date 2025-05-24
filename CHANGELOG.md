@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.1.3] - 24.05.2025
+
+- Fix: Handled missing registration numbers when building the aircrafts list/table from flight records.
+
 ## [3.1.2] - 24.05.2025
 
 - Fix: Copilot time was not added to the logbook during import.
