@@ -234,3 +234,16 @@ type Currency struct {
 	Comparison string `json:"comparison"`
 	Filters    string `json:"filters"`
 }
+
+// CustomField is a type for custom fields
+type CustomField struct {
+	UUID          string `json:"uuid"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	Type          string `json:"type"`
+	StatsFunction string `json:"stats_function"`
+	SizeXs        int    `json:"size_xs"`
+	SizeMd        int    `json:"size_md"`
+	SizeLg        int    `json:"size_lg"`
+	DisplayOrder  int    `json:"display_order"`
+}
