@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [3.1.3] - 24.05.2025
+
+- Fix: Handled missing registration numbers when building the aircrafts list/table from flight records.
+
 ## [3.1.2] - 24.05.2025
 
 - Fix: Copilot time was not added to the logbook during import.
@@ -30,14 +34,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Added navigation buttons to move to the previous and next flights on the flight record page.
 - Fix: Resolved an issue when changing or adding a new license category.
 - Fix: Fixed a bug with the aircraft type autocomplete when no records are present. @danielkappelle
-
-## [3.0.0-beta4] - 09.05.2025
-
-- Fix: Columns layout for currency table.
-- Fix: Error when updating day or night landings in a flight record.
-- Update: Added recalculation of night time during flight record import.
-- Fix: Corrected night time calculation for flights with identical departure and arrival locations (e.g., training circuits).
-- Note: I expect this to be the last beta release; the next versions will be production releases.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
