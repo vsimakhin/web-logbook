@@ -138,7 +138,7 @@ export const marshallItem = (item) => {
       night_time: item.night_time,
       ifr_time: item.ifr_time,
       pic_time: item.pic_time,
-      co_pilot_time: item.sic_time,
+      co_pilot_time: item.co_pilot_time,
       dual_time: item.dual_time,
       instructor_time: item.instr_time,
     },

@@ -148,17 +148,28 @@ func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
 
 	if fr.Departure.Place != "" && fr.Arrival.Place != "" {
 		// normal flight
-		query = "SELECT count(uuid) FROM logbook_view " +
-			"WHERE date = ? AND departure_place = ? AND departure_time = ? AND " +
-			"arrival_place = ? and arrival_time = ?"
+		query = `SELECT count(uuid)
+				FROM logbook_view
+				WHERE date = ?
+					AND departure_place = ?
+					AND departure_time = ?
+					AND arrival_place = ?
+					AND arrival_time = ?
+					AND aircraft_model = ?
+					AND reg_name = ?`
 		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.Departure.Place, fr.Departure.Time,
-			fr.Arrival.Place, fr.Arrival.Time)
-
-	} else {
+			fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg)
+	} else if fr.SIM.Type != "" && fr.SIM.Time != "" {
 		// simulator record
-		query = "SELECT count(uuid) FROM logbook_view " +
-			"WHERE date = ? AND sim_type = ? AND sim_time = ? AND remarks = ?"
+		query = `SELECT count(uuid)
+				FROM logbook_view
+				WHERE date = ?
+					AND sim_type = ?
+					AND sim_time = ?
+					AND remarks = ?`
 		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.SIM.Type, fr.SIM.Time, fr.Remarks)
+	} else {
+		return false
 	}
 
 	err := row.Scan(&n)
