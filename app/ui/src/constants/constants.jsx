@@ -131,3 +131,15 @@ export const CURRENCY_INITIAL_STATE = {
   },
   filters: "",
 };
+
+export const CUSTOM_FIELD_INITIAL_STATE = {
+  uuid: "new",
+  name: "New Custom Field",
+  description: "",
+  type: "text",
+  stats_function: "none",
+  size_xs: 12,
+  size_md: 12,
+  size_lg: 12,
+  display_order: 0,
+};
