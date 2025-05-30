@@ -14,7 +14,7 @@ import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../cons
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
 import { fetchCustomFields } from '../../../util/http/fields';
-
+import NewCustomFieldButton from './NewCustomFieldButton';
 
 const paginationKey = 'customfields-table-page-size';
 const columnVisibilityKey = 'customfields-table-column-visibility';
@@ -67,9 +67,11 @@ export const CustomFieldsTable = () => {
         </>
       ),
     },
-    { accessorKey: "name", header: "Name", size: 200 },
+    { accessorKey: "display_order", header: "Order", size: 100 },
+    { accessorKey: "name", header: "Name", size: 150 },
     { accessorKey: "description", header: "Description", size: 200 },
     { accessorKey: "type", header: "Type", size: 100 },
+    { accessorKey: "stats_function", header: "Stats Function", size: 150 },
   ], [data]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
@@ -83,8 +85,7 @@ export const CustomFieldsTable = () => {
   ), []);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
-    // <NewCurrencyButton />
-    <>{"New Field Button"}</>
+    <NewCustomFieldButton />
   ), []);
 
   const table = useMaterialReactTable({
