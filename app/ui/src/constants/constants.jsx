@@ -138,8 +138,8 @@ export const CUSTOM_FIELD_INITIAL_STATE = {
   description: "",
   type: "text",
   stats_function: "none",
-  size_xs: 12,
-  size_md: 12,
-  size_lg: 12,
+  size_xs: 3,
+  size_md: 3,
+  size_lg: 3,
   display_order: 0,
 };
