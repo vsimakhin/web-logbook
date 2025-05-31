@@ -15,6 +15,8 @@ import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
 import { fetchCustomFields } from '../../../util/http/fields';
 import NewCustomFieldButton from './NewCustomFieldButton';
+import EditCustomFieldButton from './EditCustomFieldButton';
+import DeleteCustomFieldButton from './DeleteCustomFieldButton';
 
 const paginationKey = 'customfields-table-page-size';
 const columnVisibilityKey = 'customfields-table-column-visibility';
@@ -62,8 +64,8 @@ export const CustomFieldsTable = () => {
       size: 90,
       Cell: ({ row }) => (
         <>
-          {/* <EditCurrencyButton payload={row.original} />
-          <DeleteCurrencyButton payload={row.original} /> */}
+          <EditCustomFieldButton payload={row.original} />
+          <DeleteCustomFieldButton payload={row.original} />
         </>
       ),
     },
