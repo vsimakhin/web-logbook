@@ -10,6 +10,7 @@ import CardHeader from "../UIElements/CardHeader";
 import { fetchCustomFields } from "../../util/http/fields";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import TextField from "../UIElements/TextField";
+import { FLIGHT_TIME_SLOT_PROPS } from "../../constants/constants";
 
 export const CustomFields = ({ flight, handleChange }) => {
   const navigate = useNavigate();
@@ -40,6 +41,9 @@ export const CustomFields = ({ flight, handleChange }) => {
                 tooltip={field.description}
                 value={flight.custom_fields?.[field.uuid] || ''}
                 handleChange={customFieldsChange}
+                slotProps={field.type === 'time' ? FLIGHT_TIME_SLOT_PROPS : undefined}
+                placeholder={field.type === 'time' ? 'HH:MM' : ''}
+                type={field.type === 'number' ? 'number' : undefined}
               />
             ))}
           </Grid>

@@ -64,7 +64,6 @@ export const FlightRecord = () => {
 
   const gridSize = useMemo(() => ({ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }), []);
 
-  console.log(flight)
   return (
     <>
       {isLoading && <LinearProgress />}
