@@ -74,7 +74,7 @@ const exportMappers = {
     "Time Night": row.original.time.night_time,
     "Time IFR": row.original.time.ifr_time,
     "Time PIC": row.original.time.pic_time,
-    "Time CoPilot": row.original.time.copilot_time,
+    "Time CoPilot": row.original.time.co_pilot_time,
     "Time Dual": row.original.time.dual_time,
     "Time Instructor": row.original.time.instructor_time,
     "SIM Type": row.original.sim.type,

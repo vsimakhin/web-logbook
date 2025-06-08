@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Quick CSV export for logbook table didn't include CoPilot time
+
 ## [3.1.3] - 24.05.2025
 
 - Fix: Handled missing registration numbers when building the aircrafts list/table from flight records.
