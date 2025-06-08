@@ -297,6 +297,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/eagleone84" title="eagleone84">
     <img src="https://github.com/eagleone84.png?size=40" width="40" height="40" alt="eagleone84" />
   </a>
+  <a href="https://github.com/daman2k" title="daman2k">
+    <img src="https://github.com/daman2k.png?size=40" width="40" height="40" alt="daman2k" />
+  </a>
 </p>
 
 # Used libraries
