@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Doc: Update Readme with some API examples
 - Fix: Quick CSV export for logbook table didn't include CoPilot time
 
 ## [3.1.3] - 24.05.2025
