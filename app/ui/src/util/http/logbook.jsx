@@ -1,5 +1,5 @@
 import { handleFetch } from './http';
-import { API_URL } from '../../constants/constants';
+import { API_URL, tableJSONCodec } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
 export const fetchLogbookData = async ({ signal, navigate }) => {
@@ -9,7 +9,12 @@ export const fetchLogbookData = async ({ signal, navigate }) => {
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch logbook data');
+  const response = await handleFetch(url, options, navigate, 'Cannot fetch logbook data');
+
+  return response?.map(flight => ({
+    ...flight,
+    custom_fields: tableJSONCodec.parse(flight.custom_fields)
+  })) || response;
 }
 
 export const fetchLogbookMapData = async ({ signal, navigate }) => {
@@ -29,7 +34,17 @@ export const fetchFlightData = async ({ signal, id, navigate }) => {
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch flight data');
+
+  const response = await handleFetch(url, options, navigate, 'Cannot fetch flight data');
+
+  if (response) {
+    return {
+      ...response,
+      custom_fields: tableJSONCodec.parse(response.custom_fields)
+    };
+  }
+
+  return response;
 }
 
 export const fetchNightTime = async ({ signal, flight, navigate }) => {
@@ -60,6 +75,8 @@ export const deleteFlightRecord = async ({ signal, id, navigate }) => {
 export const createFlightRecord = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/new`;
 
+  const marshallCustomFields = JSON.stringify(flight.custom_fields || {});
+  flight.custom_fields = marshallCustomFields;
   flight.landings.day = parseInt(flight.landings.day) || 0;
   flight.landings.night = parseInt(flight.landings.night) || 0;
 
@@ -75,6 +92,8 @@ export const createFlightRecord = async ({ signal, flight, navigate }) => {
 export const updateFlightRecord = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/${flight.uuid}`;
 
+  const marshallCustomFields = JSON.stringify(flight.custom_fields || {});
+  flight.custom_fields = marshallCustomFields;
   flight.landings.day = parseInt(flight.landings.day) || 0;
   flight.landings.night = parseInt(flight.landings.night) || 0;
 

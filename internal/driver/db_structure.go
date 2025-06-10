@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "6"
+	schemaVersion = "7"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -47,6 +47,7 @@ var logbookTable = NewTable("logbook", "uuid", UUID,
 		{Name: "remarks", Type: FullText},
 		{Name: "distance", Type: Real},
 		{Name: "track", Type: Blob},
+		{Name: "custom_fields", Type: FullText},
 	})
 
 var airportsTable = NewTable("airports", "icao", SmallText,
@@ -146,7 +147,7 @@ var logbookView = NewView("logbook_view",
 				iif(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
 				instructor_time, sim_type, sim_time, pic_name, remarks,
-				IFNULL(distance, 0) distance, track
+				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields
 			FROM logbook;
 			`,
 		MySQL: `
@@ -158,7 +159,7 @@ var logbookView = NewView("logbook_view",
 				IF(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
 				instructor_time, sim_type, sim_time, pic_name, remarks,
-				IFNULL(distance, 0) distance, track
+				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields
 			FROM logbook;
 		`,
 	},

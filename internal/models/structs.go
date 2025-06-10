@@ -66,6 +66,8 @@ type FlightRecord struct {
 	Distance float64 `json:"distance"`
 	Track    []byte  `json:"track"`
 
+	CustomFields string `json:"custom_fields"`
+
 	// calculated
 	PrevUUID string `json:"prev_uuid"`
 	NextUUID string `json:"next_uuid"`
