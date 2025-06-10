@@ -5,15 +5,11 @@ import CardContent from '@mui/material/CardContent';
 // Custom
 import CardHeader from "../../UIElements/CardHeader";
 import CustomFieldsTable from './CustomFieldsTable';
+import HelpButton from './HelpButton';
 
-const ActionButtons = memo(({ }) => (
-  <>
-    {/* here will be a help button */}
-  </>
-));
+const ActionButtons = memo(({ }) => (<HelpButton />));
 
 export const CustomFields = () => {
-
   return (
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>

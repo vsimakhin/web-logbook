@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
@@ -18,7 +18,6 @@ import Select from '../../UIElements/Select';
 import { createCustomField, updateCustomField } from '../../../util/http/fields';
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { queryClient } from '../../../util/http/http';
-
 
 const typeOptions = ["text", "number", "time", "duration"];
 
@@ -65,21 +64,34 @@ const SaveButton = memo(({ field, onClose }) => {
   );
 });
 
-export const CustomFieldModal = ({ open, onClose, payload }) => {
+export const CustomFieldModal = memo(({ open, onClose, payload }) => {
   const [field, setField] = useState({ ...payload });
 
+  useEffect(() => {
+    if (payload) {
+      setField({ ...payload });
+    }
+  }, [payload]);
+
   const title = useMemo(() => field?.uuid === "new" ? "New Custom Field" : "Edit Custom Field", [field?.uuid]);
+  const isTypeDisabled = useMemo(() => field.uuid !== "new", [field.uuid]);
 
   const handleChange = useCallback((key, value) => {
-    if (key === "type") {
-      setField(prev => ({ ...prev, stats_function: statsFunction[value]?.[0] || "" }));
-    }
+    setField(prev => {
+      const newField = { ...prev, [key]: value };
 
-    setField(prev => ({ ...prev, [key]: value }));
+      if (key === "type") {
+        newField.stats_function = statsFunction[value]?.[0] || "";
+      }
+
+      return newField;
+    });
   }, []);
 
+  const handleClose = useCallback(() => onClose(), [onClose]);
+
   return (
-    <Dialog fullWidth open={open} onClose={() => onClose()}>
+    <Dialog fullWidth open={open} onClose={handleClose}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
           <CardHeader title={title}
@@ -112,6 +124,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               handleChange={handleChange}
               value={field.type}
               options={typeOptions}
+              disabled={isTypeDisabled}
             />
             <Select gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="stats_function"
@@ -158,6 +171,6 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
       </Card >
     </Dialog>
   )
-}
+});
 
 export default CustomFieldModal;

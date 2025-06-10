@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
@@ -8,10 +8,10 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { fetchSettings } from "../../util/http/settings";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import GeneralSettings from "./GeneralSettings";
-import LogbookSignature from "./LogbookSignature";
+import LogbookSignature from "./Signature/LogbookSignature";
 import CustomFields from "./CustomFields/CustomFields";
 
-export const Settings = () => {
+export const Settings = memo(() => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({});
 
@@ -64,6 +64,6 @@ export const Settings = () => {
       </Grid>
     </>
   );
-}
+});
 
 export default Settings;

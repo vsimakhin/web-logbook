@@ -4,7 +4,7 @@ import SignaturePad from 'signature_pad';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 // Custom
-import CardHeader from "../UIElements/CardHeader";
+import CardHeader from "../../UIElements/CardHeader";
 import ClearSignatureButton from "./ClearSignatureButton";
 import PickColorButton from "./PickColorButton";
 import SaveSignatureButton from "./SaveSignatureButton";
