@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.2.0] - 10.06.2025
 
 - New: Added custom fields functionality. Create custom fields (text, number, time, duration) on the Settings page that appear on Flight records. Includes configurable statistics functions with Dashboard integration for data visualization. Note: Import data for custom fields is not yet supported.
 - Doc: Update Readme with some API examples
