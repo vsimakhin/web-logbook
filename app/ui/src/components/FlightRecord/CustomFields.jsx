@@ -1,5 +1,5 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
@@ -10,7 +10,7 @@ import CardHeader from "../UIElements/CardHeader";
 import { fetchCustomFields } from "../../util/http/fields";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import TextField from "../UIElements/TextField";
-import { FLIGHT_TIME_SLOT_PROPS } from "../../constants/constants";
+import { FLIGHT_TIME_SLOT_PROPS, TIME_SLOT_PROPS } from "../../constants/constants";
 
 export const CustomFields = ({ flight, handleChange }) => {
   const navigate = useNavigate();
@@ -34,18 +34,33 @@ export const CustomFields = ({ flight, handleChange }) => {
         <CardContent>
           <CardHeader title="Custom fields" />
           <Grid container spacing={1} sx={{ mt: 1 }}>
-            {data.map((field) => (
-              <TextField key={field.uuid} gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}
-                label={field.name}
-                id={field.uuid}
-                tooltip={field.description}
-                value={flight.custom_fields?.[field.uuid] || ''}
-                handleChange={customFieldsChange}
-                slotProps={field.type === 'time' ? FLIGHT_TIME_SLOT_PROPS : undefined}
-                placeholder={field.type === 'time' ? 'HH:MM' : ''}
-                type={field.type === 'number' ? 'number' : undefined}
-              />
-            ))}
+            {data.map((field) => {
+              const props = { slotProps: undefined, type: undefined, placeholder: undefined };
+
+              if (field.type === 'time') {
+                props.slotProps = TIME_SLOT_PROPS;
+                props.placeholder = 'HHMM';
+              } else if (field.type === 'number') {
+                props.type = 'number';
+              }
+              else if (field.type === 'duration') {
+                props.slotProps = FLIGHT_TIME_SLOT_PROPS;
+                props.placeholder = 'HH:MM';
+              }
+
+              return (
+                <TextField key={field.uuid} gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}
+                  label={field.name}
+                  id={field.uuid}
+                  tooltip={field.description}
+                  value={flight.custom_fields?.[field.uuid] || ''}
+                  handleChange={customFieldsChange}
+                  slotProps={props.slotProps}
+                  placeholder={props.placeholder}
+                  type={props.type}
+                />
+              );
+            })}
           </Grid>
         </CardContent>
       </Card >

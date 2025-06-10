@@ -20,12 +20,13 @@ import { useErrorNotification, useSuccessNotification } from '../../../hooks/use
 import { queryClient } from '../../../util/http/http';
 
 
-const typeOptions = ["text", "number", "time"];
+const typeOptions = ["text", "number", "time", "duration"];
 
 const statsFunction = {
   text: ["none", "count"],
   number: ["none", "sum", "avg", "count"],
-  time: ["none", "sum", "avg", "count"],
+  time: ["none", "count"],
+  duration: ["none", "sum", "avg", "count"],
 }
 
 const CloseDialogButton = memo(({ onClose }) => {

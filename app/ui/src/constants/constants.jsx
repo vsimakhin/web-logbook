@@ -91,11 +91,6 @@ export const FLIGHT_TIME_SLOT_PROPS = {
         value = `${hours.slice(0, 2)}:${minutes || ''}`;
       }
 
-      // Limit minutes to 59
-      if (minutes && parseInt(minutes, 10) > 59) {
-        value = `${hours}:59`;
-      }
-
       // Allow clearing or partial input
       e.target.value = value;
     },

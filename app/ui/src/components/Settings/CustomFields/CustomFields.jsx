@@ -7,7 +7,9 @@ import CardHeader from "../../UIElements/CardHeader";
 import CustomFieldsTable from './CustomFieldsTable';
 
 const ActionButtons = memo(({ }) => (
-  <></>
+  <>
+    {/* here will be a help button */}
+  </>
 ));
 
 export const CustomFields = () => {
