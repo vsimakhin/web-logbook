@@ -2,7 +2,6 @@ import {
   MaterialReactTable, MRT_ShowHideColumnsButton,
   MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton, useMaterialReactTable
 } from 'material-react-table';
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
@@ -47,7 +46,6 @@ export const CustomFieldsTable = () => {
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const navigate = useNavigate();
-  const dialogs = useDialogs();
 
   const { data: data, isLoading, isError, error } = useQuery({
     queryKey: ['custom-fields'],

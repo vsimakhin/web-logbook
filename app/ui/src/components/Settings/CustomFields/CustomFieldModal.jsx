@@ -23,9 +23,9 @@ const typeOptions = ["text", "number", "time", "duration"];
 
 const statsFunction = {
   text: ["none", "count"],
-  number: ["none", "sum", "avg", "count"],
+  number: ["none", "sum", "average", "count"],
   time: ["none", "count"],
-  duration: ["none", "sum", "avg", "count"],
+  duration: ["none", "sum", "average", "count"],
 }
 
 const CloseDialogButton = memo(({ onClose }) => {
