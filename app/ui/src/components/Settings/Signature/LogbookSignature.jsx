@@ -1,7 +1,25 @@
-import { useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import SignaturePad from 'signature_pad';
+// MUI
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+// Custom
+import CardHeader from "../../UIElements/CardHeader";
+import ClearSignatureButton from "./ClearSignatureButton";
+import PickColorButton from "./PickColorButton";
+import SaveSignatureButton from "./SaveSignatureButton";
+import UploadSignatureButton from "./UploadSignatureButton";
 
-export const LogbookSignature = ({ settings, handleChange }) => {
+const ActionButtons = memo(({ settings, handleChange }) => (
+  <>
+    <UploadSignatureButton handleChange={handleChange} />
+    <SaveSignatureButton settings={settings} />
+    <ClearSignatureButton handleChange={handleChange} />
+    <PickColorButton handleChange={handleChange} />
+  </>
+));
+
+export const LogbookSignature = memo(({ settings, handleChange }) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
   const penColor = settings?.penColor || '#000000'; // Default color: black
@@ -46,22 +64,27 @@ export const LogbookSignature = ({ settings, handleChange }) => {
     }
   }, [settings.penColor]);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (signaturePadRef.current?.isEmpty()) {
       return;
     }
     const dataUrl = signaturePadRef.current.toDataURL();
     handleChange('signature_image', dataUrl);
-  };
+  }, [handleChange]);
 
   return (
-    <>
-      <canvas
-        ref={canvasRef}
-        style={{ border: '1px solid #ccc', width: '100%', height: '150px' }}
-      />
-    </>
+    <Card variant="outlined" sx={{ mb: 1 }}>
+      <CardContent>
+        <CardHeader title="Logbook Signature"
+          action={<ActionButtons settings={settings} handleChange={handleChange} />}
+        />
+        <canvas
+          ref={canvasRef}
+          style={{ border: '1px solid #ccc', width: '100%', height: '150px' }}
+        />
+      </CardContent>
+    </Card >
   );
-};
+});
 
 export default LogbookSignature;

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Added custom fields functionality. Create custom fields (text, number, time, duration) on the Settings page that appear on Flight records. Includes configurable statistics functions with Dashboard integration for data visualization. Note: Import data for custom fields is not yet supported.
 - Doc: Update Readme with some API examples
 - Fix: Quick CSV export for logbook table didn't include CoPilot time
 

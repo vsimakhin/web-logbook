@@ -1,37 +1,17 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 // Custom
-import CardHeader from "../UIElements/CardHeader";
 import FlightRecordDetails from "./FlightRecordDetails";
 import { fetchFlightData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 import FlightMap from "../FlightMap/FlightMap";
-import HelpButton from "./HelpButton";
-import NewFlightRecordButton from "./NewFlightRecordButton";
-import CopyFlightRecordButton from "./CopyFlightRecordButton";
-import SaveFlightRecordButton from "./SaveFlightRecordButton";
-import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import Attachments from "../Attachment/Attachments";
-import ResetTrackButton from "./ResetTrackButton";
-import FlightTitle from "./FlightTitle";
-
-const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
-  <>
-    <HelpButton />
-    <SaveFlightRecordButton flight={flight} handleChange={handleChange} />
-    {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} />}
-    {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} />}
-    {flight.track && <ResetTrackButton flight={flight} handleChange={handleChange} />}
-    {flight.uuid !== "new" && <DeleteFlightRecordButton flight={flight} />}
-  </>
-));
+import CustomFields from "./CustomFields";
 
 export const FlightRecord = () => {
   const { id } = useParams();
@@ -82,26 +62,15 @@ export const FlightRecord = () => {
     });
   }, []);
 
-  const gridSize = useMemo(() => ({
-    xs: 12, sm: 12, md: 6, lg: 6, xl: 6
-  }), []);
-
-  const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
+  const gridSize = useMemo(() => ({ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }), []);
 
   return (
     <>
       {isLoading && <LinearProgress />}
       <Grid container spacing={1}>
         <Grid size={gridSize}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title={title}
-                action={<ActionButtons flight={flight} handleChange={handleChange} setFlight={setFlight} />}
-              />
-              <FlightRecordDetails flight={flight} handleChange={handleChange} />
-            </CardContent>
-          </Card >
-
+          <FlightRecordDetails flight={flight} handleChange={handleChange} setFlight={setFlight} />
+          <CustomFields flight={flight} handleChange={handleChange} />
           <Attachments id={id} />
         </Grid>
 

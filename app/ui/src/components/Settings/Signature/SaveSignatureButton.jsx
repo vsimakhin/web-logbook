@@ -5,9 +5,9 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 // MUI Icons
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
-import { queryClient } from "../../util/http/http";
-import { updateSignature } from "../../util/http/settings";
+import { useErrorNotification, useSuccessNotification } from "../../../hooks/useAppNotifications";
+import { queryClient } from "../../../util/http/http";
+import { updateSignature } from "../../../util/http/settings";
 
 export const SaveSignatureButton = ({ settings }) => {
   const navigate = useNavigate();

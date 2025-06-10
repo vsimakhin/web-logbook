@@ -91,11 +91,6 @@ export const FLIGHT_TIME_SLOT_PROPS = {
         value = `${hours.slice(0, 2)}:${minutes || ''}`;
       }
 
-      // Limit minutes to 59
-      if (minutes && parseInt(minutes, 10) > 59) {
-        value = `${hours}:59`;
-      }
-
       // Allow clearing or partial input
       e.target.value = value;
     },
@@ -130,4 +125,16 @@ export const CURRENCY_INITIAL_STATE = {
     value: 90
   },
   filters: "",
+};
+
+export const CUSTOM_FIELD_INITIAL_STATE = {
+  uuid: "new",
+  name: "New Custom Field",
+  description: "",
+  type: "text",
+  stats_function: "none",
+  size_xs: 3,
+  size_md: 3,
+  size_lg: 3,
+  display_order: 0,
 };

@@ -12,6 +12,8 @@ import Filters from "../../UIElements/Filters";
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../../util/http/logbook";
 import DashboardTiles from "./DashboardTiles";
+import CustomFieldsTiles from "./CustomFieldsTiles";
+import { fetchCustomFields } from "../../../util/http/fields";
 
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
@@ -25,6 +27,13 @@ export const TotalsDashboard = () => {
     gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
+
+  const { data: customFields } = useQuery({
+    queryKey: ['custom-fields'],
+    queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+  });
 
   const callbackFunction = (filteredData, filter) => {
     setDashboardData(filteredData);
@@ -45,12 +54,8 @@ export const TotalsDashboard = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Stats" />
-              <DashboardTiles data={dashboardData} filter={filter} />
-            </CardContent>
-          </Card >
+          <DashboardTiles data={dashboardData} filter={filter} />
+          <CustomFieldsTiles data={dashboardData} customFields={customFields} />
         </Grid>
       </Grid>
     </>

@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Added custom fields functionality. Create custom fields (text, number, time, duration) on the Settings page that appear on Flight records. Includes configurable statistics functions with Dashboard integration for data visualization. Note: Import data for custom fields is not yet supported.
 - Doc: Update Readme with some API examples
 - Fix: Quick CSV export for logbook table didn't include CoPilot time
 
@@ -111,6 +112,7 @@ Since it's written in Golang, it can run on any system after compiling the sourc
 * Flight data
 * Attachments for the flight records
 * Automatic night-time calculation
+* Custom/user defined fields support
 * Flight map
   * KML track support (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
 
@@ -182,6 +184,7 @@ So in real life the logbook could look like
   * Signature pad to automatically include signatures to the PDF exports
   * Enable/Disable authentication (in case you need to expose the app to the public internet)
   * Some interface settings
+  * Custom fields for the Flight record
 
 ![Settings](./readme-assets/settings.png)
 
