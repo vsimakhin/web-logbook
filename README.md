@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Update: update golang and npm packages
+
 ## [3.2.0] - 10.06.2025
 
 - New: Added custom fields functionality. Create custom fields (text, number, time, duration) on the Settings page that appear on Flight records. Includes configurable statistics functions with Dashboard integration for data visualization. Note: Import data for custom fields is not yet supported.
@@ -28,18 +32,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - Fix: Copilot time was not added to the logbook during import.
 - Update: Fix a logic for checking duplicate records during import.
-
-## [3.1.1] - 21.05.2025
-
-- Fix: Potential user lockout when the username was not provided in email format.
-
-## [3.1.0] - 17.05.2025
-
-- Note: Version 3 is now stable and released to production. The Docker image is also available under the `latest` tag.
-- New: Added preview support for flight record attachments.
-- Update: Added navigation buttons to move to the previous and next flights on the flight record page.
-- Fix: Resolved an issue when changing or adding a new license category.
-- Fix: Fixed a bug with the aircraft type autocomplete when no records are present. @danielkappelle
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
