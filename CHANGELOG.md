@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: updated material-react-table npm package and fixed the issue with filters for the text columns.
 - Update: update golang and npm packages
 
 ## [3.2.0] - 10.06.2025

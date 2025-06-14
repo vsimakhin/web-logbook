@@ -1,8 +1,13 @@
+import { useCallback } from 'react';
 import MUITextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid2';
 import Tooltip from '@mui/material/Tooltip';
 
 export const TextField = ({ gsize, id, name = id, label, handleChange, ...props }) => {
+  const handleTextFieldChange = useCallback((event) => {
+    handleChange(id, event.target.value);
+  }, [id, handleChange]);
+
   return (
     <Grid size={gsize}>
       <Tooltip title={props.tooltip}>
@@ -11,7 +16,7 @@ export const TextField = ({ gsize, id, name = id, label, handleChange, ...props 
             id={id}
             name={name}
             label={label}
-            onChange={(event) => handleChange(id, event.target.value)}
+            onChange={handleTextFieldChange}
             fullWidth
             size="small"
             variant="outlined"
