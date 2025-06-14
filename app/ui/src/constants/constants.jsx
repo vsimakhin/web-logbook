@@ -108,11 +108,15 @@ export const tableJSONCodec = {
   stringify: (value) => JSON.stringify(value),
 }
 
-export const defaultColumnFilterTextFieldProps = ({ column }) => ({
-  label: `Filter by ${column.columnDef.header}`,
-  placeholder: '',
-  InputLabelProps: { shrink: true },
-});
+export const defaultColumnFilterTextFieldProps = ({ column }) => {
+  const headerText = typeof column.columnDef.header === 'object' ? column.columnDef.header.props.title : column.columnDef.header;
+
+  return {
+    label: `Filter by ${headerText}`,
+    placeholder: '',
+    InputLabelProps: { shrink: true },
+  }
+};
 
 export const CURRENCY_INITIAL_STATE = {
   uuid: "new",

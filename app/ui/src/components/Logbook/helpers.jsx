@@ -84,7 +84,7 @@ export const createLandingColumn = (id, name) => ({
   header: name,
   size: 53,
   ...renderProps,
-  filterFn: "landingFilterFn",
+  filterFn: "landingFilterFn", filterVariant: "landing",
   Filter: ({ column }) => <LandingFilter column={column} />, // using custom filter component, otherwise it just goes crazy
   Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue()),
   Footer: ({ table }) => renderLangingFooter(table, id),

@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: updated material-react-table npm package and fixed the issue with filters for the text columns.
 - Update: update golang and npm packages
 
 ## [3.2.0] - 10.06.2025
