@@ -14,7 +14,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.3.0] - 06.07.2025
 
 - Fix: Critical bug with excessive escaping for custom fields
 - New: Custom logbook table pagination. You can set your custom rows numbers instead of standard `5, 10, 15, 20, 25, 30, 50, 100` for the logbook table
