@@ -75,8 +75,20 @@ export const deleteFlightRecord = async ({ signal, id, navigate }) => {
 export const createFlightRecord = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/new`;
 
-  const marshallCustomFields = JSON.stringify(flight.custom_fields || {});
-  flight.custom_fields = marshallCustomFields;
+  // Ensure custom_fields is properly marshalled as JSON string
+  // If it's already a string, parse it first to avoid double stringification
+  let customFieldsObj;
+  if (typeof flight.custom_fields === 'string') {
+    try {
+      customFieldsObj = JSON.parse(flight.custom_fields);
+    } catch {
+      customFieldsObj = {};
+    }
+  } else {
+    customFieldsObj = flight.custom_fields || {};
+  }
+  flight.custom_fields = JSON.stringify(customFieldsObj);
+
   flight.landings.day = parseInt(flight.landings.day) || 0;
   flight.landings.night = parseInt(flight.landings.night) || 0;
 
@@ -92,8 +104,20 @@ export const createFlightRecord = async ({ signal, flight, navigate }) => {
 export const updateFlightRecord = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/${flight.uuid}`;
 
-  const marshallCustomFields = JSON.stringify(flight.custom_fields || {});
-  flight.custom_fields = marshallCustomFields;
+  // Ensure custom_fields is properly marshalled as JSON string
+  // If it's already a string, parse it first to avoid double stringification
+  let customFieldsObj;
+  if (typeof flight.custom_fields === 'string') {
+    try {
+      customFieldsObj = JSON.parse(flight.custom_fields);
+    } catch {
+      customFieldsObj = {};
+    }
+  } else {
+    customFieldsObj = flight.custom_fields || {};
+  }
+  flight.custom_fields = JSON.stringify(customFieldsObj);
+
   flight.landings.day = parseInt(flight.landings.day) || 0;
   flight.landings.night = parseInt(flight.landings.night) || 0;
 

@@ -54,8 +54,30 @@ const OwnerInfoFields = memo(({ settings, handleChange }) => (
   </Grid>
 ));
 
+const OtherSettings = memo(({ settings, handleChange }) => {
+  const getDefaultPagination = () => {
+    // Return default pagination if the setting is empty or undefined
+    return settings.logbook_pagination && settings.logbook_pagination.trim() !== ''
+      ? settings.logbook_pagination
+      : "5, 10, 15, 20, 25, 30, 50, 100";
+  };
+
+  return (
+    <Grid container spacing={1} sx={{ mt: 2 }}>
+      <TextField
+        gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+        id="logbook_pagination"
+        label="Logbook Pagination"
+        handleChange={handleChange}
+        value={getDefaultPagination()}
+        tooltip="Logbook Pagination (comma-separated values, e.g. 5,10,15)"
+      />
+    </Grid>
+  );
+});
+
 const TimeFormatSelector = memo(({ settings, onFormatChange }) => (
-  <Grid container>
+  <Grid container spacing={1}>
     <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
       <FormControlLabel
         sx={{ m: 0, width: '100%', display: 'flex', justifyContent: 'space-between' }}
@@ -147,6 +169,7 @@ export const GeneralSettings = memo(({ settings, handleChange }) => {
 
         <OwnerInfoFields settings={settings} handleChange={handleChange} />
         <Divider sx={{ m: 1 }} />
+        <OtherSettings settings={settings} handleChange={handleChange} />
         <TimeFormatSelector settings={settings} onFormatChange={handleTimeFormatChange} />
         <Divider sx={{ m: 1 }} />
         <AuthSettings settings={settings} handleChange={handleChange} onAuthToggle={enableAuth} />

@@ -4,6 +4,8 @@ import {
 } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 // MUI UI elements
 import Box from '@mui/material/Box';
 // Custom components and libraries
@@ -20,6 +22,8 @@ import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import TableHeader from '../UIElements/TableHeader';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
+import { fetchSettings } from '../../util/http/settings';
+import { useErrorNotification } from '../../hooks/useAppNotifications';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
@@ -43,11 +47,37 @@ const tableOptions = {
 };
 
 export const LogbookTable = ({ data, isLoading }) => {
+  const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
+
+  // Load settings including pagination options
+  const { data: settings, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
+    queryKey: ['settings'],
+    queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+    refetchOnWindowFocus: false,
+  });
+  useErrorNotification({ isError: isSettingsError, error: settingsError, fallbackMessage: 'Failed to load settings' });
+
+  // Parse pagination options from settings
+  const paginationOptions = useMemo(() => {
+    const defaultOptions = [5, 10, 15, 20, 25, 30, 50, 100];
+    if (settings?.logbook_pagination) {
+      try {
+        const options = settings.logbook_pagination.split(',').map(opt => parseInt(opt.trim()));
+        return options.length > 0 ? options : defaultOptions;
+      } catch (error) {
+        return defaultOptions;
+      }
+    }
+    return defaultOptions;
+  }, [settings?.logbook_pagination]);
+
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
     timeFilterFn: timeFilterFn,
@@ -170,7 +200,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
-    isLoading: isLoading,
+    isLoading: isLoading || isSettingsLoading,
     onShowColumnFiltersChange: filterDrawOpen,
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
@@ -186,6 +216,9 @@ export const LogbookTable = ({ data, isLoading }) => {
     },
     defaultColumn: { muiFilterTextFieldProps: getMuiFilterTextFieldProps },
     renderToolbarInternalActions: renderToolbarInternalActions,
+    muiPaginationProps: {
+      rowsPerPageOptions: paginationOptions,
+    },
     ...tableOptions,
   });
 
