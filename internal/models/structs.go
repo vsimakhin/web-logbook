@@ -183,7 +183,8 @@ type Settings struct {
 	ExportA4 ExportPDF `json:"export_a4"`
 	ExportA5 ExportPDF `json:"export_a5"`
 
-	TimeFieldsAutoFormat byte `json:"time_fields_auto_format"`
+	LogbookPagination    string `json:"logbook_pagination"`
+	TimeFieldsAutoFormat byte   `json:"time_fields_auto_format"`
 
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`
