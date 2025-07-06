@@ -60,6 +60,7 @@ export const LogbookTable = ({ data, isLoading }) => {
     queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
     staleTime: 3600000,
     gcTime: 3600000,
+    refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError: isSettingsError, error: settingsError, fallbackMessage: 'Failed to load settings' });
 
