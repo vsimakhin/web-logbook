@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid2";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { LinearProgress } from "@mui/material";
+import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import CardHeader from "../UIElements/CardHeader";
 import { useErrorNotification } from "../../hooks/useAppNotifications";

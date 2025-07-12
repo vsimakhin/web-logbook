@@ -4,12 +4,12 @@ import { useCallback } from "react";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
 // MUI Icons
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
 import { updateAirportsDB } from "../../util/http/airport";
-import { CircularProgress } from "@mui/material";
 
 export const UpdateAirportsDBButton = () => {
   const navigate = useNavigate();
