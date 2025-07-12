@@ -28,6 +28,8 @@ const statsFunction = {
   duration: ["none", "sum", "average", "count"],
 }
 
+const categoryOptions = ["Custom", "Departure", "Arrival", "Aircraft", "Pilot Function Time", "FSTD Session", "Remarks"];
+
 const CloseDialogButton = memo(({ onClose }) => {
   return (
     <Tooltip title="Close">
@@ -103,21 +105,30 @@ export const CustomFieldModal = memo(({ open, onClose, payload }) => {
             }
           />
           <Grid container spacing={1}>
-            <TextField gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="name"
               label="Name"
               tooltip="Name for the custom field"
               handleChange={handleChange}
               value={field.name}
             />
-            <TextField gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="description"
               label="Description"
               tooltip="Description/tooltip for the custom field"
               handleChange={handleChange}
               value={field.description}
             />
-            <Select gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+            <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
+              id="category"
+              label="Category"
+              tooltip="Category or group of the custom field"
+              handleChange={handleChange}
+              value={field.category}
+              options={categoryOptions}
+              freeSolo={true}
+            />
+            <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
               id="type"
               label="Type"
               tooltip="Type of the custom field"
@@ -126,7 +137,7 @@ export const CustomFieldModal = memo(({ open, onClose, payload }) => {
               options={typeOptions}
               disabled={isTypeDisabled}
             />
-            <Select gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+            <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
               id="stats_function"
               label="Stats Function"
               tooltip="Stats function to apply to the custom field"
