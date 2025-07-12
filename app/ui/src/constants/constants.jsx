@@ -135,6 +135,7 @@ export const CUSTOM_FIELD_INITIAL_STATE = {
   uuid: "new",
   name: "New Custom Field",
   description: "",
+  category: "Custom",
   type: "text",
   stats_function: "none",
   size_xs: 3,
