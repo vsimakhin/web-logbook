@@ -1,13 +1,16 @@
 import * as toGeoJSON from "@mapbox/togeojson";
 
-export const parseKML = (fileText) => {
+// Generic function to parse both KML and GPX files
+const parseTrackFileContent = (fileText, fileType) => {
   if (fileText.startsWith('\uFEFF') || fileText.charCodeAt(0) === 0xEF) {
     fileText = fileText.slice(3); // UTF-8 BOM
   }
 
   const parser = new DOMParser();
-  const kml = parser.parseFromString(fileText, "text/xml");
-  const geojson = toGeoJSON.kml(kml);
+  const xmlDoc = parser.parseFromString(fileText, "text/xml");
+
+  // Use appropriate toGeoJSON method based on file type
+  const geojson = fileType === 'kml' ? toGeoJSON.kml(xmlDoc) : toGeoJSON.gpx(xmlDoc);
 
   const extractedCoordinates = [];
 
@@ -30,6 +33,10 @@ export const parseKML = (fileText) => {
       processCoordinates(geometry.coordinates, true);
     } else if (geometry.type === 'LineString') {
       processCoordinates(geometry.coordinates);
+    } else if (geometry.type === 'MultiLineString') {
+      geometry.coordinates.forEach((lineCoords) => {
+        processCoordinates(lineCoords);
+      });
     } else if (geometry.type === 'MultiGeometry' && geometry.geometries) {
       geometry.geometries.forEach((g) => {
         if (g.type === 'Point') {
@@ -42,5 +49,16 @@ export const parseKML = (fileText) => {
   });
 
   return extractedCoordinates;
+};
+
+// Generic parser that detects file type and uses appropriate parser
+export const parseTrackFile = (fileText, fileName) => {
+  const extension = fileName.toLowerCase().split('.').pop();
+
+  if (extension === 'kml' || extension === 'gpx') {
+    return parseTrackFileContent(fileText, extension);
+  } else {
+    throw new Error(`Unsupported file format: ${extension}`);
+  }
 };
 

@@ -13,9 +13,9 @@ import { queryClient } from "../../util/http/http";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { uploadAttachement } from "../../util/http/attachment";
 import { uploadTrackLog } from "../../util/http/logbook";
-import { parseKML } from "./helpers";
+import { parseTrackFile } from "./helpers";
 
-export const AddKMLButton = ({ id }) => {
+export const AddTrackButton = ({ id }) => {
   const navigate = useNavigate();
   const notifications = useNotifications();
 
@@ -52,17 +52,17 @@ export const AddKMLButton = ({ id }) => {
         reader.readAsText(file);
       });
 
-      const extractedCoordinates = parseKML(fileText);
+      const extractedCoordinates = parseTrackFile(fileText, file.name);
       if (extractedCoordinates.length === 0) {
-        notifications.show("No coordinates found in KML file", {
+        notifications.show("No coordinates found in track file", {
           severity: "error",
-          key: "kml-parse-error",
+          key: "track-parse-error",
           autoHideDuration: 3000,
         });
         return;
       }
 
-      // Upload KML as attachment
+      // Upload track file as attachment
       const formData = new FormData();
       formData.append("document", file);
       formData.append("id", id);
@@ -71,9 +71,9 @@ export const AddKMLButton = ({ id }) => {
       await upload({ data: formData });
       await uploadTrack({ data: extractedCoordinates });
     } catch (error) {
-      notifications.show("Error parsing or uploading KML file", {
+      notifications.show("Error parsing or uploading track file", {
         severity: "error",
-        key: "kml-parse-error",
+        key: "track-parse-error",
         autoHideDuration: 3000,
       });
       console.error(error);
@@ -84,9 +84,9 @@ export const AddKMLButton = ({ id }) => {
     <>
       {(isPending || isTrackPending) && <CircularProgress size={24} />}
       {!(isPending && isTrackPending) &&
-        <Tooltip title="Add track log">
+        <Tooltip title="Add track log (KML/GPX)">
           <IconButton size="small" component="label" ><MapOutlinedIcon />
-            <input hidden type="file" name="document" id="document" onChange={handleFileChange} accept=".kml" />
+            <input hidden type="file" name="document" id="document" onChange={handleFileChange} accept=".kml,.gpx" />
           </IconButton>
         </Tooltip>
       }
@@ -94,4 +94,4 @@ export const AddKMLButton = ({ id }) => {
   );
 }
 
-export default AddKMLButton;
+export default AddTrackButton;

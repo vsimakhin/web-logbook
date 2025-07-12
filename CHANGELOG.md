@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Support for GPX track files
+
 ## [3.3.0] - 06.07.2025
 
 - Fix: Critical bug with excessive escaping for custom fields

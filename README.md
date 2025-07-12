@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Support for GPX track files
+
 ## [3.3.0] - 06.07.2025
 
 - Fix: Critical bug with excessive escaping for custom fields
@@ -26,15 +30,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - New: Added custom fields functionality. Create custom fields (text, number, time, duration) on the Settings page that appear on Flight records. Includes configurable statistics functions with Dashboard integration for data visualization. Note: Import data for custom fields is not yet supported.
 - Doc: Update Readme with some API examples
 - Fix: Quick CSV export for logbook table didn't include CoPilot time
-
-## [3.1.3] - 24.05.2025
-
-- Fix: Handled missing registration numbers when building the aircrafts list/table from flight records.
-
-## [3.1.2] - 24.05.2025
-
-- Fix: Copilot time was not added to the logbook during import.
-- Update: Fix a logic for checking duplicate records during import.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

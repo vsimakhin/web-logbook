@@ -9,7 +9,7 @@ import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 // Custom
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { fetchAttachment } from '../../util/http/attachment';
-import { parseKML } from './helpers';
+import { parseTrackFile } from './helpers';
 import { uploadTrackLog } from '../../util/http/logbook';
 import { queryClient } from '../../util/http/http';
 
@@ -31,7 +31,7 @@ export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
   const handleConvert = useCallback(async () => {
     const data = await fetchAttachment({ id: attachment.uuid, navigate });
     const byteCharacters = atob(data.document);
-    const extractedCoordinates = parseKML(byteCharacters);
+    const extractedCoordinates = parseTrackFile(byteCharacters);
 
     if (extractedCoordinates.length === 0) {
       notifications.show("No coordinates found in KML file", {
