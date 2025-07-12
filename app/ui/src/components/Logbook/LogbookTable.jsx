@@ -15,7 +15,8 @@ import NewFlightRecordButton from './NewFlightRecordButton';
 import { tableJSONCodec } from '../../constants/constants';
 import {
   createColumn, createDateColumn, createLandingColumn, createTimeColumn,
-  renderProps, renderTextProps, renderTotalFooter
+  renderProps, renderTextProps, renderTotalFooter, createCustomFieldColumns,
+  createCustomFieldColumnGroup,
 } from "./helpers";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
@@ -23,6 +24,7 @@ import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import TableHeader from '../UIElements/TableHeader';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 import { fetchSettings } from '../../util/http/settings';
+import { fetchCustomFields } from '../../util/http/fields';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
 
 const paginationKey = 'logbook-table-page-size';
@@ -64,6 +66,16 @@ export const LogbookTable = ({ data, isLoading }) => {
   });
   useErrorNotification({ isError: isSettingsError, error: settingsError, fallbackMessage: 'Failed to load settings' });
 
+  // Load the list of custom fields
+  const { data: customFields, isError: isCustomFieldsError, error: customFieldsError } = useQuery({
+    queryKey: ['custom-fields'],
+    queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+    refetchOnWindowFocus: false,
+  });
+  useErrorNotification({ isError: isCustomFieldsError, error: customFieldsError, fallbackMessage: 'Failed to load custom fields' });
+
   // Parse pagination options from settings
   const paginationOptions = useMemo(() => {
     const defaultOptions = [5, 10, 15, 20, 25, 30, 50, 100];
@@ -84,88 +96,102 @@ export const LogbookTable = ({ data, isLoading }) => {
     landingFilterFn: landingFilterFn,
   }), []);
 
-  const columns = useMemo(() => [
-    {
-      header: "Date", ...renderTextProps, columns: [
-        createDateColumn("date", "", 90),
-      ]
-    },
-    {
-      header: "Departure", ...renderProps, columns: [
-        createColumn("departure.place", "Place", 55),
-        createColumn("departure.time", "Time", 50)
-      ]
-    },
-    {
-      header: "Arrival", columns: [
-        createColumn("arrival.place", "Place", 55),
-        createColumn("arrival.time", "Time", 50)
-      ]
-    },
-    {
-      header: "Aircraft", columns: [
-        createColumn("aircraft.model", "Type", 80),
-        createColumn("aircraft.reg_name", "Reg", 80, false, renderTotalFooter())
-      ]
-    },
-    {
-      header: <TableHeader title="Single Pilot" />,
-      columns: [
-        createTimeColumn("time.se_time", "SE"),
-        createTimeColumn("time.me_time", "ME"),
-      ]
-    },
-    {
-      header: "MCC", columns: [
-        createTimeColumn("time.mcc_time", "MCC")
-      ]
-    },
-    {
-      header: "Total", columns: [
-        createTimeColumn("time.total_time", "")
-      ]
-    },
-    {
-      header: <TableHeader title="PIC Name" />,
-      columns: [
-        createColumn("pic_name", "", 150, true)
-      ]
-    },
-    {
-      header: "Landings", columns: [
-        createLandingColumn("landings.day", "Day"),
-        createLandingColumn("landings.night", "Night")
-      ]
-    },
-    {
-      header: <TableHeader title="Operation Condition Time" />,
-      columns: [
-        createTimeColumn("time.night_time", "Night"),
-        createTimeColumn("time.ifr_time", "IFR"),
-      ]
-    },
-    {
-      header: <TableHeader title="Pilot Function Time" />,
-      columns: [
-        createTimeColumn("time.pic_time", "PIC"),
-        createTimeColumn("time.co_pilot_time", "COP"),
-        createTimeColumn("time.dual_time", "Dual"),
-        createTimeColumn("time.instructor_time", "Instr")
-      ]
-    },
-    {
-      header: <TableHeader title="FSTD Session" />,
-      columns: [
-        createColumn("sim.type", "Type", 70),
-        createTimeColumn("sim.time", "Time")
-      ]
-    },
-    {
-      header: "Remarks", grow: true, columns: [
-        { accessorKey: "remarks", header: "", grow: true, ...renderTextProps },
-      ]
+  const columns = useMemo(() => {
+    // Don't create columns until we have custom fields data
+    if (!customFields) {
+      return [];
     }
-  ], []);
+
+    return [
+      {
+        header: "Date", ...renderTextProps, columns: [
+          createDateColumn("date", "", 90),
+        ]
+      },
+      {
+        header: "Departure", ...renderProps, columns: [
+          createColumn("departure.place", "Place", 55),
+          createColumn("departure.time", "Time", 50),
+          ...createCustomFieldColumns(customFields, "Departure")
+        ]
+      },
+      {
+        header: "Arrival", columns: [
+          createColumn("arrival.place", "Place", 55),
+          createColumn("arrival.time", "Time", 50),
+          ...createCustomFieldColumns(customFields, "Arrival")
+        ]
+      },
+      {
+        header: "Aircraft", columns: [
+          createColumn("aircraft.model", "Type", 80),
+          createColumn("aircraft.reg_name", "Reg", 80, false, renderTotalFooter()),
+          ...createCustomFieldColumns(customFields, "Aircraft")
+        ]
+      },
+      {
+        header: <TableHeader title="Single Pilot" />,
+        columns: [
+          createTimeColumn("time.se_time", "SE"),
+          createTimeColumn("time.me_time", "ME"),
+        ]
+      },
+      {
+        header: "MCC", columns: [
+          createTimeColumn("time.mcc_time", "MCC")
+        ]
+      },
+      {
+        header: "Total", columns: [
+          createTimeColumn("time.total_time", "")
+        ]
+      },
+      {
+        header: <TableHeader title="PIC Name" />,
+        columns: [
+          createColumn("pic_name", "", 150, true)
+        ]
+      },
+      {
+        header: "Landings", columns: [
+          createLandingColumn("landings.day", "Day"),
+          createLandingColumn("landings.night", "Night")
+        ]
+      },
+      {
+        header: <TableHeader title="Operation Condition Time" />,
+        columns: [
+          createTimeColumn("time.night_time", "Night"),
+          createTimeColumn("time.ifr_time", "IFR"),
+        ]
+      },
+      {
+        header: <TableHeader title="Pilot Function Time" />,
+        columns: [
+          createTimeColumn("time.pic_time", "PIC"),
+          createTimeColumn("time.co_pilot_time", "COP"),
+          createTimeColumn("time.dual_time", "Dual"),
+          createTimeColumn("time.instructor_time", "Instr"),
+          ...createCustomFieldColumns(customFields, "Pilot Function Time")
+        ]
+      },
+      {
+        header: <TableHeader title="FSTD Session" />,
+        columns: [
+          createColumn("sim.type", "Type", 70),
+          createTimeColumn("sim.time", "Time"),
+          ...createCustomFieldColumns(customFields, "FSTD Session")
+        ]
+      },
+      createCustomFieldColumnGroup(customFields, "Custom", "Custom"),
+      {
+        header: "Remarks", grow: true, columns: [
+          { accessorKey: "remarks", header: "", grow: true, ...renderTextProps },
+          ...createCustomFieldColumns(customFields, "Remarks")
+        ]
+      }
+    ].filter(Boolean);
+  }, [customFields]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -200,7 +226,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
-    isLoading: isLoading || isSettingsLoading,
+    isLoading: isLoading || isSettingsLoading || !customFields,
     onShowColumnFiltersChange: filterDrawOpen,
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
