@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Golang and npm packages/security patches
 - New: Support for GPX track files
 
 ## [3.3.0] - 06.07.2025

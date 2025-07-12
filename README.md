@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Golang and npm packages/security patches
 - New: Support for GPX track files
 
 ## [3.3.0] - 06.07.2025
