@@ -70,6 +70,7 @@ export const CustomFieldsTable = () => {
     { accessorKey: "display_order", header: "Order", size: 100 },
     { accessorKey: "name", header: "Name", size: 150 },
     { accessorKey: "description", header: "Description", size: 200 },
+    { accessorKey: "category", header: "Category", size: 150 },
     { accessorKey: "type", header: "Type", size: 100 },
     { accessorKey: "stats_function", header: "Stats Function", size: 150 },
   ], [data]);

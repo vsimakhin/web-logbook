@@ -243,6 +243,7 @@ type CustomField struct {
 	UUID          string `json:"uuid"`
 	Name          string `json:"name"`
 	Description   string `json:"description"`
+	Category      string `json:"category"`
 	Type          string `json:"type"`
 	StatsFunction string `json:"stats_function"`
 	SizeXs        int    `json:"size_xs"`
