@@ -136,6 +136,8 @@ export const createCustomFieldColumns = (customFields, category) => {
 
       // Add time footer for duration fields
       if (field.type === 'duration') {
+        baseColumn.filterVariant = "time-range";
+        baseColumn.filterFn = "timeFilterFn";
         baseColumn.Footer = ({ table }) => renderTimeFooter(table, `custom_fields.${field.uuid}`);
       } else if (field.type === 'number') {
         baseColumn.Footer = ({ table }) => renderNumberFooter(table, `custom_fields.${field.uuid}`);
