@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Instructor time wasn't imported
 - Update: Golang and npm packages/security patches
 - New: Support for GPX track files
 

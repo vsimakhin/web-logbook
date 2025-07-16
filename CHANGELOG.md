@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Instructor time wasn't imported
 - Update: Golang and npm packages/security patches
 - New: Support for GPX track files
 
