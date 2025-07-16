@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.4.0] - 16.07.2025
 
 - Fix: Instructor time wasn't imported
 - Update: Golang and npm packages/security patches
