@@ -140,7 +140,7 @@ export const marshallItem = (item) => {
       pic_time: item.pic_time,
       co_pilot_time: item.co_pilot_time,
       dual_time: item.dual_time,
-      instructor_time: item.instr_time,
+      instructor_time: item.instructor_time,
     },
     landings: {
       day: parseInt(item.landings_day) || 0,
