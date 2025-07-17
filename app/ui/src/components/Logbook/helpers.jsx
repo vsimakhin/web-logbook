@@ -51,9 +51,18 @@ const renderTimeFooter = (table, field) => {
   );
 };
 
-const renderLangingFooter = (table, field) => {
-  const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) => total + getValue(row.original, field), 0);
-  const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) => total + getValue(row.original, field), 0);
+const renderNumberFooter = (table, field) => {
+  const totalForAllData = table.getPreGroupedRowModel().rows.reduce((total, row) => {
+    const value = getValue(row.original, field);
+    const numValue = value ? parseFloat(value) : 0;
+    return total + (isNaN(numValue) ? 0 : numValue);
+  }, 0);
+
+  const totalForCurrentPage = table.getRowModel().rows.reduce((total, row) => {
+    const value = getValue(row.original, field);
+    const numValue = value ? parseFloat(value) : 0;
+    return total + (isNaN(numValue) ? 0 : numValue);
+  }, 0);
 
   return (
     <Stack direction="column" spacing={1} alignItems="center">
@@ -87,7 +96,7 @@ export const createLandingColumn = (id, name) => ({
   filterFn: "landingFilterFn", filterVariant: "landing",
   Filter: ({ column }) => <LandingFilter column={column} />, // using custom filter component, otherwise it just goes crazy
   Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue()),
-  Footer: ({ table }) => renderLangingFooter(table, id),
+  Footer: ({ table }) => renderNumberFooter(table, id),
 })
 
 export const createDateColumn = (id, name, size) => ({
@@ -107,6 +116,53 @@ export const createColumn = (id, name, size, isText = false, footer = undefined)
   ...(isText ? renderTextProps : renderProps),
   Footer: () => footer,
 })
+
+export const createCustomFieldColumns = (customFields, category) => {
+  if (!customFields || !Array.isArray(customFields)) {
+    return [];
+  }
+  return customFields
+    .filter(field => field.category === category)
+    .map(field => {
+      const baseColumn = {
+        accessorKey: `custom_fields.${field.uuid}`,
+        id: field.uuid,
+        header: field.name,
+        size: 100,
+        ...renderProps,
+        accessorFn: (row) => row.custom_fields?.[field.uuid] || '',
+        Cell: ({ cell }) => cell.getValue() || '',
+      };
+
+      // Add time footer for duration fields
+      if (field.type === 'duration') {
+        baseColumn.filterVariant = "time-range";
+        baseColumn.filterFn = "timeFilterFn";
+        baseColumn.Footer = ({ table }) => renderTimeFooter(table, `custom_fields.${field.uuid}`);
+      } else if (field.type === 'number') {
+        baseColumn.Footer = ({ table }) => renderNumberFooter(table, `custom_fields.${field.uuid}`);
+      }
+
+      return baseColumn;
+    })
+}
+
+export const createCustomFieldColumnGroup = (customFields) => {
+  if (!customFields || !Array.isArray(customFields)) {
+    return [];
+  }
+
+  if (!customFields.some(field => field.category === "Custom")) {
+    return [];
+  }
+
+  return [{
+    header: "Custom",
+    columns: [
+      ...createCustomFieldColumns(customFields, "Custom")
+    ]
+  }]
+}
 
 export const getFilterLabel = (column) => {
 
