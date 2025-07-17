@@ -67,7 +67,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   useErrorNotification({ isError: isSettingsError, error: settingsError, fallbackMessage: 'Failed to load settings' });
 
   // Load the list of custom fields
-  const { data: customFields, isError: isCustomFieldsError, error: customFieldsError } = useQuery({
+  const { data: customFields, isLoading: isCustomFieldsLoading, isError: isCustomFieldsError, error: customFieldsError } = useQuery({
     queryKey: ['custom-fields'],
     queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
     staleTime: 3600000,
@@ -97,8 +97,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   }), []);
 
   const columns = useMemo(() => {
-    // Don't create columns until we have custom fields data
-    if (!customFields) {
+    if (isCustomFieldsLoading) {
       return [];
     }
 
@@ -183,15 +182,15 @@ export const LogbookTable = ({ data, isLoading }) => {
           ...createCustomFieldColumns(customFields, "FSTD Session")
         ]
       },
-      createCustomFieldColumnGroup(customFields, "Custom", "Custom"),
+      ...createCustomFieldColumnGroup(customFields),
       {
         header: "Remarks", grow: true, columns: [
           { accessorKey: "remarks", header: "", grow: true, ...renderTextProps },
           ...createCustomFieldColumns(customFields, "Remarks")
         ]
       }
-    ].filter(Boolean);
-  }, [customFields]);
+    ];
+  }, [customFields, isCustomFieldsLoading]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -226,7 +225,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
-    isLoading: isLoading || isSettingsLoading || !customFields,
+    isLoading: isLoading || isSettingsLoading || isCustomFieldsLoading,
     onShowColumnFiltersChange: filterDrawOpen,
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,

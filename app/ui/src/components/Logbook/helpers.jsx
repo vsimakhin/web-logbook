@@ -147,15 +147,21 @@ export const createCustomFieldColumns = (customFields, category) => {
     })
 }
 
-export const createCustomFieldColumnGroup = (customFields, category, header) => {
-  const fields = createCustomFieldColumns(customFields, category);
-  if (fields.length === 0) {
-    return null;
+export const createCustomFieldColumnGroup = (customFields) => {
+  if (!customFields || !Array.isArray(customFields)) {
+    return [];
   }
-  return {
-    header: header,
-    columns: fields
-  };
+
+  if (!customFields.some(field => field.category === "Custom")) {
+    return [];
+  }
+
+  return [{
+    header: "Custom",
+    columns: [
+      ...createCustomFieldColumns(customFields, "Custom")
+    ]
+  }]
 }
 
 export const getFilterLabel = (column) => {
