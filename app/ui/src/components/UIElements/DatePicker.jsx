@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 export const DatePicker = ({ gsize, id, name = id, label, handleChange, ...props }) => {
   return (
     <Grid size={gsize}>
-      <Tooltip title={props.tooltip}>
+      <Tooltip title={props.tooltip} disableInteractive>
         <div>
           <MUIDatePicker
             id={id}

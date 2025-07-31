@@ -15,14 +15,14 @@ export const FlightTitle = ({ flight }) => {
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         {"Flight Record "}
         {flight.prev_uuid && (
-          <Tooltip title="Previous flight record">
+          <Tooltip title="Previous flight record" disableInteractive>
             <IconButton size="small" onClick={() => navigate(`/logbook/${flight.prev_uuid}`)}>
               <NavigateBeforeOutlinedIcon />
             </IconButton>
           </Tooltip>
         )}
         {flight.next_uuid && (
-          <Tooltip title="Next flight record">
+          <Tooltip title="Next flight record" disableInteractive>
             <IconButton size="small" onClick={() => navigate(`/logbook/${flight.next_uuid}`)}>
               <NavigateNextOutlinedIcon />
             </IconButton>

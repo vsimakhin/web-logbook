@@ -10,7 +10,7 @@ export const TextField = ({ gsize, id, name = id, label, handleChange, ...props 
 
   return (
     <Grid size={gsize}>
-      <Tooltip title={props.tooltip}>
+      <Tooltip title={props.tooltip} disableInteractive>
         <div>
           <MUITextField
             id={id}
