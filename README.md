@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Night time calculation error when copying flight records
+
 ## [3.4.0] - 16.07.2025
 
 - Fix: Instructor time wasn't imported
