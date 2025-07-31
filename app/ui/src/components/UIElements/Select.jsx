@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 export const Select = ({ gsize, id, name = id, label, children, handleChange, disableClearable = true, ...props }) => {
   return (
     <Grid size={gsize}>
-      <Tooltip title={props.tooltip}>
+      <Tooltip title={props.tooltip} disableInteractive>
         <Autocomplete id={id} name={name} disableClearable={disableClearable}
           sx={{
             '& .MuiAutocomplete-inputRoot': {
