@@ -14,7 +14,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.5.0] 31.07.2025
 
 - Fix: Tooltip/description overlap for the input fields
 - Fix: Night time calculation error when copying flight records
@@ -299,6 +299,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   </a>
   <a href="https://github.com/daman2k" title="daman2k">
     <img src="https://github.com/daman2k.png?size=40" width="40" height="40" alt="daman2k" />
+  </a>
+  <a href="https://github.com/fldroiddev" title="fldroiddev">
+    <img src="https://github.com/fldroiddev.png?size=40" width="40" height="40" alt="daman2k" />
   </a>
 </p>
 

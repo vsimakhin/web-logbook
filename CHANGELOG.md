@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.5.0] 31.07.2025
 
 - Fix: Tooltip/description overlap for the input fields
 - Fix: Night time calculation error when copying flight records
