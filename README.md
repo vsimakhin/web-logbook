@@ -14,7 +14,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [3.5.0] 31.07.2025
+## [3.5.0] - 31.07.2025
 
 - Fix: Tooltip/description overlap for the input fields
 - Fix: Night time calculation error when copying flight records
