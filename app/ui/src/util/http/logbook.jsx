@@ -2,6 +2,27 @@ import { handleFetch } from './http';
 import { API_URL, tableJSONCodec } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
+const prepareFlightDataForAPI = (flight) => {
+  // Ensure custom_fields is properly marshalled as JSON string
+  // If it's already a string, parse it first to avoid double stringification
+  let customFieldsObj;
+  if (typeof flight.custom_fields === 'string') {
+    try {
+      customFieldsObj = JSON.parse(flight.custom_fields);
+    } catch {
+      customFieldsObj = {};
+    }
+  } else {
+    customFieldsObj = flight.custom_fields || {};
+  }
+  flight.custom_fields = JSON.stringify(customFieldsObj);
+
+  flight.landings.day = parseInt(flight.landings.day) || 0;
+  flight.landings.night = parseInt(flight.landings.night) || 0;
+
+  return flight;
+}
+
 export const fetchLogbookData = async ({ signal, navigate }) => {
   const url = `${API_URL}/logbook/data`;
   const options = {
@@ -49,14 +70,10 @@ export const fetchFlightData = async ({ signal, id, navigate }) => {
 
 export const fetchNightTime = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/night`;
-
-  flight.landings.day = parseInt(flight.landings.day) || 0;
-  flight.landings.night = parseInt(flight.landings.night) || 0;
-
   const options = {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(flight),
+    body: JSON.stringify(prepareFlightDataForAPI(flight)),
     signal: signal,
   };
   return await handleFetch(url, options, navigate, 'Cannot fetch night time');
@@ -74,58 +91,22 @@ export const deleteFlightRecord = async ({ signal, id, navigate }) => {
 
 export const createFlightRecord = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/new`;
-
-  // Ensure custom_fields is properly marshalled as JSON string
-  // If it's already a string, parse it first to avoid double stringification
-  let customFieldsObj;
-  if (typeof flight.custom_fields === 'string') {
-    try {
-      customFieldsObj = JSON.parse(flight.custom_fields);
-    } catch {
-      customFieldsObj = {};
-    }
-  } else {
-    customFieldsObj = flight.custom_fields || {};
-  }
-  flight.custom_fields = JSON.stringify(customFieldsObj);
-
-  flight.landings.day = parseInt(flight.landings.day) || 0;
-  flight.landings.night = parseInt(flight.landings.night) || 0;
-
   const options = {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     signal: signal,
-    body: JSON.stringify(flight),
+    body: JSON.stringify(prepareFlightDataForAPI(flight)),
   };
   return await handleFetch(url, options, navigate, 'Cannot create flight record');
 }
 
 export const updateFlightRecord = async ({ signal, flight, navigate }) => {
   const url = `${API_URL}/logbook/${flight.uuid}`;
-
-  // Ensure custom_fields is properly marshalled as JSON string
-  // If it's already a string, parse it first to avoid double stringification
-  let customFieldsObj;
-  if (typeof flight.custom_fields === 'string') {
-    try {
-      customFieldsObj = JSON.parse(flight.custom_fields);
-    } catch {
-      customFieldsObj = {};
-    }
-  } else {
-    customFieldsObj = flight.custom_fields || {};
-  }
-  flight.custom_fields = JSON.stringify(customFieldsObj);
-
-  flight.landings.day = parseInt(flight.landings.day) || 0;
-  flight.landings.night = parseInt(flight.landings.night) || 0;
-
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     signal: signal,
-    body: JSON.stringify(flight),
+    body: JSON.stringify(prepareFlightDataForAPI(flight)),
   };
   return await handleFetch(url, options, navigate, 'Cannot update flight record');
 }
