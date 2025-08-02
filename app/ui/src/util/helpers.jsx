@@ -78,6 +78,50 @@ const updateTotals = (totals, flight) => {
   return totals;
 };
 
+// Helper function to update custom field totals
+const updateCustomFieldTotals = (totals, flight, customFields) => {
+  if (!flight.custom_fields || !customFields || customFields.length === 0) return;
+
+  customFields.forEach(field => {
+    if (field.stats_function === 'none') return;
+
+    const value = flight.custom_fields[field.uuid];
+    if (value && value !== '') {
+      let numValue = 0;
+      if (field.type === 'duration') {
+        numValue = convertTimeToMinutes(value);
+      } else if (field.type === 'number') {
+        numValue = parseFloat(value);
+      } else if (field.type === 'text' || field.type === 'time') {
+        numValue = 1; // For count functionality
+      }
+
+      if (totals.custom_fields && totals.custom_fields[field.uuid]) {
+        totals.custom_fields[field.uuid].sum += numValue;
+        totals.custom_fields[field.uuid].count += 1;
+      }
+    }
+  });
+};
+
+// Helper function to calculate custom field final values based on stats function
+export const getCustomFieldValue = (fieldData, field) => {
+  if (!fieldData || !field) return 0;
+
+  switch (field.stats_function) {
+    case 'sum':
+      return field.type === 'duration' ? convertMinutesToTime(fieldData.sum) : fieldData.sum;
+    case 'average':
+      if (fieldData.count === 0) return 0;
+      const average = fieldData.sum / fieldData.count;
+      return field.type === 'duration' ? convertMinutesToTime(Math.round(average)) : Number(average.toFixed(2));
+    case 'count':
+      return fieldData.count;
+    default:
+      return 0;
+  }
+};
+
 // Helper function to format time totals
 const formatTimeTotals = (totals) => ({
   time: Object.fromEntries(
@@ -122,16 +166,24 @@ export const getStats = (data) => {
   };
 };
 
-export const getTotalsByMonthAndYear = (flights) => {
+export const getTotalsByMonthAndYear = (flights, customFields = []) => {
   const totals = flights.reduce((acc, flight) => {
     const [, month, year] = flight.date.split('/');
     const key = `${year}-${month}`;
 
     if (!acc[key]) {
       acc[key] = createInitialTotals({ year, month });
+      // Initialize custom fields
+      acc[key].custom_fields = {};
+      customFields.forEach(field => {
+        if (field.stats_function !== 'none') {
+          acc[key].custom_fields[field.uuid] = { sum: 0, count: 0 };
+        }
+      });
     }
 
     updateTotals(acc[key], flight);
+    updateCustomFieldTotals(acc[key], flight, customFields);
     return acc;
   }, {});
 
@@ -140,7 +192,7 @@ export const getTotalsByMonthAndYear = (flights) => {
   );
 };
 
-export const getTotalsByAircraft = (flights, type, models) => {
+export const getTotalsByAircraft = (flights, type, models, customFields = []) => {
   const modelCategories = type === "category" ?
     models.reduce((acc, { model, category }) => {
       acc[model] = category.split(',').map(c => c.trim());
@@ -156,8 +208,16 @@ export const getTotalsByAircraft = (flights, type, models) => {
     keys.forEach(key => {
       if (!acc[key]) {
         acc[key] = createInitialTotals({ model: key });
+        // Initialize custom fields
+        acc[key].custom_fields = {};
+        customFields.forEach(field => {
+          if (field.stats_function !== 'none') {
+            acc[key].custom_fields[field.uuid] = { sum: 0, count: 0 };
+          }
+        });
       }
       updateTotals(acc[key], flight);
+      updateCustomFieldTotals(acc[key], flight, customFields);
     });
 
     return acc;
