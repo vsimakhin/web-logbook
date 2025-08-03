@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Dashboard filters error
+
 ## [3.5.0] - 31.07.2025
 
 - Fix: Tooltip/description overlap for the input fields
@@ -31,12 +35,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - New: Custom logbook table pagination. You can set your custom rows numbers instead of standard `5, 10, 15, 20, 25, 30, 50, 100` for the logbook table
 - Update: Updated material-react-table npm package and fixed the issue with filters for the text columns.
 - Update: Update golang and npm packages
-
-## [3.2.0] - 10.06.2025
-
-- New: Added custom fields functionality. Create custom fields (text, number, time, duration) on the Settings page that appear on Flight records. Includes configurable statistics functions with Dashboard integration for data visualization. Note: Import data for custom fields is not yet supported.
-- Doc: Update Readme with some API examples
-- Fix: Quick CSV export for logbook table didn't include CoPilot time
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
