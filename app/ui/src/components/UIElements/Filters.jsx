@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 // MUI UI elements
@@ -31,6 +31,7 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_category: "",
   place: "",
   no_routes: false,
+  show: {},
 };
 
 const STATS_FILTERS = [
@@ -104,20 +105,25 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
   const { data: modelsData } = useQuery({
     queryKey: ['models-categories'],
     queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+    refetchOnWindowFocus: false,
   });
 
-  const handleChange = (key, value) => { setFilter(prev => ({ ...prev, [key]: value })) };
-  const handleStatsStateChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
+    setFilter(prev => ({ ...prev, [key]: value }))
+  }, []);
+
+  const handleStatsStateChange = useCallback((key, value) => {
     setFilterStatsState(prev => ({ ...prev, [key]: value }));
-    setFilter(prev => ({ ...prev, show: { ...prev.hide, [key]: value } }));
-  }
+    setFilter(prev => ({ ...prev, show: { ...prev.show, [key]: value } }));
+  }, [setFilterStatsState, setFilter]);
 
   const handleQuickSelect = (_, value) => {
     const range = dateRanges.find(r => r.label === value);
     if (range) {
       const { start, end } = range.fn();
-      handleChange('start_date', start);
-      handleChange('end_date', end);
+      setFilter(prev => ({ ...prev, 'start_date': start, 'end_date': end }));
     }
   };
 
@@ -128,7 +134,9 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
     callbackFunction(filteredData, filter);
   }, [data, filter, modelsData]);
 
-  useEffect(() => { handleQuickSelect(null, options.defaultQuickSelect) }, [options.defaultQuickSelect]);
+  useEffect(() => {
+    handleQuickSelect(null, options.defaultQuickSelect)
+  }, [options.defaultQuickSelect]);
 
   return (
     <>
