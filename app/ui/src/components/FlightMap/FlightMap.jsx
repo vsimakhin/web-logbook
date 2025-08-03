@@ -132,7 +132,7 @@ const drawTrackLog = (flightTrack, vectorSource) => {
   vectorSource.addFeature(feature);
 }
 
-export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => {
+export const FlightMap = ({ data, options = { noRoutes: false, noTracks: true }, title = "Flight Map", sx }) => {
   const navigate = useNavigate();
   const mapRef = useRef(null);
   const containerRef = useRef(null);
@@ -211,13 +211,13 @@ export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => 
             addMarker(features, departure);
             addMarker(features, arrival);
 
-            if (routes) {
+            if (!options.noRoutes) {
               setDistance((prev) => prev + flight.distance);
-
+              drawGreatCircleLine(departure, arrival, vectorSource);
+            }
+            if (!options.noTracks) {
               if (flight.track) {
                 drawTrackLog(flight.track, vectorSource);
-              } else {
-                drawGreatCircleLine(departure, arrival, vectorSource);
               }
             }
             return { departure, arrival };
@@ -261,7 +261,7 @@ export const FlightMap = ({ data, routes = true, title = "Flight Map", sx }) => 
             <CardContent sx={{ height: '100%' }}>
               <CardHeader title={title} />
               <div ref={mapRef} style={{ width: '100%', height: 'calc(100% - 35px)', borderRadius: '4px', overflow: 'hidden' }}></div>
-              {distance >= 0 && (
+              {distance > 0 && (
                 <Typography>{`Distance: ${distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} nm / ${(distance * 1.852).toLocaleString(undefined, { maximumFractionDigits: 2 })} km`}</Typography>
               )}
             </CardContent>

@@ -31,6 +31,7 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_category: "",
   place: "",
   no_routes: false,
+  no_tracks: true,
   show: {},
 };
 
@@ -194,11 +195,22 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
           value={filter?.place}
         />
         {options.showNoRoutes &&
-          <FormControlLabel label="No Route Lines" sx={{ width: '100%' }}
-            control={
-              <Switch checked={filter?.no_routes ?? false} onChange={(event) => handleChange("no_routes", event.target.checked)} />
-            }
-          />
+          <>
+            <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+              <FormControlLabel label="No Route Lines" sx={{ width: '100%' }}
+                control={
+                  <Switch checked={filter?.no_routes ?? false} onChange={(event) => handleChange("no_routes", event.target.checked)} />
+                }
+              />
+            </Grid>
+            <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+              <FormControlLabel label="No Tracks" sx={{ width: '100%' }}
+                control={
+                  <Switch checked={filter?.no_tracks ?? true} onChange={(event) => handleChange("no_tracks", event.target.checked)} />
+                }
+              />
+            </Grid>
+          </>
         }
         {options.showStatsFilters &&
           <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
