@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Add option to show/hide tracks and routes on the `Map` page
 - Fix: Dashboard filters error
 
 ## [3.5.0] - 31.07.2025
