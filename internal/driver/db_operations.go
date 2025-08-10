@@ -29,7 +29,7 @@ var queries = map[string]map[int]string{
 		checkTable:  "SELECT * FROM %s WHERE 1=2",
 		createTable: "CREATE TABLE %s (%s %s PRIMARY KEY)",
 		getColumns:  "PRAGMA table_info(%s)",
-		alterTable:  "ALTER TABLE %s ADD COLUMN %s %s",
+		alterTable:  "ALTER TABLE %s ADD COLUMN %s %s %s",
 		dropView:    "DROP VIEW IF EXISTS %s",
 		createView:  "CREATE VIEW %s AS %s",
 		checkIndex:  "PRAGMA index_list(%s)",
@@ -39,7 +39,7 @@ var queries = map[string]map[int]string{
 		checkTable:  "SELECT * FROM %s WHERE 1=2",
 		createTable: "CREATE TABLE %s (%s %s PRIMARY KEY);",
 		getColumns:  "SHOW COLUMNS FROM %s",
-		alterTable:  "ALTER TABLE %s ADD COLUMN %s %s",
+		alterTable:  "ALTER TABLE %s ADD COLUMN %s %s %s",
 		dropView:    "DROP VIEW IF EXISTS %s",
 		createView:  "CREATE VIEW %s AS %s",
 		checkIndex:  "SELECT index_name FROM information_schema.statistics WHERE table_name = '%s'",
@@ -162,7 +162,7 @@ func (t *Table) ensureColumnsExist(ctx context.Context, db *sql.DB, engine strin
 
 	for _, column := range t.Columns {
 		if _, exists := existingColumns[column.Name]; !exists {
-			alterQuery := fmt.Sprintf(queries[engine][alterTable], t.Name, column.Name, column.Type[engine])
+			alterQuery := fmt.Sprintf(queries[engine][alterTable], t.Name, column.Name, column.Type[engine], column.Properties)
 			if _, err := db.ExecContext(ctx, alterQuery); err != nil {
 				return fmt.Errorf("failed to add column %s to table %s: %w", column.Name, t.Name, err)
 			}

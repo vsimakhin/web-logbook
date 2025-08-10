@@ -128,7 +128,7 @@ var customFieldsTable = NewTable("custom_fields", "uuid", UUID,
 	[]Column{
 		{Name: "name", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "description", Type: SmallText, Properties: "NOT NULL DEFAULT ''"},
-		{Name: "category", Type: SmallText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "category", Type: SmallText, Properties: "NOT NULL DEFAULT 'Custom'"},
 		{Name: "type", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "stats_function", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "size_xs", Type: SmallInt, Properties: "NOT NULL"},
