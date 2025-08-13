@@ -27,6 +27,7 @@ import PdfExportA4Page from './pages/PdfExportA4Page.jsx';
 import PdfExportA5Page from './pages/PdfExportA5Page.jsx';
 import ImportPage from './pages/ImportPage.jsx';
 import CurrencyPage from './pages/CurrencyPage.jsx';
+import PersonsPage from './pages/PersonsPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
           },
           { path: 'map', element: <MapPage /> },
           { path: 'aircrafts', element: <AircraftsPage /> },
+          { path: 'persons', element: <PersonsPage /> }, 
           { path: 'airports', element: <AirportsPage /> },
           {
             path: 'stats', children: [

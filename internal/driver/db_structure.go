@@ -137,6 +137,20 @@ var customFieldsTable = NewTable("custom_fields", "uuid", UUID,
 		{Name: "display_order", Type: SmallInt, Properties: "NOT NULL"},
 	})
 
+var personsTable = NewTable("persons", "uuid", UUID,
+	[]Column{
+		{Name: "first_name", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "middle_name", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "last_name", Type: SmallText, Properties: "NOT NULL"},
+	})
+
+var personToLogTable = NewTable("person_to_log", "uuid", UUID,
+	[]Column{
+		{Name: "person_uuid", Type: UUID, Properties: "NOT NULL"},
+		{Name: "log_uuid", Type: UUID, Properties: "NOT NULL"},
+		{Name: "role", Type: SmallText, Properties: "NOT NULL"},
+	})
+
 var logbookView = NewView("logbook_view",
 	SQLQuery{
 		SQLite: `

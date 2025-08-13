@@ -85,6 +85,14 @@ type Airport struct {
 	Lon       float64 `json:"lon"`
 }
 
+// Person is a structure for person records
+type Person struct {
+	UUID       string `json:"uuid"`
+	FirstName  string `json:"first_name"`
+	MiddleName string `json:"middle_name"`
+	LastName   string `json:"last_name"`
+}
+
 type ColumnsWidth struct {
 	Col1  float64 `json:"col1"`
 	Col2  float64 `json:"col2"`
