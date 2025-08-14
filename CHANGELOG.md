@@ -1,7 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [3.6.0] - 14.08.2025
 
+- New: Custom fields support in the main logbook table and stats tables
 - New: Add option to show/hide tracks and routes on the `Map` page
 - Fix: Dashboard filters error
 
