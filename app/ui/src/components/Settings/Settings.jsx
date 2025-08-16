@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
@@ -19,6 +19,7 @@ export const Settings = memo(() => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['settings'],
     queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
+    refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load settings' });
 
@@ -28,7 +29,7 @@ export const Settings = memo(() => {
     }
   }, [data]);
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setSettings((settings) => {
       const keys = key.split('.'); // Split key by dots to handle nesting
       let updatedsettings = { ...settings }; // Create a shallow copy of the settings object
@@ -48,7 +49,7 @@ export const Settings = memo(() => {
 
       return updatedsettings;
     });
-  };
+  }, []);
 
   return (
     <>
