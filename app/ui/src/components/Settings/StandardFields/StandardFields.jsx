@@ -8,6 +8,8 @@ import CardHeader from "../../UIElements/CardHeader";
 import TextField from "../../UIElements/TextField";
 import { memo } from 'react';
 import SaveSettingsButton from '../SaveSettingsButton';
+import RestoreDefaultsButton from './RestoreDefaultsButton';
+import HelpButton from './HelpButton';
 
 const HEADERS_CONFIG = [
   {
@@ -99,7 +101,11 @@ const HEADERS_CONFIG = [
 ];
 
 const ActionButtons = memo(({ settings }) => (
-  <SaveSettingsButton settings={settings} />
+  <>
+    <HelpButton />
+    <RestoreDefaultsButton />
+    <SaveSettingsButton settings={settings} />
+  </>
 ));
 
 export const StandardFields = ({ settings = {}, handleChange }) => {
