@@ -10,10 +10,11 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import GeneralSettings from "./GeneralSettings";
 import LogbookSignature from "./Signature/LogbookSignature";
 import CustomFields from "./CustomFields/CustomFields";
+import StandardFields from "./StandardFields/StandardFields";
 
 export const Settings = memo(() => {
   const navigate = useNavigate();
-  const [settings, setSettings] = useState({});
+  const [settings, setSettings] = useState({ standard_fields_headers: {} });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['settings'],
@@ -59,6 +60,7 @@ export const Settings = memo(() => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+          <StandardFields settings={settings} handleChange={handleChange} />
           <CustomFields />
         </Grid>
       </Grid>
