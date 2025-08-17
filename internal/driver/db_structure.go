@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "8"
+	schemaVersion = "9" // TODO update version before merge
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}

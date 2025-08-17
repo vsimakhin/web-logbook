@@ -100,6 +100,8 @@ func (app *application) routes() *chi.Mux {
 
 		r.Route("/person", func(r chi.Router) {
 			r.With(middleware.Compress(5)).Get("/list", app.HandlerApiPersonList)
+			r.Post("/", app.HandlerApiPersonNew)
+			r.Put("/", app.HandlerApiPersonUpdate)
 		})
 
 		// export

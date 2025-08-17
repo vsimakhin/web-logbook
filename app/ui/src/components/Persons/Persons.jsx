@@ -7,12 +7,16 @@ import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchPersons } from '../../util/http/person';
+import { fetchPersons } from "../../util/http/person";
 import {
   defaultColumnFilterTextFieldProps,
   tableJSONCodec,
 } from "../../constants/constants";
 import Box from "@mui/material/Box";
+import AddPersonButton from "./AddPersonButton";
+import EditPersonButton from './EditPersonButton';
+import DeletePersonButton from "./DeletePersonButton";
+
 const paginationKey = "persons-table-page-size";
 const columnVisibilityKey = "persons-table-column-visibility";
 
@@ -33,7 +37,7 @@ const tableOptions = {
   enableFacetedValues: true,
   enableSorting: true,
   enableColumnActions: true,
-  enableRowActions: false,
+  enableRowActions: true,
 };
 
 export const Persons = () => {
@@ -81,10 +85,22 @@ export const Persons = () => {
 
   const renderTopToolbarCustomActions = useCallback(
     ({ table }) => (
-      <Box sx={{ display: "flex", flexWrap: "wrap" }}>Buttons here</Box>
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+        <AddPersonButton />
+      </Box>
     ),
     []
   );
+
+  const renderRowActions = useCallback(({ row }) => {
+    const payload = row.original;
+    return (
+      <>
+        <EditPersonButton payload={payload} />
+        <DeletePersonButton payload={payload} />
+      </>
+    );
+  }, []);
 
   const table = useMaterialReactTable({
     isLoading,
@@ -94,7 +110,7 @@ export const Persons = () => {
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    // renderRowActions: renderRowActions,
+    renderRowActions: renderRowActions,
     onPaginationChange: setPagination,
     state: { pagination, columnFilters, columnVisibility },
     defaultColumn: {
