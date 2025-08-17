@@ -94,6 +94,7 @@ export const FLIGHT_TIME_SLOT_PROPS = {
       // Allow clearing or partial input
       e.target.value = value;
     },
+    inputMode: 'numeric'
   },
 };
 
