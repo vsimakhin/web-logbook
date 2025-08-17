@@ -93,6 +93,18 @@ type Person struct {
 	LastName   string `json:"last_name"`
 }
 
+type PersonToLog struct {
+	UUID       string `json:"uuid"`
+	PersonUUID string `json:"person_uuid"`
+	LogUUID    string `json:"log_uuid"`
+	Role       string `json:"role"`
+}
+
+type PersonForLog struct {
+	Person
+	Role string `json:"role"`
+}
+
 type ColumnsWidth struct {
 	Col1  float64 `json:"col1"`
 	Col2  float64 `json:"col2"`

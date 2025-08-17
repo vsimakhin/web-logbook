@@ -144,6 +144,10 @@ var personsTable = NewTable("persons", "uuid", UUID,
 		{Name: "last_name", Type: SmallText, Properties: "NOT NULL"},
 	})
 
+// TODO: currently the table has an index of uuid. But this is not necessary as
+// person_uuid + log_uuid together can function as an index (also unique). But
+// current setup doesn't allow that as-is. For now the uuid is just generated on
+// the fly and then never used again.
 var personToLogTable = NewTable("person_to_log", "uuid", UUID,
 	[]Column{
 		{Name: "person_uuid", Type: UUID, Properties: "NOT NULL"},

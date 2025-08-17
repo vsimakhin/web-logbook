@@ -12,6 +12,16 @@ export const fetchPersons = async ({ signal, navigate }) => {
   return await handleFetch(url, options, navigate, 'Cannot fetch persons');
 }
 
+export const fetchPersonsForLog = async ({ signal, navigate, logUuid }) => {
+  const url = `${API_URL}/person/personsForLog/${logUuid}`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch persons for log');
+}
+
 export const createPerson = async ({ payload, navigate }) => {
   const url = `${API_URL}/person`;
   const options = {
@@ -30,4 +40,34 @@ export const updatePerson = async ({ payload, navigate }) => {
     body: JSON.stringify(payload),
   };
   return await handleFetch(url, options, navigate, 'Cannot update person');
+}
+
+export const createPersonToLog = async ({ payload, navigate }) => {
+  const url = `${API_URL}/person/personToLog`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  };
+  return await handleFetch(url, options, navigate, 'Cannot create person-to-log record');
+}
+
+export const updatePersonToLog = async ({ payload, navigate }) => {
+  const url = `${API_URL}/person/personToLog`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  };
+  return await handleFetch(url, options, navigate, 'Cannot update person-to-log record');
+}
+
+export const deletePersonToLog = async ({ payload, navigate }) => {
+  const url = `${API_URL}/person/personToLog`;
+  const options = {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  };
+  return await handleFetch(url, options, navigate, 'Cannot delete person-to-log record');
 }
