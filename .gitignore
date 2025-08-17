@@ -19,3 +19,5 @@ weblogbook-output.log
 certs
 
 app/ui/node_modules/
+
+.vscode/
