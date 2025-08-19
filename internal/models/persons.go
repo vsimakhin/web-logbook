@@ -14,11 +14,11 @@ func (m *DBModel) GetPersonsDBRecordsCount() (count int, err error) {
 }
 
 // fetchPersons is a helper function to fetch persons based on a query and a scan function
-func (m *DBModel) fetchPersons(query string) (persons []Person, err error) {
+func (m *DBModel) fetchPersons(query string, params ...any) (persons []Person, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.QueryContext(ctx, query, params...)
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +39,12 @@ func (m *DBModel) fetchPersons(query string) (persons []Person, err error) {
 func (m *DBModel) GetPersons() (persons []Person, err error) {
 	query := "SELECT uuid, first_name, middle_name, last_name FROM persons"
 	return m.fetchPersons(query)
+}
+
+func (m *DBModel) GetPersonById(uuid string) (person Person, err error) {
+	query := "SELECT uuid, first_name, middle_name, last_name FROM persons WHERE uuid = ?"
+	persons, err := m.fetchPersons(query, uuid)
+	return persons[0], err
 }
 
 func (m *DBModel) GetPersonsForLog(logUuid string) (persons []PersonForLog, err error) {
@@ -141,4 +147,26 @@ func (m *DBModel) DeletePersonToLog(personToLog PersonToLog) (err error) {
 	query := "DELETE FROM person_to_log WHERE log_uuid = ? AND person_uuid = ?"
 	_, err = m.DB.ExecContext(ctx, query, personToLog.LogUUID, personToLog.PersonUUID)
 	return err
+}
+
+func (m *DBModel) GetFlightRecordsForPerson(personUuid string) (records []FlightRecordForPerson, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := "SELECT lb.uuid, ptl.role, lb.date, lb.m_date, lb.departure_place, lb.arrival_place, lb.aircraft_model, lb.reg_name, lb.sim_type FROM person_to_log AS ptl INNER JOIN logbook_view AS lb ON ptl.log_uuid = lb.uuid WHERE ptl.person_uuid = ?"
+	rows, err := m.DB.QueryContext(ctx, query, personUuid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var record FlightRecordForPerson
+		if err = rows.Scan(&record.FlightRecordUUID, &record.Role, &record.Date, &record.MDate, &record.Departure, &record.Arrival, &record.Aircraft.Model, &record.Aircraft.Reg, &record.SimType); err != nil {
+			return records, err
+		}
+		records = append(records, record)
+	}
+
+	return records, nil
 }

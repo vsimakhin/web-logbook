@@ -105,6 +105,20 @@ type PersonForLog struct {
 	Role string `json:"role"`
 }
 
+type FlightRecordForPerson struct {
+	FlightRecordUUID string `json:"flight_record_uuid"`
+	Role             string `json:"role"`
+	Date             string `json:"date"`
+	MDate            string `json:"m_date"`
+	Departure        string `json:"departure"`
+	Arrival          string `json:"arrival"`
+	Aircraft         struct {
+		Model string `json:"model"`
+		Reg   string `json:"reg_name"`
+	} `json:"aircraft"`
+	SimType string `json:"sim_type"`
+}
+
 type ColumnsWidth struct {
 	Col1  float64 `json:"col1"`
 	Col2  float64 `json:"col2"`

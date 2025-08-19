@@ -21,6 +21,17 @@ func (app *application) HandlerApiPersonList(w http.ResponseWriter, r *http.Requ
 	app.writeJSON(w, http.StatusOK, persons)
 }
 
+func (app *application) HandlerApiPersonByID(w http.ResponseWriter, r *http.Request) {
+	uuid := strings.ToLower(chi.URLParam(r, "uuid"))
+	person, err := app.db.GetPersonById(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, person)
+}
+
 // HandlerApiPersonNew adds a new person
 func (app *application) HandlerApiPersonNew(w http.ResponseWriter, r *http.Request) {
 	var person models.Person
@@ -127,7 +138,7 @@ func (app *application) HandlerApiPersonToLogDelete(w http.ResponseWriter, r *ht
 
 // HandlerApiPersonsForLog returns a list of persons
 func (app *application) HandlerApiPersonsForLog(w http.ResponseWriter, r *http.Request) {
-	logUuid := strings.ToLower(chi.URLParam(r, "id"))
+	logUuid := strings.ToLower(chi.URLParam(r, "logUuid"))
 
 	persons, err := app.db.GetPersonsForLog(logUuid)
 	if err != nil {
@@ -136,4 +147,16 @@ func (app *application) HandlerApiPersonsForLog(w http.ResponseWriter, r *http.R
 	}
 
 	app.writeJSON(w, http.StatusOK, persons)
+}
+
+func (app *application) HandlerApiLogsForPerson(w http.ResponseWriter, r *http.Request) {
+	personUuid := strings.ToLower(chi.URLParam(r, "personUuid"))
+
+	records, err := app.db.GetFlightRecordsForPerson(personUuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, records)
 }

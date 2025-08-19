@@ -12,6 +12,16 @@ export const fetchPersons = async ({ signal, navigate }) => {
   return await handleFetch(url, options, navigate, 'Cannot fetch persons');
 }
 
+export const fetchPersonByUuid = async ({ signal, navigate, uuid }) => {
+  const url = `${API_URL}/person/${uuid}`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch person');
+}
+
 export const fetchPersonsForLog = async ({ signal, navigate, logUuid }) => {
   const url = `${API_URL}/person/personsForLog/${logUuid}`;
   const options = {
@@ -20,6 +30,16 @@ export const fetchPersonsForLog = async ({ signal, navigate, logUuid }) => {
     signal: signal,
   };
   return await handleFetch(url, options, navigate, 'Cannot fetch persons for log');
+}
+
+export const fetchLogsForPerson = async ({ signal, navigate, personUuid }) => {
+  const url = `${API_URL}/person/logsForPerson/${personUuid}`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch logs for person');
 }
 
 export const createPerson = async ({ payload, navigate }) => {

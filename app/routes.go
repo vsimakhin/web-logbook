@@ -100,9 +100,11 @@ func (app *application) routes() *chi.Mux {
 
 		r.Route("/person", func(r chi.Router) {
 			r.With(middleware.Compress(5)).Get("/list", app.HandlerApiPersonList)
+			r.Get("/{uuid}", app.HandlerApiPersonByID)
 			r.Post("/", app.HandlerApiPersonNew)
 			r.Put("/", app.HandlerApiPersonUpdate)
-			r.Get("/personsForLog/{id}", app.HandlerApiPersonsForLog)
+			r.Get("/logsForPerson/{personUuid}", app.HandlerApiLogsForPerson)
+			r.Get("/personsForLog/{logUuid}", app.HandlerApiPersonsForLog)
 			r.Post("/personToLog", app.HandlerApiPersonToLogNew)
 			r.Put("/personToLog", app.HandlerApiPersonToLogUpdate)
 			r.Delete("/personToLog", app.HandlerApiPersonToLogDelete)

@@ -7,19 +7,16 @@ import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchPersons } from "../../util/http/person";
 import {
   defaultColumnFilterTextFieldProps,
   tableJSONCodec,
 } from "../../constants/constants";
 import Box from "@mui/material/Box";
-import AddPersonButton from "./AddPersonButton";
-import EditPersonButton from "./EditPersonButton";
-import DeletePersonButton from "./DeletePersonButton";
-import ViewPersonButton from "./ViewPersonButton";
+import { fetchLogsForPerson } from "../../util/http/person";
+import { LinearProgress } from "@mui/material";
 
-const paginationKey = "persons-table-page-size";
-const columnVisibilityKey = "persons-table-column-visibility";
+const paginationKey = "persons-view-flights-table-page-size";
+const columnVisibilityKey = "persons-view-flights-table-column-visibility";
 
 const tableOptions = {
   initialState: { density: "compact" },
@@ -41,13 +38,13 @@ const tableOptions = {
   enableRowActions: true,
   displayColumnDefOptions: {
     "mrt-row-actions": {
-      size: 120, //if using layoutMode that is not 'semantic', the columns will not auto-size, so you need to set the size manually
+      size: 50, //if using layoutMode that is not 'semantic', the columns will not auto-size, so you need to set the size manually
       grow: false,
     },
   },
 };
 
-export const Persons = () => {
+export const PersonsViewFlightsTable = ({ uuid }) => {
   const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -63,21 +60,25 @@ export const Persons = () => {
   );
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["persons"],
-    queryFn: ({ signal }) => fetchPersons({ signal, navigate }),
+    queryKey: ["person-view-flights", uuid],
+    queryFn: ({ signal }) =>
+      fetchLogsForPerson({ signal, personUuid: uuid, navigate }),
   });
-
   useErrorNotification({
     isError,
     error,
-    fallbackMessage: "Failed to load persons",
+    fallbackMessage: "Failed to load flights",
   });
 
   const columns = useMemo(
     () => [
-      { accessorKey: "first_name", header: "First name" },
-      { accessorKey: "middle_name", header: "Middle name" },
-      { accessorKey: "last_name", header: "Last name" },
+      { accessorKey: "date", header: "Date" },
+      { accessorKey: "role", header: "Role" },
+      { accessorKey: "departure", header: "From" },
+      { accessorKey: "arrival", header: "To" },
+      { accessorKey: "aircraft.model", header: "Model" },
+      { accessorKey: "aircraft.reg_name", header: "Registration" },
+      { accessorKey: "sim_type", header: "Sim" },
     ],
     []
   );
@@ -91,23 +92,13 @@ export const Persons = () => {
   }, []);
 
   const renderTopToolbarCustomActions = useCallback(
-    ({ table }) => (
-      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-        <AddPersonButton />
-      </Box>
-    ),
+    ({ table }) => <Box sx={{ display: "flex", flexWrap: "wrap" }}></Box>,
     []
   );
 
   const renderRowActions = useCallback(({ row }) => {
     const payload = row.original;
-    return (
-      <Box>
-        <EditPersonButton payload={payload} />
-        <DeletePersonButton payload={payload} />
-        <ViewPersonButton payload={payload} />
-      </Box>
-    );
+    return <Box></Box>;
   }, []);
 
   const table = useMaterialReactTable({
@@ -129,9 +120,10 @@ export const Persons = () => {
 
   return (
     <>
+      {isLoading && <LinearProgress />}
       <MaterialReactTable table={table} />
     </>
   );
 };
 
-export default Persons;
+export default PersonsViewFlightsTable;
