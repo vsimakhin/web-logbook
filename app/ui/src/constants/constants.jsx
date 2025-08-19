@@ -66,7 +66,7 @@ export const PLACE_SLOT_PROPS = {
   htmlInput: { maxLength: 32, style: { textTransform: 'uppercase' }, onInput: (e) => { e.target.value = e.target.value.toUpperCase() } }
 }
 export const TIME_SLOT_PROPS = {
-  htmlInput: { maxLength: 4, onInput: (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, '') } }
+  htmlInput: { maxLength: 4, onInput: (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, '') }, inputMode: 'numeric' }
 }
 
 export const FLIGHT_TIME_SLOT_PROPS = {

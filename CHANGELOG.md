@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Add `numeric` property for Time and Landing fields to show a numeric keyboard on mobile devices for better UX @danielkappelle
+
 ## [3.6.0] - 14.08.2025
 
 - New: Custom fields support in the main logbook table and stats tables
