@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: track is not displayed on the Flight record map
 - Update: Add `numeric` property for Time and Landing fields to show a numeric keyboard on mobile devices for better UX @danielkappelle
 
 ## [3.6.0] - 14.08.2025
