@@ -1,11 +1,9 @@
-// MUI UI elements
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-// MUI Icons
+import { Link } from "react-router-dom";
 import { printPerson } from '../../util/helpers';
-import EditFlightrecordPersonButton from './EditFlightRecordPersonButton';
 import DeletePersonToLogButton from './DeletePersonToLogButton';
-// Custom
+import EditFlightrecordPersonButton from './EditFlightRecordPersonButton';
 
 export const PersonForLog = ({ person, logUuid }) => {
   return (
@@ -13,8 +11,13 @@ export const PersonForLog = ({ person, logUuid }) => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <EditFlightrecordPersonButton person={person} logUuid={logUuid} />
         <DeletePersonToLogButton person={person} logUuid={logUuid} />
-        <Typography variant="body2">
+        <Typography variant="body2" color="primary">
+          <Link
+              to={`/persons/${person.uuid}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
           {printPerson(person)} ({person.role})
+          </Link>
         </Typography>
       </Box>
     </>

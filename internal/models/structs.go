@@ -106,13 +106,13 @@ type PersonForLog struct {
 }
 
 type FlightRecordForPerson struct {
-	FlightRecordUUID string `json:"flight_record_uuid"`
-	Role             string `json:"role"`
-	Date             string `json:"date"`
-	MDate            string `json:"m_date"`
-	Departure        string `json:"departure"`
-	Arrival          string `json:"arrival"`
-	Aircraft         struct {
+	LogUUID   string `json:"log_uuid"`
+	Role      string `json:"role"`
+	Date      string `json:"date"`
+	MDate     string `json:"m_date"`
+	Departure string `json:"departure"`
+	Arrival   string `json:"arrival"`
+	Aircraft  struct {
 		Model string `json:"model"`
 		Reg   string `json:"reg_name"`
 	} `json:"aircraft"`

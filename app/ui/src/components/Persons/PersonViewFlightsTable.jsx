@@ -14,6 +14,8 @@ import {
 import Box from "@mui/material/Box";
 import { fetchLogsForPerson } from "../../util/http/person";
 import { LinearProgress } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import { Link } from "react-router-dom";
 
 const paginationKey = "persons-view-flights-table-page-size";
 const columnVisibilityKey = "persons-view-flights-table-column-visibility";
@@ -35,13 +37,7 @@ const tableOptions = {
   enableFacetedValues: true,
   enableSorting: true,
   enableColumnActions: true,
-  enableRowActions: true,
-  displayColumnDefOptions: {
-    "mrt-row-actions": {
-      size: 50, //if using layoutMode that is not 'semantic', the columns will not auto-size, so you need to set the size manually
-      grow: false,
-    },
-  },
+  enableRowActions: false
 };
 
 export const PersonsViewFlightsTable = ({ uuid }) => {
@@ -72,13 +68,27 @@ export const PersonsViewFlightsTable = ({ uuid }) => {
 
   const columns = useMemo(
     () => [
-      { accessorKey: "date", header: "Date" },
+      {
+        accessorKey: "date",
+        header: "Date",
+        Cell: ({ renderedCellValue, row }) => (
+          <Typography variant="body2" color="primary">
+            <Link
+              to={`/logbook/${row.original.log_uuid}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              {renderedCellValue}
+            </Link>
+          </Typography>
+        ),
+        size: 100,
+      },
       { accessorKey: "role", header: "Role" },
-      { accessorKey: "departure", header: "From" },
-      { accessorKey: "arrival", header: "To" },
-      { accessorKey: "aircraft.model", header: "Model" },
-      { accessorKey: "aircraft.reg_name", header: "Registration" },
-      { accessorKey: "sim_type", header: "Sim" },
+      { accessorKey: "departure", header: "From", size: 100 },
+      { accessorKey: "arrival", header: "To", size: 100 },
+      { accessorKey: "aircraft.model", header: "Model", size: 150 },
+      { accessorKey: "aircraft.reg_name", header: "Reg", size: 100 },
+      { accessorKey: "sim_type", header: "Sim", size: 150 },
     ],
     []
   );
@@ -96,11 +106,6 @@ export const PersonsViewFlightsTable = ({ uuid }) => {
     []
   );
 
-  const renderRowActions = useCallback(({ row }) => {
-    const payload = row.original;
-    return <Box></Box>;
-  }, []);
-
   const table = useMaterialReactTable({
     isLoading,
     columns: columns,
@@ -109,7 +114,6 @@ export const PersonsViewFlightsTable = ({ uuid }) => {
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    renderRowActions: renderRowActions,
     onPaginationChange: setPagination,
     state: { pagination, columnFilters, columnVisibility },
     defaultColumn: {

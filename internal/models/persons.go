@@ -162,7 +162,7 @@ func (m *DBModel) GetFlightRecordsForPerson(personUuid string) (records []Flight
 
 	for rows.Next() {
 		var record FlightRecordForPerson
-		if err = rows.Scan(&record.FlightRecordUUID, &record.Role, &record.Date, &record.MDate, &record.Departure, &record.Arrival, &record.Aircraft.Model, &record.Aircraft.Reg, &record.SimType); err != nil {
+		if err = rows.Scan(&record.LogUUID, &record.Role, &record.Date, &record.MDate, &record.Departure, &record.Arrival, &record.Aircraft.Model, &record.Aircraft.Reg, &record.SimType); err != nil {
 			return records, err
 		}
 		records = append(records, record)

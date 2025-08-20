@@ -9,13 +9,14 @@ import { fetchPersonByUuid } from "../../util/http/person";
 import CardHeader from "../UIElements/CardHeader";
 import { printPerson } from "../../util/helpers";
 import PersonsViewFlightsTable from "./PersonViewFlightsTable";
+import {EditPersonButton} from './EditPersonButton'
 
 export const PersonView = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
 
   const { data: personData, isLoading: personIsLoading, isError: personIsError, error: personError } = useQuery({
-    queryKey: ["person-view", uuid],
+    queryKey: ["persons"],
     queryFn: ({ signal }) => fetchPersonByUuid({ signal, uuid, navigate }),
   });
   useErrorNotification({
@@ -41,7 +42,7 @@ export const PersonView = () => {
             {personIsLoading && <LinearProgress />}
               <CardContent>
             {personData && (
-                <CardHeader title={printPerson(personData)} />
+                <CardHeader title={printPerson(personData)} action={<EditPersonButton payload={personData} />}/>
               )}
               </CardContent>
           </Card>
