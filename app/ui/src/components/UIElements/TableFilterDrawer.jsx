@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 // Custom
 import TextField from './TextField';
+import useSettings from '../../hooks/useSettings';
 
 const drawerSx = {
   '& .MuiDrawer-paper': {
@@ -15,29 +16,25 @@ const drawerSx = {
 
 const containerSx = { width: 350, padding: 2 };
 
-const fieldNames = {
-  "date": "Date",
-  "departure.place": "Departure Place",
-  "departure.time": "Departure Time",
-  "arrival.place": "Arrival Place",
-  "arrival.time": "Arrival Time",
-  "aircraft.model": "Aircraft Type",
-  "aircraft.reg_name": "Aircraft Reg",
-  "time.total_time": "Total Time",
-  "pic_name": "PIC",
-  "remarks": "Remarks"
-};
-
-const fieldTransforms = [
-  { test: (id) => id.includes("landings."), transform: (header) => `${header} Landing` },
-  { test: (id) => id.includes("sim."), transform: () => "Sim Type" },
-  { test: (id) => id.includes("time."), transform: (header) => `${header} Time` }
-];
-
 export const TableFilterDrawer = ({ table, isFilterDrawerOpen, onClose }) => {
 
+  const { isLoading: isSettingsLoading, getStandardFieldName } = useSettings();
+
+  const fieldNames = useMemo(() => ({
+    "departure.place": `${getStandardFieldName("departure")} ${getStandardFieldName("dep_place")}`,
+    "departure.time": `${getStandardFieldName("departure")} ${getStandardFieldName("dep_time")}`,
+    "arrival.place": `${getStandardFieldName("arrival")} ${getStandardFieldName("arr_place")}`,
+    "arrival.time": `${getStandardFieldName("arrival")} ${getStandardFieldName("arr_time")}`,
+    "aircraft.model": getStandardFieldName("model"),
+    "aircraft.reg_name": getStandardFieldName("reg"),
+    "pic_name": getStandardFieldName("pic_name"),
+    "remarks": getStandardFieldName("remarks"),
+    "sim.type": `${getStandardFieldName("fstd")} ${getStandardFieldName("sim_type")}`,
+  }), [getStandardFieldName]);
+
+
   const filteredHeaders = useMemo(() => {
-    if (!table || !table.getLeafHeaders) {
+    if (!table || !table.getLeafHeaders || isSettingsLoading) {
       return [];
     }
 
@@ -59,7 +56,7 @@ export const TableFilterDrawer = ({ table, isFilterDrawerOpen, onClose }) => {
     } catch (error) {
       return [];
     }
-  }, [table, isFilterDrawerOpen]);
+  }, [table, isSettingsLoading]);
 
   const renderFilterComponent = useCallback((header) => {
     const column = header.column;
@@ -68,12 +65,7 @@ export const TableFilterDrawer = ({ table, isFilterDrawerOpen, onClose }) => {
 
     // If it's a text filter or no specific filter variant, render custom TextField
     if (filterVariant === 'text' || !filterVariant) {
-      let fieldName = fieldNames[id] || column.columnDef.header;
-
-      const transform = fieldTransforms.find(t => t.test(id));
-      if (transform) {
-        fieldName = transform.transform(column.columnDef.header);
-      }
+      const fieldName = fieldNames[id] || column.columnDef.header;
 
       return (
         <Box key={header.id}>
@@ -89,7 +81,7 @@ export const TableFilterDrawer = ({ table, isFilterDrawerOpen, onClose }) => {
     }
 
     return <MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />;
-  }, [table]);
+  }, [table, fieldNames]);
 
   return (
     <>

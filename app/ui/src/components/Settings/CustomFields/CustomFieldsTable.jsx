@@ -77,7 +77,6 @@ export const CustomFieldsTable = () => {
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
-      {/* <HelpButton /> */}
       <MRT_ToggleGlobalFilterButton table={table} />
       <MRT_ShowHideColumnsButton table={table} />
       <MRT_ToggleFullScreenButton table={table} />

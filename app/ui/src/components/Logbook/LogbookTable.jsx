@@ -23,9 +23,9 @@ import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import TableHeader from '../UIElements/TableHeader';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import { fetchSettings } from '../../util/http/settings';
 import { fetchCustomFields } from '../../util/http/fields';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
+import useSettings from '../../hooks/useSettings';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
@@ -56,15 +56,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  // Load settings including pagination options
-  const { data: settings, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
-    queryKey: ['settings'],
-    queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    refetchOnWindowFocus: false,
-  });
-  useErrorNotification({ isError: isSettingsError, error: settingsError, fallbackMessage: 'Failed to load settings' });
+  const { isSettingsLoading, getStandardFieldName, paginationOptions } = useSettings();
 
   // Load the list of custom fields
   const { data: customFields, isLoading: isCustomFieldsLoading, isError: isCustomFieldsError, error: customFieldsError } = useQuery({
@@ -76,20 +68,6 @@ export const LogbookTable = ({ data, isLoading }) => {
   });
   useErrorNotification({ isError: isCustomFieldsError, error: customFieldsError, fallbackMessage: 'Failed to load custom fields' });
 
-  // Parse pagination options from settings
-  const paginationOptions = useMemo(() => {
-    const defaultOptions = [5, 10, 15, 20, 25, 30, 50, 100];
-    if (settings?.logbook_pagination) {
-      try {
-        const options = settings.logbook_pagination.split(',').map(opt => parseInt(opt.trim()));
-        return options.length > 0 ? options : defaultOptions;
-      } catch (error) {
-        return defaultOptions;
-      }
-    }
-    return defaultOptions;
-  }, [settings?.logbook_pagination]);
-
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
     timeFilterFn: timeFilterFn,
@@ -97,100 +75,105 @@ export const LogbookTable = ({ data, isLoading }) => {
   }), []);
 
   const columns = useMemo(() => {
-    if (isCustomFieldsLoading) {
+    if (isCustomFieldsLoading || isSettingsLoading) {
       return [];
     }
 
     return [
       {
-        header: "Date", ...renderTextProps, columns: [
+        header: <TableHeader title={getStandardFieldName("date")} />, ...renderTextProps, columns: [
           createDateColumn("date", "", 90),
         ]
       },
       {
-        header: "Departure", ...renderProps, columns: [
-          createColumn("departure.place", "Place", 55),
-          createColumn("departure.time", "Time", 50),
-          ...createCustomFieldColumns(customFields, "Departure")
+        header: <TableHeader title={getStandardFieldName("departure")} />, ...renderProps, columns: [
+          createColumn("departure.place", getStandardFieldName("dep_place"), 55),
+          createColumn("departure.time", getStandardFieldName("dep_time"), 50),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("departure"))
         ]
       },
       {
-        header: "Arrival", columns: [
-          createColumn("arrival.place", "Place", 55),
-          createColumn("arrival.time", "Time", 50),
-          ...createCustomFieldColumns(customFields, "Arrival")
+        header: <TableHeader title={getStandardFieldName("arrival")} />, columns: [
+          createColumn("arrival.place", getStandardFieldName("arr_place"), 55),
+          createColumn("arrival.time", getStandardFieldName("arr_time"), 50),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("arrival"))
         ]
       },
       {
-        header: "Aircraft", columns: [
-          createColumn("aircraft.model", "Type", 80),
-          createColumn("aircraft.reg_name", "Reg", 80, false, renderTotalFooter()),
-          ...createCustomFieldColumns(customFields, "Aircraft")
+        header: <TableHeader title={getStandardFieldName("aircraft")} />, columns: [
+          createColumn("aircraft.model", getStandardFieldName("model"), 80),
+          createColumn("aircraft.reg_name", getStandardFieldName("reg"), 80, false, renderTotalFooter()),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("aircraft"))
         ]
       },
       {
-        header: <TableHeader title="Single Pilot" />,
+        header: <TableHeader title={getStandardFieldName("spt")} />,
         columns: [
-          createTimeColumn("time.se_time", "SE"),
-          createTimeColumn("time.me_time", "ME"),
+          createTimeColumn("time.se_time", getStandardFieldName("se")),
+          createTimeColumn("time.me_time", getStandardFieldName("me")),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("spt"))
         ]
       },
       {
-        header: "MCC", columns: [
-          createTimeColumn("time.mcc_time", "MCC")
+        header: <TableHeader title={getStandardFieldName("mcc")} />, columns: [
+          createTimeColumn("time.mcc_time", ""),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("mcc"))
         ]
       },
       {
-        header: "Total", columns: [
-          createTimeColumn("time.total_time", "")
+        header: <TableHeader title={getStandardFieldName("total")} />, columns: [
+          createTimeColumn("time.total_time", ""),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("total"))
         ]
       },
       {
-        header: <TableHeader title="PIC Name" />,
+        header: <TableHeader title={getStandardFieldName("pic_name")} />,
         columns: [
           createColumn("pic_name", "", 150, true)
         ]
       },
       {
-        header: "Landings", columns: [
-          createLandingColumn("landings.day", "Day"),
-          createLandingColumn("landings.night", "Night")
+        header: <TableHeader title={getStandardFieldName("landings")} />, columns: [
+          createLandingColumn("landings.day", getStandardFieldName("land_day")),
+          createLandingColumn("landings.night", getStandardFieldName("land_night")),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("landings"))
         ]
       },
       {
-        header: <TableHeader title="Operation Condition Time" />,
+        header: <TableHeader title={getStandardFieldName("oct")} />,
         columns: [
-          createTimeColumn("time.night_time", "Night"),
-          createTimeColumn("time.ifr_time", "IFR"),
+          createTimeColumn("time.night_time", getStandardFieldName("night")),
+          createTimeColumn("time.ifr_time", getStandardFieldName("ifr")),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("oct"))
         ]
       },
       {
-        header: <TableHeader title="Pilot Function Time" />,
+        header: <TableHeader title={getStandardFieldName("pft")} />,
         columns: [
-          createTimeColumn("time.pic_time", "PIC"),
-          createTimeColumn("time.co_pilot_time", "COP"),
-          createTimeColumn("time.dual_time", "Dual"),
-          createTimeColumn("time.instructor_time", "Instr"),
-          ...createCustomFieldColumns(customFields, "Pilot Function Time")
+          createTimeColumn("time.pic_time", getStandardFieldName("pic")),
+          createTimeColumn("time.co_pilot_time", getStandardFieldName("cop")),
+          createTimeColumn("time.dual_time", getStandardFieldName("dual")),
+          createTimeColumn("time.instructor_time", getStandardFieldName("instr")),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("pft"))
         ]
       },
       {
-        header: <TableHeader title="FSTD Session" />,
+        header: <TableHeader title={getStandardFieldName("fstd")} />,
         columns: [
-          createColumn("sim.type", "Type", 70),
-          createTimeColumn("sim.time", "Time"),
-          ...createCustomFieldColumns(customFields, "FSTD Session")
+          createColumn("sim.type", getStandardFieldName("sim_type"), 70),
+          createTimeColumn("sim.time", getStandardFieldName("sim_time")),
+          ...createCustomFieldColumns(customFields, getStandardFieldName("fstd"))
         ]
       },
       ...createCustomFieldColumnGroup(customFields),
       {
-        header: "Remarks", grow: true, columns: [
+        header: <TableHeader title={getStandardFieldName("remarks")} />, grow: true, columns: [
           { accessorKey: "remarks", header: "", grow: true, ...renderTextProps },
-          ...createCustomFieldColumns(customFields, "Remarks")
+          ...createCustomFieldColumns(customFields, getStandardFieldName("remarks"))
         ]
       }
     ];
-  }, [customFields, isCustomFieldsLoading]);
+  }, [customFields, isCustomFieldsLoading, getStandardFieldName]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -219,8 +202,8 @@ export const LogbookTable = ({ data, isLoading }) => {
   }, []);
 
   const getMuiFilterTextFieldProps = useCallback(({ column }) => (
-    getFilterLabel(column)
-  ), []);
+    getFilterLabel(column, getStandardFieldName)
+  ), [getStandardFieldName, getFilterLabel]);
 
   const table = useMaterialReactTable({
     columns: columns,

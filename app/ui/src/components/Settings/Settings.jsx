@@ -1,27 +1,17 @@
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { memo, useCallback, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
-import { fetchSettings } from "../../util/http/settings";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
 import GeneralSettings from "./GeneralSettings";
 import LogbookSignature from "./Signature/LogbookSignature";
 import CustomFields from "./CustomFields/CustomFields";
 import StandardFields from "./StandardFields/StandardFields";
+import useSettings from "../../hooks/useSettings";
 
 export const Settings = memo(() => {
-  const navigate = useNavigate();
   const [settings, setSettings] = useState({ standard_fields_headers: {} });
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['settings'],
-    queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
-    refetchOnWindowFocus: false,
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load settings' });
+  const { data, isLoading } = useSettings();
 
   useEffect(() => {
     if (data) {
