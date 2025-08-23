@@ -90,3 +90,13 @@ export const fetchLatestRelease = async ({ signal }) => {
   };
   return await handleFetch(url, options, null, 'Cannot fetch latest release');
 }
+
+export const fetchStandardFields = async ({ signal, navigate }) => {
+  const url = `${API_URL}/settings/standard-fields`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch standard fields');
+}
