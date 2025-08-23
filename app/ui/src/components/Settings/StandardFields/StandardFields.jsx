@@ -100,10 +100,10 @@ const HEADERS_CONFIG = [
   },
 ];
 
-const ActionButtons = memo(({ settings }) => (
+const ActionButtons = memo(({ settings, handleChange }) => (
   <>
     <HelpButton />
-    <RestoreDefaultsButton />
+    <RestoreDefaultsButton handleChange={handleChange} />
     <SaveSettingsButton settings={settings} />
   </>
 ));
@@ -120,7 +120,7 @@ export const StandardFields = ({ settings = {}, handleChange }) => {
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
-          <CardHeader title="Standard Fields" action={<ActionButtons settings={settings} />} />
+          <CardHeader title="Standard Fields" action={<ActionButtons settings={settings} handleChange={handleHeaderChange} />} />
           <Grid container spacing={1}>
             {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
               <Grid size={size} key={`group-${groupIndex}`}>
