@@ -21,6 +21,7 @@ import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import ResetTrackButton from "./ResetTrackButton";
 import FlightTitle from "./FlightTitle";
+import useSettings from '../../hooks/useSettings';
 
 const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
   <>
@@ -35,6 +36,7 @@ const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
+  const { getStandardFieldName } = useSettings();
 
   return (
     <>
@@ -45,15 +47,17 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           />
           <Grid container spacing={1} >
             <DatePicker gsize={{ xs: 12, sm: 4, md: 4, lg: 3, xl: 3 }}
-              id="date" label="Date" handleChange={handleChange}
+              id="date"
+              handleChange={handleChange}
+              label={getStandardFieldName("date")}
               value={dayjs(flight?.date ?? dayjs().format('DD/MM/YYYY'), "DD/MM/YYYY")}
             />
           </Grid>
 
           <Grid container spacing={1} sx={{ mt: 1 }}>
-            <PlaceField flight={flight} handleChange={handleChange} type="departure" />
-            <PlaceField flight={flight} handleChange={handleChange} type="arrival" />
-            <LandingFields flight={flight} handleChange={handleChange} />
+            <PlaceField flight={flight} handleChange={handleChange} type="departure" getStandardFieldName={getStandardFieldName} />
+            <PlaceField flight={flight} handleChange={handleChange} type="arrival" getStandardFieldName={getStandardFieldName} />
+            <LandingFields flight={flight} handleChange={handleChange} getStandardFieldName={getStandardFieldName} />
           </Grid>
 
           <Grid container spacing={1} sx={{ mt: 1 }}>

@@ -3,10 +3,10 @@ import Grid from '@mui/material/Grid2';
 import Tooltip from '@mui/material/Tooltip';
 import dayjs from 'dayjs';
 
-export const DatePicker = ({ gsize, id, name = id, label, handleChange, ...props }) => {
+export const DatePicker = ({ gsize, id, name = id, label, handleChange, tooltip = label, ...props }) => {
   return (
     <Grid size={gsize}>
-      <Tooltip title={props.tooltip} disableInteractive>
+      <Tooltip title={tooltip} disableInteractive>
         <div>
           <MUIDatePicker
             id={id}
