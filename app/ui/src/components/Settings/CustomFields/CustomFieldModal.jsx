@@ -18,6 +18,7 @@ import Select from '../../UIElements/Select';
 import { createCustomField, updateCustomField } from '../../../util/http/fields';
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { queryClient } from '../../../util/http/http';
+import useSettings from '../../../hooks/useSettings';
 
 const typeOptions = ["text", "number", "time", "duration"];
 
@@ -27,8 +28,6 @@ const statsFunction = {
   time: ["none", "count"],
   duration: ["none", "sum", "average", "count"],
 }
-
-const categoryOptions = ["Custom", "Departure", "Arrival", "Aircraft", "Pilot Function Time", "FSTD Session", "Remarks"];
 
 const CloseDialogButton = memo(({ onClose }) => {
   return (
@@ -68,6 +67,7 @@ const SaveButton = memo(({ field, onClose }) => {
 
 export const CustomFieldModal = memo(({ open, onClose, payload }) => {
   const [field, setField] = useState({ ...payload });
+  const { getStandardFieldName } = useSettings();
 
   useEffect(() => {
     if (payload) {
@@ -77,6 +77,21 @@ export const CustomFieldModal = memo(({ open, onClose, payload }) => {
 
   const title = useMemo(() => field?.uuid === "new" ? "New Custom Field" : "Edit Custom Field", [field?.uuid]);
   const isTypeDisabled = useMemo(() => field.uuid !== "new", [field.uuid]);
+
+  const categoryOptions = useMemo(() => [
+    "Custom",
+    getStandardFieldName("departure"),
+    getStandardFieldName("arrival"),
+    getStandardFieldName("aircraft"),
+    getStandardFieldName("spt"),
+    getStandardFieldName("mcc"),
+    getStandardFieldName("total"),
+    getStandardFieldName("landings"),
+    getStandardFieldName("oct"),
+    getStandardFieldName("pft"),
+    getStandardFieldName("fstd"),
+    getStandardFieldName("remarks")
+  ], [getStandardFieldName]);
 
   const handleChange = useCallback((key, value) => {
     setField(prev => {
@@ -108,21 +123,21 @@ export const CustomFieldModal = memo(({ open, onClose, payload }) => {
             <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="name"
               label="Name"
-              tooltip="Name for the custom field"
+              tooltip="Custom field name"
               handleChange={handleChange}
               value={field.name}
             />
             <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="description"
               label="Description"
-              tooltip="Description/tooltip for the custom field"
+              tooltip="Custom field description"
               handleChange={handleChange}
               value={field.description}
             />
             <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
               id="category"
               label="Category"
-              tooltip="Category or group of the custom field"
+              tooltip="Custom field category"
               handleChange={handleChange}
               value={field.category}
               options={categoryOptions}
@@ -131,7 +146,7 @@ export const CustomFieldModal = memo(({ open, onClose, payload }) => {
             <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
               id="type"
               label="Type"
-              tooltip="Type of the custom field"
+              tooltip="Custom field type"
               handleChange={handleChange}
               value={field.type}
               options={typeOptions}
