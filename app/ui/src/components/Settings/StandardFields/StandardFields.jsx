@@ -1,12 +1,14 @@
 import { useTheme } from '@mui/material/styles';
+import { memo, useCallback } from 'react';
 // MUI
 import Grid from "@mui/material/Grid2";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from "../../UIElements/CardHeader";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 // Custom
 import TextField from "../../UIElements/TextField";
-import { memo } from 'react';
 import SaveSettingsButton from '../SaveSettingsButton';
 import RestoreDefaultsButton from './RestoreDefaultsButton';
 import HelpButton from './HelpButton';
@@ -112,15 +114,26 @@ export const StandardFields = ({ settings = {}, handleChange }) => {
   const theme = useTheme();
   const borderRadius = theme.shape.borderRadius;
 
-  const handleHeaderChange = (id, value) => {
+  const handleHeaderChange = useCallback((id, value) => {
     handleChange(`standard_fields_headers.${id}`, value);
-  };
+  }, [handleChange]);
 
   return (
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
           <CardHeader title="Standard Fields" action={<ActionButtons settings={settings} handleChange={handleHeaderChange} />} />
+          <Grid container spacing={1} sx={{ mb: 2 }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={settings?.enable_custom_names ?? false}
+                  onChange={(event) => handleChange("enable_custom_names", event.target.checked)}
+                />
+              }
+              label="Enable custom names for standard fields"
+            />
+          </Grid>
           <Grid container spacing={1}>
             {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
               <Grid size={size} key={`group-${groupIndex}`}>
@@ -133,6 +146,7 @@ export const StandardFields = ({ settings = {}, handleChange }) => {
                       value={settings.standard_fields_headers[id] ?? ""}
                       gsize={fieldSize}
                       tooltip={label}
+                      disabled={!settings?.enable_custom_names}
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 0,

@@ -25,6 +25,7 @@ export const FlightRecord = () => {
     queryKey: ['flight', id],
     queryFn: ({ signal }) => fetchFlightData({ signal, id, navigate }),
     enabled: id !== "new",
+    refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
 

@@ -6,13 +6,13 @@ import { useCallback, useMemo } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
-import Typography from "@mui/material/Typography";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
 import { convertMinutesToTime, getCustomFieldValue } from '../../../util/helpers';
 import CSVExportButton from '../../UIElements/CSVExportButton';
 import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
+import useSettings from '../../../hooks/useSettings';
 
 const tableOptions = {
   initialState: {
@@ -63,8 +63,10 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
+  const { fieldName } = useSettings();
+
   // Helper function to create custom field columns
-  const createCustomFieldColumn = (field) => {
+  const createCustomFieldColumn = useCallback((field) => {
     const baseColumn = {
       accessorKey: `custom_fields.${field.uuid}`,
       header: field.name,
@@ -79,24 +81,26 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
 
     // Add aggregation for this table (no grouping like in the year table)
     return baseColumn;
-  };
+  }, [getCustomFieldValue]);
 
   const columns = useMemo(() => {
     const baseColumns = [
       { accessorKey: "model", header: type === "type" ? "Type" : "Category", size: 100 },
-      createTimeColumn("time.se_time", "SE"),
-      createTimeColumn("time.me_time", "ME"),
-      createTimeColumn("time.mcc_time", "MCC"),
-      createTimeColumn("time.night_time", "Night"),
-      createTimeColumn("time.ifr_time", "IFR"),
-      createTimeColumn("time.pic_time", "PIC"),
-      createTimeColumn("time.co_pilot_time", "Co-Pilot"),
-      createTimeColumn("time.dual_time", "Dual"),
-      createTimeColumn("time.instructor_time", "Instructor"),
+      createTimeColumn("time.se_time", fieldName("se")),
+      createTimeColumn("time.me_time", fieldName("me")),
+      createTimeColumn("time.mcc_time", fieldName("mcc")),
+      createTimeColumn("time.night_time", fieldName("night")),
+      createTimeColumn("time.ifr_time", fieldName("ifr")),
+      createTimeColumn("time.pic_time", fieldName("pic")),
+      createTimeColumn("time.co_pilot_time", fieldName("cop")),
+      createTimeColumn("time.dual_time", fieldName("dual")),
+      createTimeColumn("time.instructor_time", fieldName("instr")),
       createTimeColumn("time.cc_time", "CC"),
-      createTimeColumn("sim.time", "Sim"),
+      createTimeColumn("sim.time", `${fieldName("fstd")} ${fieldName("sim_time")}`),
       {
-        accessorFn: row => `${row.landings.day}/${row.landings.night}`, header: "D/N", size: 90,
+        accessorFn: row => `${row.landings.day}/${row.landings.night}`,
+        header: `${fieldName("land_day")}/${fieldName("land_night")}`,
+        size: 90,
         muiTableBodyCellProps: { align: "right", sx: { p: 0.5 } },
       },
       {
@@ -115,9 +119,9 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
     return [
       ...baseColumns,
       ...customFieldColumns,
-      createTimeColumn("time.total_time", "Total"),
+      createTimeColumn("time.total_time", fieldName("total")),
     ];
-  }, [type, customFields]);
+  }, [type, customFields, fieldName]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>

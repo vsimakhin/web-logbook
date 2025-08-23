@@ -219,6 +219,7 @@ type Settings struct {
 
 	LogbookPagination     string        `json:"logbook_pagination"`
 	TimeFieldsAutoFormat  byte          `json:"time_fields_auto_format"`
+	EnableCustomNames     bool          `json:"enable_custom_names"`
 	StandardFieldsHeaders ColumnsHeader `json:"standard_fields_headers"`
 
 	AirportDBSource string `json:"airports_db_source"`

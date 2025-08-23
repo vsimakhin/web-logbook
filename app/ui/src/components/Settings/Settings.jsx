@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
@@ -10,14 +10,7 @@ import StandardFields from "./StandardFields/StandardFields";
 import useSettings from "../../hooks/useSettings";
 
 export const Settings = memo(() => {
-  const [settings, setSettings] = useState({ standard_fields_headers: {} });
-  const { data, isLoading } = useSettings();
-
-  useEffect(() => {
-    if (data) {
-      setSettings(data);
-    }
-  }, [data]);
+  const { settings, setSettings, isLoading } = useSettings();
 
   const handleChange = useCallback((key, value) => {
     setSettings((settings) => {

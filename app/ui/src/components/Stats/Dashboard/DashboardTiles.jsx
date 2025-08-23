@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 // MUI
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -8,36 +8,39 @@ import Divider from "@mui/material/Divider";
 import CardHeader from "../../UIElements/CardHeader";
 import Tile from "../../UIElements/Tile";
 import { getStats, getValue } from "../../../util/helpers";
+import useSettings from '../../../hooks/useSettings';
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
 export const DashboardTiles = memo(({ data, filter }) => {
-  const stats = getStats(data);
+  const stats = useMemo(() => getStats(data), [data]);
+  const { fieldNameF } = useSettings();
+
+  const tiles = useMemo(() => [
+    { key: "total_time", title: fieldNameF("total"), path: "totals.time.total_time" },
+    { key: "se_time", title: fieldNameF("se"), path: "totals.time.se_time" },
+    { key: "me_time", title: fieldNameF("me"), path: "totals.time.me_time" },
+    { key: "mcc_time", title: fieldNameF("mcc"), path: "totals.time.mcc_time" },
+    { key: "night_time", title: fieldNameF("night"), path: "totals.time.night_time" },
+    { key: "ifr_time", title: fieldNameF("ifr"), path: "totals.time.ifr_time" },
+    { key: "pic_time", title: fieldNameF("pic"), path: "totals.time.pic_time" },
+    { key: "co_pilot_time", title: fieldNameF("cop"), path: "totals.time.co_pilot_time" },
+    { key: "dual_time", title: fieldNameF("dual"), path: "totals.time.dual_time" },
+    { key: "instructor_time", title: fieldNameF("instr"), path: "totals.time.instructor_time" },
+    { key: "cc_time", title: "Cross-Country", path: "totals.time.cc_time" },
+    { key: "sim_time", title: `${fieldNameF("fstd")} ${fieldNameF("sim_time")}`, path: "totals.sim.time" },
+    { key: "landings", title: `${fieldNameF("landings")} (${fieldNameF("land_day")}/${fieldNameF("land_night")})`, path: "totals.landings", format: (val) => `${val.day}/${val.night}` },
+  ], [fieldNameF]);
 
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent>
         <CardHeader title="Stats" />
         <Grid container spacing={1}>
-          {[
-            { key: "total_time", title: "Total Time", path: "totals.time.total_time" },
-            { key: "se_time", title: "Single Engine", path: "totals.time.se_time" },
-            { key: "me_time", title: "Multi Engine", path: "totals.time.me_time" },
-            { key: "mcc_time", title: "MCC", path: "totals.time.mcc_time" },
-            { key: "night_time", title: "Night", path: "totals.time.night_time" },
-            { key: "ifr_time", title: "IFR", path: "totals.time.ifr_time" },
-            { key: "pic_time", title: "PIC", path: "totals.time.pic_time" },
-            { key: "co_pilot_time", title: "Co-Pilot", path: "totals.time.co_pilot_time" },
-            { key: "dual_time", title: "Dual", path: "totals.time.dual_time" },
-            { key: "instructor_time", title: "Instructor", path: "totals.time.instructor_time" },
-            { key: "cc_time", title: "Cross-Country", path: "totals.time.cc_time" },
-            { key: "sim_time", title: "Simulator", path: "totals.sim.time" },
-            { key: "landings", title: "Landings (D/N)", path: "totals.landings", format: (val) => `${val.day}/${val.night}` },
-          ]
-            .filter(({ key }) => filter?.show?.[key] ?? true) // Apply filtering
-            .map(({ title, path, format }) => {
+          {tiles.filter(({ key }) => filter?.show?.[key] ?? true) // Apply filtering
+            .map(({ key, title, path, format }) => {
               const value = getValue(stats, path);
-              return <Tile key={title} title={title} value={format ? format(value) : value} size={size} />;
+              return <Tile key={key} title={title} value={format ? format(value) : value} size={size} />;
             })}
         </Grid>
         <Divider orientation="horizontal" sx={{ m: 1 }} />

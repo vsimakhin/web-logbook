@@ -3,13 +3,13 @@ import { useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
 import { tableJSONCodec } from '../../constants/constants';
 import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 import OpenCSVButton from './OpenCSVButton';
 import ClearTableButton from './ClearTableButton';
 import RunImportButton from './RunImportButton';
-import { LinearProgress } from '@mui/material';
 
 const paginationKey = 'import-table-page-size';
 const columnVisibilityKey = 'import-table-column-visibility';
