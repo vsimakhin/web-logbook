@@ -8,8 +8,8 @@ const getLandingValue = (val) => (val === 0 ? "" : val ?? "");
 export const LandingFields = memo(({ flight, handleChange, fieldName }) => {
   const labels = useMemo(() => (
     {
-      day: `${fieldName("land_day", true)} ${fieldName("landings", true)} `,
-      night: `${fieldName("land_night", true)} ${fieldName("landings", true)} `,
+      day: `${fieldName("land_day", "flightRecord")} ${fieldName("landings", "flightRecord")} `,
+      night: `${fieldName("land_night", "flightRecord")} ${fieldName("landings", "flightRecord")} `,
     }
   ), [fieldName]);
 

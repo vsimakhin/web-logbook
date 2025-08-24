@@ -5,7 +5,7 @@ import { fetchSettings } from '../util/http/settings';
 import { useErrorNotification } from './useAppNotifications';
 
 const defaultFieldNames = {
-  false: { // table
+  table: {
     date: "Date",
     departure: "Departure",
     dep_place: "Place",
@@ -27,7 +27,7 @@ const defaultFieldNames = {
     land_night: "Night",
     oct: "Operational Condition Time",
     night: "Night",
-    ift: "IFR",
+    ifr: "IFR",
     pft: "Pilot Function Time",
     pic: "PIC",
     cop: "COP",
@@ -38,7 +38,7 @@ const defaultFieldNames = {
     sim_time: "Time",
     remarks: "Remarks",
   },
-  true: { // flight record page
+  flightRecord: { // flight record page
     date: "Date",
     departure: "Departure",
     dep_place: "Place",
@@ -58,10 +58,10 @@ const defaultFieldNames = {
     landings: "Landings",
     land_day: "Day",
     land_night: "Night",
-    oct: "Operational Condition Time",
+    // oct: "Operational Condition Time", // not used on flight record page
     night: "Night",
-    ift: "IFR",
-    pft: "Pilot Function Time",
+    ifr: "IFR",
+    // pft: "Pilot Function Time", // not used on flight record page
     pic: "PIC",
     cop: "Co Pilot",
     dual: "Dual",
@@ -76,7 +76,7 @@ export const useSettings = () => {
   const navigate = useNavigate();
 
   // Load settings
-  const { data: settings, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
+  const { data: settings = {}, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
     queryKey: ['settings'],
     queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
     staleTime: 3600000,
@@ -104,14 +104,14 @@ export const useSettings = () => {
    * @param {boolean} flightRecord - Whether it's for flight record page or tables
    * @returns {string} - field name
    */
-  const fieldName = useCallback((fieldId, flightRecord = false) => {
+  const fieldName = useCallback((fieldId, section = "table") => {
     if (isSettingsLoading) {
       return "";
     }
 
     // check if custom names for standard fields are enabled
     if (!settings?.enable_custom_names) {
-      return defaultFieldNames[flightRecord][fieldId] || fieldId;
+      return defaultFieldNames[section][fieldId] || fieldId;
     }
 
     // Try to get from settings first
