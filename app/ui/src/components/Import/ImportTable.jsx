@@ -112,9 +112,6 @@ export const ImportTable = () => {
     ),
     onPaginationChange: setPagination,
     state: { pagination, columnVisibility },
-    defaultColumn: {
-      muiFilterTextFieldProps: ({ column }) => (getFilterLabel(column)),
-    },
     ...tableOptions,
   });
 

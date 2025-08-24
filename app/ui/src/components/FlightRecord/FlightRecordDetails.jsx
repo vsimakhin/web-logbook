@@ -21,6 +21,7 @@ import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import ResetTrackButton from "./ResetTrackButton";
 import FlightTitle from "./FlightTitle";
+import useSettings from '../../hooks/useSettings';
 
 const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
   <>
@@ -35,6 +36,25 @@ const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
+  const { fieldName } = useSettings();
+
+  const fieldLabels = useMemo(() => ({
+    date: fieldName("date", "flightRecord"),
+    pic_name: fieldName("pic_name", "flightRecord"),
+    total: fieldName("total", "flightRecord"),
+    se: fieldName("se", "flightRecord"),
+    me: fieldName("me", "flightRecord"),
+    mcc: fieldName("mcc", "flightRecord"),
+    night: fieldName("night", "flightRecord"),
+    ifr: fieldName("ifr", "flightRecord"),
+    pic: fieldName("pic", "flightRecord"),
+    cop: fieldName("cop", "flightRecord"),
+    dual: fieldName("dual", "flightRecord"),
+    instr: fieldName("instr", "flightRecord"),
+    sim_type: `${fieldName("fstd", "flightRecord")} ${fieldName("sim_type", "flightRecord")}`,
+    sim_time: `${fieldName("fstd", "flightRecord")} ${fieldName("sim_time", "flightRecord")}`,
+    remarks: fieldName("remarks", "flightRecord"),
+  }), [fieldName]);
 
   return (
     <>
@@ -45,15 +65,17 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           />
           <Grid container spacing={1} >
             <DatePicker gsize={{ xs: 12, sm: 4, md: 4, lg: 3, xl: 3 }}
-              id="date" label="Date" handleChange={handleChange}
+              id="date"
+              handleChange={handleChange}
+              label={fieldLabels.date}
               value={dayjs(flight?.date ?? dayjs().format('DD/MM/YYYY'), "DD/MM/YYYY")}
             />
           </Grid>
 
           <Grid container spacing={1} sx={{ mt: 1 }}>
-            <PlaceField flight={flight} handleChange={handleChange} type="departure" />
-            <PlaceField flight={flight} handleChange={handleChange} type="arrival" />
-            <LandingFields flight={flight} handleChange={handleChange} />
+            <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldName={fieldName} />
+            <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldName={fieldName} />
+            <LandingFields flight={flight} handleChange={handleChange} fieldName={fieldName} />
           </Grid>
 
           <Grid container spacing={1} sx={{ mt: 1 }}>
@@ -67,10 +89,9 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
             />
             <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="pic_name"
-              label="PIC Name"
+              label={fieldLabels.pic_name}
               handleChange={handleChange}
               value={flight.pic_name ?? ""}
-              tooltip="Pilot in Command Name"
               onDoubleClick={() => handleChange("pic_name", "Self")}
             />
           </Grid>
@@ -78,16 +99,16 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           <Divider sx={{ mt: 1 }} />
 
           <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
-            <TimeField id="time.total_time" label="Total Time" handleChange={handleChange} flight={flight} tooltip="Total Time" />
-            <TimeField id="time.se_time" label="Single Engine" handleChange={handleChange} flight={flight} tooltip="Single Engine Time" />
-            <TimeField id="time.me_time" label="Multi Engine" handleChange={handleChange} flight={flight} tooltip="Multi Engine Time" />
-            <TimeField id="time.mcc_time" label="MCC" handleChange={handleChange} flight={flight} tooltip="MCC Time" />
-            <TimeField id="time.night_time" label="Night" handleChange={handleChange} flight={flight} tooltip="Night Time" />
-            <TimeField id="time.ifr_time" label="IFR" handleChange={handleChange} flight={flight} tooltip="IFR Time" />
-            <TimeField id="time.pic_time" label="PIC" handleChange={handleChange} flight={flight} tooltip="PIC Time" />
-            <TimeField id="time.co_pilot_time" label="Co Pilot" handleChange={handleChange} flight={flight} tooltip="SIC/CoPilot Time" />
-            <TimeField id="time.dual_time" label="Dual" handleChange={handleChange} flight={flight} tooltip="Dual Time" />
-            <TimeField id="time.instructor_time" label="Instructor" handleChange={handleChange} flight={flight} tooltip="Instructor Time" />
+            <TimeField id="time.total_time" label={fieldLabels.total} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.se_time" label={fieldLabels.se} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.me_time" label={fieldLabels.me} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.mcc_time" label={fieldLabels.mcc} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.night_time" label={fieldLabels.night} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.ifr_time" label={fieldLabels.ifr} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.pic_time" label={fieldLabels.pic} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.co_pilot_time" label={fieldLabels.cop} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.dual_time" label={fieldLabels.dual} handleChange={handleChange} flight={flight} />
+            <TimeField id="time.instructor_time" label={fieldLabels.instr} handleChange={handleChange} flight={flight} />
           </Grid>
 
           <Divider sx={{ mt: 1 }} />
@@ -95,12 +116,11 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
             <TextField gsize={{ xs: 5, sm: 4, md: 4, lg: 4, xl: 4 }}
               id="sim.type"
-              label="Simulator Type"
+              label={fieldLabels.sim_type}
               handleChange={handleChange}
               value={flight.sim.type ?? ""}
-              tooltip="Simulator Type"
             />
-            <TimeField id="sim.time" label="Sim Time" handleChange={handleChange} flight={flight} tooltip="Simulator Time" />
+            <TimeField id="sim.time" label={fieldLabels.sim_time} handleChange={handleChange} flight={flight} />
           </Grid>
 
           <Divider sx={{ mt: 1 }} />
@@ -108,10 +128,9 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           <Grid container spacing={1} sx={{ mt: 1 }} >
             <TextField gsize={"grow"}
               id="remarks"
-              label="Remarks"
+              label={fieldLabels.remarks}
               handleChange={handleChange}
               value={flight.remarks ?? ""}
-              tooltip="Remarks"
             />
           </Grid>
         </CardContent>

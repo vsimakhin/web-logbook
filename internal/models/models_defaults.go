@@ -35,6 +35,41 @@ var pdfDefaultHeaders = ColumnsHeader{
 	SimTime:   "Time",
 }
 
+// default values for headers for logbook table
+var standardFieldsHeaders = ColumnsHeader{
+	Date:      "Date",
+	Departure: "Departure",
+	Arrival:   "Arrival",
+	Aircraft:  "Aircraft",
+	SPT:       "Single Pilot",
+	MCC:       "MCC",
+	Total:     "Total",
+	PICName:   "PIC Name",
+	Landings:  "Landings",
+	OCT:       "Operational Condition Time",
+	PFT:       "Pilot Function Time",
+	FSTD:      "FSTD Session",
+	Remarks:   "Remarks",
+	DepPlace:  "Place",
+	DepTime:   "Time",
+	ArrPlace:  "Place",
+	ArrTime:   "Time",
+	Model:     "Type",
+	Reg:       "Reg",
+	SE:        "SE",
+	ME:        "ME",
+	LandDay:   "Day",
+	LandNight: "Night",
+	Night:     "Night",
+	IFR:       "IFR",
+	PIC:       "PIC",
+	COP:       "COP",
+	Dual:      "Dual",
+	Instr:     "Instr",
+	SimType:   "Type",
+	SimTime:   "Time",
+}
+
 // default columns width for A4 format
 var pdfA4DefaultColumns = ColumnsWidth{
 	Col1:  12.2,
@@ -142,6 +177,11 @@ func (m *DBModel) CheckDefaultValues() error {
 	if s.AirportDBSource == "" {
 		s.AirportDBSource = "https://github.com/vsimakhin/Airports/raw/master/airports.json"
 		s.NoICAOFilter = false
+		applyDefaults = true
+	}
+
+	if s.StandardFieldsHeaders.Date == "" {
+		s.StandardFieldsHeaders = standardFieldsHeaders
 		applyDefaults = true
 	}
 

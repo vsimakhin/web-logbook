@@ -84,6 +84,7 @@ func (app *application) routes() *chi.Mux {
 			r.Put("/airports", app.HandlerApiSettingsAirports)
 			r.Get("/export/defaults/{format}", app.HandlerApiSettingsExportDefaults)
 			r.Put("/export/{format}", app.HandlerApiSettingsExportUpdate)
+			r.Get("/standard-fields", app.HandlerApiSettingsFieldsDefaults)
 		})
 
 		// airports
