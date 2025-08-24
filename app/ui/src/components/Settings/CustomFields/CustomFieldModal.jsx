@@ -67,7 +67,7 @@ const SaveButton = memo(({ field, onClose }) => {
 
 export const CustomFieldModal = memo(({ open, onClose, payload }) => {
   const [field, setField] = useState({ ...payload });
-  const { getStandardFieldName } = useSettings();
+  const { fieldName } = useSettings();
 
   useEffect(() => {
     if (payload) {
@@ -80,18 +80,18 @@ export const CustomFieldModal = memo(({ open, onClose, payload }) => {
 
   const categoryOptions = useMemo(() => [
     "Custom",
-    getStandardFieldName("departure"),
-    getStandardFieldName("arrival"),
-    getStandardFieldName("aircraft"),
-    getStandardFieldName("spt"),
-    getStandardFieldName("mcc"),
-    getStandardFieldName("total"),
-    getStandardFieldName("landings"),
-    getStandardFieldName("oct"),
-    getStandardFieldName("pft"),
-    getStandardFieldName("fstd"),
-    getStandardFieldName("remarks")
-  ], [getStandardFieldName]);
+    fieldName("departure"),
+    fieldName("arrival"),
+    fieldName("aircraft"),
+    fieldName("spt"),
+    fieldName("mcc"),
+    fieldName("total"),
+    fieldName("landings"),
+    fieldName("oct"),
+    fieldName("pft"),
+    fieldName("fstd"),
+    fieldName("remarks")
+  ], [fieldName]);
 
   const handleChange = useCallback((key, value) => {
     setField(prev => {

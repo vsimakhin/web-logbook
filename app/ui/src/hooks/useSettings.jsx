@@ -4,6 +4,74 @@ import { useNavigate } from 'react-router-dom';
 import { fetchSettings } from '../util/http/settings';
 import { useErrorNotification } from './useAppNotifications';
 
+const defaultFieldNames = {
+  false: { // table
+    date: "Date",
+    departure: "Departure",
+    dep_place: "Place",
+    dep_time: "Time",
+    arrival: "Arrival",
+    arr_place: "Place",
+    arr_time: "Time",
+    aircraft: "Aircraft",
+    model: "Type",
+    reg: "Reg",
+    spt: "Single Pilot",
+    se: "SE",
+    me: "ME",
+    mcc: "MCC",
+    total: "Total",
+    pic_name: "PIC Name",
+    landings: "Landings",
+    land_day: "Day",
+    land_night: "Night",
+    oct: "Operational Condition Time",
+    night: "Night",
+    ift: "IFR",
+    pft: "Pilot Function Time",
+    pic: "PIC",
+    cop: "COP",
+    dual: "Dual",
+    instr: "Instr",
+    fstd: "FSTD Session",
+    sim_type: "Type",
+    sim_time: "Time",
+    remarks: "Remarks",
+  },
+  true: { // flight record page
+    date: "Date",
+    departure: "Departure",
+    dep_place: "Place",
+    dep_time: "Time",
+    arrival: "Arrival",
+    arr_place: "Place",
+    arr_time: "Time",
+    aircraft: "Aircraft",
+    model: "Type",
+    reg: "Registration",
+    spt: "Single Pilot",
+    se: "Single Engine",
+    me: "Multi Engine",
+    mcc: "MCC",
+    total: "Total Time",
+    pic_name: "PIC Name",
+    landings: "Landings",
+    land_day: "Day",
+    land_night: "Night",
+    oct: "Operational Condition Time",
+    night: "Night",
+    ift: "IFR",
+    pft: "Pilot Function Time",
+    pic: "PIC",
+    cop: "Co Pilot",
+    dual: "Dual",
+    instr: "Instructor",
+    fstd: "Simulator",
+    sim_type: "Type",
+    sim_time: "Time",
+    remarks: "Remarks",
+  }
+}
 export const useSettings = () => {
   const navigate = useNavigate();
 
@@ -31,31 +99,36 @@ export const useSettings = () => {
   }, [settings?.logbook_pagination]);
 
   /**
-   * Get standard field name for a column
-   * @param {string} column - Column identifier
-   * @param {string} defaultText - Default text if no field found
+   * Get standard field name for a field or column
+   * @param {string} fieldId - Field/column identifier
+   * @param {boolean} flightRecord - Whether it's for flight record page or tables
    * @returns {string} - field name
    */
-  const getStandardFieldName = useCallback((column) => {
+  const fieldName = useCallback((fieldId, flightRecord = false) => {
     if (isSettingsLoading) {
       return "";
     }
 
+    // check if custom names for standard fields are enabled
+    if (!settings?.enable_custom_names) {
+      return defaultFieldNames[flightRecord][fieldId] || fieldId;
+    }
+
     // Try to get from settings first
-    const field = settings?.standard_fields_headers?.[column];
+    const field = settings?.standard_fields_headers?.[fieldId];
     if (field) {
       return field;
     }
 
-    console.warn(`Field not found for column: ${column}`);
-    return column;
+    console.warn(`Field not found for: ${fieldId}`);
+    return fieldId;
   }, [settings, isSettingsLoading]);
 
   return {
     settings,
     data: settings,
     isLoading: isSettingsLoading,
-    getStandardFieldName,
+    fieldName,
     paginationOptions,
   };
 };

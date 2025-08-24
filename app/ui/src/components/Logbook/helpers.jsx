@@ -164,32 +164,32 @@ export const createCustomFieldColumnGroup = (customFields) => {
   }]
 }
 
-export const getFilterLabel = (column, getStandardFieldName) => {
+export const getFilterLabel = (column, fieldName) => {
 
   const id = column.columnDef.id;
   const header = column.columnDef.header;
 
   const fieldNames = {
-    "date": getStandardFieldName("date"),
-    "time.se_time": getStandardFieldName("se"),
-    "time.me_time": getStandardFieldName("me"),
-    "time.mcc_time": getStandardFieldName("mcc"),
-    "time.total_time": getStandardFieldName("total"),
-    "time.night_time": getStandardFieldName("night"),
-    "time.ifr_time": getStandardFieldName("ifr"),
-    "time.pic_time": getStandardFieldName("pic"),
-    "time.co_pilot_time": getStandardFieldName("cop"),
-    "time.dual_time": getStandardFieldName("dual"),
-    "time.instructor_time": getStandardFieldName("instr"),
-    "landings.day": getStandardFieldName("land_day"),
-    "landings.night": getStandardFieldName("land_night"),
-    "sim.time": `${getStandardFieldName("fstd")} ${getStandardFieldName("sim_time")}`,
+    "date": fieldName("date"),
+    "time.se_time": fieldName("se"),
+    "time.me_time": fieldName("me"),
+    "time.mcc_time": fieldName("mcc"),
+    "time.total_time": fieldName("total"),
+    "time.night_time": fieldName("night"),
+    "time.ifr_time": fieldName("ifr"),
+    "time.pic_time": fieldName("pic"),
+    "time.co_pilot_time": fieldName("cop"),
+    "time.dual_time": fieldName("dual"),
+    "time.instructor_time": fieldName("instr"),
+    "landings.day": fieldName("land_day"),
+    "landings.night": fieldName("land_night"),
+    "sim.time": `${fieldName("fstd")} ${fieldName("sim_time")}`,
   };
 
-  const fieldName = fieldNames[id] || header;
+  const field = fieldNames[id] || header;
 
   return {
-    label: `Filter by ${fieldName}`,
+    label: `Filter by ${field}`,
     placeholder: '',
     InputLabelProps: { shrink: true },
   };

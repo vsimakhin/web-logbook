@@ -10,6 +10,7 @@ import { memo } from 'react';
 import SaveSettingsButton from '../SaveSettingsButton';
 import RestoreDefaultsButton from './RestoreDefaultsButton';
 import HelpButton from './HelpButton';
+import { FormControlLabel, Switch } from '@mui/material';
 
 const HEADERS_CONFIG = [
   {
@@ -121,6 +122,17 @@ export const StandardFields = ({ settings = {}, handleChange }) => {
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
           <CardHeader title="Standard Fields" action={<ActionButtons settings={settings} handleChange={handleHeaderChange} />} />
+          <Grid container spacing={1} sx={{ mb: 2 }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={settings?.enable_custom_names ?? false}
+                  onChange={(event) => handleChange("enable_custom_names", event.target.checked)}
+                />
+              }
+              label="Enable custom names for standard fields"
+            />
+          </Grid>
           <Grid container spacing={1}>
             {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
               <Grid size={size} key={`group-${groupIndex}`}>
@@ -133,6 +145,7 @@ export const StandardFields = ({ settings = {}, handleChange }) => {
                       value={settings.standard_fields_headers[id] ?? ""}
                       gsize={fieldSize}
                       tooltip={label}
+                      disabled={!settings?.enable_custom_names}
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 0,

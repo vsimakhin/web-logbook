@@ -33,7 +33,7 @@ const calculateTotalTime = (flight) => {
   return `${hours}:${minutes.toString().padStart(2, "0")}`;
 }
 
-export const PlaceField = memo(({ flight, handleChange, type, getStandardFieldName }) => {
+export const PlaceField = memo(({ flight, handleChange, type, fieldName }) => {
   const icon = type === "departure" ? FlightTakeoffIcon : FlightLandIcon;
   const navigate = useNavigate();
 
@@ -86,7 +86,7 @@ export const PlaceField = memo(({ flight, handleChange, type, getStandardFieldNa
     <>
       <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
         id={`${type}.place`}
-        label={<Label icon={icon} text={getStandardFieldName(type == "departure" ? "dep_place" : "arr_place")} />}
+        label={<Label icon={icon} text={fieldName(type == "departure" ? "dep_place" : "arr_place")} />}
         handleChange={handleChange}
         value={type == "departure" ? flight.departure.place : flight.arrival.place ?? ""}
         slotProps={PLACE_SLOT_PROPS}
@@ -95,7 +95,7 @@ export const PlaceField = memo(({ flight, handleChange, type, getStandardFieldNa
       />
       <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
         id={`${type}.time`}
-        label={<Label icon={icon} text={getStandardFieldName(type == "departure" ? "dep_time" : "arr_time")} />}
+        label={<Label icon={icon} text={fieldName(type == "departure" ? "dep_time" : "arr_time")} />}
         handleChange={handleChange}
         value={type == "departure" ? flight.departure.time : flight.arrival.time ?? ""}
         slotProps={TIME_SLOT_PROPS}

@@ -18,19 +18,19 @@ const containerSx = { width: 350, padding: 2 };
 
 export const TableFilterDrawer = ({ table, isFilterDrawerOpen, onClose }) => {
 
-  const { isLoading: isSettingsLoading, getStandardFieldName } = useSettings();
+  const { isLoading: isSettingsLoading, fieldName } = useSettings();
 
   const fieldNames = useMemo(() => ({
-    "departure.place": `${getStandardFieldName("departure")} ${getStandardFieldName("dep_place")}`,
-    "departure.time": `${getStandardFieldName("departure")} ${getStandardFieldName("dep_time")}`,
-    "arrival.place": `${getStandardFieldName("arrival")} ${getStandardFieldName("arr_place")}`,
-    "arrival.time": `${getStandardFieldName("arrival")} ${getStandardFieldName("arr_time")}`,
-    "aircraft.model": getStandardFieldName("model"),
-    "aircraft.reg_name": getStandardFieldName("reg"),
-    "pic_name": getStandardFieldName("pic_name"),
-    "remarks": getStandardFieldName("remarks"),
-    "sim.type": `${getStandardFieldName("fstd")} ${getStandardFieldName("sim_type")}`,
-  }), [getStandardFieldName]);
+    "departure.place": `${fieldName("departure")} ${fieldName("dep_place")}`,
+    "departure.time": `${fieldName("departure")} ${fieldName("dep_time")}`,
+    "arrival.place": `${fieldName("arrival")} ${fieldName("arr_place")}`,
+    "arrival.time": `${fieldName("arrival")} ${fieldName("arr_time")}`,
+    "aircraft.model": fieldName("model"),
+    "aircraft.reg_name": fieldName("reg"),
+    "pic_name": fieldName("pic_name"),
+    "remarks": fieldName("remarks"),
+    "sim.type": `${fieldName("fstd")} ${fieldName("sim_type")}`,
+  }), [fieldName]);
 
 
   const filteredHeaders = useMemo(() => {
