@@ -22,7 +22,7 @@ export const PersonSelect = ({
     gcTime: 3600000,
   });
 
-  const options = persons.map(p => ({label: printPerson(p), id: p.uuid}));
+  const options = (persons || []).map(p => ({label: printPerson(p), id: p.uuid}));
 
   return (
     <Select

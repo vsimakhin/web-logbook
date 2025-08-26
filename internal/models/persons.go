@@ -24,6 +24,7 @@ func (m *DBModel) fetchPersons(query string, params ...any) (persons []Person, e
 	}
 	defer rows.Close()
 
+	persons = []Person{}
 	for rows.Next() {
 		var person Person
 		if err = rows.Scan(&person.UUID, &person.FirstName, &person.MiddleName, &person.LastName); err != nil {
