@@ -54,7 +54,7 @@ func (app *application) HandlerApiPersonNew(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	app.writeJSON(w, http.StatusOK, "Person added")
+	app.writeJSON(w, http.StatusOK, person)
 }
 
 // HandlerApiPersonUpdate updates a person

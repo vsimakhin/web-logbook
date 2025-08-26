@@ -22,6 +22,7 @@ import {
   useErrorNotification,
   useSuccessNotification,
 } from "../../hooks/useAppNotifications";
+import { printPerson } from "../../util/helpers";
 
 const CloseDialogButton = ({ onClose }) => {
   return (
@@ -87,6 +88,11 @@ export const AddEditFlightrecordPersonModal = ({ open, onClose, payload }) => {
     setFrPerson((prev) => ({ ...prev, [key]: value }));
   };
 
+  const onNewPerson = (person) => {
+    if(!person) return;
+    handleChange('person_uuid', {label: printPerson(person), id: person.uuid});
+  }
+
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
@@ -115,7 +121,7 @@ export const AddEditFlightrecordPersonModal = ({ open, onClose, payload }) => {
                   value={frPerson.person_uuid}
                 />
                 <Grid size={{ xs: 2, sm: 4, md: 4, lg: 4, xl: 4 }}>
-                  or <AddPersonButton />
+                  or <AddPersonButton onSave={onNewPerson} />
                 </Grid>
               </>
             )}

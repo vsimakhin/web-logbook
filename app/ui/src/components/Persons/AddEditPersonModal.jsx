@@ -64,8 +64,8 @@ const SaveButton = ({ person, isNew, onClose }) => {
   useSuccessNotification({ isSuccess, message: "Person saved" });
 
   const handleOnClick = useCallback(async () => {
-    await savePerson();
-    onClose();
+    const savedPerson = await savePerson();
+    onClose(savedPerson);
   }, [savePerson, onClose]);
 
   return (
@@ -94,7 +94,7 @@ export const AddEditPersonModal = ({ open, onClose, payload }) => {
             action={
               <>
                 <SaveButton person={person} onClose={onClose} isNew={isNew} />
-                <CloseDialogButton onClose={onClose} />
+                <CloseDialogButton onClose={() => onClose()} />
               </>
             }
           />

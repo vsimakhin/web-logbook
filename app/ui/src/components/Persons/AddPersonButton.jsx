@@ -9,13 +9,14 @@ import AddEditPersonModal from './AddEditPersonModal';
 // Custom components and libraries
 
 
-export const AddPersonButton = () => {
+export const AddPersonButton = ({onSave}) => {
   const dialogs = useDialogs();
 
   const handleOnClick = useCallback(async () => {
     const payload = { uuid: '', first_name: '', middle_name: '', last_name: '', isNew: true };
-    await dialogs.open(AddEditPersonModal, payload);
-  }, [dialogs]);
+    const result = await dialogs.open(AddEditPersonModal, payload);
+    if(onSave) onSave(result);
+  }, [dialogs, onSave]);
 
   return (
     <>
