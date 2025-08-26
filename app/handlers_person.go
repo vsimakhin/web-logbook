@@ -160,3 +160,15 @@ func (app *application) HandlerApiLogsForPerson(w http.ResponseWriter, r *http.R
 
 	app.writeJSON(w, http.StatusOK, records)
 }
+
+// HandlerApiPersonsForLog returns a list of persons
+func (app *application) HandlerApiPersonDelete(w http.ResponseWriter, r *http.Request) {
+	uuid := strings.ToLower(chi.URLParam(r, "uuid"))
+	err := app.db.DeletePerson(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, "Person deleted")
+}

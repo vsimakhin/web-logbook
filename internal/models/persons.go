@@ -170,3 +170,21 @@ func (m *DBModel) GetFlightRecordsForPerson(personUuid string) (records []Flight
 
 	return records, nil
 }
+
+// UpdatePersonToLog updates person-to-log record
+func (m *DBModel) DeletePerson(uuid string) (err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	// Delete all references
+	query := "DELETE FROM person_to_log WHERE person_uuid = ?"
+	_, err = m.DB.ExecContext(ctx, query, uuid)
+
+	if err != nil {
+		return fmt.Errorf("Error deleting references for person %s", uuid)
+	}
+
+	query = "DELETE FROM persons WHERE uuid = ?"
+	_, err = m.DB.ExecContext(ctx, query, uuid)
+	return err
+}

@@ -91,3 +91,12 @@ export const deletePersonToLog = async ({ payload, navigate }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot delete person-to-log record');
 }
+
+export const deletePerson = async ({ navigate, uuid }) => {
+  const url = `${API_URL}/person/${uuid}`;
+  const options = {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+  };
+  return await handleFetch(url, options, navigate, 'Cannot delete person');
+}
