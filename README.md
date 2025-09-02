@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Added new section `Persons` to track the crew members for the flights @danielkappelle
+
 ## [3.6.1] - 19.08.2025
 
 - Fix: track is not displayed on the Flight record map
