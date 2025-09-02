@@ -37,11 +37,9 @@ export const FlightRecordPersons = ({ id }) => {
         <Card variant="outlined" sx={{ mb: 1 }}>
           <CardContent>
             <CardHeader title="Persons" action={<ActionButtons id={id} />} />
-            {(data && data.length) ? data.map((person) => (
+            {(data && data.length) && data.map((person) => (
               <PersonForLog key={person.uuid} person={person} logUuid={id} />
-            )) : (
-              <i>No persons on this flight</i>
-            )}
+            ))}
           </CardContent>
         </Card>
       )}
