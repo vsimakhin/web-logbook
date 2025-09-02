@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
@@ -16,13 +16,10 @@ import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
 import { queryClient } from "../../util/http/http";
 import { printPerson } from "../../util/helpers";
-import {
-  useErrorNotification,
-  useSuccessNotification,
-} from "../../hooks/useAppNotifications";
+import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { updatePerson, createPerson } from "../../util/http/person";
 
-const CloseDialogButton = ({ onClose }) => {
+const CloseDialogButton = memo(({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}>
@@ -30,9 +27,9 @@ const CloseDialogButton = ({ onClose }) => {
       </IconButton>
     </Tooltip>
   );
-};
+});
 
-const SaveButton = ({ person, isNew, onClose }) => {
+const SaveButton = memo(({ person, isNew, onClose }) => {
   const navigate = useNavigate();
 
   const payload = {
@@ -54,13 +51,10 @@ const SaveButton = ({ person, isNew, onClose }) => {
     mutationFn: mutateFn,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["persons"] });
+      await queryClient.invalidateQueries({ queryKey: ["person", person.uuid] });
     },
   });
-  useErrorNotification({
-    isError,
-    error,
-    fallbackMessage: "Failed to save person",
-  });
+  useErrorNotification({ isError, error, fallbackMessage: "Failed to save person" });
   useSuccessNotification({ isSuccess, message: "Person saved" });
 
   const handleOnClick = useCallback(async () => {
@@ -75,15 +69,15 @@ const SaveButton = ({ person, isNew, onClose }) => {
       </IconButton>
     </Tooltip>
   );
-};
+});
 
 export const AddEditPersonModal = ({ open, onClose, payload }) => {
   const [person, setPerson] = useState({ ...payload });
   const isNew = payload.isNew;
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setPerson((prev) => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>

@@ -9,14 +9,14 @@ import { fetchPersonByUuid } from "../../util/http/person";
 import CardHeader from "../UIElements/CardHeader";
 import { printPerson } from "../../util/helpers";
 import PersonsViewFlightsTable from "./PersonViewFlightsTable";
-import {EditPersonButton} from './EditPersonButton'
+import { EditPersonButton } from './EditPersonButton'
 
 export const PersonView = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
 
   const { data: personData, isLoading: personIsLoading, isError: personIsError, error: personError } = useQuery({
-    queryKey: ["persons"],
+    queryKey: ["person", uuid],
     queryFn: ({ signal }) => fetchPersonByUuid({ signal, uuid, navigate }),
   });
   useErrorNotification({
@@ -32,7 +32,7 @@ export const PersonView = () => {
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Flights" />
-              <PersonsViewFlightsTable uuid={uuid}/>
+              <PersonsViewFlightsTable uuid={uuid} />
             </CardContent>
           </Card>
         </Grid>
@@ -40,11 +40,11 @@ export const PersonView = () => {
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 4, xl: 4 }}>
           <Card variant="outlined" sx={{ mb: 1 }}>
             {personIsLoading && <LinearProgress />}
-              <CardContent>
-            {personData && (
-                <CardHeader title={printPerson(personData)} action={<EditPersonButton payload={personData} />}/>
+            <CardContent>
+              {personData && (
+                <CardHeader title={printPerson(personData)} action={<EditPersonButton payload={personData} />} />
               )}
-              </CardContent>
+            </CardContent>
           </Card>
         </Grid>
       </Grid>
