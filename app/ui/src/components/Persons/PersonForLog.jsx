@@ -35,8 +35,8 @@ export const PersonForLog = ({ person, logUuid }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
-        <EditFlightrecordPersonButton person={person} logUuid={logUuid} />
-        <DeletePersonToLogButton person={person} logUuid={logUuid} />
+        <EditFlightrecordPersonButton person={person} logUuid={logUuid} handleClose={handleCloseMenu} />
+        <DeletePersonToLogButton person={person} logUuid={logUuid} handleClose={handleCloseMenu} />
       </Menu>
     </>
   );

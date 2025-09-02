@@ -10,7 +10,7 @@ import { queryClient } from '../../util/http/http';
 import { useCallback } from "react";
 import { deletePersonToLog } from "../../util/http/person";
 
-export const DeletePersonToLogButton = ({ person, logUuid }) => {
+export const DeletePersonToLogButton = ({ person, logUuid, handleClose }) => {
   const dialogs = useDialogs();
 
   const { mutateAsync: deleteFunction, isError, error } = useMutation({
@@ -22,6 +22,7 @@ export const DeletePersonToLogButton = ({ person, logUuid }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to delete person-to-log' });
 
   const handleDelete = useCallback(async () => {
+    handleClose();
     if (await dialogs.confirm('Are you sure you want to remove this person from this flight?')) {
       await deleteFunction();
     }

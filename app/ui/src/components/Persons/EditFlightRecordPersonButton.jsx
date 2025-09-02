@@ -7,10 +7,11 @@ import { useCallback } from "react";
 import AddEditFlightrecordPersonModal from "./AddEditFlightrecordPersonModal";
 import { printPerson } from '../../util/helpers';
 
-export const EditFlightrecordPersonButton = ({ person, logUuid }) => {
+export const EditFlightrecordPersonButton = ({ person, logUuid, handleClose }) => {
   const dialogs = useDialogs();
 
   const handleOnClick = useCallback(async () => {
+    handleClose();
     const payload = { isNew: false, person_uuid: { label: printPerson(person), id: person.uuid }, role: person.role, log_uuid: logUuid }
     await dialogs.open(AddEditFlightrecordPersonModal, payload);
   }, [dialogs]);

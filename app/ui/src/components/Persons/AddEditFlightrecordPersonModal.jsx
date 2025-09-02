@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // MUI UI elements
 import Card from "@mui/material/Card";
@@ -24,7 +24,7 @@ import {
 } from "../../hooks/useAppNotifications";
 import { printPerson } from "../../util/helpers";
 
-const CloseDialogButton = ({ onClose }) => {
+const CloseDialogButton = memo(({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}>
@@ -32,9 +32,9 @@ const CloseDialogButton = ({ onClose }) => {
       </IconButton>
     </Tooltip>
   );
-};
+});
 
-const SaveButton = ({ frPerson, isNew, onClose }) => {
+const SaveButton = memo(({ frPerson, isNew, onClose }) => {
   const navigate = useNavigate();
 
   const payload = {
@@ -78,55 +78,50 @@ const SaveButton = ({ frPerson, isNew, onClose }) => {
       </IconButton>
     </Tooltip>
   );
-};
+});
 
 export const AddEditFlightrecordPersonModal = ({ open, onClose, payload }) => {
   const [frPerson, setFrPerson] = useState({ ...payload });
   const isNew = payload.isNew;
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setFrPerson((prev) => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   const onNewPerson = (person) => {
-    if(!person) return;
-    handleChange('person_uuid', {label: printPerson(person), id: person.uuid});
+    if (!person) return;
+    handleChange('person_uuid', { label: printPerson(person), id: person.uuid });
   }
 
+  const ActionButtons = memo(() => (
+    <>
+      <SaveButton frPerson={frPerson} onClose={onClose} isNew={isNew} />
+      <CloseDialogButton onClose={onClose} />
+    </>
+  ));
+
   return (
-    <Dialog fullWidth open={open} onClose={() => onClose()}>
+    <Dialog fullWidth maxWidth="xs" open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader
-            title="Add person to flight"
-            action={
-              <>
-                <SaveButton
-                  frPerson={frPerson}
-                  onClose={onClose}
-                  isNew={isNew}
-                />
-                <CloseDialogButton onClose={onClose} />
-              </>
-            }
-          />
+          <CardHeader title="Add person to flight" action={<ActionButtons />} />
           <Grid container spacing={1}>
             {isNew && (
               <>
                 <PersonSelect
-                  gsize={{ xs: 10, sm: 8, md: 8, lg: 8, xl: 8 }}
+                  gsize={{ xs: 10, sm: 11, md: 11, lg: 11, xl: 11 }}
                   id="person_uuid"
                   label="Existing person"
                   handleChange={handleChange}
                   value={frPerson.person_uuid}
                 />
-                <Grid size={{ xs: 2, sm: 4, md: 4, lg: 4, xl: 4 }}>
-                  or <AddPersonButton onSave={onNewPerson} />
+                <Grid size={{ xs: "grow", sm: "grow", md: "grow", lg: "grow", xl: "grow" }}>
+                  <AddPersonButton onSave={onNewPerson} />
                 </Grid>
               </>
             )}
             <PersonRole
-              gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+              gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               id="role"
               label="Role"
               handleChange={handleChange}

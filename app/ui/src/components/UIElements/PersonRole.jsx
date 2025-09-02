@@ -1,9 +1,10 @@
 // Custom components
+import { memo } from "react";
 import Select from "./Select";
 
-export const PersonRole = ({ gsize, id = "role", label = "Role", value, handleChange, ...props }) => {
+export const PersonRole = memo(({ gsize, id = "role", label = "Role", value, handleChange, ...props }) => {
 
-  const options = ['Captain', 'First officer', 'Second officer', 'Flight instructor', 'Examiner'];
+  const options = ['Captain', 'First officer', 'Second officer', 'Flight instructor', 'Examiner', 'Cabin crew'];
 
   return (
     <Select gsize={gsize}
@@ -18,6 +19,6 @@ export const PersonRole = ({ gsize, id = "role", label = "Role", value, handleCh
       {...props}
     />
   );
-}
+});
 
 export default PersonRole;
