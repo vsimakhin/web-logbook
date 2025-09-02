@@ -85,6 +85,40 @@ type Airport struct {
 	Lon       float64 `json:"lon"`
 }
 
+// Person is a structure for person records
+type Person struct {
+	UUID       string `json:"uuid"`
+	FirstName  string `json:"first_name"`
+	MiddleName string `json:"middle_name"`
+	LastName   string `json:"last_name"`
+}
+
+type PersonToLog struct {
+	UUID       string `json:"uuid"`
+	PersonUUID string `json:"person_uuid"`
+	LogUUID    string `json:"log_uuid"`
+	Role       string `json:"role"`
+}
+
+type PersonForLog struct {
+	Person
+	Role string `json:"role"`
+}
+
+type FlightRecordForPerson struct {
+	LogUUID   string `json:"log_uuid"`
+	Role      string `json:"role"`
+	Date      string `json:"date"`
+	MDate     string `json:"m_date"`
+	Departure string `json:"departure"`
+	Arrival   string `json:"arrival"`
+	Aircraft  struct {
+		Model string `json:"model"`
+		Reg   string `json:"reg_name"`
+	} `json:"aircraft"`
+	SimType string `json:"sim_type"`
+}
+
 type ColumnsWidth struct {
 	Col1  float64 `json:"col1"`
 	Col2  float64 `json:"col2"`

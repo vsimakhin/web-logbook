@@ -98,6 +98,19 @@ func (app *application) routes() *chi.Mux {
 			r.Post("/update-db", app.HandlerApiAirportDBUpdate)
 		})
 
+		r.Route("/person", func(r chi.Router) {
+			r.With(middleware.Compress(5)).Get("/list", app.HandlerApiPersonList)
+			r.Get("/{uuid}", app.HandlerApiPersonByID)
+			r.Delete("/{uuid}", app.HandlerApiPersonDelete)
+			r.Post("/", app.HandlerApiPersonNew)
+			r.Put("/", app.HandlerApiPersonUpdate)
+			r.Get("/logsForPerson/{personUuid}", app.HandlerApiLogsForPerson)
+			r.Get("/personsForLog/{logUuid}", app.HandlerApiPersonsForLog)
+			r.Post("/personToLog", app.HandlerApiPersonToLogNew)
+			r.Put("/personToLog", app.HandlerApiPersonToLogUpdate)
+			r.Delete("/personToLog", app.HandlerApiPersonToLogDelete)
+		})
+
 		// export
 		r.Route("/export", func(r chi.Router) {
 			r.Get("/{format}", app.HandlerApiExportLogbook)

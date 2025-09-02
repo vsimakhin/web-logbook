@@ -227,3 +227,8 @@ export const getTotalsByAircraft = (flights, type, models, customFields = []) =>
     a.model.localeCompare(b.model)
   );
 };
+
+export const printPerson = person => {
+  if(!person) return '';
+  return `${person.first_name} ${person.middle_name} ${person.last_name}`
+}

@@ -12,6 +12,7 @@ import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 import FlightMap from "../FlightMap/FlightMap";
 import Attachments from "../Attachment/Attachments";
 import CustomFields from "./CustomFields";
+import FlightRecordPersons from "../Persons/FlightRecordPersons";
 
 export const FlightRecord = () => {
   const { id } = useParams();
@@ -74,6 +75,7 @@ export const FlightRecord = () => {
           <FlightRecordDetails flight={flight} handleChange={handleChange} setFlight={setFlight} />
           <CustomFields flight={flight} handleChange={handleChange} />
           <Attachments id={id} />
+          <FlightRecordPersons id={id} />
         </Grid>
 
         <Grid size={gridSize}>
