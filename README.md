@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Added a support to change the naming for the standard fields on the flight record page and all the tables (logbook and stats)
+
 ## [3.7.0] - 03.09.2025
 
 - New: Added new section `Persons` to track the crew members for the flights @danielkappelle
