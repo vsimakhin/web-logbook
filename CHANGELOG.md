@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.8.0] - 06.09.2025
 
 - New: Added a support to change the naming for the standard fields on the flight record page and all the tables (logbook and stats)
 
