@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
+import { memo, useCallback } from 'react';
 import dayjs from 'dayjs';
 // MUI Icons
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
@@ -32,7 +33,7 @@ const calculateTotalTime = (flight) => {
   return `${hours}:${minutes.toString().padStart(2, "0")}`;
 }
 
-export const PlaceField = ({ flight, handleChange, type }) => {
+export const PlaceField = memo(({ flight, handleChange, type, fieldNameF }) => {
   const icon = type === "departure" ? FlightTakeoffIcon : FlightLandIcon;
   const navigate = useNavigate();
 
@@ -40,7 +41,7 @@ export const PlaceField = ({ flight, handleChange, type }) => {
     mutationFn: ({ departure, arrival }) => fetchDistance({ departure, arrival, navigate }),
   });
 
-  const handlePlaceChange = async () => {
+  const handlePlaceChange = useCallback(async () => {
     // quickly recalculate the distance to show on map
     const distance = await calculateDistance({ departure: flight.departure.place, arrival: flight.arrival.place });
     if (distance && flight.track === null) {
@@ -49,14 +50,14 @@ export const PlaceField = ({ flight, handleChange, type }) => {
     // it's a trick to update the map when the place field is left
     // otherwise the map will be refreshed on each flight field change
     handleChange("redraw", Math.random());
-  }
+  }, [flight, handleChange]);
 
   const { mutateAsync: getNightTime, isError, error } = useMutation({
-    mutationFn: () => fetchNightTime({ flight, navigate }),
+    mutationFn: (signal) => fetchNightTime({ flight, navigate, signal }),
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to calculate night time' });
 
-  const handleTimeChange = async () => {
+  const handleTimeChange = useCallback(async () => {
     // check length for the time field
     if (flight.departure.time.length === 4 && flight.arrival.time.length === 4) {
       const total_time = calculateTotalTime(flight);
@@ -79,13 +80,13 @@ export const PlaceField = ({ flight, handleChange, type }) => {
         }
       }
     }
-  }
+  }, [flight, handleChange, getNightTime]);
 
   return (
     <>
       <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
         id={`${type}.place`}
-        label={<Label icon={icon} text="Place" />}
+        label={<Label icon={icon} text={fieldNameF(type == "departure" ? "dep_place" : "arr_place")} />}
         handleChange={handleChange}
         value={type == "departure" ? flight.departure.place : flight.arrival.place ?? ""}
         slotProps={PLACE_SLOT_PROPS}
@@ -94,7 +95,7 @@ export const PlaceField = ({ flight, handleChange, type }) => {
       />
       <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
         id={`${type}.time`}
-        label={<Label icon={icon} text="Time" />}
+        label={<Label icon={icon} text={fieldNameF(type == "departure" ? "dep_time" : "arr_time")} />}
         handleChange={handleChange}
         value={type == "departure" ? flight.departure.time : flight.arrival.time ?? ""}
         slotProps={TIME_SLOT_PROPS}
@@ -104,6 +105,6 @@ export const PlaceField = ({ flight, handleChange, type }) => {
       />
     </>
   )
-}
+});
 
 export default PlaceField;

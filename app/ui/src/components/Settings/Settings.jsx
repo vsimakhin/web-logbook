@@ -1,33 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
-import { fetchSettings } from "../../util/http/settings";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
 import GeneralSettings from "./GeneralSettings";
 import LogbookSignature from "./Signature/LogbookSignature";
 import CustomFields from "./CustomFields/CustomFields";
+import StandardFields from "./StandardFields/StandardFields";
+import useSettings from "../../hooks/useSettings";
 
 export const Settings = memo(() => {
-  const navigate = useNavigate();
-  const [settings, setSettings] = useState({});
+  const { settings, setSettings, isLoading } = useSettings();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['settings'],
-    queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load settings' });
-
-  useEffect(() => {
-    if (data) {
-      setSettings(data);
-    }
-  }, [data]);
-
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setSettings((settings) => {
       const keys = key.split('.'); // Split key by dots to handle nesting
       let updatedsettings = { ...settings }; // Create a shallow copy of the settings object
@@ -47,7 +32,7 @@ export const Settings = memo(() => {
 
       return updatedsettings;
     });
-  };
+  }, []);
 
   return (
     <>
@@ -59,6 +44,7 @@ export const Settings = memo(() => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+          <StandardFields settings={settings} handleChange={handleChange} />
           <CustomFields />
         </Grid>
       </Grid>

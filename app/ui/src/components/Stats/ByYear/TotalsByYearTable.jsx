@@ -13,6 +13,7 @@ import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../cons
 import { convertMinutesToTime, getCustomFieldValue } from '../../../util/helpers';
 import CSVExportButton from '../../UIElements/CSVExportButton';
 import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
+import useSettings from '../../../hooks/useSettings';
 
 const paginationKey = 'totals-stats-year-table-page-size';
 const columnVisibilityKey = 'totals-stats-year-table-column-visibility';
@@ -67,6 +68,8 @@ export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
+
+  const { fieldName } = useSettings();
 
   // Helper function to create custom field columns
   const createCustomFieldColumn = (field) => {
@@ -129,19 +132,21 @@ export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
           new Date(0, parseInt(cell.getValue()) - 1).toLocaleString('default', { month: 'short' })
         ),
       },
-      createTimeColumn("time.se_time", "SE"),
-      createTimeColumn("time.me_time", "ME"),
-      createTimeColumn("time.mcc_time", "MCC"),
-      createTimeColumn("time.night_time", "Night"),
-      createTimeColumn("time.ifr_time", "IFR"),
-      createTimeColumn("time.pic_time", "PIC"),
-      createTimeColumn("time.co_pilot_time", "Co-Pilot"),
-      createTimeColumn("time.dual_time", "Dual"),
-      createTimeColumn("time.instructor_time", "Instructor"),
+      createTimeColumn("time.se_time", fieldName("se")),
+      createTimeColumn("time.me_time", fieldName("me")),
+      createTimeColumn("time.mcc_time", fieldName("mcc")),
+      createTimeColumn("time.night_time", fieldName("night")),
+      createTimeColumn("time.ifr_time", fieldName("ifr")),
+      createTimeColumn("time.pic_time", fieldName("pic")),
+      createTimeColumn("time.co_pilot_time", fieldName("cop")),
+      createTimeColumn("time.dual_time", fieldName("dual")),
+      createTimeColumn("time.instructor_time", fieldName("instr")),
       createTimeColumn("time.cc_time", "CC"),
-      createTimeColumn("sim.time", "Sim"),
+      createTimeColumn("sim.time", `${fieldName("fstd")} ${fieldName("sim_time")}`),
       {
-        accessorFn: row => `${row.landings.day}/${row.landings.night}`, header: "D/N", size: 90,
+        accessorFn: row => `${row.landings.day}/${row.landings.night}`,
+        header: `${fieldName("land_day")}/${fieldName("land_night")}`,
+        size: 90,
         aggregationFn: (columnId, leafRows) => {
           const dayTotal = leafRows.reduce((sum, row) => sum + (parseInt(row.original.landings.day) || 0), 0);
           const nightTotal = leafRows.reduce((sum, row) => sum + (parseInt(row.original.landings.night) || 0), 0);
@@ -175,7 +180,7 @@ export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
     return [
       ...baseColumns,
       ...customFieldColumns,
-      createTimeColumn("time.total_time", "Total"),
+      createTimeColumn("time.total_time", fieldName("total")),
     ];
   }, [customFields]);
 

@@ -79,3 +79,7 @@ func (m *DBModel) GetPdfDefaults(format string) (pdfDefaults ExportPDF) {
 
 	return pdfDefaults
 }
+
+func (m *DBModel) GetStandardFieldsHeaders() ColumnsHeader {
+	return standardFieldsHeaders
+}

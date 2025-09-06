@@ -9,6 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid2";
 import Divider from "@mui/material/Divider";
+import Typography from '@mui/material/Typography';
 // MUI Icons
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -19,7 +20,6 @@ import AircraftCategories from '../UIElements/AircraftCategories';
 import { updateAircraftModelsCategories } from '../../util/http/aircraft';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
-import { Typography } from '@mui/material';
 
 const CloseDialogButton = ({ onClose }) => {
   return (

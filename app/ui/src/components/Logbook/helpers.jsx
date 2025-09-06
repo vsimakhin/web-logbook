@@ -164,36 +164,32 @@ export const createCustomFieldColumnGroup = (customFields) => {
   }]
 }
 
-export const getFilterLabel = (column) => {
+export const getFilterLabel = (column, fieldName) => {
 
   const id = column.columnDef.id;
   const header = column.columnDef.header;
 
   const fieldNames = {
-    "date": "Date",
-    "departure.place": "Departure Place",
-    "departure.time": "Departure Time",
-    "arrival.place": "Arrival Place",
-    "arrival.time": "Arrival Time",
-    "aircraft.model": "Aircraft Type",
-    "aircraft.reg_name": "Aircraft Reg",
-    "time.total_time": "Total Time",
-    "pic_name": "PIC",
-    "remarks": "Remarks"
+    "date": fieldName("date"),
+    "time.se_time": fieldName("se"),
+    "time.me_time": fieldName("me"),
+    "time.mcc_time": fieldName("mcc"),
+    "time.total_time": fieldName("total"),
+    "time.night_time": fieldName("night"),
+    "time.ifr_time": fieldName("ifr"),
+    "time.pic_time": fieldName("pic"),
+    "time.co_pilot_time": fieldName("cop"),
+    "time.dual_time": fieldName("dual"),
+    "time.instructor_time": fieldName("instr"),
+    "landings.day": fieldName("land_day"),
+    "landings.night": fieldName("land_night"),
+    "sim.time": `${fieldName("fstd")} ${fieldName("sim_time")}`,
   };
 
-  let fieldName = fieldNames[id] || header;
-
-  if (id.includes("landings.")) {
-    fieldName = `${header} Landing`;
-  } else if (id.includes("sim.")) {
-    fieldName = `Sim ${header}`;
-  } else if (id.includes("time.")) {
-    fieldName = `${header} Time`;
-  }
+  const field = fieldNames[id] || header;
 
   return {
-    label: `Filter by ${fieldName}`,
+    label: `Filter by ${field}`,
     placeholder: '',
     InputLabelProps: { shrink: true },
   };

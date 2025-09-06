@@ -1,29 +1,32 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import TextField from "../UIElements/TextField";
 
-const LANDING_SLOT_PROPS = {
-  htmlInput: {
-    inputMode: 'numeric',
-  }
-}
+const LANDING_SLOT_PROPS = { htmlInput: { inputMode: "numeric" } };
 
-export const LandingFields = memo(({ flight, handleChange }) => {
+const getLandingValue = (val) => (val === 0 ? "" : val ?? "");
+
+export const LandingFields = memo(({ flight, handleChange, fieldNameF }) => {
+  const labels = useMemo(() => (
+    {
+      day: `${fieldNameF("land_day")} ${fieldNameF("landings")}`,
+      night: `${fieldNameF("land_night")} ${fieldNameF("landings")}`,
+    }
+  ), [fieldNameF]);
+
   return (
     <>
       <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
         id="landings.day"
-        label="Day Landings"
+        label={labels.day}
         handleChange={handleChange}
-        value={flight.landings.day === 0 ? "" : flight.landings.day ?? ""}
-        tooltip="Day landings"
+        value={getLandingValue(flight.landings.day)}
         slotProps={LANDING_SLOT_PROPS}
       />
       <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
         id="landings.night"
-        label="Night Landings"
+        label={labels.night}
         handleChange={handleChange}
-        value={flight.landings.night === 0 ? "" : flight.landings.night ?? ""}
-        tooltip="Night landings"
+        value={getLandingValue(flight.landings.night)}
         slotProps={LANDING_SLOT_PROPS}
       />
     </>

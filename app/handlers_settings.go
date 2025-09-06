@@ -152,3 +152,8 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 
 	app.writeOkResponse(w, "Export settings updated")
 }
+
+func (app *application) HandlerApiSettingsFieldsDefaults(w http.ResponseWriter, r *http.Request) {
+	defaults := app.db.GetStandardFieldsHeaders()
+	app.writeJSON(w, http.StatusOK, defaults)
+}
