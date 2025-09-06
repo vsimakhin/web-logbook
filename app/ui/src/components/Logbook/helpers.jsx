@@ -3,9 +3,12 @@ import dayjs from "dayjs";
 // MUI
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+// MUI Icons
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 // Custom
 import { convertMinutesToTime, convertTimeToMinutes, getValue } from "../../util/helpers";
 import { LandingFilter } from "../UIElements/LandingsFilter";
+import { Checkbox, FormControlLabel, Tooltip } from "@mui/material";
 
 export const renderTextProps = {
   muiTableBodyCellProps: { align: "left", sx: { p: 0.5 } },
@@ -115,6 +118,48 @@ export const createColumn = (id, name, size, isText = false, footer = undefined)
   size: size,
   ...(isText ? renderTextProps : renderProps),
   Footer: () => footer,
+})
+
+export const createHasTrackColumn = (id, size) => ({
+  accessorKey: id,
+  header: <Tooltip title="Shows an icon if a flight record has a track attached">
+    <MapOutlinedIcon />
+  </Tooltip>,
+  size: size,
+  ...renderProps,
+  Cell: ({ cell }) => (cell.getValue() ? <MapOutlinedIcon /> : ""),
+  filterFn: (row, columnId, filterValue) => {
+    if (filterValue === null) return true; // show all
+    return !!row.getValue(columnId) === filterValue;
+  },
+  filterVariant: "has-track",
+  Filter: ({ column }) => {
+    let value = column.getFilterValue();
+    if (value === undefined) value = null;
+    // value: true = has track, false = no track, null = all
+    return (
+      <FormControlLabel sx={{ m: 0, p: 0 }}
+        control={
+          <Checkbox
+            checked={value === true}
+            indeterminate={value == null}
+            onChange={e => {
+              // cycle between true -> false -> null
+              if (value === null) column.setFilterValue(true);
+              else if (value === true) column.setFilterValue(false);
+              else column.setFilterValue(null);
+            }}
+          />
+        }
+        labelPlacement="start"
+        label={
+          <Typography variant="caption" color="text.secondary">
+            Filter by having track
+          </Typography>
+        }
+      />
+    );
+  },
 })
 
 export const createCustomFieldColumns = (customFields, category) => {

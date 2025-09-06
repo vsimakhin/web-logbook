@@ -6,17 +6,17 @@ import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-// MUI UI elements
+// MUI
 import Box from '@mui/material/Box';
 // Custom components and libraries
-import { getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 import PDFExportButton from './PDFExportButton';
 import NewFlightRecordButton from './NewFlightRecordButton';
 import { tableJSONCodec } from '../../constants/constants';
 import {
   createColumn, createDateColumn, createLandingColumn, createTimeColumn,
   renderProps, renderTextProps, renderTotalFooter, createCustomFieldColumns,
-  createCustomFieldColumnGroup,
+  createCustomFieldColumnGroup, createHasTrackColumn, getFilterLabel,
+  landingFilterFn, timeFilterFn
 } from "./helpers";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
@@ -80,6 +80,12 @@ export const LogbookTable = ({ data, isLoading }) => {
     }
 
     return [
+      {
+        header: <TableHeader title={"Misc"} />, columns: [
+          createHasTrackColumn("has_track", 40),
+          createColumn("attachments_count", "Att"),
+        ]
+      },
       {
         header: <TableHeader title={fieldName("date")} />, ...renderTextProps, columns: [
           createDateColumn("date", "", 90),
@@ -173,7 +179,10 @@ export const LogbookTable = ({ data, isLoading }) => {
         ]
       }
     ];
-  }, [customFields, isCustomFieldsLoading, fieldName]);
+  }, [customFields, isCustomFieldsLoading, fieldName, isSettingsLoading, createHasTrackColumn,
+    createColumn, createDateColumn, createTimeColumn, createLandingColumn, renderTotalFooter,
+    createCustomFieldColumns, createCustomFieldColumnGroup
+  ]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
