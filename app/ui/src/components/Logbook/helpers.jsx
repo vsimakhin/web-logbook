@@ -130,7 +130,7 @@ export const createHasTrackColumn = (id, size) => ({
     </Tooltip>,
   size: size,
   ...renderProps,
-  Cell: ({ cell }) => (cell.getValue() ? <MapOutlinedIcon /> : ""),
+  Cell: ({ cell }) => (cell.getValue() ? <MapOutlinedIcon color="action" /> : ""),
   filterFn: (row, columnId, filterValue) => {
     if (filterValue === null) return true; // show all
     return !!row.getValue(columnId) === filterValue;
