@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Added Track and Attachments columns for the logbook table. Shows if a flight record has a track attached and amount of the attachments. Hidden by default
+
 ## [3.8.0] - 06.09.2025
 
 - New: Added a support to change the naming for the standard fields on the flight record page and all the tables (logbook and stats)
@@ -26,23 +30,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - Fix: track is not displayed on the Flight record map
 - Update: Add `numeric` property for Time and Landing fields to show a numeric keyboard on mobile devices for better UX @danielkappelle
-
-## [3.6.0] - 14.08.2025
-
-- New: Custom fields support in the main logbook table and stats tables
-- New: Add option to show/hide tracks and routes on the `Map` page
-- Fix: Dashboard filters error
-
-## [3.5.0] - 31.07.2025
-
-- Fix: Tooltip/description overlap for the input fields
-- Fix: Night time calculation error when copying flight records
-
-## [3.4.0] - 16.07.2025
-
-- Fix: Instructor time wasn't imported
-- Update: Golang and npm packages/security patches
-- New: Support for GPX track files
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
