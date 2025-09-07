@@ -254,7 +254,8 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 			arrival_place, arrival_time, aircraft_model, reg_name,
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
-			sim_type, sim_time, pic_name, remarks, distance, custom_fields
+			sim_type, sim_time, pic_name, remarks, distance, custom_fields,
+			has_track, attachments_count
 		FROM logbook_view
 		ORDER BY m_date desc, departure_time desc`)
 
@@ -270,6 +271,7 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
 			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.Distance, &fr.CustomFields,
+			&fr.HasTrack, &fr.AttachmentsCount,
 		)
 		if err != nil {
 			return flightRecords, err

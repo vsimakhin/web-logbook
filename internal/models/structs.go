@@ -69,8 +69,10 @@ type FlightRecord struct {
 	CustomFields string `json:"custom_fields"`
 
 	// calculated
-	PrevUUID string `json:"prev_uuid"`
-	NextUUID string `json:"next_uuid"`
+	PrevUUID         string `json:"prev_uuid"`
+	NextUUID         string `json:"next_uuid"`
+	HasTrack         int    `json:"has_track"`
+	AttachmentsCount int    `json:"attachments_count"`
 }
 
 // Airpot is a structure for airport record

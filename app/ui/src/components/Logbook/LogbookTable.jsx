@@ -6,17 +6,17 @@ import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-// MUI UI elements
+// MUI
 import Box from '@mui/material/Box';
 // Custom components and libraries
-import { getFilterLabel, landingFilterFn, timeFilterFn } from './helpers';
 import PDFExportButton from './PDFExportButton';
 import NewFlightRecordButton from './NewFlightRecordButton';
 import { tableJSONCodec } from '../../constants/constants';
 import {
   createColumn, createDateColumn, createLandingColumn, createTimeColumn,
   renderProps, renderTextProps, renderTotalFooter, createCustomFieldColumns,
-  createCustomFieldColumnGroup,
+  createCustomFieldColumnGroup, createHasTrackColumn, getFilterLabel,
+  timeFilterFn, createAttachmentColumn
 } from "./helpers";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
@@ -52,7 +52,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
+  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, { attachments_count: false, has_track: false }, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
@@ -71,7 +71,6 @@ export const LogbookTable = ({ data, isLoading }) => {
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
     timeFilterFn: timeFilterFn,
-    landingFilterFn: landingFilterFn,
   }), []);
 
   const columns = useMemo(() => {
@@ -171,9 +170,18 @@ export const LogbookTable = ({ data, isLoading }) => {
           { accessorKey: "remarks", header: "", grow: true, ...renderTextProps },
           ...createCustomFieldColumns(customFields, fieldName("remarks"))
         ]
-      }
+      },
+      {
+        header: <TableHeader title={"Misc"} />, columns: [
+          createHasTrackColumn("has_track", 30),
+          createAttachmentColumn("attachments_count", 30),
+        ]
+      },
     ];
-  }, [customFields, isCustomFieldsLoading, fieldName]);
+  }, [customFields, isCustomFieldsLoading, fieldName, isSettingsLoading, createHasTrackColumn,
+    createColumn, createDateColumn, createTimeColumn, createLandingColumn, renderTotalFooter,
+    createCustomFieldColumns, createCustomFieldColumnGroup
+  ]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>

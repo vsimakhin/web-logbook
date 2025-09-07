@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "9"
+	schemaVersion = "10"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -166,8 +166,13 @@ var logbookView = NewView("logbook_view",
 				iif(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
 				instructor_time, sim_type, sim_time, pic_name, remarks,
-				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields
-			FROM logbook;
+				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
+				CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
+				IFNULL(ac.cnt, 0) AS attachments_count
+			FROM logbook
+			LEFT JOIN (
+  				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
+			) ac ON ac.record_id = logbook.uuid;
 			`,
 		MySQL: `
 			SELECT uuid, date, 
@@ -178,8 +183,13 @@ var logbookView = NewView("logbook_view",
 				IF(night_landings='',0,night_landings) as night_landings,
 				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
 				instructor_time, sim_type, sim_time, pic_name, remarks,
-				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields
-			FROM logbook;
+				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
+				CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
+				IFNULL(ac.cnt, 0) AS attachments_count
+			FROM logbook
+			LEFT JOIN (
+  				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
+			) ac ON ac.record_id = logbook.uuid;
 		`,
 	},
 )

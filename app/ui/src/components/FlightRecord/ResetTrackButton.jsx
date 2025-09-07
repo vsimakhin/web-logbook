@@ -22,6 +22,7 @@ export const ResetTrackButton = ({ flight, handleChange }) => {
       handleChange("redraw", Math.random());
       await queryClient.invalidateQueries({ queryKey: ['flight', flight.uuid] });
       await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
+      await queryClient.invalidateQueries({ queryKey: ['logbook'] });
     }
   });
   useErrorNotification({ isError: isResetError, error: resetError, fallbackMessage: 'Failed to reset track log' });

@@ -1,20 +1,21 @@
+import { useCallback } from "react";
 import TextField from "../UIElements/TextField";
 import Box from "@mui/material/Box";
 
-export const LandingFilter = ({ column }) => {
+export const CustomMinMaxFilter = ({ column, label }) => {
   const [min, max] = column.getFilterValue() || ['', ''];
 
-  const handleChange = (index) => (event) => {
+  const handleChange = (index) => useCallback((event) => {
     const value = event.target.value;
     const filterValues = [...(column.getFilterValue() || ['', ''])];
     filterValues[index] = value;
     column.setFilterValue(filterValues);
-  };
+  }, [column, index]);
 
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
       <TextField
-        label={`Landings ${column.columnDef.header} Min`}
+        label={`${label} Min`}
         placeholder=""
         variant="standard"
         value={min}
@@ -22,7 +23,7 @@ export const LandingFilter = ({ column }) => {
         InputLabelProps={{ shrink: true }}
       />
       <TextField
-        label={`Landings ${column.columnDef.header} Max`}
+        label={`${label} Max`}
         placeholder=""
         variant="standard"
         value={max}
@@ -32,3 +33,5 @@ export const LandingFilter = ({ column }) => {
     </Box>
   );
 };
+
+export default CustomMinMaxFilter;

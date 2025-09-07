@@ -3,9 +3,13 @@ import dayjs from "dayjs";
 // MUI
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+// MUI Icons
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 // Custom
 import { convertMinutesToTime, convertTimeToMinutes, getValue } from "../../util/helpers";
-import { LandingFilter } from "../UIElements/LandingsFilter";
+import { Badge, Checkbox, FormControlLabel, Tooltip } from "@mui/material";
+import CustomMinMaxFilter from "../UIElements/CustomMinMaxFilter";
 
 export const renderTextProps = {
   muiTableBodyCellProps: { align: "left", sx: { p: 0.5 } },
@@ -93,8 +97,9 @@ export const createLandingColumn = (id, name) => ({
   header: name,
   size: 53,
   ...renderProps,
-  filterFn: "landingFilterFn", filterVariant: "landing",
-  Filter: ({ column }) => <LandingFilter column={column} />, // using custom filter component, otherwise it just goes crazy
+  filterFn: customMinMaxFilterFn,
+  filterVariant: "landing",
+  Filter: ({ column }) => <CustomMinMaxFilter column={column} label={`Landings ${name}`} />,
   Cell: ({ cell }) => (cell.getValue() === 0 ? "" : cell.getValue()),
   Footer: ({ table }) => renderNumberFooter(table, id),
 })
@@ -115,6 +120,65 @@ export const createColumn = (id, name, size, isText = false, footer = undefined)
   size: size,
   ...(isText ? renderTextProps : renderProps),
   Footer: () => footer,
+})
+
+export const createHasTrackColumn = (id, size) => ({
+  accessorKey: id,
+  header:
+    <Tooltip title="Shows an icon if a flight record has a track attached">
+      <MapOutlinedIcon />
+    </Tooltip>,
+  size: size,
+  ...renderProps,
+  Cell: ({ cell }) => (cell.getValue() ? <MapOutlinedIcon /> : ""),
+  filterFn: (row, columnId, filterValue) => {
+    if (filterValue === null) return true; // show all
+    return !!row.getValue(columnId) === filterValue;
+  },
+  filterVariant: "has-track",
+  Filter: ({ column }) => {
+    let value = column.getFilterValue();
+    if (value === undefined) value = null;
+    // value: true = has track, false = no track, null = all
+    return (
+      <FormControlLabel sx={{ m: 0, p: 0 }}
+        control={
+          <Checkbox
+            checked={value === true}
+            indeterminate={value == null}
+            onChange={e => {
+              // cycle between true -> false -> null
+              if (value === null) column.setFilterValue(true);
+              else if (value === true) column.setFilterValue(false);
+              else column.setFilterValue(null);
+            }}
+          />
+        }
+        labelPlacement="start"
+        label={
+          <Typography variant="caption" color="text.secondary">
+            Filter by having track
+          </Typography>
+        }
+      />
+    );
+  },
+})
+
+export const createAttachmentColumn = (id, size) => ({
+  accessorKey: id,
+  header:
+    <Tooltip title="Shows an icon with a badge indicating the number of attachments">
+      <AttachFileOutlinedIcon />
+    </Tooltip>,
+  size: size,
+  ...renderProps,
+  Cell: ({ cell }) => (
+    cell.getValue() ? <Badge badgeContent={cell.getValue()}><AttachFileOutlinedIcon color="action" /></Badge> : ""
+  ),
+  filterFn: customMinMaxFilterFn,
+  filterVariant: "attachments",
+  Filter: ({ column }) => <CustomMinMaxFilter column={column} label="Attachments" />,
 })
 
 export const createCustomFieldColumns = (customFields, category) => {
@@ -212,8 +276,7 @@ export const timeFilterFn = (row, columnId, filterValue) => {
   return isAfterMin && isBeforeMax;
 }
 
-// custom filter function for landing range
-export const landingFilterFn = (row, columnId, filterValue) => {
+export const customMinMaxFilterFn = (row, columnId, filterValue) => {
   const rowValue = parseInt(getValue(row.original, columnId)) || 0;
   const [min, max] = filterValue || ["", ""];
 

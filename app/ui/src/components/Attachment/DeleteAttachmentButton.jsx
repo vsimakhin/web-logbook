@@ -32,6 +32,7 @@ export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['flight', attachment.record_id] });
       await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
+      await queryClient.invalidateQueries({ queryKey: ['logbook'] });
     }
   });
   useErrorNotification({ isError: isResetError, error: resetError, fallbackMessage: 'Failed to reset track log' });
