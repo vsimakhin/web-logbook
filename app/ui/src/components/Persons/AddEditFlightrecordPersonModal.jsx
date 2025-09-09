@@ -24,7 +24,7 @@ import {
 } from "../../hooks/useAppNotifications";
 import { printPerson } from "../../util/helpers";
 
-const CloseDialogButton = memo(({ onClose }) => {
+const CloseDialogButton = ({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}>
@@ -32,9 +32,9 @@ const CloseDialogButton = memo(({ onClose }) => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
-const SaveButton = memo(({ frPerson, isNew, onClose }) => {
+const SaveButton = ({ frPerson, isNew, onClose }) => {
   const navigate = useNavigate();
 
   const payload = {
@@ -46,24 +46,13 @@ const SaveButton = memo(({ frPerson, isNew, onClose }) => {
   const mutateFn = isNew
     ? () => createPersonToLog({ payload, navigate })
     : () => updatePersonToLog({ payload, navigate });
-  const {
-    mutateAsync: savePersonToLog,
-    isError,
-    error,
-    isSuccess,
-  } = useMutation({
+  const { mutateAsync: savePersonToLog, isError, error, isSuccess } = useMutation({
     mutationFn: mutateFn,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["persons-for-log", frPerson.log_uuid],
-      });
+      await queryClient.invalidateQueries({ queryKey: ["persons-for-log", frPerson.log_uuid] });
     },
   });
-  useErrorNotification({
-    isError,
-    error,
-    fallbackMessage: "Failed to add person to log record",
-  });
+  useErrorNotification({ isError, error, fallbackMessage: "Failed to add person to log record" });
   useSuccessNotification({ isSuccess, message: "Person added to log record" });
 
   const handleOnClick = useCallback(async () => {
@@ -78,7 +67,7 @@ const SaveButton = memo(({ frPerson, isNew, onClose }) => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
 export const AddEditFlightrecordPersonModal = ({ open, onClose, payload }) => {
   const [frPerson, setFrPerson] = useState({ ...payload });
