@@ -15,7 +15,7 @@ import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
 
 export const SummaryFlightMap = () => {
-  const [options, setOptions] = useState({ noRoutes: false, noTracks: true });
+  const [options, setOptions] = useState({ routes: true, tracks: false });
   const [mapData, setMapData] = useState([]);
   const navigate = useNavigate();
 
@@ -32,8 +32,8 @@ export const SummaryFlightMap = () => {
 
     setOptions((prev) => ({
       ...prev,
-      noRoutes: filter.no_routes,
-      noTracks: filter.no_tracks,
+      routes: filter.routes,
+      tracks: filter.tracks,
     }));
   }, [setMapData]);
 

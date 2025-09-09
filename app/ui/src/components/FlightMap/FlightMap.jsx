@@ -132,7 +132,7 @@ const drawTrackLog = (flightTrack, vectorSource) => {
   vectorSource.addFeature(feature);
 }
 
-export const FlightMap = ({ data, options = { noRoutes: false, noTracks: true }, title = "Flight Map", sx }) => {
+export const FlightMap = ({ data, options = { routes: true, tracks: false }, title = "Flight Map", sx }) => {
   const navigate = useNavigate();
   const mapRef = useRef(null);
   const containerRef = useRef(null);
@@ -211,11 +211,11 @@ export const FlightMap = ({ data, options = { noRoutes: false, noTracks: true },
             addMarker(features, departure);
             addMarker(features, arrival);
 
-            if (!options.noRoutes) {
+            if (options.routes) {
               setDistance((prev) => prev + flight.distance);
               drawGreatCircleLine(departure, arrival, vectorSource);
             }
-            if (!options.noTracks) {
+            if (options.tracks) {
               if (flight.track) {
                 drawTrackLog(flight.track, vectorSource);
               }

@@ -48,7 +48,7 @@ export const TotalsDashboard = () => {
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Filters" />
-              <Filters data={data} callbackFunction={callbackFunction} options={{ showNoRoutes: false, defaultQuickSelect: "All Time", showStatsFilters: true }} />
+              <Filters data={data} callbackFunction={callbackFunction} options={{ showMapSelectors: false, defaultQuickSelect: "All Time", showStatsFilters: true }} />
             </CardContent>
           </Card >
         </Grid>
