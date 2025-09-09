@@ -8,8 +8,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/go-pdf/fpdf"
-	"github.com/go-pdf/fpdf/contrib/gofpdi"
+	"codeberg.org/go-pdf/fpdf"
+	"codeberg.org/go-pdf/fpdf/contrib/gofpdi"
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
