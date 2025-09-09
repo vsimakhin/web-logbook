@@ -66,7 +66,7 @@ export const FlightRecord = () => {
 
   const gridSize = useMemo(() => ({ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }), []);
 
-  const options = flight?.track ? { noRoutes: true, noTracks: false } : { noRoutes: false, noTracks: true };
+  const options = flight?.track ? { routes: false, tracks: true } : { routes: true, tracks: false };
 
   return (
     <>

@@ -30,8 +30,8 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_model: "",
   aircraft_category: "",
   place: "",
-  no_routes: false,
-  no_tracks: true,
+  routes: true,
+  tracks: false,
   show: {},
 };
 
@@ -94,7 +94,7 @@ const dateRanges = [
 
 const defaultOptions = {
   defaultQuickSelect: "This Year",
-  showNoRoutes: true,
+  showMapSelectors: true,
   showStatsFilters: false,
 }
 
@@ -113,20 +113,20 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
 
   const handleChange = useCallback((key, value) => {
     setFilter(prev => ({ ...prev, [key]: value }))
-  }, []);
+  }, [setFilter]);
 
   const handleStatsStateChange = useCallback((key, value) => {
     setFilterStatsState(prev => ({ ...prev, [key]: value }));
     setFilter(prev => ({ ...prev, show: { ...prev.show, [key]: value } }));
   }, [setFilterStatsState, setFilter]);
 
-  const handleQuickSelect = (_, value) => {
+  const handleQuickSelect = useCallback((_, value) => {
     const range = dateRanges.find(r => r.label === value);
     if (range) {
       const { start, end } = range.fn();
       setFilter(prev => ({ ...prev, 'start_date': start, 'end_date': end }));
     }
-  };
+  }, [setFilter]);
 
   useEffect(() => {
     if (!data) return;
@@ -194,19 +194,19 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
           tooltip="Departure/Arrival"
           value={filter?.place}
         />
-        {options.showNoRoutes &&
+        {options.showMapSelectors &&
           <>
             <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-              <FormControlLabel label="No Route Lines" sx={{ width: '100%' }}
+              <FormControlLabel label="Route Lines" sx={{ width: '100%' }}
                 control={
-                  <Switch checked={filter?.no_routes ?? false} onChange={(event) => handleChange("no_routes", event.target.checked)} />
+                  <Switch checked={filter?.routes ?? false} onChange={(event) => handleChange("routes", event.target.checked)} />
                 }
               />
             </Grid>
             <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-              <FormControlLabel label="No Tracks" sx={{ width: '100%' }}
+              <FormControlLabel label="Tracks" sx={{ width: '100%' }}
                 control={
-                  <Switch checked={filter?.no_tracks ?? true} onChange={(event) => handleChange("no_tracks", event.target.checked)} />
+                  <Switch checked={filter?.tracks ?? false} onChange={(event) => handleChange("tracks", event.target.checked)} />
                 }
               />
             </Grid>
