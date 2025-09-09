@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Don't show the brackets if the person doesn't have a role
 - Update: Change Map selectors `No Route Lines`/`No Tracks` to `Route Lines`/`Tracks`
 - New: Added Track and Attachments columns for the logbook table. Shows if a flight record has a track attached and amount of the attachments. Hidden by default
 
