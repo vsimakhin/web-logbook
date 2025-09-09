@@ -3,8 +3,8 @@ module github.com/vsimakhin/web-logbook
 go 1.24.7
 
 require (
+	codeberg.org/go-pdf/fpdf v0.11.1
 	github.com/go-chi/chi/v5 v5.2.3
-	github.com/go-pdf/fpdf v0.9.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
 	github.com/nathan-osman/go-sunrise v1.1.0

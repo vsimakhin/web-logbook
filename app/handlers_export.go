@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"strings"
 
+	"codeberg.org/go-pdf/fpdf"
+	"codeberg.org/go-pdf/fpdf/contrib/gofpdi"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-pdf/fpdf"
-	"github.com/go-pdf/fpdf/contrib/gofpdi"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	"github.com/vsimakhin/web-logbook/internal/pdfexport"
 )
