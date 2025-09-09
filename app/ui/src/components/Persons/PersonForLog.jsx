@@ -23,7 +23,7 @@ export const PersonForLog = ({ person, logUuid }) => {
         <IconButton onClick={handleClick} size="small"><PersonIcon /></IconButton>
         <Typography variant="body2" color="primary">
           <Link to={`/persons/${person.uuid}`} style={{ textDecoration: "none", color: "inherit" }}>
-            {printPerson(person)} ({person.role})
+            {printPerson(person)} {person.role ? `(${person.role})` : null}
           </Link>
         </Typography>
       </Box>

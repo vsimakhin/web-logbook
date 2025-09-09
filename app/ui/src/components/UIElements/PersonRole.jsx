@@ -14,8 +14,11 @@ export const PersonRole = memo(({ gsize, id = "role", label = "Role", value, han
       value={value}
       tooltip={"Role on this flight"}
       options={options}
-      onBlur={(e) => handleChange(id, e.target.value)}
       freeSolo={true}
+      inputValue={value || ''}
+      onInputChange={(event, newValue) => {
+        handleChange(id, newValue);
+      }}
       {...props}
     />
   );
