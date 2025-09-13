@@ -294,7 +294,10 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
     <img src="https://github.com/daman2k.png?size=40" width="40" height="40" alt="daman2k" />
   </a>
   <a href="https://github.com/fldroiddev" title="fldroiddev">
-    <img src="https://github.com/fldroiddev.png?size=40" width="40" height="40" alt="daman2k" />
+    <img src="https://github.com/fldroiddev.png?size=40" width="40" height="40" alt="fldroiddev" />
+  </a>
+  <a href="https://github.com/benoitfl" title="benoitfl">
+    <img src="https://github.com/benoitfl.png?size=40" width="40" height="40" alt="benoitfl" />
   </a>
 </p>
 
