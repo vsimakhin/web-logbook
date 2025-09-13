@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Corrected caching for Persons entity
 - Update: Increase timeout for initial DB check
 - Update: Golang and npm packages/security patches
 - Fix: Don't show the brackets if the person doesn't have a role

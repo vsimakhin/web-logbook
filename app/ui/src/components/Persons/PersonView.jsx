@@ -16,14 +16,10 @@ export const PersonView = () => {
   const navigate = useNavigate();
 
   const { data: personData, isLoading: personIsLoading, isError: personIsError, error: personError } = useQuery({
-    queryKey: ["person", uuid],
+    queryKey: ["persons", "person", uuid],
     queryFn: ({ signal }) => fetchPersonByUuid({ signal, uuid, navigate }),
   });
-  useErrorNotification({
-    isError: personIsError,
-    error: personError,
-    fallbackMessage: "Failed to load person",
-  });
+  useErrorNotification({ isError: personIsError, error: personError, fallbackMessage: "Failed to load person" });
 
   return (
     <>

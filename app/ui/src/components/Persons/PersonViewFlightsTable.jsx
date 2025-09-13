@@ -55,7 +55,7 @@ export const PersonsViewFlightsTable = ({ uuid }) => {
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["person-view-flights", uuid],
+    queryKey: ["persons", "flights", uuid],
     queryFn: ({ signal }) => fetchLogsForPerson({ signal, personUuid: uuid, navigate }),
     staleTime: 3600000,
     gcTime: 3600000,

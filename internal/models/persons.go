@@ -114,7 +114,7 @@ func (m *DBModel) AddPersonToLog(personToLog PersonToLog) error {
 	query := "SELECT person_uuid, log_uuid FROM person_to_log WHERE person_uuid = ? AND log_uuid = ?"
 	row := m.DB.QueryRowContext(ctx, query, personToLog.PersonUUID, personToLog.LogUUID)
 	if err := row.Scan(&personToLog.PersonUUID, &personToLog.LogUUID); err == nil {
-		return fmt.Errorf("Person-to-log record for person %s and log %s already exists", personToLog.PersonUUID, personToLog.LogUUID)
+		return fmt.Errorf("person-to-log record for person %s and log %s already exists", personToLog.PersonUUID, personToLog.LogUUID)
 	}
 
 	query = `INSERT INTO person_to_log (uuid, person_uuid, log_uuid, role)
@@ -182,7 +182,7 @@ func (m *DBModel) DeletePerson(uuid string) (err error) {
 	_, err = m.DB.ExecContext(ctx, query, uuid)
 
 	if err != nil {
-		return fmt.Errorf("Error deleting references for person %s", uuid)
+		return fmt.Errorf("error deleting references for person %s", uuid)
 	}
 
 	query = "DELETE FROM persons WHERE uuid = ?"

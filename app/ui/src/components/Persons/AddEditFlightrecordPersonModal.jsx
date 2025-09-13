@@ -49,7 +49,8 @@ const SaveButton = ({ frPerson, isNew, onClose }) => {
   const { mutateAsync: savePersonToLog, isError, error, isSuccess } = useMutation({
     mutationFn: mutateFn,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["persons-for-log", frPerson.log_uuid] });
+      await queryClient.invalidateQueries({ queryKey: ["persons", "log", frPerson.log_uuid] });
+      await queryClient.invalidateQueries({ queryKey: ["persons", "flights"] })
     },
   });
   useErrorNotification({ isError, error, fallbackMessage: "Failed to add person to log record" });
