@@ -92,7 +92,7 @@ func NewTable(name string, primaryKeyName string, primaryKeyType ColumnType, col
 // initTable initializes the table by checking if it exists and creating it if necessary.
 // It also ensures that all required columns exist in the table.
 func (t *Table) initTable(db *sql.DB, engine string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
 
 	var err error
@@ -221,7 +221,7 @@ func (t *Table) createIndex(ctx context.Context, db *sql.DB, engine string, colu
 
 // initView initializes the view by checking if it exists and creating it if necessary.
 func (v *View) initView(db *sql.DB, engine string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
 
 	v.dropView(db, engine)
@@ -234,7 +234,7 @@ func (v *View) initView(db *sql.DB, engine string) error {
 
 // dropView drops the view from the database.
 func (v *View) dropView(db *sql.DB, engine string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
 
 	query := fmt.Sprintf(queries[engine][dropView], v.Name)
