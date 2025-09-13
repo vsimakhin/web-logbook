@@ -14,7 +14,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.9.0] - 13.09.2025
 
 - Fix: Corrected caching for Persons entity
 - Update: Increase timeout for initial DB check
@@ -30,11 +30,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [3.7.0] - 03.09.2025
 
 - New: Added new section `Persons` to track the crew members for the flights @danielkappelle
-
-## [3.6.1] - 19.08.2025
-
-- Fix: track is not displayed on the Flight record map
-- Update: Add `numeric` property for Time and Landing fields to show a numeric keyboard on mobile devices for better UX @danielkappelle
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

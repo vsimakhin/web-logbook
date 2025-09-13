@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.9.0] - 13.09.2025
 
 - Fix: Corrected caching for Persons entity
 - Update: Increase timeout for initial DB check
