@@ -16,7 +16,7 @@ export const FlightRecordPersons = ({ id }) => {
   const navigate = useNavigate();
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['persons-for-log', id],
+    queryKey: ["persons", "log", id],
     queryFn: ({ signal }) => fetchPersonsForLog({ signal, logUuid: id, navigate }),
     enabled: !(id === "new"),
   });

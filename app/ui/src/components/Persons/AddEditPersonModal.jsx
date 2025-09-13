@@ -51,7 +51,6 @@ const SaveButton = memo(({ person, isNew, onClose }) => {
     mutationFn: mutateFn,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["persons"] });
-      await queryClient.invalidateQueries({ queryKey: ["person", person.uuid] });
     },
   });
   useErrorNotification({ isError, error, fallbackMessage: "Failed to save person" });

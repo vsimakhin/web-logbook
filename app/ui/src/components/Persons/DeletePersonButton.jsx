@@ -27,11 +27,7 @@ export const DeletePersonButton = ({ payload }) => {
       await queryClient.invalidateQueries({ queryKey: ["persons"] });
     },
   });
-  useErrorNotification({
-    isError,
-    error,
-    fallbackMessage: "Failed to delete person",
-  });
+  useErrorNotification({ isError, error, fallbackMessage: "Failed to delete person" });
   useSuccessNotification({ isSuccess, message: "Person deleted" });
   // TODO notifications don't work....
 

@@ -16,7 +16,8 @@ export const DeletePersonToLogButton = ({ person, logUuid, handleClose }) => {
   const { mutateAsync: deleteFunction, isError, error } = useMutation({
     mutationFn: () => deletePersonToLog({ payload: { person_uuid: person.uuid, log_uuid: logUuid } }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['persons-for-log', logUuid] })
+      await queryClient.invalidateQueries({ queryKey: ["persons", "log", logUuid] })
+      await queryClient.invalidateQueries({ queryKey: ["persons", "flights"] })
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to delete person-to-log' });
