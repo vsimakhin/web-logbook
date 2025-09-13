@@ -53,7 +53,7 @@ func (m *DBModel) GetAirportDBRecordsCount() (count int, err error) {
 
 // UpdateAirportDB updates airports table
 func (m *DBModel) UpdateAirportDB(airports []Airport, noICAOFilter bool) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 	defer cancel()
 
 	// let's make it in transaction

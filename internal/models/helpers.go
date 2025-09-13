@@ -104,7 +104,7 @@ func (m *DBModel) UpdateFlightRecordsDistance() {
 
 // CreateDistanceCache fills cache map with calculated distances
 func (m *DBModel) CreateDistanceCache() {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 	defer cancel()
 
 	// clear cache

@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Increase timeout for initial DB check
 - Update: Golang and npm packages/security patches
 - Fix: Don't show the brackets if the person doesn't have a role
 - Update: Change Map selectors `No Route Lines`/`No Tracks` to `Route Lines`/`Tracks`
