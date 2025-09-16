@@ -212,7 +212,6 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
             addMarker(features, arrival);
 
             if (options.routes) {
-              setDistance((prev) => prev + flight.distance);
               drawGreatCircleLine(departure, arrival, vectorSource);
             }
             if (options.tracks) {
@@ -220,6 +219,7 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
                 drawTrackLog(flight.track, vectorSource);
               }
             }
+            setDistance((prev) => prev + flight.distance);
             return { departure, arrival };
           });
 
