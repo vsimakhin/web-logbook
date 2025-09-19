@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: track plotting from SkyDaemon KML files
+
 ## [3.9.0] - 13.09.2025
 
 - Fix: Corrected caching for Persons entity
