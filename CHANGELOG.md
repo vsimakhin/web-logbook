@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.10.0] - 19.09.2025
 
 - Fix: track plotting from SkyDaemon KML files
 
