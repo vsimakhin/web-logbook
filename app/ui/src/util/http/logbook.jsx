@@ -45,7 +45,12 @@ export const fetchLogbookMapData = async ({ signal, navigate }) => {
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch logbook map data');
+  const response = await handleFetch(url, options, navigate, 'Cannot fetch logbook map data');
+
+  return response?.map(flight => ({
+    ...flight,
+    custom_fields: tableJSONCodec.parse(flight.custom_fields)
+  })) || response;
 }
 
 export const fetchFlightData = async ({ signal, id, navigate }) => {

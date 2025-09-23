@@ -27,6 +27,12 @@ const HELP_CONTENT = [
       Available stats functions: none, count`,
   },
   {
+    title: 'Enroute Fields',
+    description: `Special field type to track enroute airports or airfields (divided by comma). 
+      They will be visible on the map and the distance will be calculated accordingly. No stats functions available.
+      Use only one enroute field otherwise the distance calculation will be incorrect.`,
+  },
+  {
     title: 'Duration Fields',
     description: `Duration fields allow you to enter a duration in HH:MM format. The field type is similar to the Flight Time field. 
       Available stats functions: sum, average, and count of the values.`,
