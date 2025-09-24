@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 // Custom
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../../util/http/logbook";
-import { fetchCustomFields } from "../../../util/http/fields";
 import { getTotalsByAircraft } from "../../../util/helpers";
 import TotalsByAircraftTable from "./TotalsByAircraftTable";
 import { fetchAircraftModelsCategories } from "../../../util/http/aircraft";
+import useCustomFields from "../../../hooks/useCustomFields";
 
 export const TotalsByAircraft = ({ type }) => {
   const navigate = useNavigate();
@@ -24,22 +24,15 @@ export const TotalsByAircraft = ({ type }) => {
     queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
   });
 
-  const { data: customFields } = useQuery({
-    queryKey: ['custom-fields'],
-    queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { customFields } = useCustomFields();
 
   return (
-    <>
-      <TotalsByAircraftTable
-        type={type}
-        data={getTotalsByAircraft(data ?? [], type, models ?? [], customFields ?? [])}
-        isLoading={isLoading}
-        customFields={customFields ?? []}
-      />
-    </>
+    <TotalsByAircraftTable
+      type={type}
+      data={getTotalsByAircraft(data ?? [], type, models ?? [], customFields ?? [])}
+      isLoading={isLoading}
+      customFields={customFields ?? []}
+    />
   );
 }
 

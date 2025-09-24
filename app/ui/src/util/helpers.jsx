@@ -229,6 +229,6 @@ export const getTotalsByAircraft = (flights, type, models, customFields = []) =>
 };
 
 export const printPerson = person => {
-  if(!person) return '';
+  if (!person) return '';
   return `${person.first_name} ${person.middle_name} ${person.last_name}`
 }

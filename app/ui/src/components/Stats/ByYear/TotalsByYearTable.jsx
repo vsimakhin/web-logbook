@@ -10,10 +10,10 @@ import Typography from "@mui/material/Typography";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
-import { convertMinutesToTime, getCustomFieldValue } from '../../../util/helpers';
 import CSVExportButton from '../../UIElements/CSVExportButton';
 import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
 import useSettings from '../../../hooks/useSettings';
+import { aggregatedCellSx, createCustomFieldColumn, createTimeColumn } from '../helpers';
 
 const paginationKey = 'totals-stats-year-table-page-size';
 const columnVisibilityKey = 'totals-stats-year-table-column-visibility';
@@ -44,84 +44,12 @@ const tableOptions = {
   enablePagination: false,
 }
 
-const timeFieldSize = 90;
-
-const renderProps = {
-  muiTableBodyCellProps: { align: "center", sx: { p: 0.5 } },
-};
-
-const createTimeColumn = (id, name) => ({
-  accessorKey: id,
-  header: name,
-  size: timeFieldSize,
-  ...renderProps,
-  Cell: ({ cell }) => (convertMinutesToTime(cell.getValue())),
-  aggregationFn: "sum",
-  AggregatedCell: ({ cell }) => (
-    <Typography variant="body2" color="primary" >
-      {convertMinutesToTime(cell.getValue())}
-    </Typography>
-  ),
-})
-
 export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const { fieldName } = useSettings();
-
-  // Helper function to create custom field columns
-  const createCustomFieldColumn = (field) => {
-    const baseColumn = {
-      accessorKey: `custom_fields.${field.uuid}`,
-      header: field.name,
-      size: 120,
-      muiTableBodyCellProps: { align: "center", sx: { p: 0.5 } },
-      Cell: ({ row }) => {
-        const fieldData = row.original.custom_fields?.[field.uuid];
-        const value = getCustomFieldValue(fieldData, field);
-        return value;
-      },
-    };
-
-    // Add aggregation for grouped rows
-    if (field.stats_function === 'sum' || field.stats_function === 'average') {
-      baseColumn.aggregationFn = (columnId, leafRows) => {
-        const totalSum = leafRows.reduce((sum, row) => {
-          const fieldData = row.original.custom_fields?.[field.uuid];
-          return sum + (fieldData?.sum || 0);
-        }, 0);
-
-        if (field.stats_function === 'average') {
-          const totalCount = leafRows.reduce((count, row) => {
-            const fieldData = row.original.custom_fields?.[field.uuid];
-            return count + (fieldData?.count || 0);
-          }, 0);
-          const average = totalCount > 0 ? totalSum / totalCount : 0;
-          return field.type === 'duration' ? convertMinutesToTime(Math.round(average)) : Number(average.toFixed(2));
-        }
-
-        return field.type === 'duration' ? convertMinutesToTime(totalSum) : totalSum;
-      };
-    } else if (field.stats_function === 'count') {
-      baseColumn.aggregationFn = (columnId, leafRows) => {
-        return leafRows.reduce((count, row) => {
-          const fieldData = row.original.custom_fields?.[field.uuid];
-          return count + (fieldData?.count || 0);
-        }, 0);
-      };
-    }
-
-    // Add AggregatedCell for grouped display
-    baseColumn.AggregatedCell = ({ cell }) => (
-      <Typography variant="body2" color="primary">
-        {cell.getValue()}
-      </Typography>
-    );
-
-    return baseColumn;
-  };
 
   const columns = useMemo(() => {
     const baseColumns = [
@@ -153,7 +81,7 @@ export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
           return `${dayTotal}/${nightTotal}`;
         },
         AggregatedCell: ({ cell }) => (
-          <Typography variant="body2" color="primary">
+          <Typography sx={(theme) => (aggregatedCellSx(cell.getValue() === '0/0', theme))}>
             {cell.getValue()}
           </Typography>
         ),
@@ -164,7 +92,7 @@ export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
         aggregationFn: "sum",
         Cell: ({ cell }) => (cell.getValue().toLocaleString(undefined, { maximumFractionDigits: 0 })),
         AggregatedCell: ({ cell }) => (
-          <Typography variant="body2" color="primary">
+          <Typography sx={(theme) => (aggregatedCellSx(cell.getValue() === 0, theme))}>
             {cell.getValue().toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </Typography>
         ),
