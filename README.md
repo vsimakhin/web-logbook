@@ -315,7 +315,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
 # Used libraries
 
 Backend:
-* Golang go-pdf https://github.com/go-pdf/fpdf
+* Golang go-pdf https://codeberg.org/go-pdf/fpdf
 * Golang chi web-server https://github.com/go-chi/chi
 * go-sunrise github.com/nathan-osman/go-sunrise
 * sqlite https://gitlab.com/cznic/sqlite
