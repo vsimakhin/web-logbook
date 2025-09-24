@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Enroute field as a new custom type. Allows to add enroute/touch-n-goes airfields and show them on the map. Distance is recalculated as well.
+
 ## [3.10.0] - 19.09.2025
 
 - Fix: track plotting from SkyDaemon KML files
@@ -302,6 +306,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   </a>
   <a href="https://github.com/benoitfl" title="benoitfl">
     <img src="https://github.com/benoitfl.png?size=40" width="40" height="40" alt="benoitfl" />
+  </a>
+  <a href="https://github.com/Gaudv" title="Gaudv">
+    <img src="https://github.com/Gaudv.png?size=40" width="40" height="40" alt="Gaudv" />
   </a>
 </p>
 

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { use, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI
@@ -13,6 +13,7 @@ import FlightMap from "../FlightMap/FlightMap";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
+import useCustomFields from "../../hooks/useCustomFields";
 
 export const SummaryFlightMap = () => {
   const [options, setOptions] = useState({ routes: true, tracks: false });
@@ -26,6 +27,8 @@ export const SummaryFlightMap = () => {
     gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
+
+  const { getEnroute } = useCustomFields();
 
   const callbackFunction = useCallback((filteredData, filter) => {
     setMapData(filteredData);
@@ -57,7 +60,7 @@ export const SummaryFlightMap = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <FlightMap data={mapData} options={options} />
+          <FlightMap data={mapData} options={options} getEnroute={getEnroute} />
         </Grid>
       </Grid>
     </>

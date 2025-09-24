@@ -31,13 +31,13 @@ import { fetchAirport } from '../../util/http/airport';
 const getAirportData = async (id, navigate) => {
   try {
     // Check cache first
-    const cachedData = queryClient.getQueryData(["airport", id]);
+    const cachedData = queryClient.getQueryData(["airports", id]);
     if (cachedData) {
       return cachedData;
     }
 
     const response = await queryClient.fetchQuery({
-      queryKey: ["airport", id],
+      queryKey: ["airports", id],
       queryFn: ({ signal }) => fetchAirport({ signal, id, navigate }),
       staleTime: 86400000, // 24 hours
       gcTime: 86400000, // 24 hours
@@ -132,7 +132,7 @@ const drawTrackLog = (flightTrack, vectorSource) => {
   vectorSource.addFeature(feature);
 }
 
-export const FlightMap = ({ data, options = { routes: true, tracks: false }, title = "Flight Map", sx }) => {
+export const FlightMap = ({ data, options = { routes: true, tracks: false }, title = "Flight Map", getEnroute, sx }) => {
   const navigate = useNavigate();
   const mapRef = useRef(null);
   const containerRef = useRef(null);
@@ -211,8 +211,26 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
             addMarker(features, departure);
             addMarker(features, arrival);
 
+            const fullRoute = [departure];
+            // get airport data for enroute
+            const enrouteCodes = getEnroute(flight.custom_fields);
+            if (enrouteCodes && Array.isArray(enrouteCodes)) {
+              for (const code of enrouteCodes) {
+                if (code !== flight.departure.place && code !== flight.arrival.place) {
+                  const airport = await getAirportData(code, navigate);
+                  if (airport) {
+                    fullRoute.push(airport);
+                    addMarker(features, airport);
+                  }
+                }
+              }
+            }
+            fullRoute.push(arrival);
+
             if (options.routes) {
-              drawGreatCircleLine(departure, arrival, vectorSource);
+              for (let i = 0; i < fullRoute.length - 1; i++) {
+                drawGreatCircleLine(fullRoute[i], fullRoute[i + 1], vectorSource);
+              }
             }
             if (options.tracks) {
               if (flight.track) {

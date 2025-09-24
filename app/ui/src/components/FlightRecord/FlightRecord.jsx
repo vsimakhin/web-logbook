@@ -13,6 +13,9 @@ import FlightMap from "../FlightMap/FlightMap";
 import Attachments from "../Attachment/Attachments";
 import CustomFields from "./CustomFields";
 import FlightRecordPersons from "../Persons/FlightRecordPersons";
+import useCustomFields from "../../hooks/useCustomFields";
+
+const gridSize = { xs: 12, sm: 12, md: 6, lg: 6, xl: 6 };
 
 export const FlightRecord = () => {
   const { id } = useParams();
@@ -28,6 +31,8 @@ export const FlightRecord = () => {
     refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
+
+  const { customFields, getEnroute } = useCustomFields();
 
   useEffect(() => {
     if (data) {
@@ -64,8 +69,6 @@ export const FlightRecord = () => {
     });
   }, []);
 
-  const gridSize = useMemo(() => ({ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }), []);
-
   const options = flight?.track ? { routes: false, tracks: true } : { routes: true, tracks: false };
 
   return (
@@ -74,13 +77,13 @@ export const FlightRecord = () => {
       <Grid container spacing={1}>
         <Grid size={gridSize}>
           <FlightRecordDetails flight={flight} handleChange={handleChange} setFlight={setFlight} />
-          <CustomFields flight={flight} handleChange={handleChange} />
+          <CustomFields flight={flight} customFields={customFields} handleChange={handleChange} />
           <Attachments id={id} />
           <FlightRecordPersons id={id} />
         </Grid>
 
         <Grid size={gridSize}>
-          <FlightMap data={mapData} options={options} />
+          <FlightMap data={mapData} options={options} getEnroute={getEnroute} />
         </Grid>
       </Grid>
     </>

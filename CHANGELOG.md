@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Enroute field as a new custom type. Allows to add enroute/touch-n-goes airfields and show them on the map. Distance is recalculated as well.
+
 ## [3.10.0] - 19.09.2025
 
 - Fix: track plotting from SkyDaemon KML files
