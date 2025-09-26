@@ -4,8 +4,6 @@ import {
 } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 // MUI
 import Box from '@mui/material/Box';
 // Custom components and libraries
@@ -23,9 +21,8 @@ import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import TableHeader from '../UIElements/TableHeader';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import { fetchCustomFields } from '../../util/http/fields';
-import { useErrorNotification } from '../../hooks/useAppNotifications';
 import useSettings from '../../hooks/useSettings';
+import useCustomFields from '../../hooks/useCustomFields';
 
 const paginationKey = 'logbook-table-page-size';
 const columnVisibilityKey = 'logbook-table-column-visibility';
@@ -49,7 +46,6 @@ const tableOptions = {
 };
 
 export const LogbookTable = ({ data, isLoading }) => {
-  const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, { attachments_count: false, has_track: false }, { codec: tableJSONCodec });
@@ -57,16 +53,7 @@ export const LogbookTable = ({ data, isLoading }) => {
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const { isSettingsLoading, fieldName, paginationOptions } = useSettings();
-
-  // Load the list of custom fields
-  const { data: customFields, isLoading: isCustomFieldsLoading, isError: isCustomFieldsError, error: customFieldsError } = useQuery({
-    queryKey: ['custom-fields'],
-    queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    refetchOnWindowFocus: false,
-  });
-  useErrorNotification({ isError: isCustomFieldsError, error: customFieldsError, fallbackMessage: 'Failed to load custom fields' });
+  const { customFields, isCustomFieldsLoading } = useCustomFields();
 
   const filterFns = useMemo(() => ({
     dateFilterFn: dateFilterFn,
