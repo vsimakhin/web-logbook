@@ -12,6 +12,8 @@ import CardContent from '@mui/material/CardContent';
 import TextField from "../UIElements/TextField";
 import CardHeader from "../UIElements/CardHeader";
 import SaveSettingsButton from "./SaveSettingsButton";
+import Select from "../UIElements/Select";
+import { defaultPersonRoles } from "../UIElements/PersonRole";
 
 const ActionButtons = memo(({ settings }) => (
   <SaveSettingsButton settings={settings} />
@@ -71,6 +73,16 @@ const OtherSettings = memo(({ settings, handleChange }) => {
         handleChange={handleChange}
         value={getDefaultPagination()}
         tooltip="Logbook Pagination (comma-separated values, e.g. 5,10,15)"
+      />
+      <Select gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+        id="person_roles"
+        label="Person Roles"
+        handleChange={handleChange}
+        value={settings.person_roles ? settings.person_roles.split(",").map(role => role.trim()) : []}
+        tooltip={"Person roles (type the role in and press enter or select from the default list)"}
+        options={defaultPersonRoles}
+        freeSolo={true}
+        multiple
       />
     </Grid>
   );
@@ -162,6 +174,7 @@ export const GeneralSettings = memo(({ settings, handleChange }) => {
     handleChange('time_fields_auto_format', parseInt(value));
   }, [handleChange]);
 
+  console.log(settings.person_roles)
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent>
