@@ -271,6 +271,7 @@ type Currency struct {
 	TimeFrame   struct {
 		Unit  string `json:"unit"`
 		Value int    `json:"value"`
+		Since string `json:"since"`
 	} `json:"time_frame"`
 	Comparison string `json:"comparison"`
 	Filters    string `json:"filters"`
