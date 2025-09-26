@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Added `Since` and `All Time` time frame units for the Currency
 - Update: grey out 0:00/0 values in the stats tables
 - New: Enroute field as a new custom type. Allows to add enroute/touch-n-goes airfields and show them on the map. Distance is recalculated as well.
 
