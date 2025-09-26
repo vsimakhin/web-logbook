@@ -8,7 +8,7 @@ import { useCallback } from "react";
 export const useCustomFields = () => {
   const navigate = useNavigate();
 
-  const { data = [], isError, error } = useQuery({
+  const { data = [], isError, error, isLoading } = useQuery({
     queryKey: ['custom-fields'],
     queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
     staleTime: 3600000,
@@ -16,7 +16,7 @@ export const useCustomFields = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load custom fields' });
 
-  const enrouteField = data.find(f => f.type === 'enroute');
+  const enrouteField = data?.find?.(f => f.type === 'enroute');
 
   /**
    * Get enroute airport codes from flight record custom fields
@@ -37,6 +37,9 @@ export const useCustomFields = () => {
   return {
     data,
     customFields: data,
+    isCustomFieldsLoading: isLoading,
+    isCustomFieldsError: isError,
+    customFieldsError: error,
     getEnroute,
   }
 };

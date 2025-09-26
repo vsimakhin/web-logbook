@@ -13,7 +13,7 @@ import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../../util/http/logbook";
 import DashboardTiles from "./DashboardTiles";
 import CustomFieldsTiles from "./CustomFieldsTiles";
-import { fetchCustomFields } from "../../../util/http/fields";
+import useCustomFields from "../../../hooks/useCustomFields";
 
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
@@ -28,12 +28,7 @@ export const TotalsDashboard = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
-  const { data: customFields } = useQuery({
-    queryKey: ['custom-fields'],
-    queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { customFields } = useCustomFields();
 
   const callbackFunction = (filteredData, filter) => {
     setDashboardData(filteredData);

@@ -4,18 +4,15 @@ import {
 } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
-import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
-import { fetchCustomFields } from '../../../util/http/fields';
 import NewCustomFieldButton from './NewCustomFieldButton';
 import EditCustomFieldButton from './EditCustomFieldButton';
 import DeleteCustomFieldButton from './DeleteCustomFieldButton';
+import useCustomFields from '../../../hooks/useCustomFields';
 
 const paginationKey = 'customfields-table-page-size';
 const columnVisibilityKey = 'customfields-table-column-visibility';
@@ -45,15 +42,7 @@ export const CustomFieldsTable = () => {
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  const navigate = useNavigate();
-
-  const { data: data, isLoading, isError, error } = useQuery({
-    queryKey: ['custom-fields'],
-    queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load custom fields' });
+  const { data, isCustomFieldsLoading } = useCustomFields();
 
   const columns = useMemo(() => [
     {
@@ -89,7 +78,7 @@ export const CustomFieldsTable = () => {
   ), []);
 
   const table = useMaterialReactTable({
-    isLoading: isLoading,
+    isLoading: isCustomFieldsLoading,
     columns: columns,
     data: data ?? [],
     onColumnFiltersChange: setColumnFilters,
@@ -105,7 +94,7 @@ export const CustomFieldsTable = () => {
 
   return (
     <>
-      {(isLoading) && <LinearProgress />}
+      {(isCustomFieldsLoading) && <LinearProgress />}
       <MaterialReactTable table={table} />
     </>
   );
