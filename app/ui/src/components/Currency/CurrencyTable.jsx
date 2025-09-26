@@ -97,7 +97,7 @@ export const CurrencyTable = () => {
         accessorKey: "metric", header: "Metric", size: 140,
         Cell: ({ cell }) => {
           const metricValue = cell.getValue();
-          const option = metricOptions.find(opt => opt.value === metricValue);
+          const option = metricOptions().find(opt => opt.value === metricValue);
           return option ? option.label : metricValue;
         }
       },

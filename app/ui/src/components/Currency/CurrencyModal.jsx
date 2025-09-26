@@ -108,8 +108,8 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
               id="metric"
               label="Metric"
               handleChange={(id, value) => handleChange(id, value.value)}
-              value={metricOptions.find(option => option.value === currency.metric) || null}
-              options={metricOptions}
+              value={metricOptions().find(option => option.value === currency.metric) || null}
+              options={metricOptions()}
               getOptionLabel={(option) => option.label || ""}
               isOptionEqualToValue={(option, value) => option.value === value.value}
             />
