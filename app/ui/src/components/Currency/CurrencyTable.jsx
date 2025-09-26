@@ -15,13 +15,13 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import { fetchCurrency } from '../../util/http/currency';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { evaluateCurrency, formatCurrencyValue, metricOptions, timeframeUnitOptions } from './helpers';
 import NewCurrencyButton from './NewCurrencyButton';
 import EditCurrencyButton from './EditCurrencyButton';
 import DeleteCurrencyButton from './DeleteCurrencyButton';
 import { fetchLogbookData } from '../../util/http/logbook';
 import HelpButton from './HelpButton';
+import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 
 const paginationKey = 'currency-table-page-size';
 const columnVisibilityKey = 'currency-table-column-visibility';
@@ -54,7 +54,6 @@ export const CurrencyTable = () => {
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const navigate = useNavigate();
-  const dialogs = useDialogs();
 
   // load all data
   const { data: logbookData, isLoading: isLogbookDataLoading, isError: isLogbookDataError, error: logbookDataError } = useQuery({
@@ -65,7 +64,7 @@ export const CurrencyTable = () => {
   });
   useErrorNotification({ isLogbookDataError, logbookDataError, fallbackMessage: 'Failed to load logbook data' });
 
-  const { data: modelsData } = useQuery({
+  const { data: modelsData, isLoading: isModelsDataLoading } = useQuery({
     queryKey: ['models-categories'],
     queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
   });
@@ -78,58 +77,62 @@ export const CurrencyTable = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load currencies' });
 
-  const columns = useMemo(() => [
-    {
-      id: 'actions',
-      header: 'Actions',
-      size: 90,
-      Cell: ({ row }) => (
-        <>
-          <EditCurrencyButton payload={row.original} />
-          <DeleteCurrencyButton payload={row.original} />
-        </>
-      ),
-    },
-    { accessorKey: "name", header: "Name", size: 200 },
-    {
-      accessorKey: "metric", header: "Metric", size: 140,
-      Cell: ({ cell }) => {
-        const metricValue = cell.getValue();
-        const option = metricOptions.find(opt => opt.value === metricValue);
-        return option ? option.label : metricValue;
-      }
-    },
-    { accessorKey: "comparison", header: "Comparison", size: 150 },
-    { accessorKey: "target_value", header: "Target", size: 110 },
-    {
-      id: "time_frame_combined",
-      header: "Time Frame",
-      size: 200,
-      accessorFn: (row) => ({ unit: row.time_frame?.unit, value: row.time_frame?.value }),
-      Cell: ({ cell }) => {
-        const data = cell.getValue();
-        const unitOption = timeframeUnitOptions.find(opt => opt.value === data.unit);
-        const unitLabel = unitOption ? unitOption.label : data.unit;
-        return `${data.value} ${unitLabel}`;
-      }
-    },
-    { accessorKey: "filters", header: "Filters", size: 120 },
-    {
-      id: "status", header: "Status", grow: true,
-      accessorFn: (row) => {
-        return evaluateCurrency(logbookData, row, modelsData);
+  const columns = useMemo(() => {
+    if (isLoading || isModelsDataLoading || isLogbookDataLoading) return [];
+
+    return [
+      {
+        id: 'actions',
+        header: 'Actions',
+        size: 90,
+        Cell: ({ row }) => (
+          <>
+            <EditCurrencyButton payload={row.original} />
+            <DeleteCurrencyButton payload={row.original} />
+          </>
+        ),
       },
-      Cell: ({ cell }) => {
-        const data = cell.getValue();
-        return (
-          <Chip size='small'
-            label={formatCurrencyValue(data?.current, data?.rule.metric)}
-            color={data?.meetsRequirement ? 'success' : 'error'}
-          />
-        )
+      { accessorKey: "name", header: "Name", size: 200 },
+      {
+        accessorKey: "metric", header: "Metric", size: 140,
+        Cell: ({ cell }) => {
+          const metricValue = cell.getValue();
+          const option = metricOptions.find(opt => opt.value === metricValue);
+          return option ? option.label : metricValue;
+        }
+      },
+      { accessorKey: "comparison", header: "Comparison", size: 150 },
+      { accessorKey: "target_value", header: "Target", size: 110 },
+      {
+        id: "time_frame_combined",
+        header: "Time Frame",
+        size: 200,
+        accessorFn: (row) => ({ unit: row.time_frame?.unit, value: row.time_frame?.value }),
+        Cell: ({ cell }) => {
+          const data = cell.getValue();
+          const unitOption = timeframeUnitOptions.find(opt => opt.value === data.unit);
+          const unitLabel = unitOption ? unitOption.label : data.unit;
+          return `${data.value} ${unitLabel}`;
+        }
+      },
+      { accessorKey: "filters", header: "Filters", size: 120 },
+      {
+        id: "status", header: "Status", grow: true,
+        accessorFn: (row) => {
+          return evaluateCurrency(logbookData, row, modelsData);
+        },
+        Cell: ({ cell }) => {
+          const data = cell.getValue();
+          return (
+            <Chip size='small'
+              label={formatCurrencyValue(data?.current, data?.rule.metric)}
+              color={data?.meetsRequirement ? 'success' : 'error'}
+            />
+          )
+        }
       }
-    }
-  ], [logbookData, modelsData, data]);
+    ]
+  }, [logbookData, modelsData, data]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
@@ -146,7 +149,7 @@ export const CurrencyTable = () => {
   ), []);
 
   const table = useMaterialReactTable({
-    isLoading: isLoading,
+    isLoading: (isLoading || isModelsDataLoading || isLogbookDataLoading),
     columns: columns,
     data: data ?? [],
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
@@ -163,7 +166,7 @@ export const CurrencyTable = () => {
 
   return (
     <>
-      {(isLoading || isLogbookDataLoading) && <LinearProgress />}
+      {(isLoading || isLogbookDataLoading || isModelsDataLoading) && <LinearProgress />}
       <MaterialReactTable table={table} />
       <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>
