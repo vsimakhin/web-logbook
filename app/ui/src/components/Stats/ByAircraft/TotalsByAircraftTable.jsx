@@ -9,10 +9,10 @@ import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
-import { convertMinutesToTime, getCustomFieldValue } from '../../../util/helpers';
 import CSVExportButton from '../../UIElements/CSVExportButton';
 import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
 import useSettings from '../../../hooks/useSettings';
+import { createCustomFieldColumn, createTimeColumn } from '../helpers';
 
 const tableOptions = {
   initialState: {
@@ -28,7 +28,7 @@ const tableOptions = {
   enableColumnFilters: false,
   enableColumnDragging: false,
   enableColumnPinning: true,
-  enableGrouping: true,
+  enableGrouping: false,
   enableDensityToggle: false,
   columnResizeMode: 'onEnd',
   muiTablePaperProps: { variant: 'outlined', elevation: 0 },
@@ -40,20 +40,6 @@ const tableOptions = {
   enablePagination: false,
 }
 
-const timeFieldSize = 90;
-
-const renderProps = {
-  muiTableBodyCellProps: { align: "center", sx: { p: 0.5 } },
-};
-
-const createTimeColumn = (id, name) => ({
-  accessorKey: id,
-  header: name,
-  size: timeFieldSize,
-  ...renderProps,
-  Cell: ({ cell }) => (convertMinutesToTime(cell.getValue())),
-})
-
 export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = [] }) => {
   const paginationKey = `totals-stats-${type}-table-page-size`;
   const columnVisibilityKey = `totals-stats-${type}-table-column-visibility`;
@@ -64,24 +50,6 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const { fieldName } = useSettings();
-
-  // Helper function to create custom field columns
-  const createCustomFieldColumn = useCallback((field) => {
-    const baseColumn = {
-      accessorKey: `custom_fields.${field.uuid}`,
-      header: field.name,
-      size: 120,
-      muiTableBodyCellProps: { align: "center", sx: { p: 0.5 } },
-      Cell: ({ row }) => {
-        const fieldData = row.original.custom_fields?.[field.uuid];
-        const value = getCustomFieldValue(fieldData, field);
-        return value;
-      },
-    };
-
-    // Add aggregation for this table (no grouping like in the year table)
-    return baseColumn;
-  }, [getCustomFieldValue]);
 
   const columns = useMemo(() => {
     const baseColumns = [
