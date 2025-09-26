@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
@@ -20,6 +21,7 @@ import { useErrorNotification, useSuccessNotification } from '../../hooks/useApp
 import Select from '../UIElements/Select';
 import { createCurrency, updateCurrency } from '../../util/http/currency';
 import { comparisonOptions, metricOptions, timeframeUnitOptions } from './helpers';
+import DatePicker from '../UIElements/DatePicker';
 
 
 const CloseDialogButton = memo(({ onClose }) => {
@@ -85,6 +87,30 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
     });
   }, []);
 
+  const currencyTimeFrame = useCallback(() => {
+    if (currency.time_frame.unit !== 'all_time' && currency.time_frame.unit !== 'since') {
+      return (
+        <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+          id="time_frame.value"
+          label="Timeframe Value"
+          handleChange={handleChange}
+          value={currency.time_frame.value}
+        />
+      );
+    } else if (currency.time_frame.unit === 'since') {
+      return (
+        <DatePicker gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+          id="time_frame.since"
+          handleChange={handleChange}
+          label={"Since Date"}
+          value={dayjs(currency?.time_frame?.since ?? dayjs().format('DD/MM/YYYY'), "DD/MM/YYYY")}
+        />
+      )
+    } else {
+      return null;
+    }
+  }, [currency?.time_frame, handleChange]);
+
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
@@ -135,12 +161,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
               getOptionLabel={(option) => option.label || ""}
               isOptionEqualToValue={(option, value) => option.value === value.value}
             />
-            <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-              id="time_frame.value"
-              label="Timeframe Value"
-              handleChange={handleChange}
-              value={currency.time_frame.value}
-            />
+            {currencyTimeFrame()}
             <AircraftCategories
               gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               id="filters"

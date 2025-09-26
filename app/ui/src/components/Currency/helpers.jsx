@@ -29,9 +29,13 @@ export const timeframeUnitOptions = [
   { value: "days", label: "Days" },
   { value: "calendar_months", label: "Calendar Months" },
   { value: "calendar_years", label: "Calendar Years" },
+  { value: "since", label: "Since Date" },
+  { value: "all_time", label: "All Time" },
 ];
 
-const getStartDate = (unit, value) => {
+const getStartDate = (rule) => {
+  const { unit, value, since } = rule.time_frame;
+
   const now = dayjs();
   switch (unit) {
     case "calendar_months":
@@ -40,6 +44,10 @@ const getStartDate = (unit, value) => {
     case "calendar_years":
       const targetYear = now.year() - (value - 1);
       return dayjs(`${targetYear}-01-01`);
+    case "since":
+      return dayjs(since, "DD/MM/YYYY");
+    case "all_time":
+      return dayjs('17/12/1903', 'DD/MM/YYYY');
     case "days":
     default:
       return now.subtract(value, "day");
@@ -93,7 +101,7 @@ export const evaluateCurrency = (flights, rule, modelsData) => {
     return matchesModel;
   });
 
-  const since = getStartDate(rule.time_frame.unit, rule.time_frame.value);
+  const since = getStartDate(rule);
 
   const total = filteredFlights
     .filter(flight => {

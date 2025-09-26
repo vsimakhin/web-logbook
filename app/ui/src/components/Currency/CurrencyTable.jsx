@@ -107,12 +107,19 @@ export const CurrencyTable = () => {
         id: "time_frame_combined",
         header: "Time Frame",
         size: 200,
-        accessorFn: (row) => ({ unit: row.time_frame?.unit, value: row.time_frame?.value }),
+        accessorFn: (row) => ({ unit: row.time_frame?.unit, value: row.time_frame?.value, since: row.time_frame?.since }),
         Cell: ({ cell }) => {
           const data = cell.getValue();
           const unitOption = timeframeUnitOptions.find(opt => opt.value === data.unit);
           const unitLabel = unitOption ? unitOption.label : data.unit;
-          return `${data.value} ${unitLabel}`;
+
+          if (data.unit === 'all_time') {
+            return unitOption.label;
+          } else if (data.unit === 'since') {
+            return `Since ${data.since}`;
+          } else if (data.value) {
+            return `${data.value} ${unitLabel}`;
+          }
         }
       },
       { accessorKey: "filters", header: "Filters", size: 120 },
