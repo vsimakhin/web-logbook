@@ -9,18 +9,16 @@ export const AddFlightrecordPersonButton = ({ id }) => {
   const dialogs = useDialogs();
 
   const handleOnClick = useCallback(async () => {
-    const payload = {isNew: true, person_uuid: '', role: '', log_uuid: id}
+    const payload = { isNew: true, person_uuid: '', role: '', log_uuid: id }
     await dialogs.open(AddEditFlightrecordPersonModal, payload);
   }, [dialogs]);
 
   return (
-    <>
-      <Tooltip title="Add new person">
-        <IconButton size="small" component="label" onClick={handleOnClick}>
-          <AddBoxOutlinedIcon />
-        </IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Add new person">
+      <IconButton size="small" component="label" onClick={handleOnClick}>
+        <AddBoxOutlinedIcon />
+      </IconButton>
+    </Tooltip>
   );
 };
 

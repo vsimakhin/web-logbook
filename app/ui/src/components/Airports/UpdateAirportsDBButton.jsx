@@ -28,14 +28,12 @@ export const UpdateAirportsDBButton = () => {
   }, [updateDB]);
 
   return (
-    <>
-      <Tooltip title="Update Airports Database">
-        <IconButton size="small" onClick={handleOnUpdate} disabled={isPending}>
-          {isPending && <CircularProgress size={20} />}
-          {!isPending && <RefreshOutlinedIcon />}
-        </IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Update Airports Database">
+      <IconButton size="small" onClick={handleOnUpdate} disabled={isPending}>
+        {isPending && <CircularProgress size={20} />}
+        {!isPending && <RefreshOutlinedIcon />}
+      </IconButton>
+    </Tooltip>
   );
 }
 

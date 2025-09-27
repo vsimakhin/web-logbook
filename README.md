@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: General code optimization and UI improvements for the aircraft and airports tables (column resizing)
 - New: Custom person roles (new field on the Settings page)
 - New: Added `Since` and `All Time` time frame units for the Currency
 - Update: grey out 0:00/0 values in the stats tables

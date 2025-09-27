@@ -105,11 +105,11 @@ func (app *application) routes() *chi.Mux {
 			r.Delete("/{uuid}", app.HandlerApiPersonDelete)
 			r.Post("/", app.HandlerApiPersonNew)
 			r.Put("/", app.HandlerApiPersonUpdate)
-			r.Get("/logsForPerson/{personUuid}", app.HandlerApiLogsForPerson)
-			r.Get("/personsForLog/{logUuid}", app.HandlerApiPersonsForLog)
-			r.Post("/personToLog", app.HandlerApiPersonToLogNew)
-			r.Put("/personToLog", app.HandlerApiPersonToLogUpdate)
-			r.Delete("/personToLog", app.HandlerApiPersonToLogDelete)
+			r.Get("/logs-for-person/{personUuid}", app.HandlerApiLogsForPerson)
+			r.Get("/persons-for-log/{logUuid}", app.HandlerApiPersonsForLog)
+			r.Post("/person-to-log", app.HandlerApiPersonToLogNew)
+			r.Put("/person-to-log", app.HandlerApiPersonToLogUpdate)
+			r.Delete("/person-to-log", app.HandlerApiPersonToLogDelete)
 		})
 
 		// export

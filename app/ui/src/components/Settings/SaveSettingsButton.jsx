@@ -28,11 +28,9 @@ export const SaveSettingsButton = ({ settings }) => {
   }, [saveSettings]);
 
   return (
-    <>
-      <Tooltip title="Save settings">
-        <IconButton size="small" onClick={handleOnClick}><SaveOutlinedIcon /></IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Save settings">
+      <IconButton size="small" onClick={handleOnClick}><SaveOutlinedIcon /></IconButton>
+    </Tooltip>
   );
 }
 

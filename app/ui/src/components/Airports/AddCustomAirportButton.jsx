@@ -17,13 +17,11 @@ export const AddCustomAirportButton = () => {
   }, [dialogs]);
 
   return (
-    <>
-      <Tooltip title="New Custom Airport">
-        <IconButton onClick={handleOnClick}>
-          <AddBoxOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    </>
+    <Tooltip title="New Custom Airport">
+      <IconButton onClick={handleOnClick}>
+        <AddBoxOutlinedIcon fontSize='small' />
+      </IconButton>
+    </Tooltip >
   )
 }
 

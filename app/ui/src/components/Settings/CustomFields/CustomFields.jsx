@@ -11,14 +11,12 @@ const ActionButtons = memo(({ }) => (<HelpButton />));
 
 export const CustomFields = () => {
   return (
-    <>
-      <Card variant="outlined" sx={{ mb: 1 }}>
-        <CardContent>
-          <CardHeader title="Custom Fields" action={<ActionButtons />} />
-          <CustomFieldsTable />
-        </CardContent>
-      </Card >
-    </>
+    <Card variant="outlined" sx={{ mb: 1 }}>
+      <CardContent>
+        <CardHeader title="Custom Fields" action={<ActionButtons />} />
+        <CustomFieldsTable />
+      </CardContent>
+    </Card >
   );
 }
 

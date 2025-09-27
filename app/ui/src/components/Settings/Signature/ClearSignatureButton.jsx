@@ -6,11 +6,9 @@ import CleaningServicesOutlinedIcon from '@mui/icons-material/CleaningServicesOu
 
 export const ClearSignatureButton = ({ handleChange }) => {
   return (
-    <>
-      <Tooltip title="Clear Signature">
-        <IconButton size="small" onClick={() => handleChange('signature_image', null)}><CleaningServicesOutlinedIcon /></IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Clear Signature">
+      <IconButton size="small" onClick={() => handleChange('signature_image', null)}><CleaningServicesOutlinedIcon /></IconButton>
+    </Tooltip>
   );
 }
 

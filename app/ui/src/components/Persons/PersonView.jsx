@@ -18,33 +18,33 @@ export const PersonView = () => {
   const { data: personData, isLoading: personIsLoading, isError: personIsError, error: personError } = useQuery({
     queryKey: ["persons", "person", uuid],
     queryFn: ({ signal }) => fetchPersonByUuid({ signal, uuid, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError: personIsError, error: personError, fallbackMessage: "Failed to load person" });
 
   return (
-    <>
-      <Grid container spacing={1}>
-        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 8, xl: 8 }}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Flights" />
-              <PersonsViewFlightsTable uuid={uuid} />
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 4, xl: 4 }}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            {personIsLoading && <LinearProgress />}
-            <CardContent>
-              {personData && (
-                <CardHeader title={printPerson(personData)} action={<EditPersonButton payload={personData} />} />
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
+    <Grid container spacing={1}>
+      <Grid size={{ xs: 12, sm: 12, md: 12, lg: 8, xl: 8 }}>
+        <Card variant="outlined" sx={{ mb: 1 }}>
+          <CardContent>
+            <CardHeader title="Flights" />
+            <PersonsViewFlightsTable uuid={uuid} />
+          </CardContent>
+        </Card>
       </Grid>
-    </>
+
+      <Grid size={{ xs: 12, sm: 12, md: 12, lg: 4, xl: 4 }}>
+        <Card variant="outlined" sx={{ mb: 1 }}>
+          {personIsLoading && <LinearProgress />}
+          <CardContent>
+            {personData && (
+              <CardHeader title={printPerson(personData)} action={<EditPersonButton payload={personData} />} />
+            )}
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
   );
 };
 

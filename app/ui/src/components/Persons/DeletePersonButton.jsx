@@ -42,13 +42,11 @@ export const DeletePersonButton = ({ payload }) => {
   }, [dialogs, payload, deletePersonFn]);
 
   return (
-    <>
-      <Tooltip title="Delete">
-        <IconButton onClick={handleDelete}>
-          <DeleteOutlinedIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Delete">
+      <IconButton onClick={handleDelete}>
+        <DeleteOutlinedIcon fontSize="small" />
+      </IconButton>
+    </Tooltip>
   );
 };
 

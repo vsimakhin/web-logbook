@@ -29,13 +29,11 @@ export const DeleteCustomAirportButton = ({ payload }) => {
   }, [dialogs, deleteAirport, payload]);
 
   return (
-    <>
-      <Tooltip title="Delete">
-        <IconButton onClick={handleDelete}>
-          <DeleteOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    </>
+    <Tooltip title="Delete">
+      <IconButton onClick={handleDelete}>
+        <DeleteOutlinedIcon fontSize='small' />
+      </IconButton>
+    </Tooltip >
   );
 }
 

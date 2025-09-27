@@ -24,6 +24,7 @@ type contextKey string
 
 const userContextKey contextKey = "user"
 const tokenContextKey contextKey = "token"
+const authContextKey contextKey = "auth"
 
 var loginAttempts = make(map[string]LoginAttempts)
 
@@ -117,7 +118,7 @@ func (app *application) Auth(next http.Handler) http.Handler {
 			return
 		}
 		if !isAuthEnabled {
-			ctx := context.WithValue(r.Context(), "auth", false)
+			ctx := context.WithValue(r.Context(), authContextKey, false)
 			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}

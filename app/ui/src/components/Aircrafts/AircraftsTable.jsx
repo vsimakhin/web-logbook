@@ -1,5 +1,5 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useMemo, useState } from 'react';
+import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -13,9 +13,11 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
+import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 
 const paginationKey = 'aircrafts-table-page-size';
 const columnVisibilityKey = 'aircrafts-table-column-visibility';
+const columnSizingKey = 'aircrafts-table-column-sizing';
 
 const tableOptions = {
   initialState: { density: 'compact' },
@@ -41,6 +43,7 @@ export const AircraftsTable = ({ ...props }) => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
 
   const navigate = useNavigate();
@@ -48,6 +51,8 @@ export const AircraftsTable = ({ ...props }) => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['aircrafts'],
     queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load aircrafts' });
 
@@ -57,21 +62,43 @@ export const AircraftsTable = ({ ...props }) => {
     { accessorKey: "category", header: "Category", grow: true },
   ], []);
 
+  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <CSVExportButton table={table} type="aircrafts" />
+    </Box>
+  ), []);
+
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ToggleFiltersButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), []);
+
+  const filterDrawOpen = useCallback(() => {
+    setIsFilterDrawerOpen(true);
+  }, []);
+
+  const filterDrawClose = useCallback(() => {
+    setIsFilterDrawerOpen(false);
+  }, []);
+
   const table = useMaterialReactTable({
     isLoading: isLoading,
     columns: columns,
     data: data ?? [],
-    onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
+    onShowColumnFiltersChange: filterDrawOpen,
     filterFns: filterFns,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <CSVExportButton table={table} type="aircrafts" />
-      </Box>
-    ),
+    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
+    renderToolbarInternalActions: renderToolbarInternalActions,
+    onColumnSizingChange: setColumnSizing,
     onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility },
+    state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     ...tableOptions
   });
@@ -80,7 +107,7 @@ export const AircraftsTable = ({ ...props }) => {
     <>
       {isLoading && <LinearProgress />}
       <MaterialReactTable table={table} {...props} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
+      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
     </>
   );
 }

@@ -84,17 +84,15 @@ export const TableFilterDrawer = ({ table, isFilterDrawerOpen, onClose }) => {
   }, [table, fieldNames]);
 
   return (
-    <>
-      <Drawer anchor="right" open={isFilterDrawerOpen} onClose={onClose} sx={drawerSx}>
-        <Box sx={containerSx}>
-          {filteredHeaders.length > 0 ? (
-            filteredHeaders.map(renderFilterComponent)
-          ) : (
-            <Box>Loading filters...</Box>
-          )}
-        </Box>
-      </Drawer>
-    </>
+    <Drawer anchor="right" open={isFilterDrawerOpen} onClose={onClose} sx={drawerSx}>
+      <Box sx={containerSx}>
+        {filteredHeaders.length > 0 ? (
+          filteredHeaders.map(renderFilterComponent)
+        ) : (
+          <Box>Loading filters...</Box>
+        )}
+      </Box>
+    </Drawer>
   );
 }
 

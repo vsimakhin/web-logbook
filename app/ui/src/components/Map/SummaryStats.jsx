@@ -9,16 +9,14 @@ export const SummaryStats = ({ data }) => {
   const stats = getStats(data);
 
   return (
-    <>
-      <Grid container spacing={1}>
-        <Tile title="Total Time" value={stats.totals.time.total_time} size={size} />
-        <Tile title="Total Flights" value={data.length} size={size} />
-        <Tile title="Airports" value={stats.airports} size={size} />
-        <Tile title="Routes" value={stats.routes} size={size} />
-        <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} size={size} />
-        <Tile title="Landings (D/N)" value={`${stats.totals.landings.day}/${stats.totals.landings.night}`} size={size} />
-      </Grid>
-    </>
+    <Grid container spacing={1}>
+      <Tile title="Total Time" value={stats.totals.time.total_time} size={size} />
+      <Tile title="Total Flights" value={data.length} size={size} />
+      <Tile title="Airports" value={stats.airports} size={size} />
+      <Tile title="Routes" value={stats.routes} size={size} />
+      <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} size={size} />
+      <Tile title="Landings (D/N)" value={`${stats.totals.landings.day}/${stats.totals.landings.night}`} size={size} />
+    </Grid>
   );
 }
 

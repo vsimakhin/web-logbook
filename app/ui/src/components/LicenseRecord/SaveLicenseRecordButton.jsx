@@ -69,11 +69,9 @@ export const SaveLicenseRecordButton = ({ license, handleChange }) => {
   }
 
   return (
-    <>
-      <Tooltip title="Save license record">
-        <IconButton size="small" onClick={() => handleLicenseRecordSave()}><SaveOutlinedIcon /></IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Save license record">
+      <IconButton size="small" onClick={() => handleLicenseRecordSave()}><SaveOutlinedIcon /></IconButton>
+    </Tooltip>
   );
 }
 

@@ -7,11 +7,9 @@ import CleaningServicesOutlinedIcon from '@mui/icons-material/CleaningServicesOu
 
 export const ClearTableButton = ({ setData }) => {
   return (
-    <>
-      <Tooltip title="Clear table">
-        <IconButton size="small" onClick={() => setData([])} ><CleaningServicesOutlinedIcon /></IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Clear table">
+      <IconButton size="small" onClick={() => setData([])} ><CleaningServicesOutlinedIcon /></IconButton>
+    </Tooltip>
   );
 }
 

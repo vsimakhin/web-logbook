@@ -23,7 +23,7 @@ export const fetchPersonByUuid = async ({ signal, navigate, uuid }) => {
 }
 
 export const fetchPersonsForLog = async ({ signal, navigate, logUuid }) => {
-  const url = `${API_URL}/person/personsForLog/${logUuid}`;
+  const url = `${API_URL}/person/persons-for-log/${logUuid}`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
@@ -33,7 +33,7 @@ export const fetchPersonsForLog = async ({ signal, navigate, logUuid }) => {
 }
 
 export const fetchLogsForPerson = async ({ signal, navigate, personUuid }) => {
-  const url = `${API_URL}/person/logsForPerson/${personUuid}`;
+  const url = `${API_URL}/person/logs-for-person/${personUuid}`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
@@ -63,7 +63,7 @@ export const updatePerson = async ({ payload, navigate }) => {
 }
 
 export const createPersonToLog = async ({ payload, navigate }) => {
-  const url = `${API_URL}/person/personToLog`;
+  const url = `${API_URL}/person/person-to-log`;
   const options = {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
@@ -73,7 +73,7 @@ export const createPersonToLog = async ({ payload, navigate }) => {
 }
 
 export const updatePersonToLog = async ({ payload, navigate }) => {
-  const url = `${API_URL}/person/personToLog`;
+  const url = `${API_URL}/person/person-to-log`;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
@@ -83,7 +83,7 @@ export const updatePersonToLog = async ({ payload, navigate }) => {
 }
 
 export const deletePersonToLog = async ({ payload, navigate }) => {
-  const url = `${API_URL}/person/personToLog`;
+  const url = `${API_URL}/person/person-to-log`;
   const options = {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },

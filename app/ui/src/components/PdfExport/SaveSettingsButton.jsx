@@ -51,11 +51,9 @@ export const SaveSettingsButton = ({ settings, format }) => {
     await saveSettings({ settings: parsedSettings, format });
   }
   return (
-    <>
-      <Tooltip title="Save settings">
-        <IconButton size="small" onClick={onSave}><SaveOutlinedIcon /></IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Save settings">
+      <IconButton size="small" onClick={onSave}><SaveOutlinedIcon /></IconButton>
+    </Tooltip>
   );
 }
 

@@ -19,13 +19,11 @@ export const AddPersonButton = ({ onSave }) => {
   }, [dialogs, onSave]);
 
   return (
-    <>
-      <Tooltip title="New person">
-        <IconButton onClick={handleOnClick}>
-          <AddBoxOutlinedIcon />
-        </IconButton>
-      </Tooltip >
-    </>
+    <Tooltip title="New person">
+      <IconButton onClick={handleOnClick}>
+        <AddBoxOutlinedIcon />
+      </IconButton>
+    </Tooltip >
   )
 }
 
