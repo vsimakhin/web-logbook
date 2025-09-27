@@ -341,3 +341,7 @@ Frontend:
 * compare-versions https://github.com/omichelsen/compare-versions
 * file-type https://github.com/sindresorhus/file-type
 * mapbox/togeojson https://github.com/mapbox/togeojson
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=vsimakhin/web-logbook&type=Date)](https://www.star-history.com/#vsimakhin/web-logbook&Date)
