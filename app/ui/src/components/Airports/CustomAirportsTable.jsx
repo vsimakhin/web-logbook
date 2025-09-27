@@ -1,4 +1,4 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
@@ -16,9 +16,11 @@ import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import EditCustomAirportButton from './EditCustomAirportButton';
 import DeleteCustomAirportButton from './DeleteCustomAirportButton';
 import AddCustomAirportButton from './AddCustomAirportButton';
+import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 
 const paginationKey = 'custom-airports-table-page-size';
 const columnVisibilityKey = 'custom-airports-table-column-visibility';
+const columnSizingKey = 'custom-airports-table-column-sizing';
 
 const tableOptions = {
   initialState: { density: 'compact' },
@@ -46,10 +48,13 @@ export const CustomAirportsTable = () => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['custom-airports'],
     queryFn: ({ signal }) => fetchCustomAirports({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load airports' });
 
@@ -79,6 +84,16 @@ export const CustomAirportsTable = () => {
     </Box>
   ), []);
 
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ToggleFiltersButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), []);
+
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);
   }, []);
@@ -94,10 +109,17 @@ export const CustomAirportsTable = () => {
     onShowColumnFiltersChange: filterDrawOpen,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnSizingChange: setColumnSizing,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
+    renderToolbarInternalActions: renderToolbarInternalActions,
     renderRowActions: renderRowActions,
     onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility },
+    state: {
+      pagination,
+      columnFilters: columnFilters,
+      columnVisibility,
+      columnSizing
+    },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     ...tableOptions
   });

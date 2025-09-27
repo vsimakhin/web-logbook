@@ -1,4 +1,4 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useNavigate } from "react-router-dom";
@@ -14,9 +14,11 @@ import { fetchStandardAirports } from '../../util/http/airport';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import CopyAirportButton from './CopyAirportButton';
+import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 
 const paginationKey = 'standard-airports-table-page-size';
 const columnVisibilityKey = 'standard-airports-table-column-visibility';
+const columnSizingKey = 'standard-airports-table-column-sizing';
 
 const tableOptions = {
   initialState: { density: 'compact' },
@@ -43,6 +45,7 @@ export const StandardAirportsTable = () => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const navigate = useNavigate();
 
@@ -78,6 +81,16 @@ export const StandardAirportsTable = () => {
     </Box>
   ), []);
 
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ToggleFiltersButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), []);
+
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);
   }, []);
@@ -93,10 +106,12 @@ export const StandardAirportsTable = () => {
     onShowColumnFiltersChange: filterDrawOpen,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnSizingChange: setColumnSizing,
     renderTopToolbarCustomActions: renderTopToolbarCustomActions,
+    renderToolbarInternalActions: renderToolbarInternalActions,
     onPaginationChange: setPagination,
     renderRowActions: renderRowActions,
-    state: { pagination, columnFilters: columnFilters, columnVisibility },
+    state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     ...tableOptions
   });
