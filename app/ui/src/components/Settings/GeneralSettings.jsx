@@ -174,7 +174,6 @@ export const GeneralSettings = memo(({ settings, handleChange }) => {
     handleChange('time_fields_auto_format', parseInt(value));
   }, [handleChange]);
 
-  console.log(settings.person_roles)
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent>
