@@ -25,7 +25,7 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
         handleChange("uuid", data);
         navigate(`/logbook/${data}`);
       } else {
-        await queryClient.invalidateQueries({ queryKey: ['flight', flight.id] });
+        await queryClient.invalidateQueries({ queryKey: ['flight', flight.uuid] });
       }
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
       await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
