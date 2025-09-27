@@ -21,12 +21,11 @@ const exportA5 = "A5"
 func validateCustomTitlePdf(bs []byte) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("This PDF file is not supported by pdf library")
+			err = fmt.Errorf("this PDF file is not supported by pdf library")
 		}
 	}()
 
-	var pdf *fpdf.Fpdf
-	pdf = fpdf.New("L", "mm", "A4", "")
+	pdf := fpdf.New("L", "mm", "A4", "")
 	imp := gofpdi.NewImporter()
 
 	readSeeker := io.ReadSeeker(bytes.NewReader(bs))
