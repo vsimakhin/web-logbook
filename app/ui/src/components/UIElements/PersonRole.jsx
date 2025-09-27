@@ -1,10 +1,13 @@
-// Custom components
 import { memo } from "react";
+// Custom components
 import Select from "./Select";
+import useSettings from "../../hooks/useSettings";
+
+export const defaultPersonRoles = ['Captain', 'First officer', 'Second officer', 'Flight instructor', 'Examiner', 'Cabin crew'];
 
 export const PersonRole = memo(({ gsize, id = "role", label = "Role", value, handleChange, ...props }) => {
 
-  const options = ['Captain', 'First officer', 'Second officer', 'Flight instructor', 'Examiner', 'Cabin crew'];
+  const { settings } = useSettings();
 
   return (
     <Select gsize={gsize}
@@ -13,7 +16,7 @@ export const PersonRole = memo(({ gsize, id = "role", label = "Role", value, han
       handleChange={handleChange}
       value={value}
       tooltip={"Role on this flight"}
-      options={options}
+      options={settings.person_roles ? settings.person_roles.split(",").map(role => role.trim()) : defaultPersonRoles}
       freeSolo={true}
       inputValue={value || ''}
       onInputChange={(event, newValue) => {
