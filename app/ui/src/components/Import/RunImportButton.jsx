@@ -68,13 +68,11 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
   };
 
   return (
-    <>
-      <Tooltip title="Run Import">
-        <span>
-          <IconButton size="small" disabled={inProgress || data.length === 0} onClick={handleImportClick} ><FileUploadOutlinedIcon /></IconButton>
-        </span>
-      </Tooltip>
-    </>
+    <Tooltip title="Run Import">
+      <span>
+        <IconButton size="small" disabled={inProgress || data.length === 0} onClick={handleImportClick} ><FileUploadOutlinedIcon /></IconButton>
+      </span>
+    </Tooltip>
   );
 }
 

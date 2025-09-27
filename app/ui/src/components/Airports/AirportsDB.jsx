@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -8,10 +8,11 @@ import Switch from "@mui/material/Switch";
 // Custom
 import CardHeader from "../UIElements/CardHeader";
 import Select from "../UIElements/Select";
-import { fetchSettings, updateAirportsDBSettings } from "../../util/http/settings";
+import { updateAirportsDBSettings } from "../../util/http/settings";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
 import UpdateAirportsDBButton from "./UpdateAirportsDBButton";
+import useSettings from "../../hooks/useSettings";
 
 const airportsDBOptions = [
   "https://github.com/vsimakhin/Airports/raw/master/airports.json",
@@ -23,11 +24,7 @@ export const AirportsDB = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({ airports_db_source: "", no_icao_filter: false });
 
-  const { data, isError, error } = useQuery({
-    queryKey: ['settings'],
-    queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load settings' });
+  const { data } = useSettings();
 
   useEffect(() => {
     if (data) {
@@ -52,8 +49,7 @@ export const AirportsDB = () => {
 
   return (
     <>
-      <CardHeader title="Airports DB Source" action={<UpdateAirportsDBButton />}
-      />
+      <CardHeader title="Airports DB Source" action={<UpdateAirportsDBButton />} />
       <Grid container spacing={1} >
         <Select gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
           id="airports_db_source"

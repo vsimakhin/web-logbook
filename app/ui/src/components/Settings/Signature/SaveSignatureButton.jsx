@@ -22,11 +22,9 @@ export const SaveSignatureButton = ({ settings }) => {
   useSuccessNotification({ isSuccess, message: 'Logbook signature saved' });
 
   return (
-    <>
-      <Tooltip title="Save Signature">
-        <IconButton size="small" onClick={() => saveSignature()}><SaveOutlinedIcon /></IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Save Signature">
+      <IconButton size="small" onClick={() => saveSignature()}><SaveOutlinedIcon /></IconButton>
+    </Tooltip>
   );
 }
 

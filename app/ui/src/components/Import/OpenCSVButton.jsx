@@ -53,14 +53,12 @@ export const OpenCSVButton = ({ setData }) => {
   };
 
   return (
-    <>
-      <Tooltip title="Open CSV for import">
-        <IconButton size="small" component="label" ><AddBoxOutlinedIcon />
-          <input hidden type="file" name="document" id="document" onChange={handleFileChange}
-            accept=".csv, text/csv, application/csv, text/comma-separated-values" />
-        </IconButton>
-      </Tooltip>
-    </>
+    <Tooltip title="Open CSV for import">
+      <IconButton size="small" component="label" ><AddBoxOutlinedIcon />
+        <input hidden type="file" name="document" id="document" onChange={handleFileChange}
+          accept=".csv, text/csv, application/csv, text/comma-separated-values" />
+      </IconButton>
+    </Tooltip>
   );
 }
 

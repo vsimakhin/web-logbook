@@ -119,53 +119,51 @@ export const StandardFields = ({ settings = {}, handleChange }) => {
   }, [handleChange]);
 
   return (
-    <>
-      <Card variant="outlined" sx={{ mb: 1 }}>
-        <CardContent>
-          <CardHeader title="Standard Fields" action={<ActionButtons settings={settings} handleChange={handleHeaderChange} />} />
-          <Grid container spacing={1} sx={{ mb: 2 }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={settings?.enable_custom_names ?? false}
-                  onChange={(event) => handleChange("enable_custom_names", event.target.checked)}
-                />
-              }
-              label="Enable custom names for standard fields"
-            />
-          </Grid>
-          <Grid container spacing={1}>
-            {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
-              <Grid size={size} key={`group-${groupIndex}`}>
-                <Grid container spacing={0}>
-                  {group.map(({ id, label, size: fieldSize }, fieldIndex) => (
-                    <TextField key={id}
-                      id={id}
-                      label={label}
-                      handleChange={handleHeaderChange}
-                      value={settings.standard_fields_headers[id] ?? ""}
-                      gsize={fieldSize}
-                      tooltip={label}
-                      disabled={!settings?.enable_custom_names}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 0,
-                          borderTopLeftRadius: fieldIndex === 0 ? borderRadius : 0,
-                          borderBottomLeftRadius: fieldIndex === 0 ? borderRadius : 0,
-                          borderTopRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
-                          borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
-                        }
-                      }}
-                    />
-                  ))}
-                </Grid>
-              </Grid>
-            ))
+    <Card variant="outlined" sx={{ mb: 1 }}>
+      <CardContent>
+        <CardHeader title="Standard Fields" action={<ActionButtons settings={settings} handleChange={handleHeaderChange} />} />
+        <Grid container spacing={1} sx={{ mb: 2 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={settings?.enable_custom_names ?? false}
+                onChange={(event) => handleChange("enable_custom_names", event.target.checked)}
+              />
             }
-          </Grid >
-        </CardContent>
-      </Card>
-    </>
+            label="Enable custom names for standard fields"
+          />
+        </Grid>
+        <Grid container spacing={1}>
+          {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
+            <Grid size={size} key={`group-${groupIndex}`}>
+              <Grid container spacing={0}>
+                {group.map(({ id, label, size: fieldSize }, fieldIndex) => (
+                  <TextField key={id}
+                    id={id}
+                    label={label}
+                    handleChange={handleHeaderChange}
+                    value={settings.standard_fields_headers[id] ?? ""}
+                    gsize={fieldSize}
+                    tooltip={label}
+                    disabled={!settings?.enable_custom_names}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 0,
+                        borderTopLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                        borderBottomLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                        borderTopRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
+                        borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
+                      }
+                    }}
+                  />
+                ))}
+              </Grid>
+            </Grid>
+          ))
+          }
+        </Grid >
+      </CardContent>
+    </Card>
   );
 }
 

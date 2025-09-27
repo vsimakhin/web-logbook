@@ -29,13 +29,11 @@ export const ExportButton = ({ format }) => {
   useSuccessNotification({ isSuccess: isExporting, message: 'PDF Exported successfully' });
 
   return (
-    <>
-      <Tooltip title="Export">
-        <IconButton onClick={() => runExport(format)} size="small">
-          <PictureAsPdfOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    </>
+    <Tooltip title="Export">
+      <IconButton onClick={() => runExport(format)} size="small">
+        <PictureAsPdfOutlinedIcon fontSize='small' />
+      </IconButton>
+    </Tooltip >
   )
 }
 

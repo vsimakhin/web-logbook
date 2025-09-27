@@ -16,13 +16,11 @@ export const CopyAirportButton = ({ payload }) => {
   }, [dialogs, payload]);
 
   return (
-    <>
-      <Tooltip title="Copy to Custom Airport">
-        <IconButton onClick={handleOnClick}>
-          <ContentCopyOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    </>
+    <Tooltip title="Copy to Custom Airport">
+      <IconButton onClick={handleOnClick}>
+        <ContentCopyOutlinedIcon fontSize='small' />
+      </IconButton>
+    </Tooltip >
   )
 }
 

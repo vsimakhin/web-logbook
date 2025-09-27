@@ -16,13 +16,11 @@ export const EditCustomAirportButton = ({ payload }) => {
   }, [dialogs, payload]);
 
   return (
-    <>
-      <Tooltip title="Edit">
-        <IconButton onClick={handleOnClick}>
-          <EditOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    </>
+    <Tooltip title="Edit">
+      <IconButton onClick={handleOnClick}>
+        <EditOutlinedIcon fontSize='small' />
+      </IconButton>
+    </Tooltip >
   );
 }
 

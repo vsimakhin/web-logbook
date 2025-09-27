@@ -140,101 +140,99 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
   }, [options.defaultQuickSelect]);
 
   return (
-    <>
-      <Grid container spacing={1}>
-        <Select gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-          label="Quick Date Range"
-          onChange={handleQuickSelect}
-          defaultValue={options.defaultQuickSelect}
-          options={dateRanges.map((range) => (range.label))}
-        />
-        <DatePicker
-          gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-          id="start_date"
-          label="Start Date"
-          handleChange={handleChange}
-          value={filter?.start_date ? dayjs(filter?.start_date, "DD/MM/YYYY") : null}
-          tooltip="Start Date"
-        />
-        <DatePicker
-          gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
-          id="end_date"
-          label="End Date"
-          handleChange={handleChange}
-          value={filter?.end_date ? dayjs(filter?.end_date, "DD/MM/YYYY") : null}
-          tooltip="End Date"
-        />
-        <AircraftReg
-          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
-          id="aircraft_reg"
-          handleChange={handleChange}
-          value={filter?.aircraft_reg}
-          last={false} disableClearable={false}
-        />
-        <AircraftType
-          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
-          id="aircraft_model"
-          handleChange={handleChange}
-          value={filter?.aircraft_model}
-          disableClearable={false}
-        />
-        <AircraftCategories
-          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
-          id="aircraft_category"
-          multiple={false}
-          handleChange={handleChange}
-          value={filter.aircraft_category}
-          disableClearable={false}
-        />
-        <TextField
-          gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
-          id="place"
-          label="Departure/Arrival"
-          handleChange={handleChange}
-          tooltip="Departure/Arrival"
-          value={filter?.place}
-        />
-        {options.showMapSelectors &&
-          <>
-            <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-              <FormControlLabel label="Route Lines" sx={{ width: '100%' }}
-                control={
-                  <Switch checked={filter?.routes ?? false} onChange={(event) => handleChange("routes", event.target.checked)} />
-                }
-              />
-            </Grid>
-            <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-              <FormControlLabel label="Tracks" sx={{ width: '100%' }}
-                control={
-                  <Switch checked={filter?.tracks ?? false} onChange={(event) => handleChange("tracks", event.target.checked)} />
-                }
-              />
-            </Grid>
-          </>
-        }
-        {options.showStatsFilters &&
-          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-            <Accordion variant="outlined" sx={{ width: '100%' }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Stats Filters</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {STATS_FILTERS.map(({ id, label }) => (
-                  <FormControlLabel key={id} label={`Show ${label}`} id={id} sx={{ width: '100%' }}
-                    control={
-                      <Switch
-                        checked={filterStatsState[id] ?? true}
-                        onChange={(event) => handleStatsStateChange(id, event.target.checked)}
-                      />
-                    }
-                  />
-                ))}
-              </AccordionDetails>
-            </Accordion>
+    <Grid container spacing={1}>
+      <Select gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+        label="Quick Date Range"
+        onChange={handleQuickSelect}
+        defaultValue={options.defaultQuickSelect}
+        options={dateRanges.map((range) => (range.label))}
+      />
+      <DatePicker
+        gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+        id="start_date"
+        label="Start Date"
+        handleChange={handleChange}
+        value={filter?.start_date ? dayjs(filter?.start_date, "DD/MM/YYYY") : null}
+        tooltip="Start Date"
+      />
+      <DatePicker
+        gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+        id="end_date"
+        label="End Date"
+        handleChange={handleChange}
+        value={filter?.end_date ? dayjs(filter?.end_date, "DD/MM/YYYY") : null}
+        tooltip="End Date"
+      />
+      <AircraftReg
+        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
+        id="aircraft_reg"
+        handleChange={handleChange}
+        value={filter?.aircraft_reg}
+        last={false} disableClearable={false}
+      />
+      <AircraftType
+        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
+        id="aircraft_model"
+        handleChange={handleChange}
+        value={filter?.aircraft_model}
+        disableClearable={false}
+      />
+      <AircraftCategories
+        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
+        id="aircraft_category"
+        multiple={false}
+        handleChange={handleChange}
+        value={filter.aircraft_category}
+        disableClearable={false}
+      />
+      <TextField
+        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
+        id="place"
+        label="Departure/Arrival"
+        handleChange={handleChange}
+        tooltip="Departure/Arrival"
+        value={filter?.place}
+      />
+      {options.showMapSelectors &&
+        <>
+          <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+            <FormControlLabel label="Route Lines" sx={{ width: '100%' }}
+              control={
+                <Switch checked={filter?.routes ?? false} onChange={(event) => handleChange("routes", event.target.checked)} />
+              }
+            />
           </Grid>
-        }
-      </Grid >
-    </>
+          <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+            <FormControlLabel label="Tracks" sx={{ width: '100%' }}
+              control={
+                <Switch checked={filter?.tracks ?? false} onChange={(event) => handleChange("tracks", event.target.checked)} />
+              }
+            />
+          </Grid>
+        </>
+      }
+      {options.showStatsFilters &&
+        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+          <Accordion variant="outlined" sx={{ width: '100%' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>Stats Filters</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {STATS_FILTERS.map(({ id, label }) => (
+                <FormControlLabel key={id} label={`Show ${label}`} id={id} sx={{ width: '100%' }}
+                  control={
+                    <Switch
+                      checked={filterStatsState[id] ?? true}
+                      onChange={(event) => handleStatsStateChange(id, event.target.checked)}
+                    />
+                  }
+                />
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+      }
+    </Grid >
   );
 }
 

@@ -14,13 +14,11 @@ export const ViewPersonButton = ({ payload }) => {
   }, [payload, navigate]);
 
   return (
-    <>
-      <Tooltip title="View">
-        <IconButton onClick={handleOnClick}>
-          <VisibilityOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    </>
+    <Tooltip title="View">
+      <IconButton onClick={handleOnClick}>
+        <VisibilityOutlinedIcon fontSize='small' />
+      </IconButton>
+    </Tooltip >
   );
 }
 

@@ -26,9 +26,7 @@ export const FlightRecordPersons = ({ id }) => {
 
   const ActionButtons = memo(function ActionButtons({ id }) {
     return (
-      <>
-        <AddFlightrecordPersonButton id={id} />
-      </>
+      <AddFlightrecordPersonButton id={id} />
     );
   });
 
