@@ -20,6 +20,8 @@ export const Attachments = ({ id }) => {
     queryKey: ['attachments', id],
     queryFn: ({ signal }) => fetchAttachments({ signal, id, navigate }),
     enabled: !(id === "new"),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load attachments' });
 
