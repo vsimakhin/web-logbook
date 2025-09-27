@@ -19,7 +19,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: General code optimization and UI improvements for the aircraft and airports tables (column resizing)
 - New: Custom person roles (new field on the Settings page)
 - New: Added `Since` and `All Time` time frame units for the Currency
-- Update: grey out 0:00/0 values in the stats tables
+- Update: Grey out 0:00/0 values in the stats tables
 - New: Enroute field as a new custom type. Allows to add enroute/touch-n-goes airfields and show them on the map. Distance is recalculated as well.
 
 ## [3.10.0] - 19.09.2025
@@ -48,7 +48,7 @@ If you still would like to use v2.x version:
 2. Extract the archive to some folder/directory
 3. Run:
   * Windows:
-    * Double-click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (need to solve it later), but just run it.
+    * Double-click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (I don't digitally sing the binary), but just run it.
   * Linux/MacOS:
     * Open a terminal and navigate to the directory
     * Run `./web-logbook`
@@ -80,17 +80,21 @@ $ ./web-logbook -h
       Prints current version
 ```
 
-# Supported operating systems
+# Supported Operating Systems and Requirements
 
 Since it's written in Golang, it can run on any system after compiling the sources. Currently, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are binaries available for Linux, MacOS, and Windows.
+
+You can use any modern browser with JavaScript enabled to access the app.
 
 
 # Interface
 
 ## Logbook
 * Flight records table with filter for all fields and global search through all data
+* Customized set of columns
 * Quick export to CSV for all and filtered data
 * Export to PDF (A4, A5) formats
+* Automatic totals and subtotals calculation
 
 ![EASA Logbook](./readme-assets/logbook.png)
 
@@ -100,53 +104,62 @@ Since it's written in Golang, it can run on any system after compiling the sourc
 ![EASA Logbook mobile](./readme-assets/mobile-friendly.png)
 
 
-## Flight records
-* Flight data
+## Flight Records
+* Flight record data
 * Attachments for the flight records
 * Automatic night-time calculation
-* Custom/user defined fields support
+* Custom/user defined fields
 * Flight map
-  * KML track support (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
+  * KML and GPX track attachments support for SkyDemon and FlightRadar24 (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
+* Persons tracking
 
 ![Flight record](./readme-assets/flight-record.png)
 
 ## Licensing & Certification
 * List of licenses, certificates and endorsements
 * Document attachments and preview
+* Expiration tracking
 
 ![Licensing & Certification](./readme-assets/licensing-record.png)
 
 ## Map
-* Map of the flights
+* Flight map
 * Date filters
 * Routes and airports filters
 * Aircraft filters
+* Simple overal stats
 
 ![Map of the flights](./readme-assets/map-example.png)
 
 ## Aircrafts
-* List of the aircrafts in the logbook
-* Types & categories
+* Aircraft list recorded in the logbook
+* Types & user defined categories
 
 ![Aircrafts](./readme-assets/aircrafts.png)
 
 ## Airports
-* Database of the standard airports
+* Standard airports database (3 sources)
 * Custom user defined airports and airfields
+* Filters
 
 ![Airports](./readme-assets/airports.png)
 
+## Persons
+* Persons list for the recorded flight records
+* Flight list for each person
+* Custom user defined roles (Captain, First officer, Crew etc)
+
 ## Stats
 * Dashboard with custom filters
-* By Year
-* By Type
-* By Category
+* Stats by Year, Type and Category
+* User defined fields support
 
 ![Dashboard](./readme-assets/dashboard.png)
 ![Stats](./readme-assets/stats-by-category.png)
 
 ## Currency
 * Tracking currency and flight exprerience
+* Different time frames: days, calendar months, calendar years, since date and all time
 
 ![Currency](./readme-assets/currency.png)
 
@@ -172,11 +185,12 @@ So in real life the logbook could look like
 * Automatic WebLogbook profile load
 
 ## Settings
-  * Owner name, license and address, signature for the PDF exports
-  * Signature pad to automatically include signatures to the PDF exports
-  * Enable/Disable authentication (in case you need to expose the app to the public internet)
-  * Some interface settings
-  * Custom fields for the Flight record
+* Owner name, license and address, signature for the PDF exports
+* Signature pad to automatically include signatures to the PDF exports
+* Enable/Disable authentication (in case you need to expose the app to the public internet)
+* Some interface settings
+* Custom names for the standard flight record fields
+* Custom fields for the Flight record
 
 ![Settings](./readme-assets/settings.png)
 
@@ -190,7 +204,7 @@ The app supports 3 sources:
 
 If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
 
-# Advanced configuration
+# Advanced Configuration
 
 ## Docker
 
@@ -201,6 +215,8 @@ Check [readme](./docker/README.md) for dockerized app for more details.
 You can generate your own certificate and key and store it in the different directories in your operating system. For that use `--key` and `--cert` parameters to specify the exact location and wun app with `--enable-https` flag.
 
 ## MySQL database
+
+**Disclaimer**: the main development is based on SQLite engine, so MySQL can potentially have some bugs. If you find one, please report in the issues.
 
 To store all data, you can use MySQL database. To get started, create a database and a user with access to it. On the first run, the application will create all necessary tables and views. If you want to migrate your data from SQLite to MySQL, you can use the export to CSV function first and then import from CSV.
 
@@ -256,6 +272,23 @@ Get distance between LKPR and EDDM airports in nautical miles
 curl http://127.0.0.1:4000/api/distance/LKPR/EDDM
 ```
 
+Get night time in minutes for the flight from LKPR departed at 1600 UTC to the EDDM with arrival at 2012 UTC on 27/09/2025
+```bash
+curl -s -X POST http://localhost:4000/api/logbook/night \
+  -H "Content-Type: application/json" \
+  -d '{
+    "date": "27/09/2025",
+    "departure": {
+      "place": "LKPR",
+      "time": "1600"
+    },
+    "arrival": {
+      "place": "EDDM",
+      "time": "2012"
+    }
+  }' | jq -r '.data'
+```
+
 # New features/Issues
 
 In case you'd like to add some other features to the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix it at a reasonable time but at least I can take a look.
@@ -265,61 +298,38 @@ In case you'd like to add some other features to the logbook or you found a bug,
 Thanks for bug reports, testing, improvements, and feature suggestions:
 
 <p align="left">
-  <a href="https://github.com/Jacopx" title="Jacopx">
-    <img src="https://github.com/Jacopx.png?size=40" width="40" height="40"  alt="Jacopx" />
-  </a>
-  <a href="https://github.com/dimoniet" title="dimoniet">
-    <img src="https://github.com/dimoniet.png?size=40" width="40" height="40"  alt="dimoniet" />
-  </a>
-  <a href="https://github.com/ghost" title="maesteve">
-    <img src="https://github.com/ghost.png?size=40" width="40" height="40"  alt="maesteve" />
-  </a>
-  <a href="https://github.com/ken340" title="ken340">
-    <img src="https://github.com/ken340.png?size=40" width="40" height="40"  alt="ken340" />
-  </a>
-  <a href="https://github.com/morremeyer" title="morremeyer">
-    <img src="https://github.com/morremeyer.png?size=40" width="40" height="40" alt="morremeyer" />
-  </a>
-  <a href="https://github.com/bbqman7089" title="bbqman7089">
-    <img src="https://github.com/bbqman7089.png?size=40" width="40" height="40" alt="bbqman7089" />
-  </a>
-  <a href="https://github.com/danielkappelle" title="danielkappelle">
-    <img src="https://github.com/danielkappelle.png?size=40" width="40" height="40" alt="danielkappelle" />
-  </a>
-  <a href="https://github.com/jvandergeer" title="jvandergeer">
-    <img src="https://github.com/jvandergeer.png?size=40" width="40" height="40" alt="jvandergeer" />
-  </a>
-  <a href="https://github.com/eagleone84" title="eagleone84">
-    <img src="https://github.com/eagleone84.png?size=40" width="40" height="40" alt="eagleone84" />
-  </a>
-  <a href="https://github.com/daman2k" title="daman2k">
-    <img src="https://github.com/daman2k.png?size=40" width="40" height="40" alt="daman2k" />
-  </a>
-  <a href="https://github.com/fldroiddev" title="fldroiddev">
-    <img src="https://github.com/fldroiddev.png?size=40" width="40" height="40" alt="fldroiddev" />
-  </a>
-  <a href="https://github.com/benoitfl" title="benoitfl">
-    <img src="https://github.com/benoitfl.png?size=40" width="40" height="40" alt="benoitfl" />
-  </a>
-  <a href="https://github.com/Gaudv" title="Gaudv">
-    <img src="https://github.com/Gaudv.png?size=40" width="40" height="40" alt="Gaudv" />
-  </a>
-  <a href="https://github.com/tumblebone" title="tumblebone">
-    <img src="https://github.com/tumblebone.png?size=40" width="40" height="40" alt="tumblebone" />
-  </a>
+  <a href="https://github.com/Jacopx" title="Jacopx"><img src="https://github.com/Jacopx.png" width="40" height="40" alt="Jacopx" /></a>
+  <a href="https://github.com/dimoniet" title="dimoniet"><img src="https://github.com/dimoniet.png" width="40" height="40" alt="dimoniet" /></a>
+  <a href="https://github.com/ghost" title="maesteve"><img src="https://github.com/ghost.png" width="40" height="40" alt="maesteve" /></a>
+  <a href="https://github.com/ken340" title="ken340"><img src="https://github.com/ken340.png" width="40" height="40" alt="ken340" /></a>
+  <a href="https://github.com/morremeyer" title="morremeyer"><img src="https://github.com/morremeyer.png" width="40" height="40" alt="morremeyer" /></a>
+  <a href="https://github.com/bbqman7089" title="bbqman7089"><img src="https://github.com/bbqman7089.png" width="40" height="40" alt="bbqman7089" /></a>
+  <a href="https://github.com/danielkappelle" title="danielkappelle"><img src="https://github.com/danielkappelle.png" width="40" height="40" alt="danielkappelle" /></a>
+  <a href="https://github.com/jvandergeer" title="jvandergeer"><img src="https://github.com/jvandergeer.png" width="40" height="40" alt="jvandergeer" /></a>
+  <a href="https://github.com/eagleone84" title="eagleone84"><img src="https://github.com/eagleone84.png" width="40" height="40" alt="eagleone84" /></a>
+  <a href="https://github.com/daman2k" title="daman2k"><img src="https://github.com/daman2k.png" width="40" height="40" alt="daman2k" /></a>
+  <a href="https://github.com/fldroiddev" title="fldroiddev"><img src="https://github.com/fldroiddev.png" width="40" height="40" alt="fldroiddev" /></a>
+  <a href="https://github.com/benoitfl" title="benoitfl"><img src="https://github.com/benoitfl.png" width="40" height="40" alt="benoitfl" /></a>
+  <a href="https://github.com/Gaudv" title="Gaudv"><img src="https://github.com/Gaudv.png" width="40" height="40" alt="Gaudv" /></a>
+  <a href="https://github.com/tumblebone" title="tumblebone"><img src="https://github.com/tumblebone.png" width="40" height="40" alt="tumblebone" /></a>
 </p>
 
 # Used libraries
 
 Backend:
-* Golang go-pdf https://codeberg.org/go-pdf/fpdf
-* Golang chi web-server https://github.com/go-chi/chi
-* go-sunrise github.com/nathan-osman/go-sunrise
-* sqlite https://gitlab.com/cznic/sqlite
+* go-pdf https://codeberg.org/go-pdf/fpdf
+* chi web-server https://github.com/go-chi/chi
+* go-sunrise https://github.com/nathan-osman/go-sunrise
+* sqlite https://modernc.org/sqlite
+* mysql https://github.com/go-sql-driver/mysql
+* golang-jwt https://github.com/golang-jwt/jwt/
+* testify https://github.com/stretchr/testify
 
 Frontend:
+* ViteJS https://vite.dev/
 * React https://react.dev/
 * Material UI https://mui.com/material-ui/
+* Material Toolpad core https://mui.com/toolpad/core/introduction/
 * Material React Table https://material-react-table.com
 * Openlayers https://openlayers.org/
 * dayjs https://github.com/iamkun/dayjs
@@ -330,3 +340,4 @@ Frontend:
 * arc.js https://github.com/springmeyer/arc.js
 * compare-versions https://github.com/omichelsen/compare-versions
 * file-type https://github.com/sindresorhus/file-type
+* mapbox/togeojson https://github.com/mapbox/togeojson
