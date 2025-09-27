@@ -298,48 +298,20 @@ In case you'd like to add some other features to the logbook or you found a bug,
 Thanks for bug reports, testing, improvements, and feature suggestions:
 
 <p align="left">
-  <a href="https://github.com/Jacopx" title="Jacopx">
-    <img src="https://github.com/Jacopx.png?size=40" width="40" height="40"  alt="Jacopx" />
-  </a>
-  <a href="https://github.com/dimoniet" title="dimoniet">
-    <img src="https://github.com/dimoniet.png?size=40" width="40" height="40"  alt="dimoniet" />
-  </a>
-  <a href="https://github.com/ghost" title="maesteve">
-    <img src="https://github.com/ghost.png?size=40" width="40" height="40"  alt="maesteve" />
-  </a>
-  <a href="https://github.com/ken340" title="ken340">
-    <img src="https://github.com/ken340.png?size=40" width="40" height="40"  alt="ken340" />
-  </a>
-  <a href="https://github.com/morremeyer" title="morremeyer">
-    <img src="https://github.com/morremeyer.png?size=40" width="40" height="40" alt="morremeyer" />
-  </a>
-  <a href="https://github.com/bbqman7089" title="bbqman7089">
-    <img src="https://github.com/bbqman7089.png?size=40" width="40" height="40" alt="bbqman7089" />
-  </a>
-  <a href="https://github.com/danielkappelle" title="danielkappelle">
-    <img src="https://github.com/danielkappelle.png?size=40" width="40" height="40" alt="danielkappelle" />
-  </a>
-  <a href="https://github.com/jvandergeer" title="jvandergeer">
-    <img src="https://github.com/jvandergeer.png?size=40" width="40" height="40" alt="jvandergeer" />
-  </a>
-  <a href="https://github.com/eagleone84" title="eagleone84">
-    <img src="https://github.com/eagleone84.png?size=40" width="40" height="40" alt="eagleone84" />
-  </a>
-  <a href="https://github.com/daman2k" title="daman2k">
-    <img src="https://github.com/daman2k.png?size=40" width="40" height="40" alt="daman2k" />
-  </a>
-  <a href="https://github.com/fldroiddev" title="fldroiddev">
-    <img src="https://github.com/fldroiddev.png?size=40" width="40" height="40" alt="fldroiddev" />
-  </a>
-  <a href="https://github.com/benoitfl" title="benoitfl">
-    <img src="https://github.com/benoitfl.png?size=40" width="40" height="40" alt="benoitfl" />
-  </a>
-  <a href="https://github.com/Gaudv" title="Gaudv">
-    <img src="https://github.com/Gaudv.png?size=40" width="40" height="40" alt="Gaudv" />
-  </a>
-  <a href="https://github.com/tumblebone" title="tumblebone">
-    <img src="https://github.com/tumblebone.png?size=40" width="40" height="40" alt="tumblebone" />
-  </a>
+  <a href="https://github.com/Jacopx" title="Jacopx"><img src="https://github.com/Jacopx.png" width="40" height="40" alt="Jacopx" /></a>
+  <a href="https://github.com/dimoniet" title="dimoniet"><img src="https://github.com/dimoniet.png" width="40" height="40" alt="dimoniet" /></a>
+  <a href="https://github.com/ghost" title="maesteve"><img src="https://github.com/ghost.png" width="40" height="40" alt="maesteve" /></a>
+  <a href="https://github.com/ken340" title="ken340"><img src="https://github.com/ken340.png" width="40" height="40" alt="ken340" /></a>
+  <a href="https://github.com/morremeyer" title="morremeyer"><img src="https://github.com/morremeyer.png" width="40" height="40" alt="morremeyer" /></a>
+  <a href="https://github.com/bbqman7089" title="bbqman7089"><img src="https://github.com/bbqman7089.png" width="40" height="40" alt="bbqman7089" /></a>
+  <a href="https://github.com/danielkappelle" title="danielkappelle"><img src="https://github.com/danielkappelle.png" width="40" height="40" alt="danielkappelle" /></a>
+  <a href="https://github.com/jvandergeer" title="jvandergeer"><img src="https://github.com/jvandergeer.png" width="40" height="40" alt="jvandergeer" /></a>
+  <a href="https://github.com/eagleone84" title="eagleone84"><img src="https://github.com/eagleone84.png" width="40" height="40" alt="eagleone84" /></a>
+  <a href="https://github.com/daman2k" title="daman2k"><img src="https://github.com/daman2k.png" width="40" height="40" alt="daman2k" /></a>
+  <a href="https://github.com/fldroiddev" title="fldroiddev"><img src="https://github.com/fldroiddev.png" width="40" height="40" alt="fldroiddev" /></a>
+  <a href="https://github.com/benoitfl" title="benoitfl"><img src="https://github.com/benoitfl.png" width="40" height="40" alt="benoitfl" /></a>
+  <a href="https://github.com/Gaudv" title="Gaudv"><img src="https://github.com/Gaudv.png" width="40" height="40" alt="Gaudv" /></a>
+  <a href="https://github.com/tumblebone" title="tumblebone"><img src="https://github.com/tumblebone.png" width="40" height="40" alt="tumblebone" /></a>
 </p>
 
 # Used libraries
