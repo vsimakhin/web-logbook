@@ -23,12 +23,11 @@ const airportsDBOptions = [
 export const AirportsDB = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({ airports_db_source: "", no_icao_filter: false });
-
   const { data } = useSettings();
 
   useEffect(() => {
     if (data) {
-      setSettings({ airports_db_source: data.airports_db_source, no_icao_filter: data.no_icao_filter });
+      setSettings(data);
     }
   }, [data]);
 
@@ -57,7 +56,7 @@ export const AirportsDB = () => {
           tooltip="Airport DB Source"
           options={airportsDBOptions}
           handleChange={handleChange}
-          value={settings.airports_db_source}
+          value={settings?.airports_db_source ?? ""}
         />
         <FormControlLabel
           control={
