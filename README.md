@@ -14,7 +14,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.11.0] - 27.09.2025
 
 - Update: General code optimization and UI improvements for the aircraft and airports tables (column resizing)
 - New: Custom person roles (new field on the Settings page)
@@ -35,22 +35,12 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Change Map selectors `No Route Lines`/`No Tracks` to `Route Lines`/`Tracks`
 - New: Added Track and Attachments columns for the logbook table. Shows if a flight record has a track attached and amount of the attachments. Hidden by default
 
-## [3.8.0] - 06.09.2025
-
-- New: Added a support to change the naming for the standard fields on the flight record page and all the tables (logbook and stats)
-
-## [3.7.0] - 03.09.2025
-
-- New: Added new section `Persons` to track the crew members for the flights @danielkappelle
-
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
 ## Old v2.x version
 If you still would like to use v2.x version:
 * Latest v2 release https://github.com/vsimakhin/web-logbook/releases/tag/v2.45.0
 * Docker `docker pull vsimakhin/web-logbook:v2.45.0`
-* Github branch https://github.com/vsimakhin/web-logbook/tree/v2-security-patches
-
 
 # Usage
 

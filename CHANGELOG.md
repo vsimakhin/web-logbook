@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.11.0] - 27.09.2025
 
 - Update: General code optimization and UI improvements for the aircraft and airports tables (column resizing)
 - New: Custom person roles (new field on the Settings page)
