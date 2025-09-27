@@ -18,6 +18,8 @@ export const PersonView = () => {
   const { data: personData, isLoading: personIsLoading, isError: personIsError, error: personError } = useQuery({
     queryKey: ["persons", "person", uuid],
     queryFn: ({ signal }) => fetchPersonByUuid({ signal, uuid, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError: personIsError, error: personError, fallbackMessage: "Failed to load person" });
 

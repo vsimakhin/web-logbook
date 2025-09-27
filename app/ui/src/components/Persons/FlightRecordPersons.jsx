@@ -19,6 +19,8 @@ export const FlightRecordPersons = ({ id }) => {
     queryKey: ["persons", "log", id],
     queryFn: ({ signal }) => fetchPersonsForLog({ signal, logUuid: id, navigate }),
     enabled: !(id === "new"),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load persons' });
 
