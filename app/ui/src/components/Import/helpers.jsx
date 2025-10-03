@@ -125,11 +125,18 @@ export const convertToDDMMYYYY = (date) => {
 }
 
 export const autoTimeRecog = (time) => {
-  if (!time || time === "") {
-    return "";
+  if (!time) return "";
+
+  // If input looks like a full datetime (has ':')
+  const match = time.match(/(\d{1,2}):(\d{2})/);
+  if (match) {
+    const [, h, m] = match;
+    return h.padStart(2, "0") + m.padStart(2, "0");
   }
-  return time.replace(/[^0-9]/g, '').padStart(4, '0');
-}
+
+  // Otherwise, just strip non-digits and pad
+  return time.replace(/[^0-9]/g, "").padStart(4, "0");
+};
 
 export const marshallItem = (item) => {
   return {

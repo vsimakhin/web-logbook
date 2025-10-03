@@ -40,6 +40,13 @@ export const OpenCSVButton = ({ setData }) => {
                   newRow["departure_time"] = autoTimeRecog(newRow["departure_time"]);
                   newRow["arrival_time"] = autoTimeRecog(newRow["arrival_time"]);
 
+                  // autorecognize the routing if it's in format XXXX-YYYY and set for departure place
+                  if (newRow["departure_place"].includes("-")) {
+                    const normalized = newRow["departure_place"].toUpperCase().trim();
+                    const [departure, arrival] = normalized.split("-");
+                    newRow["departure_place"] = departure.trim();
+                    newRow["arrival_place"] = arrival.trim();
+                  }
                   return newRow;
                 }).filter(row => row !== null);
 
