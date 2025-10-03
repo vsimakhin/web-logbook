@@ -14,6 +14,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Improved import with automatic recognition of date, time, and route in CSV fields, and added a help button with field format descriptions.
+
 ## [3.11.0] - 27.09.2025
 
 - Update: General code optimization and UI improvements for the aircraft and airports tables (column resizing)
@@ -312,6 +316,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/benoitfl" title="benoitfl"><img src="https://github.com/benoitfl.png" width="40" height="40" alt="benoitfl" /></a>
   <a href="https://github.com/Gaudv" title="Gaudv"><img src="https://github.com/Gaudv.png" width="40" height="40" alt="Gaudv" /></a>
   <a href="https://github.com/tumblebone" title="tumblebone"><img src="https://github.com/tumblebone.png" width="40" height="40" alt="tumblebone" /></a>
+  <a href="https://github.com/marostegui" title="marostegui"><img src="https://github.com/marostegui.png" width="40" height="40" alt="marostegui" /></a>
 </p>
 
 # Used libraries

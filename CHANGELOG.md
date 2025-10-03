@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Improved import with automatic recognition of date, time, and route in CSV fields, and added a help button with field format descriptions.
+
 ## [3.11.0] - 27.09.2025
 
 - Update: General code optimization and UI improvements for the aircraft and airports tables (column resizing)
