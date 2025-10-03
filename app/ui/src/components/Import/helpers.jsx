@@ -94,15 +94,32 @@ export const createColumn = (id, name, size, isText = false, footer = undefined)
 })
 
 export const convertToDDMMYYYY = (date) => {
-  if (date === "") {
-    return "";
+  if (!date) return "";
+
+  // Normalize separators
+  const normalized = date.replace(/[-.]/g, "/");
+  const parts = normalized.split("/");
+
+  if (parts.length !== 3) return date; // invalid format, return as is
+
+  let day, month, year;
+
+  // Case: YYYY/MM/DD
+  if (parts[0].length === 4) {
+    year = parts[0];
+    month = parts[1].padStart(2, "0");
+    day = parts[2].padStart(2, "0");
   }
-
-  const parts = date.replace(/[.]/g, '/').split('/');
-
-  const day = parts[0].padStart(2, '0');
-  const month = parts[1].padStart(2, '0');
-  const year = parts[2];
+  // Case: DD/MM/YYYY
+  else if (parts[2].length === 4) {
+    day = parts[0].padStart(2, "0");
+    month = parts[1].padStart(2, "0");
+    year = parts[2];
+  }
+  else {
+    // Unknown format, just return original
+    return date;
+  }
 
   return `${day}/${month}/${year}`;
 }
