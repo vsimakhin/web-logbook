@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.12.0] - 04.10.2025
 
 - Update: Dashboard and stats improved - simulator flights are now counted under the correct aircraft type or category when simulator type matches, otherwise grouped as "Simulator".
 - Update: Improved import with automatic recognition of date, time, and route in CSV fields, and added a help button with field format descriptions.

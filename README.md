@@ -14,7 +14,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.12.0] - 04.10.2025
 
 - Update: Dashboard and stats improved - simulator flights are now counted under the correct aircraft type or category when simulator type matches, otherwise grouped as "Simulator".
 - Update: Improved import with automatic recognition of date, time, and route in CSV fields, and added a help button with field format descriptions.
@@ -30,15 +30,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [3.10.0] - 19.09.2025
 
 - Fix: track plotting from SkyDaemon KML files
-
-## [3.9.0] - 13.09.2025
-
-- Fix: Corrected caching for Persons entity
-- Update: Increase timeout for initial DB check
-- Update: Golang and npm packages/security patches
-- Fix: Don't show the brackets if the person doesn't have a role
-- Update: Change Map selectors `No Route Lines`/`No Tracks` to `Route Lines`/`Tracks`
-- New: Added Track and Attachments columns for the logbook table. Shows if a flight record has a track attached and amount of the attachments. Hidden by default
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
