@@ -66,9 +66,17 @@ const filterData = (data, filter, modelsData) => {
     // filter registration
     const matchesReg = filter.aircraft_reg ? flight.aircraft.reg_name === filter.aircraft_reg : true;
     // filter type
-    const matchesType = filter.aircraft_model ? flight.aircraft.model === filter.aircraft_model : true;
+    const matchesType = filter.aircraft_model ? flight.aircraft.model === filter.aircraft_model || flight.sim.type === filter.aircraft_model : true;
     // filter category
-    const matchesCategory = filter.aircraft_category ? getModelsByCategory(modelsData, filter.aircraft_category).includes(flight.aircraft.model) : true;
+    const matchesCategory = (() => {
+      if (!filter.aircraft_category) return true;
+      const models = getModelsByCategory(modelsData, filter.aircraft_category);
+      return (
+        models.includes(flight.aircraft.model) ||
+        models.includes(flight.sim.type) ||
+        filter.aircraft_category === flight.sim.type
+      );
+    })();
     // filter arrival and departure place
     const matchesArrival = filter.place ? flight.arrival.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
     const matchesDeparture = filter.place ? flight.departure.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
