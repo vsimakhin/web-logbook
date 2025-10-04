@@ -200,10 +200,31 @@ export const getTotalsByAircraft = (flights, type, models, customFields = []) =>
     }, {}) : {};
 
   const totals = flights.reduce((acc, flight) => {
-    const aircraftType = flight.aircraft.model || "Simulator";
-    const keys = type === "category" ?
-      (modelCategories[aircraftType] ?? [aircraftType]) :
-      [aircraftType];
+    let aircraftType = flight.aircraft.model;
+    let keys;
+
+    if (aircraftType) {
+      // Normal case: real aircraft
+      keys = type === "category"
+        ? modelCategories[aircraftType] ?? [aircraftType]
+        : [aircraftType];
+    } else {
+      // Simulator case
+      const simType = flight.sim?.type;
+      if (
+        simType &&
+        (models.some(m => m.model === simType) ||
+          Object.values(modelCategories).some(cats => cats.includes(simType)))
+      ) {
+        // If simType matches a known model or category
+        keys = type === "category"
+          ? modelCategories[simType] ?? [simType]
+          : [simType];
+      } else {
+        // Otherwise keep it as "Simulator"
+        keys = ["Simulator"];
+      }
+    }
 
     keys.forEach(key => {
       if (!acc[key]) {
