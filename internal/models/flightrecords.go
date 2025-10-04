@@ -148,7 +148,9 @@ func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
 
 	if fr.Departure.Place != "" && fr.Arrival.Place != "" {
 		// normal flight
-		query = `SELECT count(uuid)
+		// only check duplicates if BOTH times are set
+		if fr.Departure.Time != "" && fr.Arrival.Time != "" {
+			query = `SELECT count(uuid)
 				FROM logbook_view
 				WHERE date = ?
 					AND departure_place = ?
@@ -157,8 +159,12 @@ func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
 					AND arrival_time = ?
 					AND aircraft_model = ?
 					AND reg_name = ?`
-		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.Departure.Place, fr.Departure.Time,
-			fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg)
+			row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.Departure.Place, fr.Departure.Time,
+				fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg)
+		} else {
+			// no times → don’t check duplicates, always allow insert
+			return false
+		}
 	} else if fr.SIM.Type != "" && fr.SIM.Time != "" {
 		// simulator record
 		query = `SELECT count(uuid)

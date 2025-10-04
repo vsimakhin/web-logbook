@@ -1,5 +1,5 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { useMemo, useState } from 'react';
+import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -10,9 +10,13 @@ import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, 
 import OpenCSVButton from './OpenCSVButton';
 import ClearTableButton from './ClearTableButton';
 import RunImportButton from './RunImportButton';
+import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
+import HelpButton from './HelpButton';
 
 const paginationKey = 'import-table-page-size';
 const columnVisibilityKey = 'import-table-column-visibility';
+const columnSizingKey = 'logbook-table-column-sizing';
+
 const tableOptions = {
   initialState: { density: 'compact' },
   enableColumnResizing: true,
@@ -36,6 +40,7 @@ export const ImportTable = () => {
 
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
+  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
   const columns = useMemo(() => [
     {
@@ -99,22 +104,35 @@ export const ImportTable = () => {
     }
   ], []);
 
+  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <ClearTableButton setData={setData} />
+      <OpenCSVButton setData={setData} />
+      <RunImportButton data={data} inProgress={inProgress} setInProgress={setInProgress} />
+    </Box>
+  ), [data, inProgress, setInProgress, setData]);
+
+  const renderToolbarInternalActions = useCallback(({ table }) => (
+    <>
+      <HelpButton />
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleFullScreenButton table={table} />
+      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+    </>
+  ), [setColumnSizing]);
+
   const table = useMaterialReactTable({
     columns: columns,
     data: data ?? [],
     onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: () => (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <ClearTableButton setData={setData} />
-        <OpenCSVButton setData={setData} />
-        <RunImportButton data={data} inProgress={inProgress} setInProgress={setInProgress} />
-      </Box>
-    ),
+    onColumnSizingChange: setColumnSizing,
+    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
+    renderToolbarInternalActions: renderToolbarInternalActions,
     onPaginationChange: setPagination,
-    state: { pagination, columnVisibility },
+    state: { pagination, columnVisibility, columnSizing },
     ...tableOptions,
   });
-
 
   return (
     <>
