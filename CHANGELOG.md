@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.13.0] - 06.10.2025
 
 - Fix: Dashboard stats calculation when using custom manual dates
 

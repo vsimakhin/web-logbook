@@ -14,7 +14,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.13.0] - 06.10.2025
 
 - Fix: Dashboard stats calculation when using custom manual dates
 
@@ -30,10 +30,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - New: Added `Since` and `All Time` time frame units for the Currency
 - Update: Grey out 0:00/0 values in the stats tables
 - New: Enroute field as a new custom type. Allows to add enroute/touch-n-goes airfields and show them on the map. Distance is recalculated as well.
-
-## [3.10.0] - 19.09.2025
-
-- Fix: track plotting from SkyDaemon KML files
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
