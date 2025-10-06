@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+dayjs.extend(isBetween);
 import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -58,6 +60,9 @@ const getModelsByCategory = (modelsData, category) => {
 };
 
 const filterData = (data, filter, modelsData) => {
+  filter.start_date = dayjs(filter.start_date, 'DD/MM/YYYY')
+  filter.end_date = dayjs(filter.end_date, 'DD/MM/YYYY');
+
   // Filter data
   const filteredData = data.filter((flight) => {
     // filter by date
