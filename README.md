@@ -14,6 +14,11 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Expiration date tracking for Currency - `Valid Until` and `Expire` @xtncl
+
+
 ## [3.13.0] - 06.10.2025
 
 - Fix: Dashboard stats calculation when using custom manual dates
@@ -309,6 +314,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/Gaudv" title="Gaudv"><img src="https://github.com/Gaudv.png" width="40" height="40" alt="Gaudv" /></a>
   <a href="https://github.com/tumblebone" title="tumblebone"><img src="https://github.com/tumblebone.png" width="40" height="40" alt="tumblebone" /></a>
   <a href="https://github.com/marostegui" title="marostegui"><img src="https://github.com/marostegui.png" width="40" height="40" alt="marostegui" /></a>
+  <a href="https://github.com/xtncl" title="xtncl"><img src="https://github.com/xtncl.png" width="40" height="40" alt="xtncl" /></a>
 </p>
 
 # Used libraries
