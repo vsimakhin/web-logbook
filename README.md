@@ -14,10 +14,9 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.14.0] - 07.10.2025
 
 - New: Expiration date tracking for Currency - `Valid Until` and `Expire` @xtncl
-
 
 ## [3.13.0] - 06.10.2025
 
@@ -27,14 +26,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - Update: Dashboard and stats improved - simulator flights are now counted under the correct aircraft type or category when simulator type matches, otherwise grouped as "Simulator".
 - Update: Improved import with automatic recognition of date, time, and route in CSV fields, and added a help button with field format descriptions.
-
-## [3.11.0] - 27.09.2025
-
-- Update: General code optimization and UI improvements for the aircraft and airports tables (column resizing)
-- New: Custom person roles (new field on the Settings page)
-- New: Added `Since` and `All Time` time frame units for the Currency
-- Update: Grey out 0:00/0 values in the stats tables
-- New: Enroute field as a new custom type. Allows to add enroute/touch-n-goes airfields and show them on the map. Distance is recalculated as well.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

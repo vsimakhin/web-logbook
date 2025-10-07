@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.14.0] - 07.10.2025
 
 - New: Expiration date tracking for Currency - `Valid Until` and `Expire` @xtncl
 
