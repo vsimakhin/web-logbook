@@ -9,13 +9,16 @@ import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import LinearProgress from '@mui/material/LinearProgress';
 import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import { fetchCurrency } from '../../util/http/currency';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import { evaluateCurrency, formatCurrencyValue, metricOptions, timeframeUnitOptions } from './helpers';
+import { evaluateCurrency, formatCurrencyValue, metricOptions, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
+import { calculateExpiry } from '../Licensing/helpers';
+import dayjs from 'dayjs';
 import NewCurrencyButton from './NewCurrencyButton';
 import EditCurrencyButton from './EditCurrencyButton';
 import DeleteCurrencyButton from './DeleteCurrencyButton';
@@ -124,6 +127,59 @@ export const CurrencyTable = () => {
       },
       { accessorKey: "filters", header: "Filters", size: 120 },
       {
+        id: "valid_until",
+        header: "Valid Until",
+        size: 160,
+        accessorFn: (row) => getCurrencyExpiryForRule(logbookData, row, modelsData),
+        Cell: ({ cell }) => {
+          const expiry = cell.getValue();
+          return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
+        }
+      },
+      {
+        id: "expire",
+        header: "Expire",
+        size: 120,
+        accessorFn: (row) => {
+          const expiry = getCurrencyExpiryForRule(logbookData, row, modelsData);
+          row.expiry = expiry; // Cache for use in Cell
+          if (!expiry) return null;
+          const today = dayjs().startOf('day');
+          return dayjs(expiry).startOf('day').diff(today, 'day');
+        },
+        Cell: ({ cell }) => {
+          const days = cell.getValue();
+          const row = cell.row.original;
+          
+          if (days === null || days === undefined) {
+            // If we can't compute an expiry, still show "Expired" for time-based rules
+            // when the rule does not meet the requirement in the current window.
+            const res = evaluateCurrency(logbookData, row, modelsData);
+            const isDaysWindow = row?.time_frame?.unit === 'days';
+            const isTimeMetric = typeof row?.metric === 'string' && row.metric.startsWith('time');
+            if (isDaysWindow && isTimeMetric && res && res.meetsRequirement === false) {
+              return (
+                <Typography variant="body2" color={'error'}>Expired</Typography>
+              );
+            }
+            return '—';
+          }
+          
+          const expiryStr = dayjs(cell.row.original.expiry).format('DD/MM/YYYY');
+          const exp = calculateExpiry(expiryStr);
+          if (!exp) return '—';
+          
+          const text = exp.diffDays < 0
+            ? 'Expired'
+            : `${exp.months > 0 ? `${exp.months} month${exp.months === 1 ? '' : 's'} ` : ''}${exp.days} day${exp.days === 1 ? '' : 's'}`;
+          // Currency-specific coloring: yellow in the last ~third of the window (≈30 days), red if expired
+          const color = exp.diffDays < 0 ? 'error' : (exp.diffDays < 30 ? 'warning' : 'inherit');
+          return (
+            <Typography variant="body2" color={color}>{text}</Typography>
+          );
+        }
+      },
+      {
         id: "status", header: "Status", grow: true,
         accessorFn: (row) => {
           return evaluateCurrency(logbookData, row, modelsData);
@@ -137,7 +193,7 @@ export const CurrencyTable = () => {
             />
           )
         }
-      }
+      },
     ]
   }, [logbookData, modelsData, data]);
 
