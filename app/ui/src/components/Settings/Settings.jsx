@@ -3,7 +3,7 @@ import { memo, useCallback } from "react";
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
-import GeneralSettings from "./GeneralSettings";
+import GeneralSettings from "./GeneralSettings/GeneralSettings";
 import LogbookSignature from "./Signature/LogbookSignature";
 import CustomFields from "./CustomFields/CustomFields";
 import StandardFields from "./StandardFields/StandardFields";

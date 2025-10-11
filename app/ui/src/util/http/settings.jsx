@@ -14,6 +14,7 @@ export const fetchSettings = async ({ signal, navigate }) => {
 
 export const updateSettings = async ({ settings, navigate }) => {
   const url = `${API_URL}/settings/general`;
+  settings.licenses_expiration.warning_period = parseInt(settings.licenses_expiration.warning_period) || 90;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },

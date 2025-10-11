@@ -23,9 +23,3 @@ export const calculateExpiry = (validUntil) => {
 
   return { months: diffMonths, days: remainingDays, diffDays };
 };
-
-export const getExpireColor = (days) => {
-  if (days < 0) return 'error';
-  if (days < 90) return 'warning';
-  return 'inherit';
-}
