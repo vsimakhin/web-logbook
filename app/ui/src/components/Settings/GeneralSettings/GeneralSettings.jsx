@@ -9,6 +9,7 @@ import SaveSettingsButton from "../SaveSettingsButton";
 import OwnerInfoFields from "./OwnerInfoFields";
 import OtherSettings from "./OtherSettings";
 import AuthSettings from "./AuthSettings";
+import LicensesExpiration from "./LicensesExpiration";
 
 const ActionButtons = memo(({ settings }) => (<SaveSettingsButton settings={settings} />));
 
@@ -22,6 +23,7 @@ export const GeneralSettings = ({ settings, handleChange }) => {
         <OwnerInfoFields settings={settings} handleChange={handleChange} />
         <Divider sx={{ m: 1 }} />
         <OtherSettings settings={settings} handleChange={handleChange} />
+        <LicensesExpiration settings={settings} handleChange={handleChange} />
         <Divider sx={{ m: 1 }} />
         <AuthSettings settings={settings} handleChange={handleChange} />
 
