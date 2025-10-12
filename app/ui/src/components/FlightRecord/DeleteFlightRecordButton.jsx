@@ -3,21 +3,21 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 // MUI UI elements
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { deleteFlightRecord } from '../../util/http/logbook';
 import { queryClient } from '../../util/http/http';
 
-export const DeleteFlightRecordButton = ({ flight }) => {
+export const DeleteFlightRecordButton = ({ flight, handleCloseMenu }) => {
   const dialogs = useDialogs();
   const navigate = useNavigate();
 
   const { mutateAsync: deleteFlight, isError, error, isSuccess } = useMutation({
     mutationFn: () => deleteFlightRecord({ id: flight.uuid, navigate }),
     onSuccess: async () => {
+      handleCloseMenu();
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
       await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
       await queryClient.invalidateQueries({ queryKey: ['aircraft-models'] });
@@ -37,9 +37,9 @@ export const DeleteFlightRecordButton = ({ flight }) => {
   });
 
   return (
-    <Tooltip title="Delete flight">
-      <IconButton size="small" onClick={handleConfirmDelete}><DeleteOutlinedIcon /></IconButton>
-    </Tooltip>
+    <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleConfirmDelete}>
+      <DeleteOutlinedIcon color="action" sx={{ m: 1 }} />Delete Flight Record
+    </MenuItem>
   );
 }
 

@@ -1,17 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 // MUI UI elements
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // Custom
 import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 
-export const NewFlightRecordButton = ({ setFlight }) => {
+export const NewFlightRecordButton = ({ setFlight, handleCloseMenu }) => {
   const navigate = useNavigate();
 
   const handleNewFlight = useCallback(() => {
+    handleCloseMenu();
     navigate("/logbook/new");
     setFlight((flight) => (
       {
@@ -27,11 +27,9 @@ export const NewFlightRecordButton = ({ setFlight }) => {
   }, [navigate, setFlight]);
 
   return (
-    <Tooltip title="New flight record">
-      <IconButton size="small" onClick={handleNewFlight}>
-        <AddBoxOutlinedIcon />
-      </IconButton>
-    </Tooltip>
+    <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleNewFlight}>
+      <AddBoxOutlinedIcon color="action" sx={{ m: 1 }} />New Flight Record
+    </MenuItem>
   )
 }
 

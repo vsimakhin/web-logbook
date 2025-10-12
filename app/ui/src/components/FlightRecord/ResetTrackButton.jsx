@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDialogs } from '@toolpad/core/useDialogs';
 // MUI UI elements
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import MenuItem from '@mui/material/MenuItem';
+
 // MUI Icons
 import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 // Custom
@@ -39,11 +39,9 @@ export const ResetTrackButton = ({ flight, handleChange }) => {
   });
 
   return (
-    <Tooltip title="Reset track and distance">
-      <IconButton size="small" onClick={handleReset}>
-        <RouteOutlinedIcon />
-      </IconButton>
-    </Tooltip>
+    <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleReset}>
+      <RouteOutlinedIcon color="action" sx={{ m: 1 }} />Reset track and distance
+    </MenuItem>
   )
 }
 

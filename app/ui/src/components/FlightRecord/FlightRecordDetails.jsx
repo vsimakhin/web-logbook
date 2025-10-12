@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { memo, useMemo } from 'react';
+import { useMemo } from 'react';
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
 import Divider from '@mui/material/Divider';
@@ -14,25 +14,9 @@ import AircraftReg from '../UIElements/AircraftReg';
 import TimeField from './TimeField';
 import PlaceField from './PlaceField';
 import LandingFields from './LandingFields';
-import HelpButton from "./HelpButton";
-import NewFlightRecordButton from "./NewFlightRecordButton";
-import CopyFlightRecordButton from "./CopyFlightRecordButton";
-import SaveFlightRecordButton from "./SaveFlightRecordButton";
-import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
-import ResetTrackButton from "./ResetTrackButton";
 import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
-
-const ActionButtons = memo(({ flight, handleChange, setFlight }) => (
-  <>
-    <HelpButton />
-    <SaveFlightRecordButton flight={flight} handleChange={handleChange} />
-    {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} />}
-    {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} />}
-    {flight.track && <ResetTrackButton flight={flight} handleChange={handleChange} />}
-    {flight.uuid !== "new" && <DeleteFlightRecordButton flight={flight} />}
-  </>
-));
+import FlightRecordMenuButtons from './FlightRecordMenuButtons';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
@@ -43,7 +27,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
           <CardHeader title={title}
-            action={<ActionButtons flight={flight} handleChange={handleChange} setFlight={setFlight} />}
+            action={<FlightRecordMenuButtons flight={flight} handleChange={handleChange} setFlight={setFlight} />}
           />
           <Grid container spacing={1} >
             <DatePicker gsize={{ xs: 12, sm: 4, md: 4, lg: 3, xl: 3 }}
