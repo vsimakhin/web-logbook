@@ -225,6 +225,12 @@ type Settings struct {
 	EnableCustomNames     bool          `json:"enable_custom_names"`
 	StandardFieldsHeaders ColumnsHeader `json:"standard_fields_headers"`
 
+	LicensesExpiration struct {
+		ShowExpired   bool `json:"show_expired"`
+		ShowWarning   bool `json:"show_warning"`
+		WarningPeriod int  `json:"warning_period"`
+	} `json:"licenses_expiration"`
+
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`
 }
