@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Set start of the week to Monday for the date fields
 - New: Added badges on the navigation panel for very soon expiring and expired licenses, configurable from the Settings page.
 
 ## [3.14.0] - 07.10.2025
@@ -310,6 +311,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/tumblebone" title="tumblebone"><img src="https://github.com/tumblebone.png" width="40" height="40" alt="tumblebone" /></a>
   <a href="https://github.com/marostegui" title="marostegui"><img src="https://github.com/marostegui.png" width="40" height="40" alt="marostegui" /></a>
   <a href="https://github.com/xtncl" title="xtncl"><img src="https://github.com/xtncl.png" width="40" height="40" alt="xtncl" /></a>
+  <a href="https://github.com/leapparence" title="leapparence"><img src="https://github.com/leapparence.png" width="40" height="40" alt="leapparence" /></a>
 </p>
 
 # Used libraries
