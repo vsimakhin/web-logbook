@@ -19,6 +19,8 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Added an option to hide time fields on the Flight Record page.
+- Update: Reorganized action buttons on the Flight Record page.
 - Update: Set start of the week to Monday for the date fields
 - New: Added badges on the navigation panel for very soon expiring and expired licenses, configurable from the Settings page.
 
