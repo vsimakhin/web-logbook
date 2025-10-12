@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Added badges on the navigation panel for very soon expiring and expired licenses, configurable from the Settings page.
+
 ## [3.14.0] - 07.10.2025
 
 - New: Expiration date tracking for Currency - `Valid Until` and `Expire` @xtncl

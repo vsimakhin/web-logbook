@@ -27,16 +27,16 @@ export const LicensesExpiration = ({ settings, handleChange }) => {
       />
       <Grid size={{ sm: 1, md: 1, lg: 1, xl: 1 }} sx={{ display: { xs: "none", sm: "flex" } }}><Box sx={{ width: '100%' }}></Box></Grid>
       <Grid size={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
-        <FormControlLabel label="Show Expired " sx={{ width: '100%' }}
+        <FormControlLabel label="Show Warning" sx={{ width: '100%' }}
           control={
-            <Switch checked={settings?.licenses_expiration?.show_expired ?? false} onChange={(event) => handleChange("licenses_expiration.show_expired", event.target.checked)} />
+            <Switch checked={settings?.licenses_expiration?.show_warning ?? false} onChange={(event) => handleChange("licenses_expiration.show_warning", event.target.checked)} />
           }
         />
       </Grid>
       <Grid size={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
-        <FormControlLabel label="Show Warning" sx={{ width: '100%' }}
+        <FormControlLabel label="Show Expired" sx={{ width: '100%' }}
           control={
-            <Switch checked={settings?.licenses_expiration?.show_warning ?? false} onChange={(event) => handleChange("licenses_expiration.show_warning", event.target.checked)} />
+            <Switch checked={settings?.licenses_expiration?.show_expired ?? false} onChange={(event) => handleChange("licenses_expiration.show_expired", event.target.checked)} />
           }
         />
       </Grid>
