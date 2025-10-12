@@ -16,6 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Set start of the week to Monday for the date fields
 - New: Added badges on the navigation panel for very soon expiring and expired licenses, configurable from the Settings page.
 
 ## [3.14.0] - 07.10.2025

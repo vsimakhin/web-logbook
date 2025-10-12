@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { Outlet } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
@@ -27,6 +29,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { queryClient } from './util/http/http';
 import getMPTheme from './theme/getMPTheme';
 import { LicensingNavTitle } from './components/Licensing/LicensingNavTitle';
+
+dayjs.extend(updateLocale);
+dayjs.updateLocale("en", { weekStart: 1 });
 
 const BRANDING = {
   title: 'WebLogbook',
