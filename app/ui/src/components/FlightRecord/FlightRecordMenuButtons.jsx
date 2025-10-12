@@ -11,6 +11,7 @@ import CopyFlightRecordButton from "./CopyFlightRecordButton";
 import SaveFlightRecordButton from "./SaveFlightRecordButton";
 import DeleteFlightRecordButton from "./DeleteFlightRecordButton";
 import ResetTrackButton from "./ResetTrackButton";
+import ShowHideFieldsButton from './ShowHideFieldsButton';
 
 export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -18,8 +19,6 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => 
   const handleCloseMenu = useCallback(() => setAnchorEl(null), []);
 
   const moreActions = useMemo(() => {
-    if (flight.uuid === "new") return null;
-
     return (
       <>
         <Tooltip title="More actions">
@@ -33,14 +32,14 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => 
           anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           transformOrigin={{ vertical: "top", horizontal: "left" }}
         >
-          <NewFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />
-          <CopyFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />
+          {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
+          {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
           {flight.track && <ResetTrackButton flight={flight} handleChange={handleChange} handleCloseMenu={handleCloseMenu} />}
-          <DeleteFlightRecordButton flight={flight} handleCloseMenu={handleCloseMenu} />
+          {flight.uuid !== "new" && <DeleteFlightRecordButton flight={flight} handleCloseMenu={handleCloseMenu} />}
+          <ShowHideFieldsButton handleCloseMenu={handleCloseMenu} />
         </Menu>
       </>
     )
-
   }, [flight, anchorEl, handleCloseMenu, setFlight, handleChange]);
 
   return (

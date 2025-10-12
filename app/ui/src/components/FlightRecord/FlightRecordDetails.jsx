@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
+import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
 import Divider from '@mui/material/Divider';
@@ -17,10 +18,27 @@ import LandingFields from './LandingFields';
 import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
+import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
   const { fieldNameF } = useSettings();
+  const [visibility, setVisibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
+
+  const timeFields = useMemo(() => (
+    [
+      { id: "time.total_time", label: fieldNameF("total") },
+      { id: "time.se_time", label: fieldNameF("se") },
+      { id: "time.me_time", label: fieldNameF("me") },
+      { id: "time.mcc_time", label: fieldNameF("mcc") },
+      { id: "time.night_time", label: fieldNameF("night") },
+      { id: "time.ifr_time", label: fieldNameF("ifr") },
+      { id: "time.pic_time", label: fieldNameF("pic") },
+      { id: "time.co_pilot_time", label: fieldNameF("cop") },
+      { id: "time.dual_time", label: fieldNameF("dual") },
+      { id: "time.instructor_time", label: fieldNameF("instr") },
+    ]
+  ), [fieldNameF]);
 
   return (
     <>
@@ -65,32 +83,27 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           <Divider sx={{ mt: 1 }} />
 
           <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
-            <TimeField id="time.total_time" label={fieldNameF("total")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.se_time" label={fieldNameF("se")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.me_time" label={fieldNameF("me")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.mcc_time" label={fieldNameF("mcc")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.night_time" label={fieldNameF("night")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.ifr_time" label={fieldNameF("ifr")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.pic_time" label={fieldNameF("pic")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.co_pilot_time" label={fieldNameF("cop")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.dual_time" label={fieldNameF("dual")} handleChange={handleChange} flight={flight} />
-            <TimeField id="time.instructor_time" label={fieldNameF("instr")} handleChange={handleChange} flight={flight} />
+            {timeFields.map((field) => (
+              (visibility?.[field.id] ?? true) && <TimeField key={field.id} id={field.id} label={field.label} handleChange={handleChange} flight={flight} />
+            ))}
           </Grid>
 
+          {(visibility?.["simulator"] ?? true) &&
+            <>
+              <Divider sx={{ mt: 1 }} />
+              <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
+                <TextField gsize={{ xs: 5, sm: 4, md: 4, lg: 4, xl: 4 }}
+                  id="sim.type"
+                  label={`${fieldNameF("fstd")} ${fieldNameF("sim_type")}`}
+                  handleChange={handleChange}
+                  value={flight.sim.type ?? ""}
+                />
+                <TimeField id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`} handleChange={handleChange} flight={flight} />
+              </Grid>
+            </>
+          }
+
           <Divider sx={{ mt: 1 }} />
-
-          <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
-            <TextField gsize={{ xs: 5, sm: 4, md: 4, lg: 4, xl: 4 }}
-              id="sim.type"
-              label={`${fieldNameF("fstd")} ${fieldNameF("sim_type")}`}
-              handleChange={handleChange}
-              value={flight.sim.type ?? ""}
-            />
-            <TimeField id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`} handleChange={handleChange} flight={flight} />
-          </Grid>
-
-          <Divider sx={{ mt: 1 }} />
-
           <Grid container spacing={1} sx={{ mt: 1 }} >
             <TextField gsize={"grow"}
               id="remarks"
