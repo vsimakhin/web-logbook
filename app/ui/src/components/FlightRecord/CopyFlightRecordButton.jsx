@@ -1,19 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 // MUI UI elements
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { useNotifications } from '@toolpad/core/useNotifications';
 
-export const CopyFlightRecordButton = ({ setFlight }) => {
+export const CopyFlightRecordButton = ({ setFlight, handleCloseMenu }) => {
   const navigate = useNavigate();
   const notifications = useNotifications();
 
-  const handleNewFlight = useCallback(() => {
+  const handleCopyFlight = useCallback(() => {
     const message = "Flight record copied. Update the details and save.";
 
+    handleCloseMenu();
     navigate("/logbook/new");
     setFlight((flight) => (
       {
@@ -29,11 +29,9 @@ export const CopyFlightRecordButton = ({ setFlight }) => {
   }, [navigate, setFlight, notifications]);
 
   return (
-    <Tooltip title="Copy flight record">
-      <IconButton size="small" onClick={handleNewFlight}>
-        <ContentCopyOutlinedIcon />
-      </IconButton>
-    </Tooltip>
+    <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleCopyFlight}>
+      <ContentCopyOutlinedIcon color="action" sx={{ m: 1 }} />Copy Flight Record
+    </MenuItem>
   )
 }
 

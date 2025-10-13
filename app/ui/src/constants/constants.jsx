@@ -144,3 +144,5 @@ export const CUSTOM_FIELD_INITIAL_STATE = {
   size_lg: 3,
   display_order: 0,
 };
+
+export const FIELDS_VISIBILITY_KEY = "flight-record-visibility-key";
