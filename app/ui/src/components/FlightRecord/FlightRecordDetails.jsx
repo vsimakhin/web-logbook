@@ -23,7 +23,7 @@ import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
   const { fieldNameF } = useSettings();
-  const [visibility, setVisibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
+  const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
 
   const timeFields = useMemo(() => (
     [
