@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.15.0] - 15.10.2025
 
 - New: Add option to upload and download the database file (SQLite only).
 - Fix: Update column number for the ICAO code for Our Airports database source.

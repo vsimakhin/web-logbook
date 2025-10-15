@@ -17,7 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.15.0] - 15.10.2025
 
 - New: Add option to upload and download the database file (SQLite only).
 - Fix: Update column number for the ICAO code for Our Airports database source.
@@ -34,11 +34,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [3.13.0] - 06.10.2025
 
 - Fix: Dashboard stats calculation when using custom manual dates
-
-## [3.12.0] - 04.10.2025
-
-- Update: Dashboard and stats improved - simulator flights are now counted under the correct aircraft type or category when simulator type matches, otherwise grouped as "Simulator".
-- Update: Improved import with automatic recognition of date, time, and route in CSV fields, and added a help button with field format descriptions.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
