@@ -142,7 +142,7 @@ func (app *application) parseCSVAirports(data []byte) ([]models.Airport, error) 
 		csvElev    = 6
 		csvCountry = 8
 		csvCity    = 10
-		csvICAO    = 12
+		csvICAO    = 14
 		csvIATA    = 13
 	)
 
