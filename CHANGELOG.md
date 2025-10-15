@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Update column number for the ICAO code for Our Airports database source.
 - Fix: Recalculate night time even the field is not empty.
 - New: Added an option to hide time fields on the Flight Record page.
 - Update: Reorganized action buttons on the Flight Record page.
