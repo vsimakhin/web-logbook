@@ -10,11 +10,18 @@ import OwnerInfoFields from "./OwnerInfoFields";
 import OtherSettings from "./OtherSettings";
 import AuthSettings from "./AuthSettings";
 import LicensesExpiration from "./LicensesExpiration";
+import DBActionsMenu from "./DBControl/DBActionsMenu";
+import HelpButton from "./HelpButton";
 
-const ActionButtons = memo(({ settings }) => (<SaveSettingsButton settings={settings} />));
+const ActionButtons = memo(({ settings }) => (
+  <>
+    <HelpButton />
+    <DBActionsMenu />
+    <SaveSettingsButton settings={settings} />
+  </>
+));
 
 export const GeneralSettings = ({ settings, handleChange }) => {
-
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent>
@@ -26,7 +33,6 @@ export const GeneralSettings = ({ settings, handleChange }) => {
         <LicensesExpiration settings={settings} handleChange={handleChange} />
         <Divider sx={{ m: 1 }} />
         <AuthSettings settings={settings} handleChange={handleChange} />
-
       </CardContent>
     </Card>
   );
