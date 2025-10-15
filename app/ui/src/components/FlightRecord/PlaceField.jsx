@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 // MUI Icons
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
@@ -11,8 +11,8 @@ import useLogbook from '../../hooks/useLogbook';
 
 const capitalizeFirstLetter = (str) => str ? `${str[0].toUpperCase()}${str.slice(1)}` : "";
 
-export const PlaceField = memo(({ flight, handleChange, type, fieldNameF }) => {
-  const icon = type === "departure" ? FlightTakeoffIcon : FlightLandIcon;
+export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
+  const icon = useMemo(() => (type === "departure" ? FlightTakeoffIcon : FlightLandIcon), [type]);
 
   const { calculateDistance, calculateNightTime, calculateTotalTime } = useLogbook();
 
@@ -26,32 +26,32 @@ export const PlaceField = memo(({ flight, handleChange, type, fieldNameF }) => {
     // it's a trick to update the map when the place field is left
     // otherwise the map will be refreshed on each flight field change
     handleChange("redraw", Math.random());
-  }, [flight, handleChange]);
+  }, [flight, handleChange, calculateDistance]);
 
   const handleTimeChange = useCallback(async () => {
     // check length for the time field
-    if (flight.departure.time.length === 4 && flight.arrival.time.length === 4) {
-      const total_time = calculateTotalTime(flight);
-      const old_total_time = flight.time.total_time;
-      handleChange("time.total_time", total_time);
+    if (flight.departure.time.length !== 4 || flight.arrival.time.length !== 4) return;
 
-      // iterate over the flight.time fields and update them
-      for (const key in flight.time) {
-        if (key !== "total_time" && key !== "night_time" && old_total_time !== "" && flight.time[key] === old_total_time) {
-          handleChange(`time.${key}`, total_time);
-        }
-      }
+    const total_time = calculateTotalTime(flight);
+    const old_total_time = flight.time.total_time;
+    handleChange("time.total_time", total_time);
 
-      // night time
-      if (flight.time.night_time === "" && flight.date && flight.departure.place && flight.arrival.place) {
-        const nightTimeData = await calculateNightTime(flight);
-        const nightTime = parseInt(nightTimeData.data) || 0;
-        if (nightTime > 0) {
-          handleChange("time.night_time", convertMinutesToTime(nightTime));
-        }
+    // iterate over the flight.time fields and update them
+    for (const key in flight.time) {
+      if (key !== "total_time" && key !== "night_time" && old_total_time !== "" && flight.time[key] === old_total_time) {
+        handleChange(`time.${key}`, total_time);
       }
     }
-  }, [flight, handleChange, calculateNightTime]);
+
+    // night time
+    if (flight.date && flight.departure.place && flight.arrival.place) {
+      const nightTimeData = await calculateNightTime(flight);
+      const nightTime = parseInt(nightTimeData.data) || 0;
+      if (nightTime > 0) {
+        handleChange("time.night_time", convertMinutesToTime(nightTime));
+      }
+    }
+  }, [flight, handleChange, calculateNightTime, calculateTotalTime]);
 
   return (
     <>
@@ -76,6 +76,6 @@ export const PlaceField = memo(({ flight, handleChange, type, fieldNameF }) => {
       />
     </>
   )
-});
+};
 
 export default PlaceField;
