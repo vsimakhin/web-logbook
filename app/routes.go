@@ -141,6 +141,13 @@ func (app *application) routes() *chi.Mux {
 			r.Delete("/{uuid}", app.HandlerApiCustomFieldDelete)
 		})
 
+		// db
+		r.Route("/db", func(r chi.Router) {
+			r.Get("/filename", app.HandlerApiDBFile)
+			r.Post("/upload-db", app.HandlerApiUploadDB)
+			r.Get("/download-db", app.HandlerApiDownloadDB)
+		})
+
 		// logout
 		r.Post("/logout", app.HandlerLogout)
 
