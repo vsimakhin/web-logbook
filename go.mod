@@ -9,7 +9,6 @@ require (
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
-	github.com/nathan-osman/go-sunrise v1.1.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/crypto v0.42.0
 	modernc.org/sqlite v1.39.0
@@ -21,6 +20,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mstephenholl/go-solar v0.0.0-20251023163936-4654cb7f51c9
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/phpdave11/gofpdi v1.0.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
