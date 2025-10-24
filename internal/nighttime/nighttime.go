@@ -4,8 +4,14 @@ import (
 	"math"
 	"time"
 
-	"github.com/nathan-osman/go-sunrise"
+	"github.com/mstephenholl/go-solar"
 )
+
+// Night means the hours between the end of evening civil twilight and
+// the beginning of morning civil twilight. Civil twilight ends in the evening
+// when the centre of the sun’s disc is 6 degrees below the horizon and begins
+// in the morning when the centre of the sun’s disc is 6 degrees below the horizon
+const NIGHT_SUN_ELEVATION = -6
 
 type Place struct {
 	Lat  float64
@@ -77,48 +83,6 @@ func (route *Route) FlightSpeed() float64 {
 	return route.RouteDistance() / route.FlightTime().Hours()
 }
 
-// SunriseSunset returns sunrise and sunset times or time.Time{} if there is no night
-func (place *Place) SunriseSunset() (time.Time, time.Time, float64) {
-	sunElevation := sunrise.Elevation(place.Lat, place.Lon, place.Time)
-	sunRise, sunSet := sunrise.SunriseSunset(place.Lat, place.Lon, place.Time.UTC().Year(), place.Time.UTC().Month(), place.Time.UTC().Day())
-
-	noNight := time.Time{}
-	if sunRise.Equal(noNight) || sunSet.Equal(noNight) {
-		return noNight, noNight, sunElevation
-	}
-
-	// Check if we need sunrise/sunset times for the next day
-	if sunRise.Day() != place.Time.Day() {
-		// Recalculate for the next day if we're past midnight
-		nextDay := place.Time.AddDate(0, 0, 1)
-		sunRise, sunSet = sunrise.SunriseSunset(place.Lat, place.Lon, nextDay.Year(), nextDay.Month(), nextDay.Day())
-	}
-
-	// For aviation, night starts 30 minutes after sunset and ends 30 minutes before sunrise
-	aviationSunRise := sunRise.Add(time.Duration(-30) * time.Minute)
-	aviationSunSet := sunSet.Add(time.Duration(30) * time.Minute)
-
-	return aviationSunRise, aviationSunSet, sunElevation
-}
-
-// Sunrise returns aviation sunrise time
-func (place *Place) Sunrise() time.Time {
-	s, _, _ := place.SunriseSunset()
-	return s
-}
-
-// Sunset returns aviation sunset time (+30 minutes from apparent sunset)
-func (place *Place) Sunset() time.Time {
-	_, s, _ := place.SunriseSunset()
-	return s
-}
-
-// Elevation returns sun elevation at the place
-func (place *Place) Elevation() float64 {
-	_, _, e := place.SunriseSunset()
-	return e
-}
-
 func (route *Route) NightTime() time.Duration {
 	if route.Departure.Lat == route.Arrival.Lat && route.Departure.Lon == route.Arrival.Lon {
 		// same place, training flights
@@ -135,39 +99,19 @@ func (route *Route) NightTime() time.Duration {
 }
 
 func nightCircuits(start Place, end Place) time.Duration {
-	sr, ss, _ := start.SunriseSunset()
+	loc := solar.NewLocation(end.Lat, end.Lon)
+	nightTime := 0
 
-	totalTime := end.Time.Sub(start.Time)
-
-	if sr.IsZero() && ss.IsZero() {
-		_, _, elevation := start.SunriseSunset()
-		if elevation > 0 {
-			return 0 // Polar day
+	// let's iterate each minute from start time to end time and check sun elevation
+	for t := start.Time; t.Before(end.Time); t = t.Add(time.Duration(1) * time.Minute) {
+		elevation := solar.Elevation(loc, t.UTC())
+		if elevation <= NIGHT_SUN_ELEVATION {
+			nightTime++
 		}
-		return totalTime // Polar night
 	}
 
-	if sr.After(ss) {
-		sr, ss = ss, sr // ensure sr is before ss
-	}
+	return time.Duration(nightTime) * time.Minute
 
-	if start.Time.After(sr) && end.Time.Before(ss) {
-		return 0 // fully within day
-	}
-
-	if (start.Time.Before(sr) && end.Time.Before(sr)) || (start.Time.After(ss) && end.Time.After(ss)) {
-		return totalTime // fully in night
-	}
-
-	var nightTime time.Duration
-	if start.Time.Before(sr) {
-		nightTime += sr.Sub(start.Time)
-	}
-	if end.Time.After(ss) {
-		nightTime += end.Time.Sub(ss)
-	}
-
-	return nightTime
 }
 
 func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute float64) time.Duration {
@@ -183,27 +127,13 @@ func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute fl
 		return nightSegment(start, mid, maxDistance, speedPerMinute) + nightSegment(mid, end, maxDistance, speedPerMinute)
 	}
 
-	// get sunrise and sunset for the end point
-	// it could be calculated for the middle point again to be more precise,
-	// but it will add few more calculations and the error is not so high
-	sr, ss, elevation := end.SunriseSunset()
+	loc := solar.NewLocation(end.Lat, end.Lon)
+	sunElevation := solar.Elevation(loc, end.Time.UTC())
 
-	nightTime := time.Duration(distance / speedPerMinute * float64(time.Minute))
-
-	// Handle polar day/night cases first
-	if sr.Year() == 1 && ss.Year() == 1 {
-		if elevation > 0 {
-			// Polar day, no night time
-			return 0
-		}
-		// Polar night, all time is night
-		return nightTime
-	}
-
-	// Regular day/night cycle - check if time is between aviation sunrise and sunset
-	if end.Time.After(sr) && end.Time.Before(ss) {
+	if sunElevation > NIGHT_SUN_ELEVATION { // time is in civil twilight
 		return 0
 	}
 
+	nightTime := time.Duration(distance / speedPerMinute * float64(time.Minute))
 	return nightTime
 }

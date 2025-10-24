@@ -25,7 +25,7 @@ func TestKnownNightTime(t *testing.T) {
 
 	nightTime := route.NightTime()
 
-	assert.Equal(t, int(math.Round(nightTime.Minutes())), 27)
+	assert.Equal(t, 16, int(math.Round(nightTime.Minutes())))
 
 }
 
@@ -46,7 +46,7 @@ func TestKnownNightTime2(t *testing.T) {
 
 	nightTime := route.NightTime()
 
-	assert.Equal(t, int(math.Round(nightTime.Minutes())), 393)
+	assert.Equal(t, 376, int(math.Round(nightTime.Minutes())))
 
 }
 
