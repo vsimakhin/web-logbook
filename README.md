@@ -17,6 +17,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0
+
 ## [3.15.0] - 15.10.2025
 
 - New: Add option to upload and download the database file (SQLite only).
