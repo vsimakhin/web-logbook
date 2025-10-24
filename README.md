@@ -19,7 +19,8 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
-- Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0
+- Fix/Update: Simplified and corrected night time calculation. Previously, it could be inaccurate for routes on the opposite side of the globe from Europe.
+- Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0.
 
 ## [3.15.0] - 15.10.2025
 
@@ -326,7 +327,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
 Backend:
 * go-pdf https://codeberg.org/go-pdf/fpdf
 * chi web-server https://github.com/go-chi/chi
-* go-sunrise https://github.com/nathan-osman/go-sunrise
+* go-solar https://github.com/mstephenholl/go-solar
 * sqlite https://modernc.org/sqlite
 * mysql https://github.com/go-sql-driver/mysql
 * golang-jwt https://github.com/golang-jwt/jwt/

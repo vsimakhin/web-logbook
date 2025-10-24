@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0
+- Fix/Update: Simplified and corrected night time calculation. Previously, it could be inaccurate for routes on the opposite side of the globe from Europe.
+- Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0.
 
 ## [3.15.0] - 15.10.2025
 
