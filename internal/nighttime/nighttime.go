@@ -83,10 +83,18 @@ func (place *Place) SunriseSunset() (time.Time, time.Time, float64) {
 	sunRise, sunSet := sunrise.SunriseSunset(place.Lat, place.Lon, place.Time.UTC().Year(), place.Time.UTC().Month(), place.Time.UTC().Day())
 
 	noNight := time.Time{}
-	if sunRise == noNight || sunSet == noNight {
+	if sunRise.Equal(noNight) || sunSet.Equal(noNight) {
 		return noNight, noNight, sunElevation
 	}
 
+	// Check if we need sunrise/sunset times for the next day
+	if sunRise.Day() != place.Time.Day() {
+		// Recalculate for the next day if we're past midnight
+		nextDay := place.Time.AddDate(0, 0, 1)
+		sunRise, sunSet = sunrise.SunriseSunset(place.Lat, place.Lon, nextDay.Year(), nextDay.Month(), nextDay.Day())
+	}
+
+	// For aviation, night starts 30 minutes after sunset and ends 30 minutes before sunrise
 	aviationSunRise := sunRise.Add(time.Duration(-30) * time.Minute)
 	aviationSunSet := sunSet.Add(time.Duration(30) * time.Minute)
 
@@ -163,7 +171,6 @@ func nightCircuits(start Place, end Place) time.Duration {
 }
 
 func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute float64) time.Duration {
-
 	distance := distance(start, end)
 
 	if distance > maxDistance {
@@ -183,6 +190,7 @@ func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute fl
 
 	nightTime := time.Duration(distance / speedPerMinute * float64(time.Minute))
 
+	// Handle polar day/night cases first
 	if sr.Year() == 1 && ss.Year() == 1 {
 		if elevation > 0 {
 			// Polar day, no night time
@@ -192,7 +200,7 @@ func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute fl
 		return nightTime
 	}
 
-	// day time
+	// Regular day/night cycle - check if time is between aviation sunrise and sunset
 	if end.Time.After(sr) && end.Time.Before(ss) {
 		return 0
 	}
