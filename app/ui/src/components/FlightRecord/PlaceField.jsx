@@ -49,6 +49,8 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
       const nightTime = parseInt(nightTimeData.data) || 0;
       if (nightTime > 0) {
         handleChange("time.night_time", convertMinutesToTime(nightTime));
+      } else {
+        handleChange("time.night_time", "");
       }
     }
   }, [flight, handleChange, calculateNightTime, calculateTotalTime]);
