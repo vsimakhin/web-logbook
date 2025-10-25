@@ -19,6 +19,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Error when building aircraft list if multiple aircraft types were logged under the same registration number.
 - Update: Golang and npm packages/security patches
 - Fix/Update: Simplified and corrected night time calculation. Previously, it could be inaccurate for routes on the opposite side of the globe from Europe.
 - Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0.

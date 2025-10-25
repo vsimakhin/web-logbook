@@ -32,6 +32,8 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
       await queryClient.invalidateQueries({ queryKey: ['aircraft-models'] });
       await queryClient.invalidateQueries({ queryKey: ['aircraft-regs'] });
       await queryClient.invalidateQueries({ queryKey: ['currency'] });
+      await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
+      await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });
