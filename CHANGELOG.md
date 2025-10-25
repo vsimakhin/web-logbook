@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Golang and npm packages/security patches
 - Fix/Update: Simplified and corrected night time calculation. Previously, it could be inaccurate for routes on the opposite side of the globe from Europe.
 - Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0.
 
