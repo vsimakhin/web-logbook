@@ -21,7 +21,7 @@ func (app *application) HandlerUI() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestedPath := r.URL.Path
 
-		if requestedPath != "/" && !strings.Contains(requestedPath, "assets") {
+		if requestedPath != "/" && !strings.Contains(requestedPath, "assets") && !strings.Contains(requestedPath, "favicon.ico") {
 			r.URL.Path = "/"
 		}
 
