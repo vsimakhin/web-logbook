@@ -107,14 +107,40 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
+	// first insert to the table missing reg numbers
 	query := `INSERT INTO aircrafts (reg_name, aircraft_model)
-		SELECT DISTINCT lv.reg_name, lv.aircraft_model
+		SELECT lv.reg_name, MIN(lv.aircraft_model)
 		FROM logbook_view lv
 		WHERE lv.aircraft_model <> ''
 			AND lv.reg_name IS NOT NULL
 			AND lv.reg_name <> ''
-			AND lv.reg_name NOT IN (SELECT reg_name FROM aircrafts)`
+		GROUP BY lv.reg_name
+		HAVING lv.reg_name NOT IN (SELECT reg_name FROM aircrafts)`
 	_, err = m.DB.ExecContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	// update aircraft types if they were modified
+	query = `UPDATE aircrafts
+		SET aircraft_model = (
+			SELECT MIN(lv.aircraft_model)
+			FROM logbook_view lv
+			WHERE lv.aircraft_model <> ''
+				AND lv.reg_name IS NOT NULL
+				AND lv.reg_name <> ''
+				AND lv.reg_name = aircrafts.reg_name
+		)
+		WHERE aircraft_model <> (
+			SELECT MIN(lv.aircraft_model)
+			FROM logbook_view lv
+			WHERE lv.aircraft_model <> ''
+				AND lv.reg_name IS NOT NULL
+				AND lv.reg_name <> ''
+				AND lv.reg_name = aircrafts.reg_name
+		);`
+	_, err = m.DB.ExecContext(ctx, query)
+
 	return err
 }
 
@@ -125,9 +151,9 @@ func (m *DBModel) GenerateAircraftCategoriesTable() (err error) {
 	query := `INSERT INTO aircraft_categories (model, categories)
 		SELECT DISTINCT lv.aircraft_model, ''
 		FROM logbook_view lv
-		LEFT JOIN aircraft_categories ac ON lv.aircraft_model = ac.model
+			LEFT JOIN aircraft_categories ac ON lv.aircraft_model = ac.model
 		WHERE lv.aircraft_model <> ''
-		AND ac.model IS NULL`
+			AND ac.model IS NULL`
 	_, err = m.DB.ExecContext(ctx, query)
 	return err
 }
@@ -136,7 +162,10 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := `SELECT model, categories FROM aircraft_categories ORDER BY model`
+	query := `SELECT model, categories
+		FROM aircraft_categories
+		WHERE model IN (SELECT DISTINCT lv.aircraft_model FROM logbook_view lv)
+		ORDER BY model`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
 		return categories, err
