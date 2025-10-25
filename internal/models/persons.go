@@ -154,7 +154,12 @@ func (m *DBModel) GetFlightRecordsForPerson(personUuid string) (records []Flight
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "SELECT lb.uuid, ptl.role, lb.date, lb.m_date, lb.departure_place, lb.arrival_place, lb.aircraft_model, lb.reg_name, lb.sim_type FROM person_to_log AS ptl INNER JOIN logbook_view AS lb ON ptl.log_uuid = lb.uuid WHERE ptl.person_uuid = ?"
+	query := `SELECT lb.uuid, ptl.role, lb.date, lb.m_date, lb.departure_place, lb.arrival_place,
+			lb.aircraft_model, lb.reg_name, lb.sim_type
+		FROM person_to_log AS ptl
+		INNER JOIN logbook_view AS lb ON ptl.log_uuid = lb.uuid
+		WHERE ptl.person_uuid = ?
+		ORDER BY lb.m_date DESC`
 	rows, err := m.DB.QueryContext(ctx, query, personUuid)
 	if err != nil {
 		return nil, err

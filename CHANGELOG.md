@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Flights for the selected person were shown in random order.
+
 ## [3.16.0] - 25.10.2025
 
 - Fix: Error when building aircraft list if multiple aircraft types were logged under the same registration number.
