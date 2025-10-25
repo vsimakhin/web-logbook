@@ -17,7 +17,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.16.0] - 25.10.2025
 
 - Fix: Error when building aircraft list if multiple aircraft types were logged under the same registration number.
 - Update: Golang and npm packages/security patches
@@ -37,10 +37,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [3.14.0] - 07.10.2025
 
 - New: Expiration date tracking for Currency - `Valid Until` and `Expire` @xtncl
-
-## [3.13.0] - 06.10.2025
-
-- Fix: Dashboard stats calculation when using custom manual dates
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

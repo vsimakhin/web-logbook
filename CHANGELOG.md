@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.16.0] - 25.10.2025
 
 - Fix: Error when building aircraft list if multiple aircraft types were logged under the same registration number.
 - Update: Golang and npm packages/security patches
