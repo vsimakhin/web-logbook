@@ -16,8 +16,9 @@ import PetsIcon from '@mui/icons-material/Pets';
 // Custom components
 import Select from '../UIElements/Select';
 import CardHeader from "../UIElements/CardHeader";
+import TextField from "../UIElements/TextField";
 
-const getHeader = (key, payload) => (payload.includes(key) ? key : "");
+const getHeader = (key, headers) => (headers.includes(key) ? key : "");
 
 const fields = [
   { id: 'date', label: 'Date', default: 'Date', leon: 'flightDate' },
@@ -45,20 +46,20 @@ const fields = [
   { id: 'remarks', label: 'Remarks', default: 'Remarks' },
 ];
 
-const generateProfile = (payload, fieldKey = "default") => {
+const generateProfile = (headers, fieldKey = "default") => {
   const profile = {};
   for (const field of fields) {
     const key = field[fieldKey];
-    const header = getHeader(key, payload);
+    const header = getHeader(key, headers);
     if (header) profile[field.id] = header;
   }
   return profile;
 };
 
-const ProfileButton = ({ tooltip, icon: Icon, fieldKey, setProfile, payload }) => {
+const ProfileButton = ({ tooltip, icon: Icon, fieldKey, setProfile, headers }) => {
   const handleClick = useCallback(() => {
-    setProfile(generateProfile(payload, fieldKey));
-  }, [payload, setProfile, fieldKey]);
+    setProfile(generateProfile(headers, fieldKey));
+  }, [headers, setProfile, fieldKey]);
 
   return (
     <Tooltip title={tooltip}>
@@ -67,7 +68,7 @@ const ProfileButton = ({ tooltip, icon: Icon, fieldKey, setProfile, payload }) =
   );
 }
 
-const MapFieldsDialog = ({ open, onClose, payload }) => {
+const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
   const [profile, setProfile] = useState({});
   const handleChange = useCallback((key, value) => { setProfile((prev) => ({ ...prev, [key]: value })) }, [setProfile]);
 
@@ -76,18 +77,20 @@ const MapFieldsDialog = ({ open, onClose, payload }) => {
       <ProfileButton tooltip="Apply Leon Mapping"
         fieldKey="leon"
         icon={PetsIcon}
-        setProfile={setProfile} payload={payload}
+        setProfile={setProfile} headers={headers}
       />
       <ProfileButton tooltip="Apply Web Logbook Mapping"
         fieldKey="default"
         icon={AirplaneTicketOutlinedIcon}
-        setProfile={setProfile} payload={payload}
+        setProfile={setProfile} headers={headers}
       />
       <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
       <Tooltip title="Continue">
-        <IconButton size="small" onClick={() => onClose(profile)} disabled={Object.keys(profile).length === 0}>
-          <DoubleArrowOutlinedIcon />
-        </IconButton>
+        <span>
+          <IconButton size="small" onClick={() => onClose(profile)} disabled={Object.keys(profile).length === 0}>
+            <DoubleArrowOutlinedIcon />
+          </IconButton>
+        </span>
       </Tooltip>
       <Tooltip title="Close">
         <IconButton size="small" onClick={onClose}>
@@ -95,7 +98,7 @@ const MapFieldsDialog = ({ open, onClose, payload }) => {
         </IconButton>
       </Tooltip>
     </Box>
-  ), [onClose, profile, setProfile, payload]);
+  ), [onClose, profile, setProfile, headers]);
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose(null)}>
@@ -109,11 +112,18 @@ const MapFieldsDialog = ({ open, onClose, payload }) => {
                 id={field.id}
                 label={field.label}
                 handleChange={handleChange}
-                options={payload}
+                options={headers}
                 value={profile[field.id] ?? ""}
                 disableClearable={false}
               />
             ))}
+            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+              id="pic_self_replace"
+              label="Name to Detect as Self"
+              tooltip="Used to detect your name in imported data and replace it with “Self”. Enter it exactly as it appears in the export"
+              handleChange={handleChange}
+              value={profile["pic_self_replace"] ?? ""}
+            />
           </Grid>
         </CardContent>
       </Card>
