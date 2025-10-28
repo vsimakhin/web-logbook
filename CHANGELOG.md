@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Add support for imports from Leon application.
 - Fix: Flights for the selected person were shown in random order.
 
 ## [3.16.0] - 25.10.2025
