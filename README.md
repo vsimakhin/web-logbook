@@ -190,7 +190,9 @@ So in real life the logbook could look like
 
 ## Import
 * CSV support
-* Automatic WebLogbook profile load
+* Predefined formats
+  * WebLogbook
+  * Leon application (via export to CrewLounge link)
 
 ## Settings
 * Owner name, license and address, signature for the PDF exports
