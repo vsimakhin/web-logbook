@@ -19,6 +19,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Add support for imports from Leon application.
 - Fix: Flights for the selected person were shown in random order.
 
 ## [3.16.0] - 25.10.2025
@@ -189,7 +190,9 @@ So in real life the logbook could look like
 
 ## Import
 * CSV support
-* Automatic WebLogbook profile load
+* Predefined formats
+  * WebLogbook
+  * Leon application (via export to CrewLounge link)
 
 ## Settings
 * Owner name, license and address, signature for the PDF exports
