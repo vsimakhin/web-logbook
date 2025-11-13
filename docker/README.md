@@ -65,3 +65,119 @@ services:
     volumes:
       - /YOUR/FULL/PATH/WITH/DATABASE:/data
 ```
+
+# Kubernetes & Cloudflare example
+
+For a more advanced setup, you can run the app inside a `Kubernetes` cluster and use `Cloudflare` for DNS and TLS management.
+
+- Install [Kubernetes](https://kubernetes.io/) on your instance. For a lightweight, single-node setup, you may use [k3s](https://k3s.io)
+```bash
+curl -sfL https://get.k3s.io | sh -
+```
+- Install Traefik (Ingress Controller). K3s comes with Traefik preinstalled by default. If you’re using a different Kubernetes distribution, you can install Traefik manually with Helm
+```bash
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+helm install traefik traefik/traefik \
+  --namespace kube-system \
+  --set service.type=LoadBalancer
+```
+
+- Create an A record in your Cloudflare DNS zone pointing to your instance’s public IP address.
+  - If you plan to serve multiple applications, use a wildcard subdomain such as *.my-awesome-domain.com.
+  - Otherwise, create a specific record, for example logbook.my-awesome-domain.com.
+
+| Type | Name    | Content (IP Address) | Proxy Status               | TTL  |
+| ---- | ------- | -------------------- | -------------------------- | ---- |
+| A    | logbook | INSTANCE_IP_ADDRESS  | **Proxied** (orange cloud) | Auto |
+
+Keeping Proxy Status enabled (orange cloud) allows Cloudflare to:
+- Automatically manage TLS certificates for your domain
+- Proxy traffic securely (HTTPS without managing certificates in your cluster)
+- Cache and accelerate responses
+
+If you disable proxying (grey cloud), you will need to manage your own TLS certificates inside Kubernetes (e.g., using cert-manager).
+
+- After updating your configuration file as needed, deploy your app
+```bash
+kubectl apply -f logbook.yaml
+```
+
+Example `logbook.yaml`
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: logbook-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logbook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logbook
+  template:
+    metadata:
+      labels:
+        app: logbook
+    spec:
+      containers:
+      - name: app-container
+        image: vsimakhin/web-logbook:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+        volumeMounts:
+        - name: logbook-data
+          mountPath: /data
+      volumes:
+      - name: logbook-data
+        persistentVolumeClaim:
+          claimName: logbook-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logbook-service
+spec:
+  type: ClusterIP
+  selector:
+    app: logbook
+  ports:
+    - port: 4000
+      targetPort: 4000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: logbook-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+  - host: logbook.my-awesome-domain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: logbook-service
+            port:
+              number: 4000
+  tls:
+  - hosts:
+    - logbook.my-awesome-domain.com
+
+```
