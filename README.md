@@ -3,7 +3,6 @@
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/vsimakhin/web-logbook/total?label=all%20downloads)
 ![Docker Pulls](https://img.shields.io/docker/pulls/vsimakhin/web-logbook)
 ![Docker Image Size](https://img.shields.io/docker/image-size/vsimakhin/web-logbook)
-![GitHub License](https://img.shields.io/github/license/vsimakhin/web-logbook)
 
 # Web-logbook
 
