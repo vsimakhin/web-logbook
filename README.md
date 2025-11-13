@@ -19,6 +19,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Optimized the currency page to refresh the state after a flight record is updated.
 - New: Add support for imports from Leon application.
 - Fix: Flights for the selected person were shown in random order.
 

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Optimized the currency page to refresh the state after a flight record is updated.
 - New: Add support for imports from Leon application.
 - Fix: Flights for the selected person were shown in random order.
 

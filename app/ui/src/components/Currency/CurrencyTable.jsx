@@ -70,9 +70,11 @@ export const CurrencyTable = () => {
   const { data: modelsData, isLoading: isModelsDataLoading } = useQuery({
     queryKey: ['models-categories'],
     queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
   });
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data: currencyData = [], isLoading, isError, error } = useQuery({
     queryKey: ['currency'],
     queryFn: ({ signal }) => fetchCurrency({ signal, navigate }),
     staleTime: 3600000,
@@ -112,16 +114,16 @@ export const CurrencyTable = () => {
         size: 200,
         accessorFn: (row) => ({ unit: row.time_frame?.unit, value: row.time_frame?.value, since: row.time_frame?.since }),
         Cell: ({ cell }) => {
-          const data = cell.getValue();
-          const unitOption = timeframeUnitOptions.find(opt => opt.value === data.unit);
-          const unitLabel = unitOption ? unitOption.label : data.unit;
+          const cellData = cell.getValue();
+          const unitOption = timeframeUnitOptions.find(opt => opt.value === cellData.unit);
+          const unitLabel = unitOption ? unitOption.label : cellData.unit;
 
-          if (data.unit === 'all_time') {
+          if (cellData.unit === 'all_time') {
             return unitOption.label;
-          } else if (data.unit === 'since') {
-            return `Since ${data.since}`;
-          } else if (data.value) {
-            return `${data.value} ${unitLabel}`;
+          } else if (cellData.unit === 'since') {
+            return `Since ${cellData.since}`;
+          } else if (cellData.value) {
+            return `${cellData.value} ${unitLabel}`;
           }
         }
       },
@@ -150,7 +152,7 @@ export const CurrencyTable = () => {
         Cell: ({ cell }) => {
           const days = cell.getValue();
           const row = cell.row.original;
-          
+
           if (days === null || days === undefined) {
             // If we can't compute an expiry, still show "Expired" for time-based rules
             // when the rule does not meet the requirement in the current window.
@@ -164,11 +166,11 @@ export const CurrencyTable = () => {
             }
             return '—';
           }
-          
+
           const expiryStr = dayjs(cell.row.original.expiry).format('DD/MM/YYYY');
           const exp = calculateExpiry(expiryStr);
           if (!exp) return '—';
-          
+
           const text = exp.diffDays < 0
             ? 'Expired'
             : `${exp.months > 0 ? `${exp.months} month${exp.months === 1 ? '' : 's'} ` : ''}${exp.days} day${exp.days === 1 ? '' : 's'}`;
@@ -185,17 +187,17 @@ export const CurrencyTable = () => {
           return evaluateCurrency(logbookData, row, modelsData);
         },
         Cell: ({ cell }) => {
-          const data = cell.getValue();
+          const cellData = cell.getValue();
           return (
             <Chip size='small'
-              label={formatCurrencyValue(data?.current, data?.rule.metric)}
-              color={data?.meetsRequirement ? 'success' : 'error'}
+              label={formatCurrencyValue(cellData?.current, cellData?.rule.metric)}
+              color={cellData?.meetsRequirement ? 'success' : 'error'}
             />
           )
         }
       },
     ]
-  }, [logbookData, modelsData, data]);
+  }, [logbookData, modelsData]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
@@ -214,7 +216,7 @@ export const CurrencyTable = () => {
   const table = useMaterialReactTable({
     isLoading: (isLoading || isModelsDataLoading || isLogbookDataLoading),
     columns: columns,
-    data: data ?? [],
+    data: currencyData,
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
