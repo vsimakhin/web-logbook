@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.17.0] - 13.11.2025
 
 - Update: Golang and npm packages/security patches
 - Fix: Optimized the currency page to refresh the state after a flight record is updated.
