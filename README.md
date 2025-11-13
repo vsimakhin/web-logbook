@@ -218,7 +218,7 @@ If you enable the `No ICAO codes filter` option, the app will ignore ICAO airpor
 
 # Advanced Configuration
 
-## Docker
+## Docker & Kubernetes
 
 Check [readme](./docker/README.md) for dockerized app for more details.
 
