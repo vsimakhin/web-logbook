@@ -94,7 +94,7 @@ func (app *application) HandlerApiAircraftModelsCategoriesUpdate(w http.Response
 
 // HandlerApiAircraftCategoriesList is a handler for getting the list of aircraft categories
 func (app *application) HandlerApiAircraftCategoriesList(w http.ResponseWriter, r *http.Request) {
-	categories, err := app.db.GetAircraftModelsCategories()
+	categories, err := app.db.GetAircraftsCategories()
 	if err != nil {
 		app.handleError(w, err)
 		return

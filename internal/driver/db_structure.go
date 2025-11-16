@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "13"
+	schemaVersion = "15"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -213,15 +213,43 @@ var airportsView = NewView("airports_view",
 
 var aircraftsView = NewView("aircrafts_view",
 	SQLQuery{
-		SQLite: `SELECT 
-				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories, a.custom_categories
-			FROM aircrafts a
-			LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
-			ORDER BY aircraft_model, reg_name`,
+		SQLite: `SELECT
+					a.reg_name,
+					a.aircraft_model,
+					TRIM(
+						TRIM(
+							IFNULL(ac.categories, '')
+						) ||
+						CASE
+							WHEN ac.categories IS NOT NULL AND ac.categories <> ''
+								AND a.custom_categories <> '' THEN ', ' || a.custom_categories
+							WHEN (ac.categories IS NULL OR ac.categories = '')
+								AND a.custom_categories <> '' THEN a.custom_categories
+							ELSE ''
+						END
+					) AS categories,
+					a.custom_categories
+				FROM aircrafts a
+				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
+				ORDER BY a.aircraft_model, a.reg_name;`,
 		MySQL: `SELECT 
-				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories, a.custom_categories
-			FROM aircrafts a
-			LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
-			ORDER BY aircraft_model, reg_name`,
+					a.reg_name,
+					a.aircraft_model,
+					TRIM(
+						CONCAT(
+							IFNULL(ac.categories, ''),
+							CASE
+								WHEN ac.categories IS NOT NULL AND ac.categories <> ''
+									AND a.custom_categories <> '' THEN CONCAT(', ', a.custom_categories)
+								WHEN (ac.categories IS NULL OR ac.categories = '')
+									AND a.custom_categories <> '' THEN a.custom_categories
+								ELSE ''
+							END
+						)
+					) AS categories,
+					a.custom_categories
+				FROM aircrafts a
+				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
+				ORDER BY a.aircraft_model, a.reg_name;`,
 	},
 )

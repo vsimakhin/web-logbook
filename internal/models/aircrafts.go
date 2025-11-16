@@ -183,6 +183,29 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 	return categories, nil
 }
 
+func (m *DBModel) GetAircraftsCategories() (categories []Category, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := `SELECT DISTINCT categories FROM aircrafts_view`
+
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return categories, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var cat Category
+		if err = rows.Scan(&cat.Category); err != nil {
+			return categories, err
+		}
+		categories = append(categories, cat)
+	}
+
+	return categories, nil
+}
+
 func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
