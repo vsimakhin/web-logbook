@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import { fetchAircrafts } from "../../util/http/aircraft";
+import { fetchAircraftsBuildList } from "../../util/http/aircraft";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
@@ -57,8 +57,8 @@ export const AircraftsTable = ({ ...props }) => {
   const navigate = useNavigate();
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    queryKey: ['aircrafts', 'build-list'],
+    queryFn: ({ signal }) => fetchAircraftsBuildList({ signal, navigate }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

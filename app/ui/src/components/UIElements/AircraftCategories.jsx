@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 // Custom
 import Select from "./Select";
 import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
@@ -15,7 +16,16 @@ const getUniqueCategoriesFromKey = (items, key) => {
   return Array.from(set).sort();
 };
 
-export const AircraftCategories = ({ gsize, id = "category", label = "Category", tooltip = "Aircraft Category", value, handleChange, ...props }) => {
+export const AircraftCategories = ({
+  gsize,
+  id = "category",
+  label = "Category",
+  tooltip = "Aircraft Category",
+  options = "models",
+  value,
+  handleChange,
+  ...props
+}) => {
   const navigate = useNavigate();
 
   const { data: modelCategoriesOptions = [] } = useQuery({
@@ -34,6 +44,17 @@ export const AircraftCategories = ({ gsize, id = "category", label = "Category",
     select: data => getUniqueCategoriesFromKey(data, "custom_category"),
   });
 
+  const selectOptions = useMemo(() => {
+    if (options === "models") return modelCategoriesOptions ?? [];
+    if (options === "custom") return customCategoriesOptions ?? [];
+    if (options === "all")
+      return Array.from(new Set([
+        ...(modelCategoriesOptions ?? []),
+        ...(customCategoriesOptions ?? [])
+      ])).sort();
+    return [];
+  }, [options, modelCategoriesOptions, customCategoriesOptions]);
+
   return (
     <Select gsize={gsize}
       id={id}
@@ -41,7 +62,7 @@ export const AircraftCategories = ({ gsize, id = "category", label = "Category",
       handleChange={handleChange}
       value={value}
       tooltip={tooltip}
-      options={id === "category" ? modelCategoriesOptions ?? [] : customCategoriesOptions ?? []}
+      options={selectOptions}
       multiple
       freeSolo={true}
       {...props}

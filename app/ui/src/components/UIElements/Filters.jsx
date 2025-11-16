@@ -59,7 +59,14 @@ const getModelsByCategory = (modelsData, category) => {
     .map(item => item.model);
 };
 
-const filterData = (data, filter, modelsData) => {
+const getAircraftsByCategory = (aircrafts, category) => {
+  if (!category || !aircrafts) return [];
+  return aircrafts
+    .filter(item => item.category.split(',').map(c => c.trim()).includes(category))
+    .map(item => item.reg);
+}
+
+const filterData = (data, filter, modelsData, aircrafts) => {
   filter.start_date = dayjs(filter.start_date, 'DD/MM/YYYY')
   filter.end_date = dayjs(filter.end_date, 'DD/MM/YYYY');
 
@@ -75,9 +82,10 @@ const filterData = (data, filter, modelsData) => {
     // filter category
     const matchesCategory = (() => {
       if (!filter.aircraft_category) return true;
+      const acs = getAircraftsByCategory(aircrafts, filter.aircraft_category)
       const models = getModelsByCategory(modelsData, filter.aircraft_category);
-      console.log(models)
       return (
+        acs.includes(flight.aircraft.reg_name) ||
         models.includes(flight.aircraft.model) ||
         models.includes(flight.sim.type) ||
         filter.aircraft_category === flight.sim.type
@@ -125,6 +133,13 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
     refetchOnWindowFocus: false,
   });
 
+  const { data: aircrafts } = useQuery({
+    queryKey: ['aircrafts'],
+    queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+  })
+
   const handleChange = useCallback((key, value) => {
     setFilter(prev => ({ ...prev, [key]: value }))
   }, [setFilter]);
@@ -145,7 +160,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
   useEffect(() => {
     if (!data) return;
 
-    const filteredData = filterData(data, filter, modelsData);
+    const filteredData = filterData(data, filter, modelsData, aircrafts);
     callbackFunction(filteredData, filter);
   }, [data, filter, modelsData]);
 
@@ -198,6 +213,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
         handleChange={handleChange}
         value={filter.aircraft_category}
         disableClearable={false}
+        options="all"
       />
       <TextField
         gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}

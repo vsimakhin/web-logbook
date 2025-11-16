@@ -91,6 +91,7 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
               value={category.model_category ? category.model_category.split(',') : []}
               label="Categories for Type"
               tooltip="Categories for Type"
+              options="models"
               disabled
             />
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
@@ -99,6 +100,7 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
               value={category.custom_category ? category.custom_category.split(',') : []}
               label="Custom Aircraft Categories"
               tooltip="Custom Aircraft Categories"
+              options="custom"
             />
           </Grid>
           <Divider sx={{ m: 1 }} />

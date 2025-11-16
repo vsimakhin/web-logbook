@@ -22,6 +22,16 @@ export const fetchAircraftRegs = async ({ signal, navigate, last = true }) => {
   return await handleFetch(url, options, navigate, 'Cannot fetch aircraft regs');
 }
 
+export const fetchAircraftsBuildList = async ({ signal, navigate }) => {
+  const url = `${API_URL}/aircraft/build-list`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch aircrafts');
+}
+
 export const fetchAircrafts = async ({ signal, navigate }) => {
   const url = `${API_URL}/aircraft/list`;
   const options = {
