@@ -70,7 +70,7 @@ export const AircraftsTable = ({ ...props }) => {
     { accessorKey: "category", header: "Category", grow: true },
   ], []);
 
-  const renderRowActions = ({ row }) => {
+  const renderRowActions = useCallback(({ row }) => {
     const payload = row.original;
     return (
       <Tooltip title="Edit Custom Category">
@@ -79,7 +79,7 @@ export const AircraftsTable = ({ ...props }) => {
         </IconButton>
       </Tooltip >
     );
-  }
+  }, [dialogs, EditCustomCategoriesModal]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
