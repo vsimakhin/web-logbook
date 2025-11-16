@@ -262,6 +262,7 @@ type Aircraft struct {
 	Reg            string `json:"reg"`
 	Model          string `json:"model"`
 	Category       string `json:"category"`
+	ModelCategory  string `json:"model_category"`
 	CustomCategory string `json:"custom_category"`
 }
 

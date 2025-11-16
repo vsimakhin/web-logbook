@@ -35,9 +35,8 @@ const SaveButton = ({ category, onClose }) => {
   const { mutateAsync: updateCategory, isError, error, isSuccess } = useMutation({
     mutationFn: () => updateAircraftModelsCategories({ payload: category, navigate }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['aircrafts'] })
-      await queryClient.invalidateQueries({ queryKey: ['models-categories'] })
-      await queryClient.invalidateQueries({ queryKey: ['aircraft-categories'] })
+      await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
+      await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to update categories' });

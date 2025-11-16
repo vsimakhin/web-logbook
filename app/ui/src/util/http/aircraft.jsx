@@ -32,16 +32,6 @@ export const fetchAircrafts = async ({ signal, navigate }) => {
   return await handleFetch(url, options, navigate, 'Cannot fetch aircrafts');
 }
 
-export const fetchAircraftCategories = async ({ signal, navigate }) => {
-  const url = `${API_URL}/aircraft/categories`;
-  const options = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-    signal: signal,
-  };
-  return await handleFetch(url, options, navigate, 'Cannot fetch aircraft categories');
-}
-
 export const updateAircraftModelsCategories = async ({ payload, navigate }) => {
   const url = `${API_URL}/aircraft/models-categories`;
   const options = {

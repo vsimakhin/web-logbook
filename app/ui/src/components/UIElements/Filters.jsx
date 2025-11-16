@@ -76,6 +76,7 @@ const filterData = (data, filter, modelsData) => {
     const matchesCategory = (() => {
       if (!filter.aircraft_category) return true;
       const models = getModelsByCategory(modelsData, filter.aircraft_category);
+      console.log(models)
       return (
         models.includes(flight.aircraft.model) ||
         models.includes(flight.sim.type) ||

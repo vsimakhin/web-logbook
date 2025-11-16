@@ -35,9 +35,8 @@ const SaveButton = ({ category, onClose }) => {
   const { mutateAsync: update, isError, error, isSuccess } = useMutation({
     mutationFn: () => updateAircraft({ payload: category, navigate }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['aircrafts'] })
-      await queryClient.invalidateQueries({ queryKey: ['models-categories'] })
-      await queryClient.invalidateQueries({ queryKey: ['aircraft-categories'] })
+      await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
+      await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to update categories' });
@@ -89,7 +88,7 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
             />
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               handleChange={handleChange}
-              value={category.category ? category.category.split(',') : []}
+              value={category.model_category ? category.model_category.split(',') : []}
               label="Categories for Type"
               tooltip="Categories for Type"
               disabled

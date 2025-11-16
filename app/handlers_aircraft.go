@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"sort"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -90,33 +88,6 @@ func (app *application) HandlerApiAircraftModelsCategoriesUpdate(w http.Response
 	}
 
 	app.writeOkResponse(w, "Aircraft categories have been updated")
-}
-
-// HandlerApiAircraftCategoriesList is a handler for getting the list of aircraft categories
-func (app *application) HandlerApiAircraftCategoriesList(w http.ResponseWriter, r *http.Request) {
-	categories, err := app.db.GetAircraftsCategories()
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
-	var categorySet = make(map[string]bool)
-	for _, aircraft := range categories {
-		for _, cat := range strings.Split(aircraft.Category, ",") {
-			cat = strings.TrimSpace(cat)
-			categorySet[cat] = true
-		}
-	}
-
-	var cats []string
-	for c := range categorySet {
-		if c != "" {
-			cats = append(cats, c)
-		}
-	}
-	sort.Strings(cats)
-
-	app.writeJSON(w, http.StatusOK, cats)
 }
 
 func (app *application) HandlerApiAircraftUpdate(w http.ResponseWriter, r *http.Request) {

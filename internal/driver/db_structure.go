@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "15"
+	schemaVersion = "16"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -228,10 +228,11 @@ var aircraftsView = NewView("aircrafts_view",
 							ELSE ''
 						END
 					) AS categories,
+					ac.categories AS model_categories,
 					a.custom_categories
 				FROM aircrafts a
 				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
-				ORDER BY a.aircraft_model, a.reg_name;`,
+				ORDER BY a.aircraft_model, a.reg_name`,
 		MySQL: `SELECT 
 					a.reg_name,
 					a.aircraft_model,
@@ -247,9 +248,10 @@ var aircraftsView = NewView("aircrafts_view",
 							END
 						)
 					) AS categories,
+					ac.categories AS model_categories,
 					a.custom_categories
 				FROM aircrafts a
 				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
-				ORDER BY a.aircraft_model, a.reg_name;`,
+				ORDER BY a.aircraft_model, a.reg_name`,
 	},
 )

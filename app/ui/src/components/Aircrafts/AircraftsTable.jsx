@@ -68,8 +68,6 @@ export const AircraftsTable = ({ ...props }) => {
     { accessorKey: "reg", header: "Registration", size: 120 },
     { accessorKey: "model", header: "Type", size: 110 },
     { accessorKey: "category", header: "Category", grow: true },
-
-    { accessorKey: "custom_category", header: "Custom Category", grow: true }
   ], []);
 
   const renderRowActions = ({ row }) => {
