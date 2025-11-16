@@ -118,3 +118,20 @@ func (app *application) HandlerApiAircraftCategoriesList(w http.ResponseWriter, 
 
 	app.writeJSON(w, http.StatusOK, cats)
 }
+
+func (app *application) HandlerApiAircraftUpdate(w http.ResponseWriter, r *http.Request) {
+	var aircraft models.Aircraft
+	err := json.NewDecoder(r.Body).Decode(&aircraft)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	err = app.db.UpdateAircraft(aircraft)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Aircraft have been updated")
+}

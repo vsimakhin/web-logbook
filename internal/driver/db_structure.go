@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "11"
+	schemaVersion = "13"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -106,6 +106,7 @@ var tokensTable = NewTable("tokens", "id", ColumnType{SQLite: "INTEGER", MySQL: 
 var aircraftsTable = NewTable("aircrafts", "reg_name", SmallText,
 	[]Column{
 		{Name: "aircraft_model", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "custom_categories", Type: BigText, Properties: "NOT NULL DEFAULT ''"},
 	})
 
 var aircraftCategoriesTable = NewTable("aircraft_categories", "model", SmallText,
@@ -213,12 +214,12 @@ var airportsView = NewView("airports_view",
 var aircraftsView = NewView("aircrafts_view",
 	SQLQuery{
 		SQLite: `SELECT 
-				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories
+				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories, a.custom_categories
 			FROM aircrafts a
 			LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
 			ORDER BY aircraft_model, reg_name`,
 		MySQL: `SELECT 
-				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories
+				a.reg_name, a.aircraft_model, IFNULL(ac.categories, '') AS categories, a.custom_categories
 			FROM aircrafts a
 			LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
 			ORDER BY aircraft_model, reg_name`,

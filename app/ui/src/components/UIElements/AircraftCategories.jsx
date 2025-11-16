@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Select from "./Select";
 import { fetchAircraftCategories } from "../../util/http/aircraft";
 
-export const AircraftCategories = ({ gsize, id = "category", label = "Category", value, handleChange, ...props }) => {
+export const AircraftCategories = ({ gsize, id = "category", label = "Category", tooltip = "Aircraft Category", value, handleChange, ...props }) => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([])
 
@@ -28,7 +28,7 @@ export const AircraftCategories = ({ gsize, id = "category", label = "Category",
       label={label}
       handleChange={handleChange}
       value={value}
-      tooltip={"Aircraft Category"}
+      tooltip={tooltip}
       options={options}
       multiple
       freeSolo={true}

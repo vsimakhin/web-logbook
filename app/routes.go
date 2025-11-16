@@ -74,6 +74,7 @@ func (app *application) routes() *chi.Mux {
 			r.Get("/categories", app.HandlerApiAircraftCategoriesList)
 			r.Get("/logbook", app.HandlerAircrafts)
 			r.Get("/logbook/{filter}", app.HandlerAircrafts)
+			r.Put("/update", app.HandlerApiAircraftUpdate)
 		})
 
 		// settings
