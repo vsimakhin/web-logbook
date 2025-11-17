@@ -76,8 +76,8 @@ const resolveAircraftsFromFilters = (filters, aircrafts = []) => {
 
 export const evaluateCurrency = (flights, rule, aircrafts) => {
   if (!flights || flights.length === 0) return null;
-  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts)
 
+  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts)
   const filteredFlights = flights.filter(flight => {
     return regs.size === 0 || regs.has(flight.aircraft.reg_name);
   });
@@ -134,10 +134,7 @@ export const formatCurrencyValue = (value, metric) => {
 export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
   if (!flights || flights.length === 0 || !rule?.metric) return null;
 
-  // const models = resolveModelsFromFilters(rule.filters || '', modelsData);
-  // const filteredFlights = flights.filter(f => models.length === 0 || models.includes(f.aircraft.model));
   const regs = resolveAircraftsFromFilters(rule.filters, aircrafts)
-
   const filteredFlights = flights.filter(flight => {
     return regs.size === 0 || regs.has(flight.aircraft.reg_name);
   });

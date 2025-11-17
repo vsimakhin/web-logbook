@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 // Custom
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../../util/http/logbook";
@@ -35,10 +36,15 @@ export const TotalsByAircraft = ({ type }) => {
 
   const { customFields } = useCustomFields();
 
+  const totalsData = useMemo(() =>
+    getTotalsByAircraft(flights, type, models, aircrafts, customFields),
+    [flights, type, models, aircrafts, customFields]
+  );
+
   return (
     <TotalsByAircraftTable
       type={type}
-      data={getTotalsByAircraft(flights, type, models, aircrafts, customFields)}
+      data={totalsData}
       isLoading={isLoading}
       customFields={customFields ?? []}
     />

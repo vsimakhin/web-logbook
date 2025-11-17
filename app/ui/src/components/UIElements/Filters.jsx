@@ -162,7 +162,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
 
     const filteredData = filterData(data, filter, modelsData, aircrafts);
     callbackFunction(filteredData, filter);
-  }, [data, filter, modelsData]);
+  }, [data, filter, modelsData, aircrafts]);
 
   useEffect(() => {
     handleQuickSelect(null, options.defaultQuickSelect)

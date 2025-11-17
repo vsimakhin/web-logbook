@@ -104,7 +104,7 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const table = useMaterialReactTable({
     isLoading: isLoading,
