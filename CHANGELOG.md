@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Custom aircraft category linked to the registration number. All stats, filters and currency also supports new custom categories.
+
 ## [3.17.0] - 13.11.2025
 
 - Update: Golang and npm packages/security patches
