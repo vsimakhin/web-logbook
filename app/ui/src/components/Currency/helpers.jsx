@@ -1,27 +1,5 @@
 import dayjs from "dayjs";
 import { convertHoursToTime } from "../../util/helpers";
-import useSettings from "../../hooks/useSettings";
-
-export const metricOptions = () => {
-  const { fieldNameF } = useSettings();
-
-  return [
-    { value: "time.total_time", label: fieldNameF("total") },
-    { value: "time.se_time", label: fieldNameF("se") },
-    { value: "time.me_time", label: fieldNameF("me") },
-    { value: "time.mcc_time", label: fieldNameF("mcc") },
-    { value: "time.night_time", label: fieldNameF("night") },
-    { value: "time.ifr_time", label: fieldNameF("ifr") },
-    { value: "time.pic_time", label: fieldNameF("pic") },
-    { value: "time.co_pilot_time", label: fieldNameF("cop") },
-    { value: "time.dual_time", label: fieldNameF("dual") },
-    { value: "time.instructor_time", label: fieldNameF("instr") },
-    { value: "landings.all", label: fieldNameF("landings") },
-    { value: "landings.day", label: `${fieldNameF("land_day")} ${fieldNameF("landings")}` },
-    { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
-    { value: "sim.time", label: `${fieldNameF("fstd")} ${fieldNameF("sim_time")}` },
-  ]
-};
 
 export const comparisonOptions = [">=", ">", "=", "<", "<="];
 

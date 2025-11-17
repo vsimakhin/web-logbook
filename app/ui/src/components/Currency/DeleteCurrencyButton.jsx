@@ -1,6 +1,6 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // MUI UI elements
@@ -11,7 +11,7 @@ import { deleteCurrency } from '../../util/http/currency';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 
-export const DeleteCurrencyButton = memo(({ payload }) => {
+export const DeleteCurrencyButton = ({ payload }) => {
   const dialogs = useDialogs();
 
   const { mutateAsync: removeCurrency, isError, isSuccess, error } = useMutation({
@@ -37,6 +37,6 @@ export const DeleteCurrencyButton = memo(({ payload }) => {
       </IconButton>
     </Tooltip >
   );
-});
+};
 
 export default DeleteCurrencyButton;

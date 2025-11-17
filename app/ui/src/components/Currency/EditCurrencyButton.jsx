@@ -1,5 +1,5 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import CurrencyModal from './CurrencyModal';
 
-export const EditCurrencyButton = memo(({ payload }) => {
+export const EditCurrencyButton = ({ payload }) => {
   const dialogs = useDialogs();
 
   const handleClick = useCallback(async () => {
@@ -22,6 +22,6 @@ export const EditCurrencyButton = memo(({ payload }) => {
       </IconButton>
     </Tooltip >
   );
-});
+};
 
 export default EditCurrencyButton;

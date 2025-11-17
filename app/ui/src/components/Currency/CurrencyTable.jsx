@@ -11,13 +11,14 @@ import Typography from '@mui/material/Typography';
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import { evaluateCurrency, formatCurrencyValue, metricOptions, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
+import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
 import dayjs from 'dayjs';
 import NewCurrencyButton from './NewCurrencyButton';
 import EditCurrencyButton from './EditCurrencyButton';
 import DeleteCurrencyButton from './DeleteCurrencyButton';
 import HelpButton from './HelpButton';
+import useSettings from '../../hooks/useSettings';
 
 const paginationKey = 'currency-table-page-size';
 const columnVisibilityKey = 'currency-table-column-visibility';
@@ -49,8 +50,29 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  const columns = useMemo(() => {
-    return [
+  const { fieldNameF } = useSettings();
+
+  const metricOptions = useMemo(() => (
+    [
+      { value: "time.total_time", label: fieldNameF("total") },
+      { value: "time.se_time", label: fieldNameF("se") },
+      { value: "time.me_time", label: fieldNameF("me") },
+      { value: "time.mcc_time", label: fieldNameF("mcc") },
+      { value: "time.night_time", label: fieldNameF("night") },
+      { value: "time.ifr_time", label: fieldNameF("ifr") },
+      { value: "time.pic_time", label: fieldNameF("pic") },
+      { value: "time.co_pilot_time", label: fieldNameF("cop") },
+      { value: "time.dual_time", label: fieldNameF("dual") },
+      { value: "time.instructor_time", label: fieldNameF("instr") },
+      { value: "landings.all", label: fieldNameF("landings") },
+      { value: "landings.day", label: `${fieldNameF("land_day")} ${fieldNameF("landings")}` },
+      { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
+      { value: "sim.time", label: `${fieldNameF("fstd")} ${fieldNameF("sim_time")}` },
+    ]
+  ));
+
+  const columns = useMemo(() => (
+    [
       {
         id: 'actions',
         header: 'Actions',
@@ -67,7 +89,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         accessorKey: "metric", header: "Metric", size: 140,
         Cell: ({ cell }) => {
           const metricValue = cell.getValue();
-          const option = metricOptions().find(opt => opt.value === metricValue);
+          const option = metricOptions.find(opt => opt.value === metricValue);
           return option ? option.label : metricValue;
         }
       },
@@ -97,7 +119,12 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         id: "valid_until",
         header: "Valid Until",
         size: 160,
-        accessorFn: (row) => getCurrencyExpiryForRule(logbookData, row, aircrafts),
+        accessorFn: (row) => {
+          if (!row._expiry) {
+            row._expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
+          }
+          return row._expiry;
+        },
         Cell: ({ cell }) => {
           const expiry = cell.getValue();
           return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
@@ -108,11 +135,13 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         header: "Expire",
         size: 120,
         accessorFn: (row) => {
-          const expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
-          row.expiry = expiry; // Cache for use in Cell
-          if (!expiry) return null;
+          if (!row._expiry) {
+            row._expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
+          }
+          if (!row._expiry) return null;
+
           const today = dayjs().startOf('day');
-          return dayjs(expiry).startOf('day').diff(today, 'day');
+          return dayjs(row._expiry).startOf('day').diff(today, 'day');
         },
         Cell: ({ cell }) => {
           const days = cell.getValue();
@@ -121,7 +150,11 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
           if (days === null || days === undefined) {
             // If we can't compute an expiry, still show "Expired" for time-based rules
             // when the rule does not meet the requirement in the current window.
-            const res = evaluateCurrency(logbookData, row, aircrafts);
+            if (!row._evaluation) {
+              row._evaluation = evaluateCurrency(logbookData, row, aircrafts);
+            }
+            const res = row._evaluation;
+
             const isDaysWindow = row?.time_frame?.unit === 'days';
             const isTimeMetric = typeof row?.metric === 'string' && row.metric.startsWith('time');
             if (isDaysWindow && isTimeMetric && res && res.meetsRequirement === false) {
@@ -132,7 +165,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
             return '—';
           }
 
-          const expiryStr = dayjs(cell.row.original.expiry).format('DD/MM/YYYY');
+          const expiryStr = dayjs(cell.row.original._expiry).format('DD/MM/YYYY');
           const exp = calculateExpiry(expiryStr);
           if (!exp) return '—';
 
@@ -149,7 +182,10 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
       {
         id: "status", header: "Status", grow: true,
         accessorFn: (row) => {
-          return evaluateCurrency(logbookData, row, aircrafts);
+          if (!row._evaluation) {
+            row._evaluation = evaluateCurrency(logbookData, row, aircrafts);
+          }
+          return row._evaluation
         },
         Cell: ({ cell }) => {
           const cellData = cell.getValue();
@@ -162,7 +198,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         }
       },
     ]
-  }, [logbookData, aircrafts]);
+  ), [logbookData, aircrafts]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
