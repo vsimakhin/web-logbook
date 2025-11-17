@@ -69,7 +69,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
       { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
       { value: "sim.time", label: `${fieldNameF("fstd")} ${fieldNameF("sim_time")}` },
     ]
-  ));
+  ), [fieldNameF]);
 
   const columns = useMemo(() => (
     [
@@ -198,7 +198,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         }
       },
     ]
-  ), [logbookData, aircrafts]);
+  ), [logbookData, aircrafts, metricOptions]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
@@ -208,14 +208,13 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <NewCurrencyButton />
   ), []);
 
   const table = useMaterialReactTable({
-    // isLoading: (isLoading || isModelsDataLoading || isLogbookDataLoading),
     columns: columns,
     data: currencyData,
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
@@ -232,7 +231,6 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
 
   return (
     <>
-      {/* {(isLoading || isLogbookDataLoading || isModelsDataLoading) && <LinearProgress />} */}
       <MaterialReactTable table={table} />
       <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>
