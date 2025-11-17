@@ -41,6 +41,8 @@ const tableOptions = {
   enableFacetedValues: true,
   enableSorting: true,
   enableColumnActions: true,
+  enableRowActions: true,
+  displayColumnDefOptions: { "mrt-row-actions": { size: 90, grow: false } },
 }
 
 export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
@@ -71,19 +73,15 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
     ]
   ), [fieldNameF]);
 
+  const renderRowActions = useCallback(({ row }) => (
+    <>
+      <EditCurrencyButton payload={row.original} />
+      <DeleteCurrencyButton payload={row.original} />
+    </>
+  ), []);
+
   const columns = useMemo(() => (
     [
-      {
-        id: 'actions',
-        header: 'Actions',
-        size: 90,
-        Cell: ({ row }) => (
-          <>
-            <EditCurrencyButton payload={row.original} />
-            <DeleteCurrencyButton payload={row.original} />
-          </>
-        ),
-      },
       { accessorKey: "name", header: "Name", size: 200 },
       {
         accessorKey: "metric", header: "Metric", size: 140,
@@ -212,6 +210,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
     state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing: columnSizing },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     renderToolbarInternalActions: renderToolbarInternalActions,
+    renderRowActions: renderRowActions,
     ...tableOptions
   });
 
