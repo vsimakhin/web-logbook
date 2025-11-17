@@ -63,22 +63,6 @@ const parseMetricValue = (value) => {
   return parseFloat(value) || 0;
 };
 
-const getModelsByCategory = (modelsData, category) => {
-  if (!category || !modelsData) return [];
-  return modelsData
-    .filter(item => item.category.split(',').map(c => c.trim()).includes(category))
-    .map(item => item.model);
-};
-
-const resolveModelsFromFilters = (filters, modelsData) => {
-  const categories = filters.split(',').map(c => c.trim());
-  const models = new Set();
-  categories.forEach(cat => {
-    getModelsByCategory(modelsData, cat).forEach(model => models.add(model));
-  });
-  return Array.from(models);
-};
-
 const compareValues = (leftValue, operator, rightValue) => {
   const rightNum = Number(rightValue);
 
@@ -92,13 +76,32 @@ const compareValues = (leftValue, operator, rightValue) => {
   }
 };
 
-export const evaluateCurrency = (flights, rule, modelsData) => {
+const resolveAircraftsFromFilters = (filters, aircrafts = []) => {
+  if (!filters) return new Set();
+
+  const categories = filters.split(',').map(c => c.trim().toLowerCase()).filter(Boolean);
+  const regs = new Set();
+
+  for (const ac of aircrafts) {
+    const acCats = ac.category.split(',').map(x => x.trim().toLowerCase()).filter(Boolean);
+
+    for (const cat of categories) {
+      if (acCats.includes(cat)) {
+        regs.add(ac.reg);
+        break;
+      }
+    }
+  }
+
+  return regs;
+};
+
+export const evaluateCurrency = (flights, rule, aircrafts) => {
   if (!flights || flights.length === 0) return null;
-  const models = resolveModelsFromFilters(rule.filters, modelsData);
+  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts)
 
   const filteredFlights = flights.filter(flight => {
-    const matchesModel = models.length === 0 || models.includes(flight.aircraft.model);
-    return matchesModel;
+    return regs.size === 0 || regs.has(flight.aircraft.reg_name);
   });
 
   const since = getStartDate(rule);
@@ -150,11 +153,16 @@ export const formatCurrencyValue = (value, metric) => {
 // - landings.day → day landings only
 // - landings.night → night landings only
 // Expiry rule: 90 days after the 3rd most recent qualifying landing.
-export const getCurrencyExpiryForRule = (flights, rule, modelsData) => {
+export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
   if (!flights || flights.length === 0 || !rule?.metric) return null;
 
-  const models = resolveModelsFromFilters(rule.filters || '', modelsData);
-  const filteredFlights = flights.filter(f => models.length === 0 || models.includes(f.aircraft.model));
+  // const models = resolveModelsFromFilters(rule.filters || '', modelsData);
+  // const filteredFlights = flights.filter(f => models.length === 0 || models.includes(f.aircraft.model));
+  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts)
+
+  const filteredFlights = flights.filter(flight => {
+    return regs.size === 0 || regs.has(flight.aircraft.reg_name);
+  });
 
   // Landings-based: 90 days after the 3rd most recent qualifying landing
   if (rule.metric.startsWith('landings')) {

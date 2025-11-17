@@ -4,17 +4,12 @@ import {
 } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
-import LinearProgress from '@mui/material/LinearProgress';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import { useErrorNotification } from "../../hooks/useAppNotifications";
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
-import { fetchCurrency } from '../../util/http/currency';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 import { evaluateCurrency, formatCurrencyValue, metricOptions, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
@@ -22,9 +17,7 @@ import dayjs from 'dayjs';
 import NewCurrencyButton from './NewCurrencyButton';
 import EditCurrencyButton from './EditCurrencyButton';
 import DeleteCurrencyButton from './DeleteCurrencyButton';
-import { fetchLogbookData } from '../../util/http/logbook';
 import HelpButton from './HelpButton';
-import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 
 const paginationKey = 'currency-table-page-size';
 const columnVisibilityKey = 'currency-table-column-visibility';
@@ -49,42 +42,14 @@ const tableOptions = {
   enableColumnActions: true,
 }
 
-export const CurrencyTable = () => {
+export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  const navigate = useNavigate();
-
-  // load all data
-  const { data: logbookData, isLoading: isLogbookDataLoading, isError: isLogbookDataError, error: logbookDataError } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-  useErrorNotification({ isLogbookDataError, logbookDataError, fallbackMessage: 'Failed to load logbook data' });
-
-  const { data: modelsData, isLoading: isModelsDataLoading } = useQuery({
-    queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-
-  const { data: currencyData = [], isLoading, isError, error } = useQuery({
-    queryKey: ['currency'],
-    queryFn: ({ signal }) => fetchCurrency({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load currencies' });
-
   const columns = useMemo(() => {
-    if (isLoading || isModelsDataLoading || isLogbookDataLoading) return [];
-
     return [
       {
         id: 'actions',
@@ -132,7 +97,7 @@ export const CurrencyTable = () => {
         id: "valid_until",
         header: "Valid Until",
         size: 160,
-        accessorFn: (row) => getCurrencyExpiryForRule(logbookData, row, modelsData),
+        accessorFn: (row) => getCurrencyExpiryForRule(logbookData, row, aircrafts),
         Cell: ({ cell }) => {
           const expiry = cell.getValue();
           return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
@@ -143,7 +108,7 @@ export const CurrencyTable = () => {
         header: "Expire",
         size: 120,
         accessorFn: (row) => {
-          const expiry = getCurrencyExpiryForRule(logbookData, row, modelsData);
+          const expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
           row.expiry = expiry; // Cache for use in Cell
           if (!expiry) return null;
           const today = dayjs().startOf('day');
@@ -156,7 +121,7 @@ export const CurrencyTable = () => {
           if (days === null || days === undefined) {
             // If we can't compute an expiry, still show "Expired" for time-based rules
             // when the rule does not meet the requirement in the current window.
-            const res = evaluateCurrency(logbookData, row, modelsData);
+            const res = evaluateCurrency(logbookData, row, aircrafts);
             const isDaysWindow = row?.time_frame?.unit === 'days';
             const isTimeMetric = typeof row?.metric === 'string' && row.metric.startsWith('time');
             if (isDaysWindow && isTimeMetric && res && res.meetsRequirement === false) {
@@ -184,7 +149,7 @@ export const CurrencyTable = () => {
       {
         id: "status", header: "Status", grow: true,
         accessorFn: (row) => {
-          return evaluateCurrency(logbookData, row, modelsData);
+          return evaluateCurrency(logbookData, row, aircrafts);
         },
         Cell: ({ cell }) => {
           const cellData = cell.getValue();
@@ -197,7 +162,7 @@ export const CurrencyTable = () => {
         }
       },
     ]
-  }, [logbookData, modelsData]);
+  }, [logbookData, aircrafts]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
@@ -214,7 +179,7 @@ export const CurrencyTable = () => {
   ), []);
 
   const table = useMaterialReactTable({
-    isLoading: (isLoading || isModelsDataLoading || isLogbookDataLoading),
+    // isLoading: (isLoading || isModelsDataLoading || isLogbookDataLoading),
     columns: columns,
     data: currencyData,
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
@@ -231,7 +196,7 @@ export const CurrencyTable = () => {
 
   return (
     <>
-      {(isLoading || isLogbookDataLoading || isModelsDataLoading) && <LinearProgress />}
+      {/* {(isLoading || isLogbookDataLoading || isModelsDataLoading) && <LinearProgress />} */}
       <MaterialReactTable table={table} />
       <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>

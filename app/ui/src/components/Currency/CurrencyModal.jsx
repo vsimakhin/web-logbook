@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
@@ -24,15 +24,15 @@ import { comparisonOptions, metricOptions, timeframeUnitOptions } from './helper
 import DatePicker from '../UIElements/DatePicker';
 
 
-const CloseDialogButton = memo(({ onClose }) => {
+const CloseDialogButton = ({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}><DisabledByDefaultOutlinedIcon /></IconButton>
     </Tooltip>
   );
-});
+};
 
-const SaveButton = memo(({ currency, onClose }) => {
+const SaveButton = ({ currency, onClose }) => {
   const navigate = useNavigate();
   const isNew = currency?.uuid === 'new';
   const type = isNew ? 'create' : 'update';
@@ -58,7 +58,7 @@ const SaveButton = memo(({ currency, onClose }) => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
 export const CurrencyModal = ({ open, onClose, payload }) => {
   const [currency, setCurrency] = useState({ ...payload });
@@ -168,6 +168,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
               label="Filters (Aircraft Categories)"
               handleChange={handleChange}
               value={currency.filters ? currency.filters.split(',').map(item => item.trim()) : []}
+              options="all"
             />
           </Grid>
 
