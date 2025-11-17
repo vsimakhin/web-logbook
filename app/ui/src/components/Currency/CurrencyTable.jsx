@@ -119,12 +119,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         id: "valid_until",
         header: "Valid Until",
         size: 160,
-        accessorFn: (row) => {
-          if (!row._expiry) {
-            row._expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
-          }
-          return row._expiry;
-        },
+        accessorFn: (row) => (getCurrencyExpiryForRule(logbookData, row, aircrafts)),
         Cell: ({ cell }) => {
           const expiry = cell.getValue();
           return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
@@ -135,10 +130,9 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         header: "Expire",
         size: 120,
         accessorFn: (row) => {
-          if (!row._expiry) {
-            row._expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
-          }
-          if (!row._expiry) return null;
+          const expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
+          row.expiry = expiry; // Cache for use in Cell
+          if (!expiry) return null;
 
           const today = dayjs().startOf('day');
           return dayjs(row._expiry).startOf('day').diff(today, 'day');
@@ -150,10 +144,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
           if (days === null || days === undefined) {
             // If we can't compute an expiry, still show "Expired" for time-based rules
             // when the rule does not meet the requirement in the current window.
-            if (!row._evaluation) {
-              row._evaluation = evaluateCurrency(logbookData, row, aircrafts);
-            }
-            const res = row._evaluation;
+            const res = evaluateCurrency(logbookData, row, aircrafts);
 
             const isDaysWindow = row?.time_frame?.unit === 'days';
             const isTimeMetric = typeof row?.metric === 'string' && row.metric.startsWith('time');
@@ -165,7 +156,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
             return '—';
           }
 
-          const expiryStr = dayjs(cell.row.original._expiry).format('DD/MM/YYYY');
+          const expiryStr = dayjs(cell.row.original.expiry).format('DD/MM/YYYY');
           const exp = calculateExpiry(expiryStr);
           if (!exp) return '—';
 
@@ -181,12 +172,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
       },
       {
         id: "status", header: "Status", grow: true,
-        accessorFn: (row) => {
-          if (!row._evaluation) {
-            row._evaluation = evaluateCurrency(logbookData, row, aircrafts);
-          }
-          return row._evaluation
-        },
+        accessorFn: (row) => (evaluateCurrency(logbookData, row, aircrafts)),
         Cell: ({ cell }) => {
           const cellData = cell.getValue();
           return (

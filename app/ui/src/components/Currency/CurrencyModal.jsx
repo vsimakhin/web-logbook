@@ -82,7 +82,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
       { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
       { value: "sim.time", label: `${fieldNameF("fstd")} ${fieldNameF("sim_time")}` },
     ]
-  ));
+  ), [fieldNameF]);
 
   const handleChange = useCallback((key, value) => {
     setCurrency((currency) => {
