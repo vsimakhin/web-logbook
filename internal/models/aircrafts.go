@@ -107,6 +107,12 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
+	// let's make it in transaction
+	tx, err := m.DB.Begin()
+	if err != nil {
+		return err
+	}
+
 	// first insert to the table missing reg numbers
 	query := `INSERT INTO aircrafts (reg_name, aircraft_model)
 		SELECT lv.reg_name, MIN(lv.aircraft_model)
@@ -116,8 +122,9 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 			AND lv.reg_name <> ''
 		GROUP BY lv.reg_name
 		HAVING lv.reg_name NOT IN (SELECT reg_name FROM aircrafts)`
-	_, err = m.DB.ExecContext(ctx, query)
+	_, err = tx.ExecContext(ctx, query)
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
 
@@ -139,8 +146,14 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 				AND lv.reg_name <> ''
 				AND lv.reg_name = aircrafts.reg_name
 		);`
-	_, err = m.DB.ExecContext(ctx, query)
+	_, err = tx.ExecContext(ctx, query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
 
+	// commit transaction
+	err = tx.Commit()
 	return err
 }
 
@@ -188,7 +201,7 @@ func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
 	defer cancel()
 
 	query := `SELECT 
-				reg_name, aircraft_model, categories
+				reg_name, aircraft_model, categories, model_categories, custom_categories
 			FROM aircrafts_view av`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
@@ -198,7 +211,7 @@ func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
 
 	for rows.Next() {
 		var ac Aircraft
-		if err = rows.Scan(&ac.Reg, &ac.Model, &ac.Category); err != nil {
+		if err = rows.Scan(&ac.Reg, &ac.Model, &ac.Category, &ac.ModelCategory, &ac.CustomCategory); err != nil {
 			return aircrafts, err
 		}
 		aircrafts = append(aircrafts, ac)
@@ -215,6 +228,18 @@ func (m *DBModel) UpdateAircraftModelsCategories(category Category) (err error) 
 		SET categories = ?
 		WHERE model = ?`
 	_, err = m.DB.ExecContext(ctx, query, category.Category, category.Model)
+
+	return nil
+}
+
+func (m *DBModel) UpdateAircraft(aircraft Aircraft) (err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := `UPDATE aircrafts
+		SET custom_categories = ?
+		WHERE reg_name = ?`
+	_, err = m.DB.ExecContext(ctx, query, aircraft.CustomCategory, aircraft.Reg)
 
 	return nil
 }

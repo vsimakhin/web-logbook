@@ -67,7 +67,7 @@ export const CategoriesTable = ({ ...props }) => {
     { accessorKey: "category", header: "Category", grow: true },
   ], []);
 
-  const renderRowActions = ({ row }) => {
+  const renderRowActions = useCallback(({ row }) => {
     const payload = row.original;
     return (
       <Tooltip title="Edit Category">
@@ -76,7 +76,7 @@ export const CategoriesTable = ({ ...props }) => {
         </IconButton>
       </Tooltip >
     );
-  }
+  }, [dialogs, EditCategoriesModal]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>

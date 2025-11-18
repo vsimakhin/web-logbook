@@ -259,9 +259,11 @@ type Attachment struct {
 
 // Aircraft is a type for aircrafts
 type Aircraft struct {
-	Reg      string `json:"reg"`
-	Model    string `json:"model"`
-	Category string `json:"category"`
+	Reg            string `json:"reg"`
+	Model          string `json:"model"`
+	Category       string `json:"category"`
+	ModelCategory  string `json:"model_category"`
+	CustomCategory string `json:"custom_category"`
 }
 
 type Category struct {

@@ -4,27 +4,21 @@ import {
 } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
-import LinearProgress from '@mui/material/LinearProgress';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import { useErrorNotification } from "../../hooks/useAppNotifications";
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
-import { fetchCurrency } from '../../util/http/currency';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import { evaluateCurrency, formatCurrencyValue, metricOptions, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
+import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
 import dayjs from 'dayjs';
 import NewCurrencyButton from './NewCurrencyButton';
 import EditCurrencyButton from './EditCurrencyButton';
 import DeleteCurrencyButton from './DeleteCurrencyButton';
-import { fetchLogbookData } from '../../util/http/logbook';
 import HelpButton from './HelpButton';
-import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
+import useSettings from '../../hooks/useSettings';
 
 const paginationKey = 'currency-table-page-size';
 const columnVisibilityKey = 'currency-table-column-visibility';
@@ -47,62 +41,53 @@ const tableOptions = {
   enableFacetedValues: true,
   enableSorting: true,
   enableColumnActions: true,
+  enableRowActions: true,
+  displayColumnDefOptions: { "mrt-row-actions": { size: 90, grow: false } },
 }
 
-export const CurrencyTable = () => {
+export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  const navigate = useNavigate();
+  const { fieldNameF } = useSettings();
 
-  // load all data
-  const { data: logbookData, isLoading: isLogbookDataLoading, isError: isLogbookDataError, error: logbookDataError } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-  useErrorNotification({ isLogbookDataError, logbookDataError, fallbackMessage: 'Failed to load logbook data' });
+  const metricOptions = useMemo(() => (
+    [
+      { value: "time.total_time", label: fieldNameF("total") },
+      { value: "time.se_time", label: fieldNameF("se") },
+      { value: "time.me_time", label: fieldNameF("me") },
+      { value: "time.mcc_time", label: fieldNameF("mcc") },
+      { value: "time.night_time", label: fieldNameF("night") },
+      { value: "time.ifr_time", label: fieldNameF("ifr") },
+      { value: "time.pic_time", label: fieldNameF("pic") },
+      { value: "time.co_pilot_time", label: fieldNameF("cop") },
+      { value: "time.dual_time", label: fieldNameF("dual") },
+      { value: "time.instructor_time", label: fieldNameF("instr") },
+      { value: "landings.all", label: fieldNameF("landings") },
+      { value: "landings.day", label: `${fieldNameF("land_day")} ${fieldNameF("landings")}` },
+      { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
+      { value: "sim.time", label: `${fieldNameF("fstd")} ${fieldNameF("sim_time")}` },
+    ]
+  ), [fieldNameF]);
 
-  const { data: modelsData, isLoading: isModelsDataLoading } = useQuery({
-    queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const renderRowActions = useCallback(({ row }) => (
+    <>
+      <EditCurrencyButton payload={row.original} />
+      <DeleteCurrencyButton payload={row.original} />
+    </>
+  ), []);
 
-  const { data: currencyData = [], isLoading, isError, error } = useQuery({
-    queryKey: ['currency'],
-    queryFn: ({ signal }) => fetchCurrency({ signal, navigate }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load currencies' });
-
-  const columns = useMemo(() => {
-    if (isLoading || isModelsDataLoading || isLogbookDataLoading) return [];
-
-    return [
-      {
-        id: 'actions',
-        header: 'Actions',
-        size: 90,
-        Cell: ({ row }) => (
-          <>
-            <EditCurrencyButton payload={row.original} />
-            <DeleteCurrencyButton payload={row.original} />
-          </>
-        ),
-      },
+  const columns = useMemo(() => (
+    [
       { accessorKey: "name", header: "Name", size: 200 },
       {
         accessorKey: "metric", header: "Metric", size: 140,
         Cell: ({ cell }) => {
           const metricValue = cell.getValue();
-          const option = metricOptions().find(opt => opt.value === metricValue);
+          const option = metricOptions.find(opt => opt.value === metricValue);
           return option ? option.label : metricValue;
         }
       },
@@ -132,7 +117,7 @@ export const CurrencyTable = () => {
         id: "valid_until",
         header: "Valid Until",
         size: 160,
-        accessorFn: (row) => getCurrencyExpiryForRule(logbookData, row, modelsData),
+        accessorFn: (row) => (getCurrencyExpiryForRule(logbookData, row, aircrafts)),
         Cell: ({ cell }) => {
           const expiry = cell.getValue();
           return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
@@ -143,11 +128,12 @@ export const CurrencyTable = () => {
         header: "Expire",
         size: 120,
         accessorFn: (row) => {
-          const expiry = getCurrencyExpiryForRule(logbookData, row, modelsData);
+          const expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
           row.expiry = expiry; // Cache for use in Cell
           if (!expiry) return null;
+
           const today = dayjs().startOf('day');
-          return dayjs(expiry).startOf('day').diff(today, 'day');
+          return dayjs(row._expiry).startOf('day').diff(today, 'day');
         },
         Cell: ({ cell }) => {
           const days = cell.getValue();
@@ -156,7 +142,8 @@ export const CurrencyTable = () => {
           if (days === null || days === undefined) {
             // If we can't compute an expiry, still show "Expired" for time-based rules
             // when the rule does not meet the requirement in the current window.
-            const res = evaluateCurrency(logbookData, row, modelsData);
+            const res = evaluateCurrency(logbookData, row, aircrafts);
+
             const isDaysWindow = row?.time_frame?.unit === 'days';
             const isTimeMetric = typeof row?.metric === 'string' && row.metric.startsWith('time');
             if (isDaysWindow && isTimeMetric && res && res.meetsRequirement === false) {
@@ -183,9 +170,7 @@ export const CurrencyTable = () => {
       },
       {
         id: "status", header: "Status", grow: true,
-        accessorFn: (row) => {
-          return evaluateCurrency(logbookData, row, modelsData);
-        },
+        accessorFn: (row) => (evaluateCurrency(logbookData, row, aircrafts)),
         Cell: ({ cell }) => {
           const cellData = cell.getValue();
           return (
@@ -197,7 +182,7 @@ export const CurrencyTable = () => {
         }
       },
     ]
-  }, [logbookData, modelsData]);
+  ), [logbookData, aircrafts, metricOptions]);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
@@ -207,14 +192,13 @@ export const CurrencyTable = () => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <NewCurrencyButton />
   ), []);
 
   const table = useMaterialReactTable({
-    isLoading: (isLoading || isModelsDataLoading || isLogbookDataLoading),
     columns: columns,
     data: currencyData,
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
@@ -226,12 +210,12 @@ export const CurrencyTable = () => {
     state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing: columnSizing },
     defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
     renderToolbarInternalActions: renderToolbarInternalActions,
+    renderRowActions: renderRowActions,
     ...tableOptions
   });
 
   return (
     <>
-      {(isLoading || isLogbookDataLoading || isModelsDataLoading) && <LinearProgress />}
       <MaterialReactTable table={table} />
       <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
     </>

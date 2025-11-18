@@ -1,26 +1,59 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 // Custom
 import Select from "./Select";
-import { fetchAircraftCategories } from "../../util/http/aircraft";
+import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
 
-export const AircraftCategories = ({ gsize, id = "category", label = "Category", value, handleChange, ...props }) => {
+const getUniqueCategoriesFromKey = (items, key) => {
+  const set = new Set();
+  items.forEach(item => {
+    item[key]?.split(",").forEach(c => {
+      c = c.trim();
+      if (c) set.add(c);
+    });
+  });
+  return Array.from(set).sort();
+};
+
+export const AircraftCategories = ({
+  gsize,
+  id = "category",
+  label = "Category",
+  tooltip = "Aircraft Category",
+  options = "models",
+  value,
+  handleChange,
+  ...props
+}) => {
   const navigate = useNavigate();
-  const [options, setOptions] = useState([])
 
-  const { data: categories } = useQuery({
-    queryFn: ({ signal }) => fetchAircraftCategories({ signal, navigate }),
-    queryKey: ['aircraft-categories'],
+  const { data: modelCategoriesOptions = [] } = useQuery({
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    queryKey: ['models-categories'],
     staleTime: 3600000,
     gcTime: 3600000,
+    select: data => getUniqueCategoriesFromKey(data, "category"),
   })
 
-  useEffect(() => {
-    if (categories) {
-      setOptions(categories);
-    }
-  }, [categories])
+  const { data: customCategoriesOptions = [] } = useQuery({
+    queryKey: ['aircrafts'],
+    queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+    select: data => getUniqueCategoriesFromKey(data, "custom_category"),
+  });
+
+  const selectOptions = useMemo(() => {
+    if (options === "models") return modelCategoriesOptions ?? [];
+    if (options === "custom") return customCategoriesOptions ?? [];
+    if (options === "all")
+      return Array.from(new Set([
+        ...(modelCategoriesOptions ?? []),
+        ...(customCategoriesOptions ?? [])
+      ])).sort();
+    return [];
+  }, [options, modelCategoriesOptions, customCategoriesOptions]);
 
   return (
     <Select gsize={gsize}
@@ -28,8 +61,8 @@ export const AircraftCategories = ({ gsize, id = "category", label = "Category",
       label={label}
       handleChange={handleChange}
       value={value}
-      tooltip={"Aircraft Category"}
-      options={options}
+      tooltip={tooltip}
+      options={selectOptions}
       multiple
       freeSolo={true}
       {...props}

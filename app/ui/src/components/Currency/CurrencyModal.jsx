@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
@@ -20,19 +20,19 @@ import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import Select from '../UIElements/Select';
 import { createCurrency, updateCurrency } from '../../util/http/currency';
-import { comparisonOptions, metricOptions, timeframeUnitOptions } from './helpers';
+import { comparisonOptions, timeframeUnitOptions } from './helpers';
 import DatePicker from '../UIElements/DatePicker';
+import useSettings from '../../hooks/useSettings';
 
-
-const CloseDialogButton = memo(({ onClose }) => {
+const CloseDialogButton = ({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}><DisabledByDefaultOutlinedIcon /></IconButton>
     </Tooltip>
   );
-});
+};
 
-const SaveButton = memo(({ currency, onClose }) => {
+const SaveButton = ({ currency, onClose }) => {
   const navigate = useNavigate();
   const isNew = currency?.uuid === 'new';
   const type = isNew ? 'create' : 'update';
@@ -58,12 +58,31 @@ const SaveButton = memo(({ currency, onClose }) => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
 export const CurrencyModal = ({ open, onClose, payload }) => {
+  const { fieldNameF } = useSettings();
   const [currency, setCurrency] = useState({ ...payload });
-
   const title = useMemo(() => currency?.uuid === "new" ? "New Currency" : "Edit Currency", [currency?.uuid]);
+
+  const metricOptions = useMemo(() => (
+    [
+      { value: "time.total_time", label: fieldNameF("total") },
+      { value: "time.se_time", label: fieldNameF("se") },
+      { value: "time.me_time", label: fieldNameF("me") },
+      { value: "time.mcc_time", label: fieldNameF("mcc") },
+      { value: "time.night_time", label: fieldNameF("night") },
+      { value: "time.ifr_time", label: fieldNameF("ifr") },
+      { value: "time.pic_time", label: fieldNameF("pic") },
+      { value: "time.co_pilot_time", label: fieldNameF("cop") },
+      { value: "time.dual_time", label: fieldNameF("dual") },
+      { value: "time.instructor_time", label: fieldNameF("instr") },
+      { value: "landings.all", label: fieldNameF("landings") },
+      { value: "landings.day", label: `${fieldNameF("land_day")} ${fieldNameF("landings")}` },
+      { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
+      { value: "sim.time", label: `${fieldNameF("fstd")} ${fieldNameF("sim_time")}` },
+    ]
+  ), [fieldNameF]);
 
   const handleChange = useCallback((key, value) => {
     setCurrency((currency) => {
@@ -111,18 +130,18 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
     }
   }, [currency?.time_frame, handleChange]);
 
+  const actionButtons = useMemo(() => (
+    <>
+      <SaveButton currency={currency} onClose={onClose} />
+      <CloseDialogButton onClose={onClose} />
+    </>
+  ), [currency, onClose]);
+
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader title={title}
-            action={
-              <>
-                <SaveButton currency={currency} onClose={onClose} />
-                <CloseDialogButton onClose={onClose} />
-              </>
-            }
-          />
+          <CardHeader title={title} action={actionButtons} />
           <Grid container spacing={1}>
             <TextField gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               id="name"
@@ -134,8 +153,8 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
               id="metric"
               label="Metric"
               handleChange={(id, value) => handleChange(id, value.value)}
-              value={metricOptions().find(option => option.value === currency.metric) || null}
-              options={metricOptions()}
+              value={metricOptions.find(option => option.value === currency.metric) || null}
+              options={metricOptions}
               getOptionLabel={(option) => option.label || ""}
               isOptionEqualToValue={(option, value) => option.value === value.value}
             />
@@ -168,9 +187,9 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
               label="Filters (Aircraft Categories)"
               handleChange={handleChange}
               value={currency.filters ? currency.filters.split(',').map(item => item.trim()) : []}
+              options="all"
             />
           </Grid>
-
         </CardContent>
       </Card >
     </Dialog>

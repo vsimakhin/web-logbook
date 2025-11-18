@@ -192,22 +192,36 @@ export const getTotalsByMonthAndYear = (flights, customFields = []) => {
   );
 };
 
-export const getTotalsByAircraft = (flights, type, models, customFields = []) => {
+export const getTotalsByAircraft = (flights, type, models, aircrafts, customFields) => {
+  if (!customFields) customFields = [];
+
   const modelCategories = type === "category" ?
     models.reduce((acc, { model, category }) => {
       acc[model] = category.split(',').map(c => c.trim());
       return acc;
     }, {}) : {};
 
+  const aircraftMap = aircrafts?.reduce((acc, a) => {
+    acc[a.reg] = a;
+    return acc;
+  }, {}) ?? {};
+
   const totals = flights.reduce((acc, flight) => {
-    let aircraftType = flight.aircraft.model;
+    const aircraftType = flight.aircraft.model;
+    const aircraftReg = flight.aircraft.reg_name;
+
     let keys;
+    const ac = aircraftMap[aircraftReg];
 
     if (aircraftType) {
       // Normal case: real aircraft
-      keys = type === "category"
-        ? modelCategories[aircraftType] ?? [aircraftType]
-        : [aircraftType];
+      if (type === "category") {
+        keys = modelCategories[aircraftType] ?? [aircraftType];
+        const extra = ac.category.split(',').map(c => c.trim()).filter(Boolean);
+        keys = [...new Set([...keys, ...extra])];
+      } else {
+        keys = [aircraftType];
+      }
     } else {
       // Simulator case
       const simType = flight.sim?.type;

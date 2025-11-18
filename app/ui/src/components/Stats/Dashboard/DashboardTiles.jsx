@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 // MUI
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -12,7 +12,7 @@ import useSettings from '../../../hooks/useSettings';
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
-export const DashboardTiles = memo(({ data, filter }) => {
+export const DashboardTiles = ({ data, filter }) => {
   const stats = useMemo(() => getStats(data), [data]);
   const { fieldNameF } = useSettings();
 
@@ -55,6 +55,6 @@ export const DashboardTiles = memo(({ data, filter }) => {
       </CardContent>
     </Card >
   );
-});
+};
 
 export default DashboardTiles;

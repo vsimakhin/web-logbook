@@ -17,7 +17,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
 import AircraftCategories from '../UIElements/AircraftCategories';
-import { updateAircraftModelsCategories } from '../../util/http/aircraft';
+import { updateAircraft } from '../../util/http/aircraft';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 
@@ -32,8 +32,8 @@ const CloseDialogButton = ({ onClose }) => {
 const SaveButton = ({ category, onClose }) => {
   const navigate = useNavigate();
 
-  const { mutateAsync: updateCategory, isError, error, isSuccess } = useMutation({
-    mutationFn: () => updateAircraftModelsCategories({ payload: category, navigate }),
+  const { mutateAsync: update, isError, error, isSuccess } = useMutation({
+    mutationFn: () => updateAircraft({ payload: category, navigate }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
       await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
@@ -43,7 +43,7 @@ const SaveButton = ({ category, onClose }) => {
   useSuccessNotification({ isSuccess, message: 'Categories updates' });
 
   const handleOnClick = async () => {
-    await updateCategory();
+    await update();
     onClose();
   }
 
@@ -54,7 +54,7 @@ const SaveButton = ({ category, onClose }) => {
   );
 }
 
-export const EditCategoriesModal = ({ open, onClose, payload }) => {
+export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
   const [category, setCategory] = useState({ ...payload });
 
   const handleChange = (key, value) => {
@@ -65,7 +65,7 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader title="Edit Categories"
+          <CardHeader title="Edit Custom Aircraft Categories"
             action={
               <>
                 <SaveButton category={category} onClose={onClose} />
@@ -74,14 +74,33 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
             }
           />
           <Grid container spacing={1}>
-            <TextField gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+            <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+              id="reg"
+              label="Registration"
+              handleChange={handleChange} value={category.reg}
+              disabled
+            />
+            <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="model"
               label="Type"
               handleChange={handleChange} value={category.model}
               disabled
             />
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-              handleChange={handleChange} value={category.category ? category.category.split(',') : []}
+              handleChange={handleChange}
+              value={category.model_category ? category.model_category.split(',') : []}
+              label="Categories for Type"
+              tooltip="Categories for Type"
+              options="models"
+              disabled
+            />
+            <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+              id="custom_category"
+              handleChange={handleChange}
+              value={category.custom_category ? category.custom_category.split(',') : []}
+              label="Custom Aircraft Categories"
+              tooltip="Custom Aircraft Categories"
+              options="custom"
             />
           </Grid>
           <Divider sx={{ m: 1 }} />
@@ -94,4 +113,4 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
   )
 }
 
-export default EditCategoriesModal;
+export default EditCustomCategoriesModal;
