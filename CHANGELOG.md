@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.18.1] - 18.11.2025
+
+- Fix: Error loading currency page.
+
 ## [3.18.0] - 18.11.2025
 
 - Update: Golang and npm packages/security patches

@@ -200,7 +200,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
 
   const table = useMaterialReactTable({
     columns: columns,
-    data: currencyData,
+    data: currencyData ?? [],
     onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
