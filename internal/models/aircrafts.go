@@ -128,6 +128,19 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 		return err
 	}
 
+	// remove aircrafts which are not in the logbook anymore
+	query = `DELETE FROM aircrafts
+		WHERE reg_name NOT IN (
+			SELECT DISTINCT lv.reg_name
+			FROM logbook_view lv
+			WHERE lv.reg_name IS NOT NULL AND lv.reg_name <> ''
+		)`
+	_, err = tx.ExecContext(ctx, query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	// update aircraft types if they were modified
 	query = `UPDATE aircrafts
 		SET aircraft_model = (
@@ -152,22 +165,21 @@ func (m *DBModel) GenerateAircraftTable() (err error) {
 		return err
 	}
 
-	// commit transaction
-	err = tx.Commit()
-	return err
-}
-
-func (m *DBModel) GenerateAircraftCategoriesTable() (err error) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	query := `INSERT INTO aircraft_categories (model, categories)
+	// update aircraft categories table
+	query = `INSERT INTO aircraft_categories (model, categories)
 		SELECT DISTINCT lv.aircraft_model, ''
 		FROM logbook_view lv
 			LEFT JOIN aircraft_categories ac ON lv.aircraft_model = ac.model
 		WHERE lv.aircraft_model <> ''
 			AND ac.model IS NULL`
-	_, err = m.DB.ExecContext(ctx, query)
+	_, err = tx.ExecContext(ctx, query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// commit transaction
+	err = tx.Commit()
 	return err
 }
 

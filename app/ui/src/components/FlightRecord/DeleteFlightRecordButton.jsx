@@ -19,9 +19,7 @@ export const DeleteFlightRecordButton = ({ flight, handleCloseMenu }) => {
     onSuccess: async () => {
       handleCloseMenu();
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
-      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
-      await queryClient.invalidateQueries({ queryKey: ['aircraft-models'] });
-      await queryClient.invalidateQueries({ queryKey: ['aircraft-regs'] });
+      await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
 
       navigate('/logbook');
     }

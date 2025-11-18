@@ -64,6 +64,9 @@ func (app *application) HandlerApiFlightRecordDelete(w http.ResponseWriter, r *h
 		app.errorLog.Println(err)
 	}
 
+	// refresh aircraft tables
+	_ = app.db.GenerateAircraftTable()
+
 	app.writeOkResponse(w, "Flight record has been deleted")
 }
 
@@ -88,6 +91,9 @@ func (app *application) HandlerApiFlightRecordNew(w http.ResponseWriter, r *http
 		app.handleError(w, err)
 		return
 	}
+
+	// refresh aircraft tables
+	_ = app.db.GenerateAircraftTable()
 
 	var response models.JSONResponse
 	response.OK = true
@@ -117,6 +123,9 @@ func (app *application) HandlerApiFlightRecordUpdate(w http.ResponseWriter, r *h
 		app.handleError(w, err)
 		return
 	}
+
+	// refresh aircraft tables
+	_ = app.db.GenerateAircraftTable()
 
 	app.writeOkResponse(w, "Flight Record has been updated")
 }

@@ -31,7 +31,6 @@ export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
     mutationFn: () => resetTrackLog({ id: attachment.record_id, navigate }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['flight', attachment.record_id] });
-      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
     }
   });

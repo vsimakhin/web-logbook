@@ -21,7 +21,6 @@ export const ResetTrackButton = ({ flight, handleChange }) => {
     onSuccess: async () => {
       handleChange("redraw", Math.random());
       await queryClient.invalidateQueries({ queryKey: ['flight', flight.uuid] });
-      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] });
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
     }
   });

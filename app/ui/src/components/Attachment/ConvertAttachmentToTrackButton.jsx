@@ -22,7 +22,6 @@ export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', attachment.record_id] });
       await queryClient.invalidateQueries({ queryKey: ['flight', attachment.record_id] });
-      await queryClient.invalidateQueries({ queryKey: ['map-logbook'] })
     }
   });
   useErrorNotification({ isError: isTrackError, error: trackError, fallbackMessage: 'Failed to upload track log' });

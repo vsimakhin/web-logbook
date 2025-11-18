@@ -46,12 +46,6 @@ func (app *application) HandlerApiAircraftBuildList(w http.ResponseWriter, r *ht
 		return
 	}
 
-	err = app.db.GenerateAircraftCategoriesTable()
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
 	aircrafts, err := app.db.GetAircrafts()
 	if err != nil {
 		app.handleError(w, err)

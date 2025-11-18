@@ -12,7 +12,7 @@ export const AircraftReg = ({ gsize, id = "aircraft.reg_name", label, value, han
 
   const { data: regs = {} } = useQuery({
     queryFn: ({ signal }) => fetchAircraftRegs({ signal, navigate, last }),
-    queryKey: ['aircraft-regs', 'last', last],
+    queryKey: ['aircrafts', 'regs', 'last', last],
     staleTime: 3600000,
     gcTime: 3600000,
   })
