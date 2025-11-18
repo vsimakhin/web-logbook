@@ -16,7 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.18.0] - 18.11.2025
 
 - Update: Golang and npm packages/security patches
 - New: Custom aircraft category linked to the registration number. All stats, filters and currency also supports new custom categories.
@@ -34,20 +34,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Golang and npm packages/security patches
 - Fix/Update: Simplified and corrected night time calculation. Previously, it could be inaccurate for routes on the opposite side of the globe from Europe.
 - Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0.
-
-## [3.15.0] - 15.10.2025
-
-- New: Add option to upload and download the database file (SQLite only).
-- Fix: Update column number for the ICAO code for Our Airports database source.
-- Fix: Recalculate night time even the field is not empty.
-- New: Added an option to hide time fields on the Flight Record page.
-- Update: Reorganized action buttons on the Flight Record page.
-- Update: Set start of the week to Monday for the date fields
-- New: Added badges on the navigation panel for very soon expiring and expired licenses, configurable from the Settings page.
-
-## [3.14.0] - 07.10.2025
-
-- New: Expiration date tracking for Currency - `Valid Until` and `Expire` @xtncl
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
