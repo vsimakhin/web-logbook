@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.18.2] - 19.11.2025
 
 - Fix: License notification error if there are no licenses stored.
 - Fix: aircraft list update when the flight is removed from the logbook.
