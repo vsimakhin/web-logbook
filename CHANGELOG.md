@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: License notification error if there are no licenses stored.
 - Fix: aircraft list update when the flight is removed from the logbook.
 
 ## [3.18.1] - 18.11.2025

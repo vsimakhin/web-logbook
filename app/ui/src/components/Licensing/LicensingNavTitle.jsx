@@ -32,12 +32,14 @@ export const LicensingNavTitle = () => {
     let warning = 0;
     let expired = 0;
 
-    for (const license of licenses) {
-      const expiration = calculateExpiry(license.valid_until || "");
-      if (!expiration) continue;
+    if (licenses) {
+      for (const license of licenses) {
+        const expiration = calculateExpiry(license.valid_until || "");
+        if (!expiration) continue;
 
-      if (expiration.diffDays < 0) expired++;
-      else if (expiration.diffDays < warningPeriod) warning++;
+        if (expiration.diffDays < 0) expired++;
+        else if (expiration.diffDays < warningPeriod) warning++;
+      }
     }
 
     return { warning, expired };
