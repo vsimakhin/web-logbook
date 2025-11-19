@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: aircraft list update when the flight is removed from the logbook.
+
 ## [3.18.1] - 18.11.2025
 
 - Fix: Error loading currency page.
