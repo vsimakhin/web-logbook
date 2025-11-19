@@ -18,7 +18,8 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
-- Fix: aircraft list update when the flight is removed from the logbook.
+- Fix: License notification error if there are no licenses stored.
+- Fix: Aircraft list update when the flight is removed from the logbook.
 
 ## [3.18.1] - 18.11.2025
 
