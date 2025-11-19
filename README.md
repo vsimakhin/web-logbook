@@ -327,6 +327,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/xtncl" title="xtncl"><img src="https://github.com/xtncl.png" width="40" height="40" alt="xtncl" /></a>
   <a href="https://github.com/leapparence" title="leapparence"><img src="https://github.com/leapparence.png" width="40" height="40" alt="leapparence" /></a>
   <a href="https://github.com/fuelflo" title="fuelflo"><img src="https://github.com/fuelflo.png" width="40" height="40" alt="fuelflo" /></a>
+  <a href="https://github.com/chrp90" title="chrp90"><img src="https://github.com/chrp90.png" width="40" height="40" alt="chrp90" /></a>
 </p>
 
 # Used libraries
