@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: aircraft list update when the flight is removed from the logbook.
+
 ## [3.18.1] - 18.11.2025
 
 - Fix: Error loading currency page.

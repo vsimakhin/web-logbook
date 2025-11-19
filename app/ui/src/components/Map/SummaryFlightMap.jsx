@@ -21,7 +21,7 @@ export const SummaryFlightMap = () => {
   const navigate = useNavigate();
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['map-logbook'],
+    queryKey: ['logbook', 'map'],
     queryFn: ({ signal }) => fetchLogbookMapData({ signal, navigate }),
     staleTime: 3600000,
     gcTime: 3600000,

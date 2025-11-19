@@ -19,7 +19,7 @@ export const AircraftType = ({
 
   const { data: options = [] } = useQuery({
     queryFn: ({ signal }) => fetchAircraftModels({ signal, navigate }),
-    queryKey: ["aircraft-models"],
+    queryKey: ["aircrafts", "models"],
     staleTime: 3600000,
     gcTime: 3600000,
   });
