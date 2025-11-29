@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang and npm packages/security patches
+
 ## [3.18.2] - 19.11.2025
 
 - Fix: License notification error if there are no licenses stored.
@@ -36,13 +40,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Fix: Optimized the currency page to refresh the state after a flight record is updated.
 - New: Add support for imports from Leon application.
 - Fix: Flights for the selected person were shown in random order.
-
-## [3.16.0] - 25.10.2025
-
-- Fix: Error when building aircraft list if multiple aircraft types were logged under the same registration number.
-- Update: Golang and npm packages/security patches
-- Fix/Update: Simplified and corrected night time calculation. Previously, it could be inaccurate for routes on the opposite side of the globe from Europe.
-- Fix: Night time field wasn't updated (for copied flights) if the actual night time was 0.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang and npm packages/security patches
+
 ## [3.18.2] - 19.11.2025
 
 - Fix: License notification error if there are no licenses stored.
