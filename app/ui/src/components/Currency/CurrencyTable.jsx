@@ -194,7 +194,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
     </>
   ), [setColumnSizing]);
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+  const renderTopToolbarCustomActions = useCallback(() => (
     <NewCurrencyButton />
   ), []);
 
