@@ -17,11 +17,9 @@ const getStartDate = (rule) => {
   const now = dayjs();
   switch (unit) {
     case "calendar_months":
-      const target = now.subtract(value, "month");
-      return target.startOf("month");
+      return now.subtract(value, "month").startOf("month");
     case "calendar_years":
-      const targetYear = now.year() - (value - 1);
-      return dayjs(`${targetYear}-01-01`);
+      return dayjs(`${now.year() - (value - 1)}-01-01`);
     case "since":
       return dayjs(since, "DD/MM/YYYY");
     case "all_time":
@@ -29,6 +27,24 @@ const getStartDate = (rule) => {
     case "days":
     default:
       return now.subtract(value, "day");
+  }
+};
+
+// function to get the expiration date for landings
+const getEndDate = (rule, lastEventDate) => {
+  const { unit, value } = rule.time_frame;
+
+  switch (unit) {
+    case "calendar_months":
+      return lastEventDate.add(value, "month").startOf("month");
+    case "calendar_years":
+      return dayjs(`${lastEventDate.year() + value}-01-01`);
+    case "since":
+    case "all_time":
+      return lastEventDate.add(90, "day");
+    case "days":
+    default:
+      return lastEventDate.add(value, "day");
   }
 };
 
@@ -130,7 +146,7 @@ export const formatCurrencyValue = (value, metric) => {
 // - landings.all → day + night
 // - landings.day → day landings only
 // - landings.night → night landings only
-// Expiry rule: 90 days after the 3rd most recent qualifying landing.
+// Expiry rule: XX days after the YY most recent qualifying landing.
 export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
   if (!flights || flights.length === 0 || !rule?.metric) return null;
 
@@ -139,7 +155,6 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
     return regs.size === 0 || regs.has(flight.aircraft.reg_name);
   });
 
-  // Landings-based: 90 days after the 3rd most recent qualifying landing
   if (rule.metric.startsWith('landings')) {
     const selector = (() => {
       if (rule.metric === 'landings.day') return (f) => parseInt(f?.landings?.day) || 0;
@@ -155,10 +170,10 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
       for (let i = 0; i < cnt; i++) events.push(d);
     });
 
-    if (events.length < 3) return null;
+    if (events.length < rule.target_value) return null;
     events.sort((a, b) => b.valueOf() - a.valueOf());
     const third = events[2];
-    return third.add(90, 'day');
+    return getEndDate(rule, third)
   }
 
   // Time-based (e.g., time.pic_time, time.total_time, sim.time):

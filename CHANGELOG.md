@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Landing-based expiry calculation to use the most recent qualifying landing that completes the target threshold. Previously, expiry was set to 90 days after the 3rd most recent qualifying landing.
 - Update: Golang and npm packages/security patches
 
 ## [3.18.2] - 19.11.2025
