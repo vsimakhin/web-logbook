@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.19.0] - 05.12.2025
 
 - Fix: Intermittent error on the Stats/Category page.
 - Update: Landing-based expiry calculation to use the most recent qualifying landing that completes the target threshold. Previously, expiry was set to 90 days after the 3rd most recent qualifying landing.

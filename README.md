@@ -16,7 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.19.0] - 05.12.2025
 
 - Fix: Intermittent error on the Stats/Category page.
 - Update: Landing-based expiry calculation to use the most recent qualifying landing that completes the target threshold. Previously, expiry was set to 90 days after the 3rd most recent qualifying landing.
@@ -35,13 +35,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - Update: Golang and npm packages/security patches
 - New: Custom aircraft category linked to the registration number. All stats, filters and currency also supports new custom categories.
-
-## [3.17.0] - 13.11.2025
-
-- Update: Golang and npm packages/security patches
-- Fix: Optimized the currency page to refresh the state after a flight record is updated.
-- New: Add support for imports from Leon application.
-- Fix: Flights for the selected person were shown in random order.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
