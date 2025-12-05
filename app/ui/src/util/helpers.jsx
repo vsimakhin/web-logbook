@@ -217,8 +217,10 @@ export const getTotalsByAircraft = (flights, type, models, aircrafts, customFiel
       // Normal case: real aircraft
       if (type === "category") {
         keys = modelCategories[aircraftType] ?? [aircraftType];
-        const extra = ac.category.split(',').map(c => c.trim()).filter(Boolean);
-        keys = [...new Set([...keys, ...extra])];
+        if (ac) {
+          const extra = ac.category.split(',').map(c => c.trim()).filter(Boolean);
+          keys = [...new Set([...keys, ...extra])];
+        }
       } else {
         keys = [aircraftType];
       }
