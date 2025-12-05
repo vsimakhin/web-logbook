@@ -18,6 +18,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Fix: Intermittent error on the Stats/Category page.
 - Update: Landing-based expiry calculation to use the most recent qualifying landing that completes the target threshold. Previously, expiry was set to 90 days after the 3rd most recent qualifying landing.
 - Update: Golang and npm packages/security patches
 
