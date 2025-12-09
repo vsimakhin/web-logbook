@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Added option to update aircraft type in Aircrafts table, which also will update all logbook entries.
+
 ## [3.19.0] - 05.12.2025
 
 - Fix: Intermittent error on the Stats/Category page.
