@@ -37,10 +37,13 @@ const SaveButton = ({ aircraft, onClose }) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
       await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
+      if (aircraft.model_change) {
+        await queryClient.invalidateQueries({ queryKey: ['logbook'] });
+      }
     }
   });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to update categories' });
-  useSuccessNotification({ isSuccess, message: 'Categories updates' });
+  useErrorNotification({ isError, error, fallbackMessage: 'Failed to update aircraft' });
+  useSuccessNotification({ isSuccess, message: 'Aircraft updated' });
 
   const handleOnClick = async () => {
     await update();
@@ -68,7 +71,7 @@ export const EditAircraftModal = ({ open, onClose, payload }) => {
           <CardHeader title="Edit Aircraft"
             action={
               <>
-                <SaveButton aircraft={aircraft} onClose={onClose} />
+                <SaveButton aircraft={{ ...aircraft, model_change: (aircraft.model !== payload.model) }} onClose={onClose} />
                 <CloseDialogButton onClose={onClose} />
               </>
             }
@@ -84,7 +87,6 @@ export const EditAircraftModal = ({ open, onClose, payload }) => {
               id="model"
               label="Type"
               handleChange={handleChange} value={aircraft.model}
-              disabled
             />
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               handleChange={handleChange}
@@ -104,9 +106,14 @@ export const EditAircraftModal = ({ open, onClose, payload }) => {
             />
           </Grid>
           <Divider sx={{ m: 1 }} />
-          <Typography variant="caption" color="textSecondary">
+          <Typography variant="caption" color="textSecondary" display="block">
             * To create a new category, type the name in the input field and press Enter
           </Typography>
+          {(aircraft.model !== payload.model) && (
+            <Typography variant="caption" color="error" display="block">
+              * Changing the aircraft type will update all logbook flights with this aircraft
+            </Typography>
+          )}
         </CardContent>
       </Card >
     </Dialog>
