@@ -20,6 +20,7 @@ import AircraftCategories from '../UIElements/AircraftCategories';
 import { updateAircraft } from '../../util/http/aircraft';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
+import AircraftType from '../UIElements/AircraftType';
 
 const CloseDialogButton = ({ onClose }) => {
   return (
@@ -83,10 +84,10 @@ export const EditAircraftModal = ({ open, onClose, payload }) => {
               handleChange={handleChange} value={aircraft.reg}
               disabled
             />
-            <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+            <AircraftType gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="model"
-              label="Type"
-              handleChange={handleChange} value={aircraft.model}
+              handleChange={handleChange}
+              value={aircraft.model}
             />
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               handleChange={handleChange}
@@ -107,12 +108,17 @@ export const EditAircraftModal = ({ open, onClose, payload }) => {
           </Grid>
           <Divider sx={{ m: 1 }} />
           <Typography variant="caption" color="textSecondary" display="block">
-            * To create a new category, type the name in the input field and press Enter
+            * To create a new category, type the name in the input field and press `Enter`.
           </Typography>
           {(aircraft.model !== payload.model) && (
-            <Typography variant="caption" color="error" display="block">
-              * Changing the aircraft type will update all logbook flights with this aircraft
-            </Typography>
+            <>
+              <Typography variant="caption" color="error" display="block">
+                * Changing the aircraft type will update all logbook flights with this aircraft.
+              </Typography>
+              <Typography variant="caption" color="warning" display="block">
+                * If it&apos;s a new type, you will need to set the categories in the `Types & Categories` table.
+              </Typography>
+            </>
           )}
         </CardContent>
       </Card >
