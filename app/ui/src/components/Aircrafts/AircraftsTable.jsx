@@ -18,7 +18,7 @@ import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
 import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import EditCustomCategoriesModal from './EditCustomCategoriesModal';
+import EditAircraftModal from './EditAircraftModal';
 import { useDialogs } from '@toolpad/core/useDialogs';
 
 const paginationKey = 'aircrafts-table-page-size';
@@ -73,13 +73,13 @@ export const AircraftsTable = ({ ...props }) => {
   const renderRowActions = useCallback(({ row }) => {
     const payload = row.original;
     return (
-      <Tooltip title="Edit Custom Category">
-        <IconButton onClick={async () => await dialogs.open(EditCustomCategoriesModal, payload)}>
+      <Tooltip title="Edit Aircraft">
+        <IconButton onClick={async () => await dialogs.open(EditAircraftModal, payload)}>
           <EditOutlinedIcon fontSize='small' />
         </IconButton>
       </Tooltip >
     );
-  }, [dialogs, EditCustomCategoriesModal]);
+  }, [dialogs]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -95,7 +95,7 @@ export const AircraftsTable = ({ ...props }) => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);

@@ -29,11 +29,11 @@ const CloseDialogButton = ({ onClose }) => {
   );
 }
 
-const SaveButton = ({ category, onClose }) => {
+const SaveButton = ({ aircraft, onClose }) => {
   const navigate = useNavigate();
 
   const { mutateAsync: update, isError, error, isSuccess } = useMutation({
-    mutationFn: () => updateAircraft({ payload: category, navigate }),
+    mutationFn: () => updateAircraft({ payload: aircraft, navigate }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
       await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
@@ -54,21 +54,21 @@ const SaveButton = ({ category, onClose }) => {
   );
 }
 
-export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
-  const [category, setCategory] = useState({ ...payload });
+export const EditAircraftModal = ({ open, onClose, payload }) => {
+  const [aircraft, setAircraft] = useState({ ...payload });
 
   const handleChange = (key, value) => {
-    setCategory(prev => ({ ...prev, [key]: value }));
+    setAircraft(prev => ({ ...prev, [key]: value }));
   };
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader title="Edit Custom Aircraft Categories"
+          <CardHeader title="Edit Aircraft"
             action={
               <>
-                <SaveButton category={category} onClose={onClose} />
+                <SaveButton aircraft={aircraft} onClose={onClose} />
                 <CloseDialogButton onClose={onClose} />
               </>
             }
@@ -77,18 +77,18 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
             <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="reg"
               label="Registration"
-              handleChange={handleChange} value={category.reg}
+              handleChange={handleChange} value={aircraft.reg}
               disabled
             />
             <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="model"
               label="Type"
-              handleChange={handleChange} value={category.model}
+              handleChange={handleChange} value={aircraft.model}
               disabled
             />
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               handleChange={handleChange}
-              value={category.model_category ? category.model_category.split(',') : []}
+              value={aircraft.model_category ? aircraft.model_category.split(',') : []}
               label="Categories for Type"
               tooltip="Categories for Type"
               options="models"
@@ -97,7 +97,7 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               id="custom_category"
               handleChange={handleChange}
-              value={category.custom_category ? category.custom_category.split(',') : []}
+              value={aircraft.custom_category ? aircraft.custom_category.split(',') : []}
               label="Custom Aircraft Categories"
               tooltip="Custom Aircraft Categories"
               options="custom"
@@ -113,4 +113,4 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
   )
 }
 
-export default EditCustomCategoriesModal;
+export default EditAircraftModal;
