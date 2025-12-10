@@ -20,6 +20,7 @@ import AircraftCategories from '../UIElements/AircraftCategories';
 import { updateAircraft } from '../../util/http/aircraft';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
+import AircraftType from '../UIElements/AircraftType';
 
 const CloseDialogButton = ({ onClose }) => {
   return (
@@ -29,18 +30,21 @@ const CloseDialogButton = ({ onClose }) => {
   );
 }
 
-const SaveButton = ({ category, onClose }) => {
+const SaveButton = ({ aircraft, onClose }) => {
   const navigate = useNavigate();
 
   const { mutateAsync: update, isError, error, isSuccess } = useMutation({
-    mutationFn: () => updateAircraft({ payload: category, navigate }),
+    mutationFn: () => updateAircraft({ payload: aircraft, navigate }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
       await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
+      if (aircraft.model_change) {
+        await queryClient.invalidateQueries({ queryKey: ['logbook'] });
+      }
     }
   });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to update categories' });
-  useSuccessNotification({ isSuccess, message: 'Categories updates' });
+  useErrorNotification({ isError, error, fallbackMessage: 'Failed to update aircraft' });
+  useSuccessNotification({ isSuccess, message: 'Aircraft updated' });
 
   const handleOnClick = async () => {
     await update();
@@ -54,21 +58,21 @@ const SaveButton = ({ category, onClose }) => {
   );
 }
 
-export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
-  const [category, setCategory] = useState({ ...payload });
+export const EditAircraftModal = ({ open, onClose, payload }) => {
+  const [aircraft, setAircraft] = useState({ ...payload });
 
   const handleChange = (key, value) => {
-    setCategory(prev => ({ ...prev, [key]: value }));
+    setAircraft(prev => ({ ...prev, [key]: value }));
   };
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader title="Edit Custom Aircraft Categories"
+          <CardHeader title="Edit Aircraft"
             action={
               <>
-                <SaveButton category={category} onClose={onClose} />
+                <SaveButton aircraft={{ ...aircraft, model_change: (aircraft.model !== payload.model) }} onClose={onClose} />
                 <CloseDialogButton onClose={onClose} />
               </>
             }
@@ -77,18 +81,17 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
             <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="reg"
               label="Registration"
-              handleChange={handleChange} value={category.reg}
+              handleChange={handleChange} value={aircraft.reg}
               disabled
             />
-            <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+            <AircraftType gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="model"
-              label="Type"
-              handleChange={handleChange} value={category.model}
-              disabled
+              handleChange={handleChange}
+              value={aircraft.model}
             />
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               handleChange={handleChange}
-              value={category.model_category ? category.model_category.split(',') : []}
+              value={aircraft.model_category ? aircraft.model_category.split(',') : []}
               label="Categories for Type"
               tooltip="Categories for Type"
               options="models"
@@ -97,20 +100,30 @@ export const EditCustomCategoriesModal = ({ open, onClose, payload }) => {
             <AircraftCategories gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
               id="custom_category"
               handleChange={handleChange}
-              value={category.custom_category ? category.custom_category.split(',') : []}
+              value={aircraft.custom_category ? aircraft.custom_category.split(',') : []}
               label="Custom Aircraft Categories"
               tooltip="Custom Aircraft Categories"
               options="custom"
             />
           </Grid>
           <Divider sx={{ m: 1 }} />
-          <Typography variant="caption" color="textSecondary">
-            * To create a new category, type the name in the input field and press Enter
+          <Typography variant="caption" color="textSecondary" display="block">
+            * To create a new category, type the name in the input field and press `Enter`.
           </Typography>
+          {(aircraft.model !== payload.model) && (
+            <>
+              <Typography variant="caption" color="error" display="block">
+                * Changing the aircraft type will update all logbook flights with this aircraft.
+              </Typography>
+              <Typography variant="caption" color="warning" display="block">
+                * If it&apos;s a new type, you will need to set the categories in the `Types & Categories` table.
+              </Typography>
+            </>
+          )}
         </CardContent>
       </Card >
     </Dialog>
   )
 }
 
-export default EditCustomCategoriesModal;
+export default EditAircraftModal;

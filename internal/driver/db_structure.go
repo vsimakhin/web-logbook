@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "16"
+	schemaVersion = "17"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -228,7 +228,7 @@ var aircraftsView = NewView("aircrafts_view",
 							ELSE ''
 						END
 					) AS categories,
-					ac.categories AS model_categories,
+					IFNULL(ac.categories,'') AS model_categories,
 					a.custom_categories
 				FROM aircrafts a
 				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
@@ -248,7 +248,7 @@ var aircraftsView = NewView("aircrafts_view",
 							END
 						)
 					) AS categories,
-					ac.categories AS model_categories,
+					IFNULL(ac.categories,'') AS model_categories,
 					a.custom_categories
 				FROM aircrafts a
 				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model

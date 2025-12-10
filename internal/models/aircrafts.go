@@ -244,14 +244,41 @@ func (m *DBModel) UpdateAircraftModelsCategories(category Category) (err error) 
 	return nil
 }
 
+func (m *DBModel) GetAircraft(reg string) (aircraft Aircraft, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+	query := `SELECT
+				reg_name, aircraft_model, categories, model_categories, custom_categories
+			FROM aircrafts_view
+			WHERE reg_name = ?`
+	row := m.DB.QueryRowContext(ctx, query, reg)
+
+	err = row.Scan(&aircraft.Reg, &aircraft.Model, &aircraft.Category, &aircraft.ModelCategory, &aircraft.CustomCategory)
+	return aircraft, err
+}
+
 func (m *DBModel) UpdateAircraft(aircraft Aircraft) (err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := `UPDATE aircrafts
-		SET custom_categories = ?
-		WHERE reg_name = ?`
-	_, err = m.DB.ExecContext(ctx, query, aircraft.CustomCategory, aircraft.Reg)
+	// get existing aircraft
+	existingAircraft, err := m.GetAircraft(aircraft.Reg)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	// update aircraft record
+	query := `UPDATE aircrafts
+		SET custom_categories = ?, aircraft_model = ?
+		WHERE reg_name = ?`
+	_, err = m.DB.ExecContext(ctx, query, aircraft.CustomCategory, aircraft.Model, aircraft.Reg)
+
+	// if aircraft model was changed, update logbook records
+	if err == nil && existingAircraft.Model != aircraft.Model {
+		query = `UPDATE logbook
+			SET aircraft_model = ?
+			WHERE aircraft_model = ? AND reg_name = ?`
+		_, err = m.DB.ExecContext(ctx, query, aircraft.Model, existingAircraft.Model, aircraft.Reg)
+	}
+	return err
 }
