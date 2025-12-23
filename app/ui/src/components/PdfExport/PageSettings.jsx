@@ -48,89 +48,89 @@ const COLUMN_CONFIG = [
 const HEADERS_CONFIG = [
   {
     size: { xs: 12, sm: 2, md: 3, lg: 2, xl: 2 },
-    group: [{ id: "date", label: "Date", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }],
+    group: [{ id: "date", label: "Date", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }, col: "col1" }],
   },
   {
     size: { xs: 12, sm: 5, md: 9, lg: 5, xl: 5 },
     group: [
-      { id: "departure", label: "Departure Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 } },
-      { id: "dep_place", label: "Place", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
-      { id: "dep_time", label: "Time", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
+      { id: "departure", label: "Departure Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }, col: "col2,col3" },
+      { id: "dep_place", label: "Place", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col2" },
+      { id: "dep_time", label: "Time", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col3" },
     ],
   },
   {
     size: { xs: 12, sm: 5, md: 12, lg: 5, xl: 5 },
     group: [
-      { id: "arrival", label: "Arrival Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 } },
-      { id: "arr_place", label: "Place", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
-      { id: "arr_time", label: "Time", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
+      { id: "arrival", label: "Arrival Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }, col: "col4,col5" },
+      { id: "arr_place", label: "Place", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col4" },
+      { id: "arr_time", label: "Time", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col5" },
     ],
   },
   {
     size: { xs: 12, sm: 6, md: 12, lg: 6, xl: 6 },
     group: [
-      { id: "aircraft", label: "Aircraft Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 } },
-      { id: "model", label: "Type", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
-      { id: "reg", label: "Reg", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
+      { id: "aircraft", label: "Aircraft Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }, col: "col6,col7" },
+      { id: "model", label: "Type", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col6" },
+      { id: "reg", label: "Reg", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col7" },
     ],
   },
   {
     size: { xs: 12, sm: 6, md: 12, lg: 6, xl: 6 },
     group: [
-      { id: "spt", label: "Single Pilot Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 } },
-      { id: "se", label: "SE", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
-      { id: "me", label: "ME", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
+      { id: "spt", label: "Single Pilot Header", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }, col: "col8,col9" },
+      { id: "se", label: "SE", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col8" },
+      { id: "me", label: "ME", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col9" },
     ],
   },
   {
     size: { xs: 12, sm: 4, md: 4, lg: 3, xl: 3 },
-    group: [{ id: "mcc", label: "MCC Time", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }],
+    group: [{ id: "mcc", label: "MCC Time", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }, col: "col10" }],
   },
   {
     size: { xs: 12, sm: 4, md: 4, lg: 3, xl: 3 },
-    group: [{ id: "total", label: "Total Time", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }],
+    group: [{ id: "total", label: "Total Time", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }, col: "col11" }],
   },
   {
     size: { xs: 12, sm: 4, md: 4, lg: 3, xl: 3 },
-    group: [{ id: "pic_name", label: "PIC Name", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }],
+    group: [{ id: "pic_name", label: "PIC Name", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }, col: "col12" }],
   },
   {
     size: { xs: 12, sm: 5, md: 12, lg: 5, xl: 5 },
     group: [
-      { id: "landings", label: "Landings", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 } },
-      { id: "land_day", label: "Day", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
-      { id: "land_night", label: "Night", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
+      { id: "landings", label: "Landings", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }, col: "col13,col14" },
+      { id: "land_day", label: "Day", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col13" },
+      { id: "land_night", label: "Night", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col14" },
     ],
   },
   {
     size: { xs: 12, sm: 7, md: 12, lg: 7, xl: 7 },
     group: [
-      { id: "oct", label: "Operational Condition Time", size: { xs: 8, sm: 8, md: 8, lg: 8, xl: 8 } },
-      { id: "night", label: "Night", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 } },
-      { id: "ifr", label: "IFR", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 } },
+      { id: "oct", label: "Operational Condition Time", size: { xs: 8, sm: 8, md: 8, lg: 8, xl: 8 }, col: "col15,col16" },
+      { id: "night", label: "Night", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col15" },
+      { id: "ifr", label: "IFR", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col16" },
     ],
   },
   {
     size: { xs: 12, sm: 12, md: 12, lg: 10, xl: 10 },
     group: [
-      { id: "pft", label: "Pilot Function Time", size: { xs: 4, sm: 4, md: 4, lg: 4, xl: 4 } },
-      { id: "pic", label: "PIC", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 } },
-      { id: "cop", label: "CoPilot", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 } },
-      { id: "dual", label: "Dual", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 } },
-      { id: "instr", label: "Instr", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 } },
+      { id: "pft", label: "Pilot Function Time", size: { xs: 4, sm: 4, md: 4, lg: 4, xl: 4 }, col: "col17,col18,col19,col20" },
+      { id: "pic", label: "PIC", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col17" },
+      { id: "cop", label: "CoPilot", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col18" },
+      { id: "dual", label: "Dual", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col19" },
+      { id: "instr", label: "Instr", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col20" },
     ],
   },
   {
     size: { xs: 12, sm: 6, md: 12, lg: 6, xl: 6 },
     group: [
-      { id: "fstd", label: "FSTD", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 } },
-      { id: "sim_type", label: "Type", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
-      { id: "sim_time", label: "Time", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 } },
+      { id: "fstd", label: "FSTD", size: { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }, col: "col21,col22" },
+      { id: "sim_type", label: "Type", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col21" },
+      { id: "sim_time", label: "Time", size: { xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }, col: "col22" },
     ],
   },
   {
     size: { xs: 12, sm: 6, md: 12, lg: 6, xl: 6 },
-    group: [{ id: "remarks", label: "Remarks", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }],
+    group: [{ id: "remarks", label: "Remarks", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }, col: "col23" }],
   },
 ];
 
@@ -138,6 +138,7 @@ export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnCh
   const theme = useTheme();
   const borderRadius = theme.shape.borderRadius;
 
+  console.log(pdfSettings.columns)
   return (
     <>
       <Grid container spacing={1} columns={16} >
@@ -174,7 +175,7 @@ export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnCh
         {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
           <Grid size={size} key={`group-${groupIndex}`}>
             <Grid container spacing={0}>
-              {group.map(({ id, label, size: fieldSize }, fieldIndex) => (
+              {group.map(({ id, label, size: fieldSize, col }, fieldIndex) => (
                 <TextField key={id}
                   id={id}
                   label={label}
@@ -191,6 +192,7 @@ export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnCh
                       borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
                     }
                   }}
+                  disabled={col && col.split(',').every(c => parseInt(pdfSettings.columns[c]) === 0)}
                 />
               ))}
             </Grid>
