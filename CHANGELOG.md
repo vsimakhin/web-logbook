@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Hide columns in the PDF export if the field size is set to 0.
 - New: Added option to update aircraft type in Aircrafts table, which also will update all logbook entries.
 
 ## [3.19.0] - 05.12.2025
