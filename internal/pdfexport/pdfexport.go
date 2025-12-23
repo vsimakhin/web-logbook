@@ -545,6 +545,10 @@ func (p *PDFExporter) printBodyRemarksCell(w float64, value string, fill bool) {
 
 // printFooterLeftBlock prints left block in the footer of the logbook
 func (p *PDFExporter) printFooterLeftBlock(totalName string) {
+	if p.columns.w4[0] <= 0 {
+		return
+	}
+
 	var border string
 	switch totalName {
 	case FooterThisPage:
