@@ -262,9 +262,10 @@ func (p *PDFExporter) initColumns() {
 // initPDF initializes the PDF object
 func (p *PDFExporter) initPDF() error {
 	// init pdf object
-	if p.Format == PDFA4 {
+	switch p.Format {
+	case PDFA4:
 		p.pdf = fpdf.New("L", "mm", "A4", "")
-	} else if p.Format == PDFA5 {
+	case PDFA5:
 		p.pdf = fpdf.New("L", "mm", "A5", "")
 	}
 
@@ -444,16 +445,25 @@ func (p *PDFExporter) setFontLogbookBody() {
 
 // printBodyTimeCell prints time cell in the row of the logbook
 func (p *PDFExporter) printBodyTimeCell(w float64, value string, fill bool) {
+	if w <= 0 {
+		return
+	}
 	p.pdf.CellFormat(w, p.Export.BodyRow, value, "1", 0, "C", fill, 0, "")
 }
 
 // printBodyTextCell prints text cell in the row of the logbook
 func (p *PDFExporter) printBodyTextCell(w float64, value string, fill bool) {
+	if w <= 0 {
+		return
+	}
 	p.pdf.CellFormat(w, p.Export.BodyRow, value, "1", 0, "L", fill, 0, "")
 }
 
 // printFooterCell prints cell in the footer of the logbook
 func (p *PDFExporter) printFooterCell(w float64, value string) {
+	if w <= 0 {
+		return
+	}
 	p.pdf.CellFormat(w, p.Export.FooterRow, value, "1", 0, "C", true, 0, "")
 }
 
@@ -507,6 +517,9 @@ func (p *PDFExporter) formatTimeField(timeField string) string {
 
 // printBodyRemarksCell prints remarks cell in the row of the logbook
 func (p *PDFExporter) printBodyRemarksCell(w float64, value string, fill bool) {
+	if w <= 0 {
+		return
+	}
 
 	wFactored := int(w * 0.9)
 	vL := len(value)
@@ -549,7 +562,8 @@ func (p *PDFExporter) printFooterLeftBlock(totalName string) {
 func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
 	p.pdf.SetFont(fontRegular, "", SignatureFontSize)
 
-	if totalName == FooterThisPage {
+	switch totalName {
+	case FooterThisPage:
 		if p.Export.IsExtended {
 			// let's save the coordinates
 			p.signatureBlockX, p.signatureBlockY = p.pdf.GetXY()
@@ -558,7 +572,7 @@ func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
 		} else {
 			p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, p.Signature, "LTR", 0, "C", true, 0, "")
 		}
-	} else if totalName == FooterPreviousPage {
+	case FooterPreviousPage:
 		p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, "", "LR", 0, "", true, 0, "")
 
 		if p.Export.IsExtended {
@@ -578,7 +592,7 @@ func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
 			// empty tiny cell to set the footerRowHeight back
 			p.pdf.CellFormat(0.01, p.Export.FooterRow, "", "", 0, "", true, 0, "")
 		}
-	} else {
+	default:
 		p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, p.OwnerName, "LBR", 0, "C", true, 0, "")
 		p.printSignature()
 	}
