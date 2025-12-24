@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { useCallback } from "react";
-import { useDialogs } from "@toolpad/core/useDialogs";
+import { useCallback, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 // MUI UI
 import MenuItem from '@mui/material/MenuItem';
+import CircularProgress from "@mui/material/CircularProgress";
 // MUI Icons
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 // Custom components
@@ -11,8 +11,8 @@ import { downloadDBFile, fetchDBFileName } from "../../../../util/http/db";
 import { useErrorNotification, useSuccessNotification } from "../../../../hooks/useAppNotifications";
 
 export const DBDownloadButton = ({ handleCloseMenu }) => {
+  const [isDownloading, setIsDownloading] = useState(false);
   const navigate = useNavigate();
-  const dialogs = useDialogs();
 
   const { data: dbfilename = "web-logbook.sql" } = useQuery({
     queryKey: ['db', 'filename'],
@@ -27,7 +27,7 @@ export const DBDownloadButton = ({ handleCloseMenu }) => {
     onSuccess: (blob) => {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = dbfilename;
+      link.download = dbfilename.split("/").pop(); // Extract filename from path
       link.click();
       URL.revokeObjectURL(link.href);
     },
@@ -36,13 +36,16 @@ export const DBDownloadButton = ({ handleCloseMenu }) => {
   useSuccessNotification({ isSuccess: isDownloadSuccess, message: 'Database downloaded' });
 
   const handleDownload = useCallback(async () => {
+    setIsDownloading(true);
     await downloadDB();
+    setIsDownloading(false);
     handleCloseMenu();
-  }, [downloadDB]);
+  }, [downloadDB, handleCloseMenu, setIsDownloading]);
 
   return (
-    <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleDownload}>
-      <CloudDownloadOutlinedIcon color="action" sx={{ m: 1 }} />Download Database
+    <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleDownload} disabled={isDownloading}>
+      <CloudDownloadOutlinedIcon color="action" sx={{ m: 1 }} />Download Database &nbsp;
+      {isDownloading && <CircularProgress size={20} />}
     </MenuItem>
   )
 }

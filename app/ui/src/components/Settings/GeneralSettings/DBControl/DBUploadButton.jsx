@@ -52,12 +52,13 @@ export const DBUploadButton = ({ handleCloseMenu }) => {
       }
     }
     handleCloseMenu();
-  }, [uploadDB]);
+  }, [uploadDB, dialogs, handleCloseMenu]);
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} component="label" disabled={isPending}>
       <input hidden type="file" name="document" id="document" onChange={onFileChange} accept={fileExtension} />
-      <CloudUploadOutlinedIcon color="action" sx={{ m: 1 }} />{isPending && <CircularProgress size={24} />}Upload Database
+      <CloudUploadOutlinedIcon color="action" sx={{ m: 1 }} />Upload Database&nbsp;
+      {isPending && <CircularProgress size={20} />}
     </MenuItem>
   )
 }
