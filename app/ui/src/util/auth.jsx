@@ -2,7 +2,7 @@ import { TOKEN_KEY, USERNAME_KEY } from '../constants/constants';
 
 export const removeAuthData = () => {
   localStorage.removeItem(USERNAME_KEY);
-  localStorage.removeItem(USERNAME_KEY);
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export const setAuthData = (data) => {
