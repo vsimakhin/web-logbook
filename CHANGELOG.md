@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.20.0] - 25.12.2025
 
 - Update: Golang and npm packages/security patches.
 - Update: Added another option (dd/mm/yy) for date autorecognition during the import.

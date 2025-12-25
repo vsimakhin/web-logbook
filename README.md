@@ -16,7 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.20.0] - 25.12.2025
 
 - Update: Golang and npm packages/security patches.
 - Update: Added another option (dd/mm/yy) for date autorecognition during the import.
@@ -29,20 +29,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Fix: Intermittent error on the Stats/Category page.
 - Update: Landing-based expiry calculation to use the most recent qualifying landing that completes the target threshold. Previously, expiry was set to 90 days after the 3rd most recent qualifying landing.
 - Update: Golang and npm packages/security patches
-
-## [3.18.2] - 19.11.2025
-
-- Fix: License notification error if there are no licenses stored.
-- Fix: Aircraft list update when the flight is removed from the logbook.
-
-## [3.18.1] - 18.11.2025
-
-- Fix: Error loading currency page.
-
-## [3.18.0] - 18.11.2025
-
-- Update: Golang and npm packages/security patches
-- New: Custom aircraft category linked to the registration number. All stats, filters and currency also supports new custom categories.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
