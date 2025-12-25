@@ -38,7 +38,7 @@ export const useLogbook = () => {
     }
 
     return totalDistance;
-  }, [getEnroute]);
+  }, [getEnroute, getDistance]);
 
   // mutation to fetch night time
   const { mutateAsync: getNightTime, isError: isErrorNightTime, error: errorNightTime } = useMutation({
