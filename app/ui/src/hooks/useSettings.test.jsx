@@ -150,7 +150,6 @@ describe("useSettings", () => {
     const { result } = renderHook(() => useSettings());
 
     expect(result.current).toHaveProperty("settings");
-    expect(result.current).toHaveProperty("setSettings");
     expect(result.current).toHaveProperty("data");
     expect(result.current).toHaveProperty("isLoading");
     expect(result.current).toHaveProperty("fieldName");

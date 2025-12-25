@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { fetchSettings } from '../util/http/settings';
@@ -74,10 +74,9 @@ const defaultFieldNames = {
 }
 export const useSettings = () => {
   const navigate = useNavigate();
-  const [settings, setSettings] = useState({ standard_fields_headers: {} });
 
   // Load settings
-  const { data, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
+  const { data = { standard_fields_headers: {} }, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
     queryKey: ['settings'],
     queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
     staleTime: 3600000,
@@ -86,24 +85,18 @@ export const useSettings = () => {
   });
   useErrorNotification({ isError: isSettingsError, error: settingsError, fallbackMessage: 'Failed to load settings' });
 
-  useEffect(() => {
-    if (data) {
-      setSettings(data);
-    }
-  }, [data]);
-
   const paginationOptions = useMemo(() => {
     const defaultOptions = [5, 10, 15, 20, 25, 30, 50, 100];
-    if (settings?.logbook_pagination) {
+    if (data?.logbook_pagination) {
       try {
-        const options = settings.logbook_pagination.split(',').map(opt => parseInt(opt.trim()));
+        const options = data.logbook_pagination.split(',').map(opt => parseInt(opt.trim()));
         return options.length > 0 ? options : defaultOptions;
-      } catch (error) {
+      } catch {
         return defaultOptions;
       }
     }
     return defaultOptions;
-  }, [settings?.logbook_pagination]);
+  }, [data?.logbook_pagination]);
 
   /**
    * Get standard field name for a field or column
@@ -117,26 +110,25 @@ export const useSettings = () => {
     }
 
     // check if custom names for standard fields are enabled
-    if (!settings?.enable_custom_names) {
+    if (!data?.enable_custom_names) {
       return defaultFieldNames[section][fieldId] || fieldId;
     }
 
     // Try to get from settings first
-    const field = settings?.standard_fields_headers?.[fieldId];
+    const field = data?.standard_fields_headers?.[fieldId];
     if (field) {
       return field;
     }
 
     console.warn(`Field not found for: ${fieldId}`);
     return fieldId;
-  }, [settings, isSettingsLoading]);
+  }, [data, isSettingsLoading]);
 
   const fieldNameF = useCallback((fieldId) => fieldName(fieldId, "flightRecord"), [fieldName]);
 
   return {
-    settings,
-    setSettings,
-    data: settings,
+    settings: data,
+    data,
     isLoading: isSettingsLoading,
     fieldName,
     fieldNameF,
