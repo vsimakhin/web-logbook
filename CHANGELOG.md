@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: Golang and npm packages/security patches.
 - Update: Added another option (dd/mm/yy) for date autorecognition during the import.
 - Update: Added a circular progress indicator during database download.
 - Update: Hide columns in the PDF export if the field size is set to 0.
