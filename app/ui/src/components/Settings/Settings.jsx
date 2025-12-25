@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
@@ -60,4 +60,4 @@ export const Settings = () => {
   );
 };
 
-export default memo(Settings);
+export default Settings;
