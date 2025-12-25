@@ -18,6 +18,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Added another option (dd/mm/yy) for date autorecognition during the import.
 - Update: Added a circular progress indicator during database download.
 - Update: Hide columns in the PDF export if the field size is set to 0.
 - New: Added option to update aircraft type in Aircrafts table, which also will update all logbook entries.

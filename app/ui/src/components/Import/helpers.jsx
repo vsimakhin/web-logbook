@@ -116,6 +116,14 @@ export const convertToDDMMYYYY = (date) => {
     month = parts[1].padStart(2, "0");
     year = parts[2];
   }
+  // Case: DD/MM/YY
+  else if (parts[2].length === 2) {
+    day = parts[0].padStart(2, "0");
+    month = parts[1].padStart(2, "0");
+
+    const yy = parseInt(parts[2], 10);
+    year = yy < 50 ? `20${parts[2]}` : `19${parts[2]}`;
+  }
   else {
     // Unknown format, just return original
     return date;
