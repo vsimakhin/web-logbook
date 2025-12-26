@@ -1,11 +1,6 @@
 // MUI Icons
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
-import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 
 // Custom
 import HelpButtonDrawer from "../../UIElements/HelpButtonDrawer";

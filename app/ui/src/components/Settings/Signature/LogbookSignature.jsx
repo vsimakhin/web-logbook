@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import SignaturePad from 'signature_pad';
 // MUI
 import Card from '@mui/material/Card';
@@ -10,19 +10,28 @@ import PickColorButton from "./PickColorButton";
 import SaveSignatureButton from "./SaveSignatureButton";
 import UploadSignatureButton from "./UploadSignatureButton";
 
-const ActionButtons = memo(({ settings, handleChange }) => (
+const ActionButtons = ({ settings, handleChange }) => (
   <>
     <UploadSignatureButton handleChange={handleChange} />
     <SaveSignatureButton settings={settings} />
     <ClearSignatureButton handleChange={handleChange} />
     <PickColorButton handleChange={handleChange} />
   </>
-));
+);
 
-export const LogbookSignature = memo(({ settings, handleChange }) => {
+export const LogbookSignature = ({ settings, handleChange }) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
   const penColor = settings?.penColor || '#000000'; // Default color: black
+
+  const handleSave = useCallback(() => {
+    if (signaturePadRef.current?.isEmpty()) {
+      return;
+    }
+    const dataUrl = signaturePadRef.current.toDataURL();
+    handleChange('signature_image', dataUrl);
+  }, [handleChange]);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -55,7 +64,7 @@ export const LogbookSignature = memo(({ settings, handleChange }) => {
         signaturePadRef.current.removeEventListener("endStroke", handleSave);
       }
     };
-  }, [settings.signature_image]);
+  }, [handleSave, penColor, settings.signature_image]);
 
   // Update pen color when user selects a new color
   useEffect(() => {
@@ -64,13 +73,6 @@ export const LogbookSignature = memo(({ settings, handleChange }) => {
     }
   }, [settings.penColor]);
 
-  const handleSave = useCallback(() => {
-    if (signaturePadRef.current?.isEmpty()) {
-      return;
-    }
-    const dataUrl = signaturePadRef.current.toDataURL();
-    handleChange('signature_image', dataUrl);
-  }, [handleChange]);
 
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
@@ -85,6 +87,6 @@ export const LogbookSignature = memo(({ settings, handleChange }) => {
       </CardContent>
     </Card >
   );
-});
+};
 
 export default LogbookSignature;

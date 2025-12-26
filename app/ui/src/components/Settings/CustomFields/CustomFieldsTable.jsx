@@ -71,9 +71,9 @@ export const CustomFieldsTable = () => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+  const renderTopToolbarCustomActions = useCallback(() => (
     <NewCustomFieldButton />
   ), []);
 
