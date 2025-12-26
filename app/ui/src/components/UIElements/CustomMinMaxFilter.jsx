@@ -5,12 +5,17 @@ import Box from "@mui/material/Box";
 export const CustomMinMaxFilter = ({ column, label }) => {
   const [min, max] = column.getFilterValue() || ['', ''];
 
-  const handleChange = (index) => useCallback((event) => {
-    const value = event.target.value;
+  const handleMinChange = useCallback((event) => {
     const filterValues = [...(column.getFilterValue() || ['', ''])];
-    filterValues[index] = value;
+    filterValues[0] = event.target.value;
     column.setFilterValue(filterValues);
-  }, [column, index]);
+  }, [column]);
+
+  const handleMaxChange = useCallback((event) => {
+    const filterValues = [...(column.getFilterValue() || ['', ''])];
+    filterValues[1] = event.target.value;
+    column.setFilterValue(filterValues);
+  }, [column]);
 
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
@@ -19,7 +24,7 @@ export const CustomMinMaxFilter = ({ column, label }) => {
         placeholder=""
         variant="standard"
         value={min}
-        onChange={handleChange(0)}
+        onChange={handleMinChange}
         InputLabelProps={{ shrink: true }}
       />
       <TextField
@@ -27,7 +32,7 @@ export const CustomMinMaxFilter = ({ column, label }) => {
         placeholder=""
         variant="standard"
         value={max}
-        onChange={handleChange(1)}
+        onChange={handleMaxChange}
         InputLabelProps={{ shrink: true }}
       />
     </Box>

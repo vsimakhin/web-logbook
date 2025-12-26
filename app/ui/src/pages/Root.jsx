@@ -40,6 +40,7 @@ const CustomAppTitle = () => {
 
   useEffect(() => {
     if (version && latestRelease?.tag_name) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsNewReleaseAvailable(compareVersions(latestRelease.tag_name, version) === 1);
     }
   }, [version, latestRelease?.tag_name]);

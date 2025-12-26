@@ -23,7 +23,7 @@ import AircraftCategories from "./AircraftCategories";
 import TextField from "./TextField";
 import Select from "./Select";
 import { tableJSONCodec } from "../../constants/constants";
-import { fetchAircraftModelsCategories } from "../../util/http/aircraft";
+import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
 
 const MAP_FILTER_INITIAL_STATE = {
   start_date: dayjs().startOf('year'),
@@ -162,11 +162,12 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
 
     const filteredData = filterData(data, filter, modelsData, aircrafts);
     callbackFunction(filteredData, filter);
-  }, [data, filter, modelsData, aircrafts]);
+  }, [data, filter, modelsData, aircrafts, callbackFunction]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     handleQuickSelect(null, options.defaultQuickSelect)
-  }, [options.defaultQuickSelect]);
+  }, [handleQuickSelect, options.defaultQuickSelect]);
 
   return (
     <Grid container spacing={1}>

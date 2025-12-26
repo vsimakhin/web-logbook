@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import Card from '@mui/material/Card';
@@ -50,7 +50,7 @@ const calculateStats = {
   }
 };
 
-export const CustomFieldsTiles = memo(({ data, customFields }) => {
+export const CustomFieldsTiles = ({ data, customFields }) => {
   const visibleFields = useMemo(() => {
     if (!data || data.length === 0 || !customFields?.length) {
       return [];
@@ -90,6 +90,6 @@ export const CustomFieldsTiles = memo(({ data, customFields }) => {
       </CardContent>
     </Card>
   );
-});
+};
 
 export default CustomFieldsTiles;

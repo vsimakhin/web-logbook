@@ -53,7 +53,7 @@ export const TableFilterDrawer = ({ table, isFilterDrawerOpen, onClose }) => {
       });
 
       return filtered;
-    } catch (error) {
+    } catch {
       return [];
     }
   }, [table, isSettingsLoading]);
