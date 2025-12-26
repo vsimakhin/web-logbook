@@ -31,9 +31,10 @@ export const PdfExport = ({ format }) => {
 
   useEffect(() => {
     if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       format === "A4" ? setPdfSettings(data.export_a4) : setPdfSettings(data.export_a5);
     }
-  }, [data]);
+  }, [data, format]);
 
   const handleChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, [key]: value })) };
   const handleColumnChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, columns: { ...prev.columns, [key]: value } })) };

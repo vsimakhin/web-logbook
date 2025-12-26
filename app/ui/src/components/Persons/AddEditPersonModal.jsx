@@ -19,6 +19,7 @@ import { printPerson } from "../../util/helpers";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { updatePerson, createPerson } from "../../util/http/person";
 
+// eslint-disable-next-line react/display-name
 const CloseDialogButton = memo(({ onClose }) => {
   return (
     <Tooltip title="Close">
@@ -29,6 +30,7 @@ const CloseDialogButton = memo(({ onClose }) => {
   );
 });
 
+// eslint-disable-next-line react/display-name
 const SaveButton = memo(({ person, isNew, onClose }) => {
   const navigate = useNavigate();
 

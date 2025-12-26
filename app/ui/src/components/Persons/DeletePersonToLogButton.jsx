@@ -27,7 +27,7 @@ export const DeletePersonToLogButton = ({ person, logUuid, handleClose }) => {
     if (await dialogs.confirm('Are you sure you want to remove this person from this flight?')) {
       await deleteFunction();
     }
-  }, [dialogs, deleteFunction]);
+  }, [handleClose, dialogs, deleteFunction]);
 
   return (
     <MenuItem onClick={handleDelete} sx={{ p: 0, pr: 1 }}><DeleteOutlinedIcon sx={{ m: 1 }} color="action" />Delete Person</MenuItem>

@@ -6,8 +6,6 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import AddEditPersonModal from './AddEditPersonModal';
-// Custom components and libraries
-
 
 export const AddPersonButton = ({ onSave }) => {
   const dialogs = useDialogs();

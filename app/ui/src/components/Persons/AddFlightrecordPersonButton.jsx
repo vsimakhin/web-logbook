@@ -11,7 +11,7 @@ export const AddFlightrecordPersonButton = ({ id }) => {
   const handleOnClick = useCallback(async () => {
     const payload = { isNew: true, person_uuid: '', role: '', log_uuid: id }
     await dialogs.open(AddEditFlightrecordPersonModal, payload);
-  }, [dialogs]);
+  }, [dialogs, id]);
 
   return (
     <Tooltip title="Add new person">

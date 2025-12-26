@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { memo, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // MUI UI elements
 import Card from "@mui/material/Card";
@@ -83,18 +83,18 @@ export const AddEditFlightrecordPersonModal = ({ open, onClose, payload }) => {
     handleChange('person_uuid', { label: printPerson(person), id: person.uuid });
   }
 
-  const ActionButtons = memo(() => (
+  const ActionButtons = (
     <>
       <SaveButton frPerson={frPerson} onClose={onClose} isNew={isNew} />
       <CloseDialogButton onClose={onClose} />
     </>
-  ));
+  );
 
   return (
     <Dialog fullWidth maxWidth="xs" open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader title="Add person to flight" action={<ActionButtons />} />
+          <CardHeader title="Add person to flight" action={ActionButtons} />
           <Grid container spacing={1}>
             {isNew && (
               <>
