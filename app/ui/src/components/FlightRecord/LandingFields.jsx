@@ -7,7 +7,8 @@ const LANDING_SLOT_PROPS = { htmlInput: { inputMode: "numeric" } };
 
 const getLandingValue = (val) => (val === 0 ? "" : val ?? "");
 
-export const LandingFields = memo(({ flight, handleChange, fieldNameF }) => {
+// eslint-disable-next-line react/display-name
+export const LandingFields = memo(({ day, night, handleChange, fieldNameF }) => {
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
 
   const labels = useMemo(() => (
@@ -23,7 +24,7 @@ export const LandingFields = memo(({ flight, handleChange, fieldNameF }) => {
         id="landings.day"
         label={labels.day}
         handleChange={handleChange}
-        value={getLandingValue(flight.landings.day)}
+        value={getLandingValue(day)}
         slotProps={LANDING_SLOT_PROPS}
       />
       {(visibility?.["landings.night"] ?? true) &&
@@ -31,7 +32,7 @@ export const LandingFields = memo(({ flight, handleChange, fieldNameF }) => {
           id="landings.night"
           label={labels.night}
           handleChange={handleChange}
-          value={getLandingValue(flight.landings.night)}
+          value={getLandingValue(night)}
           slotProps={LANDING_SLOT_PROPS}
         />
       }

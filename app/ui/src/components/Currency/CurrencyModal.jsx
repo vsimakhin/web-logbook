@@ -106,7 +106,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
     });
   }, []);
 
-  const currencyTimeFrame = useCallback(() => {
+  const currencyTimeFrame = () => {
     if (currency.time_frame.unit !== 'all_time' && currency.time_frame.unit !== 'since') {
       return (
         <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
@@ -128,7 +128,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
     } else {
       return null;
     }
-  }, [currency?.time_frame, handleChange]);
+  };
 
   const actionButtons = useMemo(() => (
     <>

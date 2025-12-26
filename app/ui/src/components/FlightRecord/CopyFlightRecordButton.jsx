@@ -26,7 +26,7 @@ export const CopyFlightRecordButton = ({ setFlight, handleCloseMenu }) => {
       key: "flightrecord-copy",
       autoHideDuration: 3000,
     });
-  }, [navigate, setFlight, notifications]);
+  }, [handleCloseMenu, navigate, setFlight, notifications]);
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleCopyFlight}>

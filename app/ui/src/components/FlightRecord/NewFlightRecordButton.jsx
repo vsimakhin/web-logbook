@@ -24,7 +24,7 @@ export const NewFlightRecordButton = ({ setFlight, handleCloseMenu }) => {
         },
       }
     ));
-  }, [navigate, setFlight]);
+  }, [handleCloseMenu, navigate, setFlight]);
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleNewFlight}>

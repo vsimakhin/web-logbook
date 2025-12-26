@@ -82,7 +82,7 @@ export const ShowHideFieldsButton = ({ handleCloseMenu }) => {
   const handleOnClick = useCallback(async () => {
     handleCloseMenu();
     await dialogs.open(ShowHideFieldsModal)
-  }, [handleCloseMenu]);
+  }, [dialogs, handleCloseMenu]);
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleOnClick}>

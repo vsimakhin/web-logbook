@@ -28,7 +28,7 @@ export const DeleteCurrencyButton = ({ payload }) => {
     if (status) {
       await removeCurrency({ payload });
     }
-  }, [dialogs, payload]);
+  }, [dialogs, payload, removeCurrency]);
 
   return (
     <Tooltip title="Delete Currency">
