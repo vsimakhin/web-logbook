@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 // Custom components and libraries
 import CardHeader from '../UIElements/CardHeader';
 
-export const decodeBase64 = async (base64String) => {
+const decodeBase64 = async (base64String) => {
   const binaryString = atob(base64String);
   const uint8Array = new Uint8Array(
     binaryString.split('').map((char) => char.charCodeAt(0))

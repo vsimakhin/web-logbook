@@ -104,7 +104,7 @@ export const ImportTable = () => {
     }
   ], []);
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+  const renderTopToolbarCustomActions = useCallback(() => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
       <ClearTableButton setData={setData} />
       <OpenCSVButton setData={setData} />

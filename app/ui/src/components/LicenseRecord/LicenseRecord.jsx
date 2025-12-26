@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
@@ -34,13 +34,14 @@ export const LicenseRecord = () => {
 
   useEffect(() => {
     if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLicense(data);
     }
   }, [data]);
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setLicense(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   return (
     <>
