@@ -92,7 +92,7 @@ export const CustomAirportsTable = () => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);

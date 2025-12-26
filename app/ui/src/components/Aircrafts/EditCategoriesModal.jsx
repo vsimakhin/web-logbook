@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
@@ -57,9 +57,9 @@ const SaveButton = ({ category, onClose }) => {
 export const EditCategoriesModal = ({ open, onClose, payload }) => {
   const [category, setCategory] = useState({ ...payload });
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setCategory(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>

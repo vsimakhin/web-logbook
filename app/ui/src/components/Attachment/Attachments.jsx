@@ -13,6 +13,14 @@ import Attachment from "./Attachment";
 import AddAttachmentButton from "./AddAttachmentButton";
 import AddTrackButton from "./AddTrackButton";
 
+// eslint-disable-next-line react/display-name
+const ActionButtons = memo(({ id }) => (
+  <>
+    <AddTrackButton id={id} />
+    <AddAttachmentButton id={id} />
+  </>
+));
+
 export const Attachments = ({ id }) => {
   const navigate = useNavigate();
 
@@ -24,13 +32,6 @@ export const Attachments = ({ id }) => {
     gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load attachments' });
-
-  const ActionButtons = memo(({ id }) => (
-    <>
-      <AddTrackButton id={id} />
-      <AddAttachmentButton id={id} />
-    </>
-  ));
 
   return (
     <>

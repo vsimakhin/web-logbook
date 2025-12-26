@@ -38,15 +38,16 @@ export const AttachmentPreview = ({ attachment, open, onClose }) => {
     if (open) {
       loadAttachment();
     }
+  }, [open, loadAttachment]); // trigger load
 
+  // Separate effect strictly for blob cleanup
+  useEffect(() => {
     return () => {
       if (blobUrl) {
         URL.revokeObjectURL(blobUrl);
-        setBlobUrl(null);
-        setMimeType(null);
       }
     };
-  }, [open]);
+  }, [blobUrl]); // Only runs when blobUrl changes (or unmounts)
 
   const renderPreview = () => {
     if (mimeType.startsWith("image/")) {

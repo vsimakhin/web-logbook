@@ -78,7 +78,7 @@ export const AddTrackButton = ({ id }) => {
       });
       console.error(error);
     }
-  }, [upload, uploadTrack, id]);
+  }, [id, upload, uploadTrack, notifications]);
 
   return (
     <>

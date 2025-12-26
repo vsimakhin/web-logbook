@@ -76,7 +76,7 @@ export const CategoriesTable = ({ ...props }) => {
         </IconButton>
       </Tooltip >
     );
-  }, [dialogs, EditCategoriesModal]);
+  }, [dialogs]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -92,7 +92,7 @@ export const CategoriesTable = ({ ...props }) => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);

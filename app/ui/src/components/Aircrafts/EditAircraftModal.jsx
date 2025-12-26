@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
@@ -46,10 +46,10 @@ const SaveButton = ({ aircraft, onClose }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to update aircraft' });
   useSuccessNotification({ isSuccess, message: 'Aircraft updated' });
 
-  const handleOnClick = async () => {
+  const handleOnClick = useCallback(async () => {
     await update();
     onClose();
-  }
+  }, [update, onClose]);
 
   return (
     <Tooltip title="Save">
