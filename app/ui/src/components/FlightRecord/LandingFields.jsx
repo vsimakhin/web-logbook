@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import TextField from "../UIElements/TextField";
 import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from "../../constants/constants";
@@ -7,8 +7,8 @@ const LANDING_SLOT_PROPS = { htmlInput: { inputMode: "numeric" } };
 
 const getLandingValue = (val) => (val === 0 ? "" : val ?? "");
 
-// eslint-disable-next-line react/display-name
-export const LandingFields = memo(({ day, night, handleChange, fieldNameF }) => {
+export const LandingFields = ({ day, night, handleChange, fieldNameF }) => {
+  console.log("landing fields")
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
 
   const labels = useMemo(() => (
@@ -38,6 +38,6 @@ export const LandingFields = memo(({ day, night, handleChange, fieldNameF }) => 
       }
     </>
   );
-});
+};
 
 export default LandingFields;

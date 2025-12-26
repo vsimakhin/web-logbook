@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
@@ -19,8 +19,7 @@ import { printPerson } from "../../util/helpers";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { updatePerson, createPerson } from "../../util/http/person";
 
-// eslint-disable-next-line react/display-name
-const CloseDialogButton = memo(({ onClose }) => {
+const CloseDialogButton = ({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}>
@@ -28,10 +27,9 @@ const CloseDialogButton = memo(({ onClose }) => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
-// eslint-disable-next-line react/display-name
-const SaveButton = memo(({ person, isNew, onClose }) => {
+const SaveButton = ({ person, isNew, onClose }) => {
   const navigate = useNavigate();
 
   const payload = {
@@ -70,7 +68,7 @@ const SaveButton = memo(({ person, isNew, onClose }) => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
 export const AddEditPersonModal = ({ open, onClose, payload }) => {
   const [person, setPerson] = useState({ ...payload });

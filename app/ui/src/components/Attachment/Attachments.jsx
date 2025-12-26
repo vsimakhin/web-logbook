@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { memo } from "react";
 // MUI UI elements
 import LinearProgress from '@mui/material/LinearProgress';
 import Card from '@mui/material/Card';
@@ -13,13 +12,12 @@ import Attachment from "./Attachment";
 import AddAttachmentButton from "./AddAttachmentButton";
 import AddTrackButton from "./AddTrackButton";
 
-// eslint-disable-next-line react/display-name
-const ActionButtons = memo(({ id }) => (
+const ActionButtons = ({ id }) => (
   <>
     <AddTrackButton id={id} />
     <AddAttachmentButton id={id} />
   </>
-));
+);
 
 export const Attachments = ({ id }) => {
   const navigate = useNavigate();
