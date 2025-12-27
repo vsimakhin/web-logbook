@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { memo } from "react";
 // MUI UI elements
 import LinearProgress from '@mui/material/LinearProgress';
 import Card from '@mui/material/Card';
@@ -13,6 +12,13 @@ import Attachment from "./Attachment";
 import AddAttachmentButton from "./AddAttachmentButton";
 import AddTrackButton from "./AddTrackButton";
 
+const ActionButtons = ({ id }) => (
+  <>
+    <AddTrackButton id={id} />
+    <AddAttachmentButton id={id} />
+  </>
+);
+
 export const Attachments = ({ id }) => {
   const navigate = useNavigate();
 
@@ -24,13 +30,6 @@ export const Attachments = ({ id }) => {
     gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load attachments' });
-
-  const ActionButtons = memo(({ id }) => (
-    <>
-      <AddTrackButton id={id} />
-      <AddAttachmentButton id={id} />
-    </>
-  ));
 
   return (
     <>

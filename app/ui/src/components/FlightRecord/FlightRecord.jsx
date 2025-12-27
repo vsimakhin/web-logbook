@@ -22,7 +22,6 @@ export const FlightRecord = () => {
   const navigate = useNavigate();
 
   const [flight, setFlight] = useState({ ...FLIGHT_INITIAL_STATE, uuid: id });
-  const [mapData, setMapData] = useState([]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['flight', id],
@@ -38,15 +37,14 @@ export const FlightRecord = () => {
 
   useEffect(() => {
     if (data) {
-      data.redraw = Math.random(); // trigger map redraw
-      setFlight(data);
+      setFlight({ ...data, redraw: Math.random() });
     }
   }, [data]);
 
-  useEffect(() => {
-    if (flight) {
-      setMapData([flight]);
-    }
+  const mapData = useMemo(() => {
+    if (flight) return [flight];
+    return [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flight.redraw, flight.distance]);
 
   const handleChange = useCallback((key, value) => {

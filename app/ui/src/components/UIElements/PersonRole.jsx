@@ -1,11 +1,10 @@
-import { memo } from "react";
 // Custom components
 import Select from "./Select";
 import useSettings from "../../hooks/useSettings";
 
 export const defaultPersonRoles = ['Captain', 'First officer', 'Second officer', 'Flight instructor', 'Examiner', 'Cabin crew'];
 
-export const PersonRole = memo(({ gsize, id = "role", label = "Role", value, handleChange, ...props }) => {
+export const PersonRole = ({ gsize, id = "role", label = "Role", value, handleChange, ...props }) => {
 
   const { settings } = useSettings();
 
@@ -25,6 +24,6 @@ export const PersonRole = memo(({ gsize, id = "role", label = "Role", value, han
       {...props}
     />
   );
-});
+};
 
 export default PersonRole;

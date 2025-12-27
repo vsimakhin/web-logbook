@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 // MUI Icons
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 // MUI UI elements

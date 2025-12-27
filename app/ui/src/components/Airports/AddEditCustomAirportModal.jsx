@@ -64,9 +64,9 @@ export const AddEditCustomAirportModal = ({ open, onClose, payload }) => {
   const [airport, setAirport] = useState({ ...payload });
   const isNew = payload.isNew;
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setAirport(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>

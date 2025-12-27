@@ -72,6 +72,7 @@ export const createCustomFieldColumn = (field) => {
   }
 
   // Add AggregatedCell for grouped display
+  // eslint-disable-next-line react/display-name
   baseColumn.AggregatedCell = ({ cell }) => {
     const v = cell.getValue();
     const isZero = (v === 0) || (v === "00:00");

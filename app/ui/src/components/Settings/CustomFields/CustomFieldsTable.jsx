@@ -62,7 +62,7 @@ export const CustomFieldsTable = () => {
     { accessorKey: "category", header: "Category", size: 150 },
     { accessorKey: "type", header: "Type", size: 100 },
     { accessorKey: "stats_function", header: "Stats Function", size: 150 },
-  ], [data]);
+  ], []);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
@@ -71,9 +71,9 @@ export const CustomFieldsTable = () => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+  const renderTopToolbarCustomActions = useCallback(() => (
     <NewCustomFieldButton />
   ), []);
 

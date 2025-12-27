@@ -32,7 +32,7 @@ export const DeleteFlightRecordButton = ({ flight, handleCloseMenu }) => {
     if (confirmed) {
       await deleteFlight();
     }
-  });
+  }, [deleteFlight, dialogs]);
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleConfirmDelete}>

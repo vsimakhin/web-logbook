@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { use, useCallback } from 'react';
+import { useCallback } from 'react';
 // MUI UI elements
 import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
@@ -60,7 +60,7 @@ export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
     }
 
     handleClose();
-  }, [dialogs, removeAttachment, attachment, handleClose]);
+  }, [attachment.document_name, dialogs, handleClose, removeAttachment, resetTrack]);
 
   return (
     <MenuItem onClick={handleDelete} sx={{ p: 0, pr: 1 }}><DeleteOutlinedIcon sx={{ m: 1 }} color="action" />Delete</MenuItem>

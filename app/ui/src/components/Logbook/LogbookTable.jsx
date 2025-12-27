@@ -165,10 +165,7 @@ export const LogbookTable = ({ data, isLoading }) => {
         ]
       },
     ];
-  }, [customFields, isCustomFieldsLoading, fieldName, isSettingsLoading, createHasTrackColumn,
-    createColumn, createDateColumn, createTimeColumn, createLandingColumn, renderTotalFooter,
-    createCustomFieldColumns, createCustomFieldColumnGroup
-  ]);
+  }, [customFields, isCustomFieldsLoading, fieldName, isSettingsLoading]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -186,7 +183,7 @@ export const LogbookTable = ({ data, isLoading }) => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const filterDrawOpen = useCallback(() => {
     setIsFilterDrawerOpen(true);
@@ -198,7 +195,7 @@ export const LogbookTable = ({ data, isLoading }) => {
 
   const getMuiFilterTextFieldProps = useCallback(({ column }) => (
     getFilterLabel(column, fieldName)
-  ), [fieldName, getFilterLabel]);
+  ), [fieldName]);
 
   const table = useMaterialReactTable({
     columns: columns,

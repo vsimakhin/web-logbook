@@ -194,6 +194,7 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
       });
 
       if (data) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDistance(0);
 
         (async () => {
@@ -265,7 +266,8 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
         map.setTarget(null);
       }
     };
-  }, [data, navigate, handleMapClick]);
+  }, [data, navigate, handleMapClick, getEnroute, options.routes, options.tracks]);
+
 
   return (
     <>

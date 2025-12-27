@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
@@ -27,6 +27,7 @@ export const AirportsDB = () => {
 
   useEffect(() => {
     if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSettings(data);
     }
   }, [data]);
@@ -41,10 +42,10 @@ export const AirportsDB = () => {
   useErrorNotification({ isSaveError, saveError, fallbackMessage: 'Failed to save settings' });
   useSuccessNotification({ isSuccess, message: 'Airports DB Settings saved' });
 
-  const handleChange = async (key, value) => {
+  const handleChange = useCallback(async (key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
     await saveSettings();
-  }
+  }, [saveSettings]);
 
   return (
     <>

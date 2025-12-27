@@ -40,7 +40,7 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => 
         </Menu>
       </>
     )
-  }, [flight, anchorEl, handleCloseMenu, setFlight, handleChange]);
+  }, [handleClick, anchorEl, handleCloseMenu, flight, setFlight, handleChange]);
 
   return (
     <>

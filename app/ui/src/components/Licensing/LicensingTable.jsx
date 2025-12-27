@@ -52,7 +52,7 @@ export const LisencingTable = ({ data, isLoading }) => {
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
-  const { settings, isLoading: isSettingsLoading } = useSettings();
+  const { settings } = useSettings();
 
   const getExpireColor = useCallback((days) => {
     const warning = settings?.licenses_expiration?.warning_period || 90;
@@ -96,7 +96,7 @@ export const LisencingTable = ({ data, isLoading }) => {
       size: 150,
     },
     { accessorKey: "remarks", header: "Remarks", grow: true },
-  ], [isSettingsLoading, getExpireColor]);
+  ], [getExpireColor]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -113,7 +113,7 @@ export const LisencingTable = ({ data, isLoading }) => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
 
   const filterDrawOpen = useCallback(() => {

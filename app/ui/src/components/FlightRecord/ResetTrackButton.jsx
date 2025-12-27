@@ -12,7 +12,7 @@ import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { resetTrackLog } from '../../util/http/logbook';
 
-export const ResetTrackButton = ({ flight, handleChange }) => {
+export const ResetTrackButton = ({ flight, handleChange, handleCloseMenu }) => {
   const dialogs = useDialogs();
   const navigate = useNavigate();
 
@@ -35,7 +35,8 @@ export const ResetTrackButton = ({ flight, handleChange }) => {
     if (reset) {
       await resetTrack();
     }
-  });
+    handleCloseMenu();
+  }, [dialogs, resetTrack, handleCloseMenu]);
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleReset}>

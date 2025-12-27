@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid2";
 import LinearProgress from '@mui/material/LinearProgress';
@@ -9,8 +9,16 @@ import CustomFields from "./CustomFields/CustomFields";
 import StandardFields from "./StandardFields/StandardFields";
 import useSettings from "../../hooks/useSettings";
 
-export const Settings = memo(() => {
-  const { settings, setSettings, isLoading } = useSettings();
+export const Settings = () => {
+  const { data, isLoading } = useSettings();
+  const [settings, setSettings] = useState(data);
+
+  useEffect(() => {
+    if (!isLoading && data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSettings(data);
+    }
+  }, [isLoading, data]);
 
   const handleChange = useCallback((key, value) => {
     setSettings((settings) => {
@@ -32,7 +40,7 @@ export const Settings = memo(() => {
 
       return updatedsettings;
     });
-  }, []);
+  }, [setSettings]);
 
   return (
     <>
@@ -50,6 +58,6 @@ export const Settings = memo(() => {
       </Grid>
     </>
   );
-});
+};
 
 export default Settings;

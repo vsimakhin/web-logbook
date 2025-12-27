@@ -5,3 +5,5 @@ export const PersonViewPage = () => {
     <PersonView />
   )
 }
+
+export default PersonViewPage

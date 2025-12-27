@@ -95,10 +95,9 @@ export const PersonsViewFlightsTable = ({ uuid }) => {
     setIsFilterDrawerOpen(false);
   }, []);
 
-  const renderTopToolbarCustomActions = useCallback(
-    ({ table }) => <Box sx={{ display: "flex", flexWrap: "wrap" }}></Box>,
-    []
-  );
+  const renderTopToolbarCustomActions = useCallback(() => (
+    <Box sx={{ display: "flex", flexWrap: "wrap" }}></Box>
+  ), []);
 
   const renderToolbarInternalActions = useCallback(({ table }) => (
     <>
@@ -108,7 +107,7 @@ export const PersonsViewFlightsTable = ({ uuid }) => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const table = useMaterialReactTable({
     isLoading,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI
@@ -30,10 +30,10 @@ export const TotalsDashboard = () => {
 
   const { customFields } = useCustomFields();
 
-  const callbackFunction = (filteredData, filter) => {
+  const callbackFunction = useCallback((filteredData, filter) => {
     setDashboardData(filteredData);
     setFilter(filter);
-  }
+  }, []);
 
   return (
     <>

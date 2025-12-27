@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
@@ -30,15 +30,15 @@ const statsFunction = {
   enroute: ["none"],
 }
 
-const CloseDialogButton = memo(({ onClose }) => {
+const CloseDialogButton = ({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}><DisabledByDefaultOutlinedIcon /></IconButton>
     </Tooltip>
   );
-});
+};
 
-const SaveButton = memo(({ field, onClose }) => {
+const SaveButton = ({ field, onClose }) => {
   const navigate = useNavigate();
   const isNew = field?.uuid === 'new';
   const type = isNew ? 'create' : 'update';
@@ -64,14 +64,15 @@ const SaveButton = memo(({ field, onClose }) => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
-export const CustomFieldModal = memo(({ open, onClose, payload }) => {
+export const CustomFieldModal = ({ open, onClose, payload }) => {
   const [field, setField] = useState({ ...payload });
   const { fieldName } = useSettings();
 
   useEffect(() => {
     if (payload) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setField({ ...payload });
     }
   }, [payload]);
@@ -198,6 +199,6 @@ export const CustomFieldModal = memo(({ open, onClose, payload }) => {
       </Card >
     </Dialog>
   )
-});
+};
 
 export default CustomFieldModal;

@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 // MUI UI elements
 import IconButton from "@mui/material/IconButton";
 import Menu from '@mui/material/Menu';
@@ -8,12 +8,10 @@ import DBUploadButton from './DBUploadButton';
 import DBDownloadButton from './DBDownloadButton';
 // Custom
 
-export const DBActionsMenu = memo(() => {
+export const DBActionsMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = useCallback((event) => setAnchorEl(event.currentTarget), []);
   const handleCloseMenu = useCallback(() => setAnchorEl(null), []);
-
-
 
   return (
     <>
@@ -33,6 +31,6 @@ export const DBActionsMenu = memo(() => {
       </Menu>
     </>
   );
-});
+};
 
 export default DBActionsMenu;

@@ -1,4 +1,3 @@
-import { memo } from "react";
 // Custom
 import HelpButtonDrawer from "../../UIElements/HelpButtonDrawer";
 
@@ -9,10 +8,10 @@ const HELP_CONTENT = [
   },
 ];
 
-export const HelpButton = memo(() => {
+export const HelpButton = () => {
   return (
     <HelpButtonDrawer content={HELP_CONTENT} />
   );
-});
+};
 
 export default HelpButton;

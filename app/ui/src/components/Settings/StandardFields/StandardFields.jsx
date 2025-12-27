@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles';
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 // MUI
 import Grid from "@mui/material/Grid2";
 import Card from '@mui/material/Card';
@@ -102,13 +102,13 @@ const HEADERS_CONFIG = [
   },
 ];
 
-const ActionButtons = memo(({ settings, handleChange }) => (
+const ActionButtons = ({ settings, handleChange }) => (
   <>
     <HelpButton />
     <RestoreDefaultsButton handleChange={handleChange} />
     <SaveSettingsButton settings={settings} />
   </>
-));
+);
 
 export const StandardFields = ({ settings = {}, handleChange }) => {
   const theme = useTheme();

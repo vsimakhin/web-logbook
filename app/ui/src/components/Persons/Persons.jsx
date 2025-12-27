@@ -84,7 +84,7 @@ export const Persons = () => {
     setIsFilterDrawerOpen(false);
   }, []);
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+  const renderTopToolbarCustomActions = useCallback(() => (
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>
       <AddPersonButton />
     </Box>
@@ -109,7 +109,7 @@ export const Persons = () => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const table = useMaterialReactTable({
     isLoading,

@@ -8,7 +8,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { fetchAttachment } from "../../util/http/attachment";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 
-export const decodeBase64 = async (base64String) => {
+const decodeBase64 = async (base64String) => {
   const binaryString = atob(base64String);
   const uint8Array = new Uint8Array(
     binaryString.split('').map((char) => char.charCodeAt(0))

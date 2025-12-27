@@ -1,5 +1,5 @@
 import {
-  MaterialReactTable, useMaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
+  MaterialReactTable, useMaterialReactTable, MRT_ShowHideColumnsButton,
   MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton
 } from 'material-react-table';
 import { useCallback, useMemo } from 'react';
@@ -110,7 +110,7 @@ export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
       ...customFieldColumns,
       createTimeColumn("time.total_time", fieldName("total")),
     ];
-  }, [customFields]);
+  }, [customFields, fieldName]);
 
   const renderTopToolbarCustomActions = useCallback(({ table }) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -125,7 +125,7 @@ export const TotalsByYearTable = ({ data, isLoading, customFields = [] }) => {
       <MRT_ToggleFullScreenButton table={table} />
       <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), []);
+  ), [setColumnSizing]);
 
   const table = useMaterialReactTable({
     isLoading: isLoading,

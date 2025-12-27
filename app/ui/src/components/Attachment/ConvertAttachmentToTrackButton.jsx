@@ -17,7 +17,7 @@ export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
   const navigate = useNavigate();
   const notifications = useNotifications();
 
-  const { mutateAsync: uploadTrack, isPending: isTrackPending, isError: isTrackError, error: trackError, isSuccess: isTrackSuccess } = useMutation({
+  const { mutateAsync: uploadTrack, isError: isTrackError, error: trackError, isSuccess: isTrackSuccess } = useMutation({
     mutationFn: async ({ data }) => await uploadTrackLog({ id: attachment.record_id, track: data, navigate }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', attachment.record_id] });
@@ -30,7 +30,7 @@ export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
   const handleConvert = useCallback(async () => {
     const data = await fetchAttachment({ id: attachment.uuid, navigate });
     const byteCharacters = atob(data.document);
-    const extractedCoordinates = parseTrackFile(byteCharacters);
+    const extractedCoordinates = parseTrackFile(byteCharacters, data.document_name);
 
     if (extractedCoordinates.length === 0) {
       notifications.show("No coordinates found in KML file", {
@@ -44,7 +44,7 @@ export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
     await uploadTrack({ data: extractedCoordinates });
 
     handleClose();
-  }, [handleClose]);
+  }, [attachment.uuid, handleClose, navigate, notifications, uploadTrack]);
 
   return (
     <MenuItem onClick={handleConvert} sx={{ p: 0, pr: 1 }}>

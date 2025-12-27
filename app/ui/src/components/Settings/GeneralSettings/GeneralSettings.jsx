@@ -1,4 +1,3 @@
-import { memo } from "react";
 // MUI UI elements
 import Divider from "@mui/material/Divider";
 import Card from '@mui/material/Card';
@@ -13,13 +12,13 @@ import LicensesExpiration from "./LicensesExpiration";
 import DBActionsMenu from "./DBControl/DBActionsMenu";
 import HelpButton from "./HelpButton";
 
-const ActionButtons = memo(({ settings }) => (
+const ActionButtons = ({ settings }) => (
   <>
     <HelpButton />
     <DBActionsMenu />
     <SaveSettingsButton settings={settings} />
   </>
-));
+);
 
 export const GeneralSettings = ({ settings, handleChange }) => {
   return (

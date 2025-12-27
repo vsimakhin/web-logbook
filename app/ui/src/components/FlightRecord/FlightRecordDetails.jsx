@@ -59,7 +59,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           <Grid container spacing={1} sx={{ mt: 1 }}>
             <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldNameF={fieldNameF} />
             <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldNameF={fieldNameF} />
-            <LandingFields flight={flight} handleChange={handleChange} fieldNameF={fieldNameF} />
+            <LandingFields day={flight.landings.day} night={flight.landings.night} handleChange={handleChange} fieldNameF={fieldNameF} />
           </Grid>
 
           <Grid container spacing={1} sx={{ mt: 1 }}>

@@ -112,9 +112,11 @@ export const getCustomFieldValue = (fieldData, field) => {
     case 'sum':
       return field.type === 'duration' ? convertMinutesToTime(fieldData.sum) : fieldData.sum;
     case 'average':
-      if (fieldData.count === 0) return 0;
-      const average = fieldData.sum / fieldData.count;
-      return field.type === 'duration' ? convertMinutesToTime(Math.round(average)) : Number(average.toFixed(2));
+      {
+        if (fieldData.count === 0) return 0;
+        const average = fieldData.sum / fieldData.count;
+        return field.type === 'duration' ? convertMinutesToTime(Math.round(average)) : Number(average.toFixed(2));
+      }
     case 'count':
       return fieldData.count;
     default:

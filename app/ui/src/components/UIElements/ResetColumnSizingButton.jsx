@@ -9,7 +9,7 @@ import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBacku
 export const ResetColumnSizingButton = ({ resetFunction }) => {
   const handleReset = useCallback(() => {
     resetFunction({});
-  }, []);
+  }, [resetFunction]);
 
   return (
     <Tooltip title="Reset Column Sizing">

@@ -1,6 +1,6 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // MUI UI elements
@@ -11,7 +11,7 @@ import { queryClient } from '../../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { deleteCustomField } from '../../../util/http/fields';
 
-export const DeleteCustomFieldButton = memo(({ payload }) => {
+export const DeleteCustomFieldButton = ({ payload }) => {
   const dialogs = useDialogs();
 
   const { mutateAsync, isError, isSuccess, error } = useMutation({
@@ -36,7 +36,7 @@ export const DeleteCustomFieldButton = memo(({ payload }) => {
     if (status) {
       await mutateAsync({ payload });
     }
-  }, [dialogs, payload]);
+  }, [dialogs, mutateAsync, payload]);
 
   return (
     <Tooltip title="Delete Custom Field">
@@ -45,6 +45,6 @@ export const DeleteCustomFieldButton = memo(({ payload }) => {
       </IconButton>
     </Tooltip >
   );
-});
+};
 
 export default DeleteCustomFieldButton;
