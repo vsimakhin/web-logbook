@@ -162,8 +162,9 @@ export const LogbookTable = ({ data, isLoading }) => {
         header: <TableHeader title={"Misc"} />, columns: [
           createHasTrackColumn("has_track", 30),
           createAttachmentColumn("attachments_count", 30),
+          createColumn("tags", fieldName("tags"), 150)
         ]
-      },
+      }
     ];
   }, [customFields, isCustomFieldsLoading, fieldName, isSettingsLoading]);
 

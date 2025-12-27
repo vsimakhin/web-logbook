@@ -48,6 +48,8 @@ const ShowHideFieldsModal = ({ open, onClose }) => {
       { id: "time.instructor_time", label: fieldNameF("instr") },
       { id: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
       { id: "simulator", label: fieldNameF("fstd") },
+      { id: "remarks", label: fieldNameF("remarks") },
+      { id: "tags", label: fieldNameF("tags") },
     ]
   ), [fieldNameF]);
 

@@ -97,8 +97,12 @@ const HEADERS_CONFIG = [
     ],
   },
   {
-    size: { xs: 12, sm: 6, md: 12, lg: 6, xl: 6 },
+    size: { xs: 12, sm: 6, md: 12, lg: 3, xl: 3 },
     group: [{ id: "remarks", label: "Remarks", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }],
+  },
+  {
+    size: { xs: 12, sm: 6, md: 12, lg: 3, xl: 3 },
+    group: [{ id: "tags", label: "Tags", size: { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }],
   },
 ];
 

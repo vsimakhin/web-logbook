@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Added Tags field to flight records. Tags are visible in the logbook table and available as filters on the `Map` and `Dashboard` pages.
+
 ## [3.20.0] - 25.12.2025
 
 - Update: Golang and npm packages/security patches.

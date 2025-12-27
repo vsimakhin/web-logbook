@@ -37,6 +37,7 @@ const defaultFieldNames = {
     sim_type: "Type",
     sim_time: "Time",
     remarks: "Remarks",
+    tags: "Tags",
   },
   flightRecord: { // flight record page
     date: "Date",
@@ -70,6 +71,7 @@ const defaultFieldNames = {
     sim_type: "Type",
     sim_time: "Time",
     remarks: "Remarks",
+    tags: "Tags",
   }
 }
 export const useSettings = () => {

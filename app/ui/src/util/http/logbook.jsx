@@ -148,3 +148,13 @@ export const fetchDistance = async ({ signal, departure, arrival, navigate }) =>
   };
   return await handleFetch(url, options, navigate, 'Cannot fetch distance');
 }
+
+export const fetchTags = async ({ signal, navigate }) => {
+  const url = `${API_URL}/logbook/tags`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch tags');
+}
