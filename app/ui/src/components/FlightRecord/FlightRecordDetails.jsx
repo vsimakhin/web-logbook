@@ -19,6 +19,7 @@ import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
 import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
+import { getValue } from '../../util/helpers';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
@@ -84,7 +85,12 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
 
           <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
             {timeFields.map((field) => (
-              (visibility?.[field.id] ?? true) && <TimeField key={field.id} id={field.id} label={field.label} handleChange={handleChange} flight={flight} />
+              (visibility?.[field.id] ?? true) &&
+              <TimeField
+                key={field.id} id={field.id} label={field.label}
+                handleChange={handleChange}
+                total_time={flight.time.total_time}
+                value={getValue(flight, field.id)} />
             ))}
           </Grid>
 
@@ -98,7 +104,11 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                   handleChange={handleChange}
                   value={flight.sim.type ?? ""}
                 />
-                <TimeField id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`} handleChange={handleChange} flight={flight} />
+                <TimeField
+                  id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`}
+                  handleChange={handleChange}
+                  total_time={flight.time.total_time}
+                  value={getValue(flight, "sim.time")} />
               </Grid>
             </>
           }
