@@ -130,6 +130,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               <FlightTags gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
                 id="tags"
                 label={fieldNameF("tags")}
+                tooltip="Flight tags. To add a tag, start typing and press Enter."
                 handleChange={handleChange}
                 value={flight.tags ? flight.tags.split(',') : []}
               />

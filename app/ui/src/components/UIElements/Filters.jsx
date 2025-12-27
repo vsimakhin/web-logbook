@@ -24,6 +24,7 @@ import TextField from "./TextField";
 import Select from "./Select";
 import { tableJSONCodec } from "../../constants/constants";
 import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
+import FlightTags from "./FlightTags";
 
 const MAP_FILTER_INITIAL_STATE = {
   start_date: dayjs().startOf('year'),
@@ -31,6 +32,7 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_reg: "",
   aircraft_model: "",
   aircraft_category: "",
+  tags: "",
   place: "",
   routes: true,
   tracks: false,
@@ -91,11 +93,13 @@ const filterData = (data, filter, modelsData, aircrafts) => {
         filter.aircraft_category === flight.sim.type
       );
     })();
+    // filter tags
+    const matchesTags = filter.tags ? flight.tags.includes(filter.tags) : true;
     // filter arrival and departure place
     const matchesArrival = filter.place ? flight.arrival.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
     const matchesDeparture = filter.place ? flight.departure.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
 
-    return matchesDate & matchesReg && matchesType && matchesCategory && (matchesArrival || matchesDeparture);
+    return matchesDate & matchesReg && matchesType && matchesCategory && matchesTags && (matchesArrival || matchesDeparture);
   });
 
   return filteredData;
@@ -142,12 +146,12 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
 
   const handleChange = useCallback((key, value) => {
     setFilter(prev => ({ ...prev, [key]: value }))
-  }, [setFilter]);
+  }, []);
 
   const handleStatsStateChange = useCallback((key, value) => {
     setFilterStatsState(prev => ({ ...prev, [key]: value }));
     setFilter(prev => ({ ...prev, show: { ...prev.show, [key]: value } }));
-  }, [setFilterStatsState, setFilter]);
+  }, [setFilterStatsState]);
 
   const handleQuickSelect = useCallback((_, value) => {
     const range = dateRanges.find(r => r.label === value);
@@ -155,7 +159,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
       const { start, end } = range.fn();
       setFilter(prev => ({ ...prev, 'start_date': start, 'end_date': end }));
     }
-  }, [setFilter]);
+  }, []);
 
   useEffect(() => {
     if (!data) return;
@@ -215,6 +219,14 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
         value={filter.aircraft_category}
         disableClearable={false}
         options="all"
+      />
+      <FlightTags
+        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
+        id="tags"
+        handleChange={handleChange}
+        value={filter.tags}
+        multiple={false}
+        disableClearable={false}
       />
       <TextField
         gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
