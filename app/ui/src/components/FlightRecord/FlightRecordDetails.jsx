@@ -20,6 +20,7 @@ import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
 import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
+import FlightTags from '../UIElements/FlightTags';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
@@ -115,11 +116,17 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
 
           <Divider sx={{ mt: 1 }} />
           <Grid container spacing={1} sx={{ mt: 1 }} >
-            <TextField gsize={"grow"}
+            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="remarks"
               label={fieldNameF("remarks")}
               handleChange={handleChange}
               value={flight.remarks ?? ""}
+            />
+            <FlightTags gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+              id="tags"
+              label={fieldNameF("tags")}
+              handleChange={handleChange}
+              value={flight.tags ? flight.tags.split(',') : []}
             />
           </Grid>
         </CardContent>

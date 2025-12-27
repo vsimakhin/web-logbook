@@ -68,6 +68,7 @@ var standardFieldsHeaders = ColumnsHeader{
 	Instr:     "Instr",
 	SimType:   "Type",
 	SimTime:   "Time",
+	Tags:      "Tags",
 }
 
 // default columns width for A4 format
