@@ -19,6 +19,8 @@ import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
 import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
+import { getValue } from '../../util/helpers';
+import FlightTags from '../UIElements/FlightTags';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
@@ -84,7 +86,12 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
 
           <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
             {timeFields.map((field) => (
-              (visibility?.[field.id] ?? true) && <TimeField key={field.id} id={field.id} label={field.label} handleChange={handleChange} flight={flight} />
+              (visibility?.[field.id] ?? true) &&
+              <TimeField
+                key={field.id} id={field.id} label={field.label}
+                handleChange={handleChange}
+                total_time={flight.time.total_time}
+                value={getValue(flight, field.id)} />
             ))}
           </Grid>
 
@@ -98,19 +105,36 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                   handleChange={handleChange}
                   value={flight.sim.type ?? ""}
                 />
-                <TimeField id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`} handleChange={handleChange} flight={flight} />
+                <TimeField
+                  id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`}
+                  handleChange={handleChange}
+                  total_time={flight.time.total_time}
+                  value={getValue(flight, "sim.time")} />
               </Grid>
             </>
           }
 
-          <Divider sx={{ mt: 1 }} />
+          {((visibility?.["remarks"] ?? true) || (visibility?.["tags"] ?? true)) &&
+            <Divider sx={{ mt: 1 }} />
+          }
           <Grid container spacing={1} sx={{ mt: 1 }} >
-            <TextField gsize={"grow"}
-              id="remarks"
-              label={fieldNameF("remarks")}
-              handleChange={handleChange}
-              value={flight.remarks ?? ""}
-            />
+            {(visibility?.["remarks"] ?? true) &&
+              <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+                id="remarks"
+                label={fieldNameF("remarks")}
+                handleChange={handleChange}
+                value={flight.remarks ?? ""}
+              />
+            }
+            {(visibility?.["tags"] ?? true) &&
+              <FlightTags gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+                id="tags"
+                label={fieldNameF("tags")}
+                tooltip="Flight tags. To add a tag, start typing and press Enter."
+                handleChange={handleChange}
+                value={flight.tags ? flight.tags.split(',') : []}
+              />
+            }
           </Grid>
         </CardContent>
       </Card >

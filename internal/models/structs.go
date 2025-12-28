@@ -67,6 +67,7 @@ type FlightRecord struct {
 	Track    []byte  `json:"track"`
 
 	CustomFields string `json:"custom_fields"`
+	Tags         string `json:"tags"`
 
 	// calculated
 	PrevUUID         string `json:"prev_uuid"`
@@ -179,6 +180,7 @@ type ColumnsHeader struct {
 	Instr     string `json:"instr"`
 	SimType   string `json:"sim_type"`
 	SimTime   string `json:"sim_time"`
+	Tags      string `json:"tags"`
 }
 
 type ExportPDF struct {
