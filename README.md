@@ -18,6 +18,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- Update: Some code optimization, added error page.
 - Update: `Person Role` selector now uses the dynamic roles listed from the database instead of static defaults or manual settings.
 - New: Added Tags field to flight records. Tags are visible in the logbook table and available as filters on the `Map` and `Dashboard` pages.
 
