@@ -12,6 +12,7 @@ export const FlightTags = ({ gsize, id = "tags", label = "Tags", value, handleCh
     queryFn: ({ signal }) => fetchTags({ signal, navigate }),
     staleTime: 3600000,
     gcTime: 3600000,
+    select: (data) => data || [], // Ensure options is always an array
   });
 
   return (
