@@ -7,23 +7,23 @@ import Box from "@mui/material/Box";
 import NavigateNextOutlinedIcon from '@mui/icons-material/NavigateNextOutlined';
 import NavigateBeforeOutlinedIcon from '@mui/icons-material/NavigateBeforeOutlined';
 
-export const FlightTitle = ({ flight }) => {
+export const FlightTitle = ({ prev_uuid, next_uuid }) => {
   const navigate = useNavigate();
-  console.log("title")
+
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         {"Flight Record "}
-        {flight.prev_uuid && (
+        {prev_uuid && (
           <Tooltip title="Previous flight record" disableInteractive>
-            <IconButton size="small" onClick={() => navigate(`/logbook/${flight.prev_uuid}`)}>
+            <IconButton size="small" onClick={() => navigate(`/logbook/${prev_uuid}`)}>
               <NavigateBeforeOutlinedIcon />
             </IconButton>
           </Tooltip>
         )}
-        {flight.next_uuid && (
+        {next_uuid && (
           <Tooltip title="Next flight record" disableInteractive>
-            <IconButton size="small" onClick={() => navigate(`/logbook/${flight.next_uuid}`)}>
+            <IconButton size="small" onClick={() => navigate(`/logbook/${next_uuid}`)}>
               <NavigateNextOutlinedIcon />
             </IconButton>
           </Tooltip>

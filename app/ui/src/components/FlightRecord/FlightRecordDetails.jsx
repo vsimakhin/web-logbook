@@ -23,7 +23,10 @@ import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
-  const title = useMemo(() => (<FlightTitle flight={flight} />), [flight]);
+  const title = useMemo(() =>
+    <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
+    [flight.prev_uuid, flight.next_uuid]
+  );
   const { fieldNameF } = useSettings();
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
 
