@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -39,12 +38,11 @@ const CloseDialogButton = ({ onClose }) => {
 };
 
 const SaveButton = ({ field, onClose }) => {
-  const navigate = useNavigate();
   const isNew = field?.uuid === 'new';
   const type = isNew ? 'create' : 'update';
 
   const { mutateAsync, isError, error, isSuccess } = useMutation({
-    mutationFn: () => isNew ? createCustomField({ field, navigate }) : updateCustomField({ field, navigate }),
+    mutationFn: () => isNew ? createCustomField({ field }) : updateCustomField({ field }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['custom-fields'] })
     }

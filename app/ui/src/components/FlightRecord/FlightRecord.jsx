@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
@@ -19,13 +19,11 @@ const gridSize = { xs: 12, sm: 12, md: 6, lg: 6, xl: 6 };
 
 export const FlightRecord = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-
   const [flight, setFlight] = useState({ ...FLIGHT_INITIAL_STATE, uuid: id });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['flight', id],
-    queryFn: ({ signal }) => fetchFlightData({ signal, id, navigate }),
+    queryFn: ({ signal }) => fetchFlightData({ signal, id }),
     enabled: id !== "new",
     refetchOnWindowFocus: false,
     staleTime: 3600000,

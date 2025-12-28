@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useCallback, useMemo } from "react";
 import { useDialogs } from "@toolpad/core/useDialogs";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -13,12 +12,11 @@ import { useErrorNotification, useSuccessNotification } from "../../../../hooks/
 import { queryClient } from "../../../../util/http/http";
 
 export const DBUploadButton = ({ handleCloseMenu }) => {
-  const navigate = useNavigate();
   const dialogs = useDialogs();
 
   const { data: dbfilename = "web-logbook.sql" } = useQuery({
     queryKey: ['db', 'filename'],
-    queryFn: ({ signal }) => fetchDBFileName({ signal, navigate }),
+    queryFn: ({ signal }) => fetchDBFileName({ signal }),
     staleTime: 86400000,
     gcTime: 86400000,
     refetchOnWindowFocus: false,
@@ -26,7 +24,7 @@ export const DBUploadButton = ({ handleCloseMenu }) => {
   const fileExtension = useMemo(() => (`.${dbfilename.split(".").pop()}`), [dbfilename])
 
   const { mutateAsync: uploadDB, isPending, isError, error, isSuccess } = useMutation({
-    mutationFn: async ({ data }) => await uploadDBFile({ payload: data, navigate }),
+    mutationFn: async ({ data }) => await uploadDBFile({ payload: data }),
     onSuccess: async () => {
       // invalidate all cached queries
       await queryClient.invalidateQueries();

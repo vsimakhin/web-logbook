@@ -12,12 +12,12 @@ export const fetchExport = async (format) => {
   return blob;
 }
 
-export const uploadCustomTitle = async ({ payload, navigate }) => {
+export const uploadCustomTitle = async ({ payload }) => {
   const url = `${API_URL}/export/custom-title`;
   const options = {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     body: payload,
   };
-  return await handleFetch(url, options, navigate, 'Cannot upload custom title', false);
+  return await handleFetch(url, options, 'Cannot upload custom title', false);
 }

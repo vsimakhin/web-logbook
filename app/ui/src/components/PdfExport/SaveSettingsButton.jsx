@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
@@ -31,10 +30,8 @@ const parseColumns = (columns) => {
 };
 
 export const SaveSettingsButton = ({ settings, format }) => {
-  const navigate = useNavigate();
-
   const { mutateAsync: saveSettings, isError, error, isSuccess } = useMutation({
-    mutationFn: ({ settings, format }) => updatePdfSettings({ settings, format, navigate }),
+    mutationFn: ({ settings, format }) => updatePdfSettings({ settings, format }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['settings'] })
     }

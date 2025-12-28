@@ -17,9 +17,9 @@ export const SaveLicenseRecordButton = ({ license, handleChange }) => {
   const { mutateAsync: saveLicenseRecord, isError, error, isSuccess } = useMutation({
     mutationFn: async ({ payload }) => {
       if (license.uuid === "new") {
-        return await createLicenseRecord({ payload, navigate });
+        return await createLicenseRecord({ payload });
       } else {
-        return await updateLicenseRecord({ uuid: license.uuid, payload, navigate });
+        return await updateLicenseRecord({ uuid: license.uuid, payload });
       }
     },
     onSuccess: async (data) => {

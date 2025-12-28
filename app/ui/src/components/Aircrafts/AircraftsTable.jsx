@@ -1,7 +1,6 @@
 import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -54,11 +53,9 @@ export const AircraftsTable = ({ ...props }) => {
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
 
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['aircrafts', 'build-list'],
-    queryFn: ({ signal }) => fetchAircraftsBuildList({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircraftsBuildList({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

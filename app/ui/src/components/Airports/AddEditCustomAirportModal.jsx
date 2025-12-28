@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -27,8 +26,6 @@ const CloseDialogButton = ({ onClose }) => {
 }
 
 const SaveButton = ({ airport, isNew, onClose }) => {
-  const navigate = useNavigate();
-
   const payload = {
     name: airport.name,
     city: airport.city,
@@ -38,7 +35,7 @@ const SaveButton = ({ airport, isNew, onClose }) => {
     lon: parseFloat(airport.lon) || parseFloat(0),
   };
 
-  const mutateFn = isNew ? () => createCustomAirport({ payload, navigate }) : () => updateCustomAirport({ payload, navigate });
+  const mutateFn = isNew ? () => createCustomAirport({ payload }) : () => updateCustomAirport({ payload });
   const { mutateAsync: saveAirport, isError, error, isSuccess } = useMutation({
     mutationFn: mutateFn,
     onSuccess: async () => {

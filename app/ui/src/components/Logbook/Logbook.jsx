@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 // MUI
 import LinearProgress from "@mui/material/LinearProgress";
 // Custom
@@ -8,11 +7,9 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import LogbookTable from "./LogbookTable";
 
 export const Logbook = () => {
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLogbookData({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

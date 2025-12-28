@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { useDialogs } from "@toolpad/core/useDialogs";
-import { useNavigate } from "react-router-dom";
 // MUI Icons
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 // MUI UI elements
@@ -13,7 +12,6 @@ import { deletePerson } from "../../util/http/person";
 import { useCallback } from "react";
 
 export const DeletePersonButton = ({ payload }) => {
-  const navigate = useNavigate();
   const dialogs = useDialogs();
 
   const {
@@ -22,7 +20,7 @@ export const DeletePersonButton = ({ payload }) => {
     isSuccess,
     error
   } = useMutation({
-    mutationFn: () => deletePerson({ uuid: payload.uuid, navigate }),
+    mutationFn: () => deletePerson({ uuid: payload.uuid }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["persons"] });
     },

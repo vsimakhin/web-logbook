@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback } from "react";
 // MUI UI elements
@@ -12,10 +11,8 @@ import { queryClient } from "../../util/http/http";
 import { updateAirportsDB } from "../../util/http/airport";
 
 export const UpdateAirportsDBButton = () => {
-  const navigate = useNavigate();
-
   const { mutateAsync: updateDB, isError, error, isSuccess, isPending } = useMutation({
-    mutationFn: () => updateAirportsDB({ navigate }),
+    mutationFn: () => updateAirportsDB(),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['airports'] })
     }

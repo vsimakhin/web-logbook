@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // Custom components
@@ -14,11 +13,10 @@ export const AircraftType = ({
   handleChange,
   ...props
 }) => {
-  const navigate = useNavigate();
   const { fieldName } = useSettings();
 
   const { data: options = [] } = useQuery({
-    queryFn: ({ signal }) => fetchAircraftModels({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircraftModels({ signal }),
     queryKey: ["aircrafts", "models"],
     staleTime: 3600000,
     gcTime: 3600000,

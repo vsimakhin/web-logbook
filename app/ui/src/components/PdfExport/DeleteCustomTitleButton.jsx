@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { useDialogs } from "@toolpad/core/useDialogs";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
@@ -14,11 +13,10 @@ import { deleteAttachment } from "../../util/http/attachment";
 
 export const DeleteCustomTitleButton = ({ format }) => {
   const dialogs = useDialogs();
-  const navigate = useNavigate();
   const id = `custom_title_${format.toLowerCase()}`;
 
   const { mutateAsync: deleteCustomTitle, isPending, isError, error, isSuccess } = useMutation({
-    mutationFn: () => deleteAttachment({ id, navigate }),
+    mutationFn: () => deleteAttachment({ id }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['custom-title', format] })
     }

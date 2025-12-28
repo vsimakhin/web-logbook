@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
@@ -13,10 +12,8 @@ import { useErrorNotification, useSuccessNotification } from "../../hooks/useApp
 import { uploadAttachement } from "../../util/http/attachment";
 
 export const AddAttachmentButton = ({ id }) => {
-  const navigate = useNavigate();
-
   const { mutateAsync: upload, isPending, isError, error, isSuccess } = useMutation({
-    mutationFn: async ({ data }) => await uploadAttachement({ payload: data, navigate }),
+    mutationFn: async ({ data }) => await uploadAttachement({ payload: data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', id] });
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });

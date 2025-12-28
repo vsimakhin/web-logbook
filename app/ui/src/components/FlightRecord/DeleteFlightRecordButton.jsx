@@ -15,7 +15,7 @@ export const DeleteFlightRecordButton = ({ flight, handleCloseMenu }) => {
   const navigate = useNavigate();
 
   const { mutateAsync: deleteFlight, isError, error, isSuccess } = useMutation({
-    mutationFn: () => deleteFlightRecord({ id: flight.uuid, navigate }),
+    mutationFn: () => deleteFlightRecord({ id: flight.uuid }),
     onSuccess: async () => {
       handleCloseMenu();
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });

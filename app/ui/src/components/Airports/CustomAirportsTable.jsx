@@ -1,7 +1,6 @@
 import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -43,7 +42,6 @@ const tableOptions = {
 }
 
 export const CustomAirportsTable = () => {
-  const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
@@ -52,7 +50,7 @@ export const CustomAirportsTable = () => {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['custom-airports'],
-    queryFn: ({ signal }) => fetchCustomAirports({ signal, navigate }),
+    queryFn: ({ signal }) => fetchCustomAirports({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

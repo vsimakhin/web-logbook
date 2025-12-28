@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
 // MUI UI elements
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -35,8 +34,6 @@ const CloseDialogButton = ({ onClose }) => {
 };
 
 const SaveButton = ({ frPerson, isNew, onClose }) => {
-  const navigate = useNavigate();
-
   const payload = {
     person_uuid: frPerson.person_uuid.id,
     role: frPerson.role,
@@ -44,8 +41,8 @@ const SaveButton = ({ frPerson, isNew, onClose }) => {
   };
 
   const mutateFn = isNew
-    ? () => createPersonToLog({ payload, navigate })
-    : () => updatePersonToLog({ payload, navigate });
+    ? () => createPersonToLog({ payload })
+    : () => updatePersonToLog({ payload });
   const { mutateAsync: savePersonToLog, isError, error, isSuccess } = useMutation({
     mutationFn: mutateFn,
     onSuccess: async () => {

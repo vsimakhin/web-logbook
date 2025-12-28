@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback } from "react";
 // MUI UI elements
@@ -11,10 +10,8 @@ import { queryClient } from "../../util/http/http";
 import { updateSettings } from "../../util/http/settings";
 
 export const SaveSettingsButton = ({ settings }) => {
-  const navigate = useNavigate();
-
   const { mutateAsync: saveSettings, isError, error, isSuccess } = useMutation({
-    mutationFn: () => updateSettings({ settings, navigate }),
+    mutationFn: () => updateSettings({ settings }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['settings'] })
       await queryClient.invalidateQueries({ queryKey: ['auth-enabled'] })

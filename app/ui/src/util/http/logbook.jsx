@@ -23,14 +23,14 @@ const prepareFlightDataForAPI = (flight) => {
   return flight;
 }
 
-export const fetchLogbookData = async ({ signal, navigate }) => {
+export const fetchLogbookData = async ({ signal }) => {
   const url = `${API_URL}/logbook/data`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  const response = await handleFetch(url, options, navigate, 'Cannot fetch logbook data');
+  const response = await handleFetch(url, options, 'Cannot fetch logbook data');
 
   return response?.map(flight => ({
     ...flight,
@@ -38,14 +38,14 @@ export const fetchLogbookData = async ({ signal, navigate }) => {
   })) || response;
 }
 
-export const fetchLogbookMapData = async ({ signal, navigate }) => {
+export const fetchLogbookMapData = async ({ signal }) => {
   const url = `${API_URL}/logbook/mapdata`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  const response = await handleFetch(url, options, navigate, 'Cannot fetch logbook map data');
+  const response = await handleFetch(url, options, 'Cannot fetch logbook map data');
 
   return response?.map(flight => ({
     ...flight,
@@ -53,7 +53,7 @@ export const fetchLogbookMapData = async ({ signal, navigate }) => {
   })) || response;
 }
 
-export const fetchFlightData = async ({ signal, id, navigate }) => {
+export const fetchFlightData = async ({ signal, id }) => {
   const url = `${API_URL}/logbook/${id}`;
   const options = {
     method: 'GET',
@@ -61,7 +61,7 @@ export const fetchFlightData = async ({ signal, id, navigate }) => {
     signal: signal,
   };
 
-  const response = await handleFetch(url, options, navigate, 'Cannot fetch flight data');
+  const response = await handleFetch(url, options, 'Cannot fetch flight data');
 
   if (response) {
     return {
@@ -73,7 +73,7 @@ export const fetchFlightData = async ({ signal, id, navigate }) => {
   return response;
 }
 
-export const fetchNightTime = async ({ signal, flight, navigate }) => {
+export const fetchNightTime = async ({ signal, flight }) => {
   const url = `${API_URL}/logbook/night`;
   const options = {
     method: 'POST',
@@ -81,20 +81,20 @@ export const fetchNightTime = async ({ signal, flight, navigate }) => {
     body: JSON.stringify(prepareFlightDataForAPI(flight)),
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch night time');
+  return await handleFetch(url, options, 'Cannot fetch night time');
 }
 
-export const deleteFlightRecord = async ({ signal, id, navigate }) => {
+export const deleteFlightRecord = async ({ signal, id }) => {
   const url = `${API_URL}/logbook/${id}`;
   const options = {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot delete flight record');
+  return await handleFetch(url, options, 'Cannot delete flight record');
 }
 
-export const createFlightRecord = async ({ signal, flight, navigate }) => {
+export const createFlightRecord = async ({ signal, flight }) => {
   const url = `${API_URL}/logbook/new`;
   const options = {
     method: 'POST',
@@ -102,10 +102,10 @@ export const createFlightRecord = async ({ signal, flight, navigate }) => {
     signal: signal,
     body: JSON.stringify(prepareFlightDataForAPI(flight)),
   };
-  return await handleFetch(url, options, navigate, 'Cannot create flight record');
+  return await handleFetch(url, options, 'Cannot create flight record');
 }
 
-export const updateFlightRecord = async ({ signal, flight, navigate }) => {
+export const updateFlightRecord = async ({ signal, flight }) => {
   const url = `${API_URL}/logbook/${flight.uuid}`;
   const options = {
     method: 'PUT',
@@ -113,29 +113,29 @@ export const updateFlightRecord = async ({ signal, flight, navigate }) => {
     signal: signal,
     body: JSON.stringify(prepareFlightDataForAPI(flight)),
   };
-  return await handleFetch(url, options, navigate, 'Cannot update flight record');
+  return await handleFetch(url, options, 'Cannot update flight record');
 }
 
-export const uploadTrackLog = async ({ id, track, navigate }) => {
+export const uploadTrackLog = async ({ id, track }) => {
   const url = `${API_URL}/logbook/track/${id}`;
   const options = {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(track),
   };
-  return await handleFetch(url, options, navigate, 'Cannot upload track log');
+  return await handleFetch(url, options, 'Cannot upload track log');
 }
 
-export const resetTrackLog = async ({ id, navigate }) => {
+export const resetTrackLog = async ({ id }) => {
   const url = `${API_URL}/logbook/track/${id}`;
   const options = {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
   };
-  return await handleFetch(url, options, navigate, 'Cannot reset track log');
+  return await handleFetch(url, options, 'Cannot reset track log');
 }
 
-export const fetchDistance = async ({ signal, departure, arrival, navigate }) => {
+export const fetchDistance = async ({ signal, departure, arrival }) => {
   if (!departure || !arrival) {
     return 0;
   }
@@ -146,15 +146,16 @@ export const fetchDistance = async ({ signal, departure, arrival, navigate }) =>
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch distance');
+  return await handleFetch(url, options, 'Cannot fetch distance');
 }
 
-export const fetchTags = async ({ signal, navigate }) => {
+export const fetchTags = async ({ signal }) => {
   const url = `${API_URL}/logbook/tags`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch tags');
+  return await handleFetch(url, options, 'Cannot fetch tags');
 }
+

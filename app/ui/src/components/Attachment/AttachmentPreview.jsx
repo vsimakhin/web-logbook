@@ -1,7 +1,6 @@
 import { fileTypeFromBuffer } from 'file-type';
 import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 // MUI
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -12,12 +11,11 @@ import { fetchAttachment } from '../../util/http/attachment';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
 
 export const AttachmentPreview = ({ attachment, open, onClose }) => {
-  const navigate = useNavigate();
   const [blobUrl, setBlobUrl] = useState(null);
   const [mimeType, setMimeType] = useState(null);
 
   const { mutate: loadAttachment, isPending } = useMutation({
-    mutationFn: () => fetchAttachment({ id: attachment.uuid, navigate }),
+    mutationFn: () => fetchAttachment({ id: attachment.uuid }),
     onSuccess: async (data) => {
       const binary = atob(data.document);
       const byteArray = Uint8Array.from(binary, char => char.charCodeAt(0));

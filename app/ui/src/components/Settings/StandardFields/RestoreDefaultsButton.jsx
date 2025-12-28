@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback } from "react";
 // MUI UI elements
@@ -11,10 +10,8 @@ import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { fetchStandardFields } from "../../../util/http/settings";
 
 export const RestoreDefaultsButton = ({ handleChange }) => {
-  const navigate = useNavigate();
-
   const { mutateAsync: restore, isError, error } = useMutation({
-    mutationFn: (signal) => fetchStandardFields({ signal, navigate }),
+    mutationFn: (signal) => fetchStandardFields({ signal }),
     onSuccess: async (data) => {
       if (data) {
         Object.entries(data).forEach(([key, value]) => {

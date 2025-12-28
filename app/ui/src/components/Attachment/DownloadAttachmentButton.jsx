@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 // MUI UI elements
@@ -10,10 +9,8 @@ import { useErrorNotification, useSuccessNotification } from '../../hooks/useApp
 import { fetchAttachment } from '../../util/http/attachment';
 
 export const DownloadAttachmentButton = ({ attachment, handleClose }) => {
-  const navigate = useNavigate();
-
   const { mutateAsync: downloadAttachment, isPending: isDownloadPending, isError: isDownloadError, error: downloadError, isSuccess: isDownloadSuccess } = useMutation({
-    mutationFn: async () => await fetchAttachment({ id: attachment.uuid, navigate }),
+    mutationFn: async () => await fetchAttachment({ id: attachment.uuid }),
     onSuccess: async (data) => {
       // Convert the base64 string to a Blob
       const byteCharacters = atob(data.document);

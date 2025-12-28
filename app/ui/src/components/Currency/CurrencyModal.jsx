@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -33,12 +32,11 @@ const CloseDialogButton = ({ onClose }) => {
 };
 
 const SaveButton = ({ currency, onClose }) => {
-  const navigate = useNavigate();
   const isNew = currency?.uuid === 'new';
   const type = isNew ? 'create' : 'update';
 
   const { mutateAsync, isError, error, isSuccess } = useMutation({
-    mutationFn: () => isNew ? createCurrency({ currency, navigate }) : updateCurrency({ currency, navigate }),
+    mutationFn: () => isNew ? createCurrency({ currency }) : updateCurrency({ currency }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['currency'] })
     }

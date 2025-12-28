@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
@@ -21,7 +20,6 @@ const airportsDBOptions = [
 ];
 
 export const AirportsDB = () => {
-  const navigate = useNavigate();
   const [settings, setSettings] = useState({ airports_db_source: "", no_icao_filter: false });
   const { data } = useSettings();
 
@@ -34,7 +32,7 @@ export const AirportsDB = () => {
 
   // mutation for autosave db source settings
   const { mutateAsync: saveSettings, isError: isSaveError, error: saveError, isSuccess } = useMutation({
-    mutationFn: () => updateAirportsDBSettings({ settings, navigate }),
+    mutationFn: () => updateAirportsDBSettings({ settings }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['settings'] })
     }

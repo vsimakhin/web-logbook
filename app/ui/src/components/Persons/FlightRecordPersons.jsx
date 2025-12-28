@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import LinearProgress from "@mui/material/LinearProgress";
@@ -12,11 +11,9 @@ import { fetchPersonsForLog } from "../../util/http/person";
 import PersonForLog from "./PersonForLog";
 
 export const FlightRecordPersons = ({ id }) => {
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["persons", "log", id],
-    queryFn: ({ signal }) => fetchPersonsForLog({ signal, logUuid: id, navigate }),
+    queryFn: ({ signal }) => fetchPersonsForLog({ signal, logUuid: id }),
     enabled: !(id === "new"),
     staleTime: 3600000,
     gcTime: 3600000,

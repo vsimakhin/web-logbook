@@ -3,7 +3,7 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchPersonByUuid } from "../../util/http/person";
 import CardHeader from "../UIElements/CardHeader";
@@ -13,11 +13,10 @@ import { EditPersonButton } from './EditPersonButton'
 
 export const PersonView = () => {
   const { uuid } = useParams();
-  const navigate = useNavigate();
 
   const { data: personData, isLoading: personIsLoading, isError: personIsError, error: personError } = useQuery({
     queryKey: ["persons", "person", uuid],
-    queryFn: ({ signal }) => fetchPersonByUuid({ signal, uuid, navigate }),
+    queryFn: ({ signal }) => fetchPersonByUuid({ signal, uuid }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

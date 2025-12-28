@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid2";
@@ -14,12 +13,10 @@ import { fetchAircrafts } from "../../util/http/aircraft";
 import { fetchCurrency } from "../../util/http/currency";
 
 export const Currency = () => {
-  const navigate = useNavigate();
-
   // load all data
   const { data: logbookData = [], isLoading: isLogbookDataLoading, isError: isLogbookDataError, error: logbookDataError } = useQuery({
     queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLogbookData({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });
@@ -27,7 +24,7 @@ export const Currency = () => {
 
   const { data: currencyData = [], isLoading: isCurrencyDataLoading, isError, error } = useQuery({
     queryKey: ['currency'],
-    queryFn: ({ signal }) => fetchCurrency({ signal, navigate }),
+    queryFn: ({ signal }) => fetchCurrency({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });
@@ -35,7 +32,7 @@ export const Currency = () => {
 
   const { data: aircrafts = [], isLoading: isAircraftsLoading } = useQuery({
     queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircrafts({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   })

@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import { useNotifications } from "@toolpad/core/useNotifications";
 // MUI UI elements
@@ -16,11 +15,10 @@ import { uploadTrackLog } from "../../util/http/logbook";
 import { parseTrackFile } from "./helpers";
 
 export const AddTrackButton = ({ id }) => {
-  const navigate = useNavigate();
   const notifications = useNotifications();
 
   const { mutateAsync: upload, isPending, isError, error, isSuccess } = useMutation({
-    mutationFn: async ({ data }) => await uploadAttachement({ payload: data, navigate }),
+    mutationFn: async ({ data }) => await uploadAttachement({ payload: data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', id] });
     }
@@ -29,7 +27,7 @@ export const AddTrackButton = ({ id }) => {
   useSuccessNotification({ isSuccess, message: 'Attachment uploaded' });
 
   const { mutateAsync: uploadTrack, isPending: isTrackPending, isError: isTrackError, error: trackError, isSuccess: isTrackSuccess } = useMutation({
-    mutationFn: async ({ data }) => await uploadTrackLog({ id, track: data, navigate }),
+    mutationFn: async ({ data }) => await uploadTrackLog({ id, track: data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', id] });
       await queryClient.invalidateQueries({ queryKey: ['flight', id] });

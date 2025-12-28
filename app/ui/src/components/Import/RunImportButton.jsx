@@ -1,5 +1,4 @@
 import { useDialogs } from "@toolpad/core/useDialogs";
-import { useNavigate } from "react-router-dom";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -15,10 +14,9 @@ import ImportLogDialog from "./ImportLogDialog";
 
 export const RunImportButton = ({ data, inProgress, setInProgress }) => {
   const dialogs = useDialogs();
-  const navigate = useNavigate();
 
   const { mutateAsync: importFlightRecords, isError, error } = useMutation({
-    mutationFn: ({ payload }) => runImport({ payload, navigate }),
+    mutationFn: ({ payload }) => runImport({ payload }),
     onSuccess: async (payload) => {
       if (payload) {
         await dialogs.open(ImportLogDialog, payload);

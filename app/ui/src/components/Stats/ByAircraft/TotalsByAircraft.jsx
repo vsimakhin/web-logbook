@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // Custom
@@ -10,11 +9,9 @@ import { fetchAircraftModelsCategories, fetchAircrafts } from "../../../util/htt
 import useCustomFields from "../../../hooks/useCustomFields";
 
 export const TotalsByAircraft = ({ type }) => {
-  const navigate = useNavigate();
-
   const { data: flights = [], isLoading, isError, error } = useQuery({
     queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLogbookData({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });
@@ -22,14 +19,14 @@ export const TotalsByAircraft = ({ type }) => {
 
   const { data: models = [] } = useQuery({
     queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });
 
   const { data: aircrafts = [] } = useQuery({
     queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircrafts({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   })

@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 // MUI UI
@@ -12,18 +11,17 @@ import { useErrorNotification, useSuccessNotification } from "../../../../hooks/
 
 export const DBDownloadButton = ({ handleCloseMenu }) => {
   const [isDownloading, setIsDownloading] = useState(false);
-  const navigate = useNavigate();
 
   const { data: dbfilename = "web-logbook.sql" } = useQuery({
     queryKey: ['db', 'filename'],
-    queryFn: ({ signal }) => fetchDBFileName({ signal, navigate }),
+    queryFn: ({ signal }) => fetchDBFileName({ signal }),
     staleTime: 86400000,
     gcTime: 86400000,
     refetchOnWindowFocus: false,
   })
 
   const { mutateAsync: downloadDB, isError: isDownloadError, error: downloadError, isSuccess: isDownloadSuccess } = useMutation({
-    mutationFn: async () => await downloadDBFile({ navigate }),
+    mutationFn: async () => await downloadDBFile(),
     onSuccess: (blob) => {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);

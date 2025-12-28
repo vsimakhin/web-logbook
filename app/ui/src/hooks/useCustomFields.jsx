@@ -1,16 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
 // Custom
 import { fetchCustomFields } from "../util/http/fields";
 import { useErrorNotification } from "./useAppNotifications";
 import { useCallback } from "react";
 
 export const useCustomFields = () => {
-  const navigate = useNavigate();
-
   const { data = [], isError, error, isLoading } = useQuery({
     queryKey: ['custom-fields'],
-    queryFn: ({ signal }) => fetchCustomFields({ signal, navigate }),
+    queryFn: ({ signal }) => fetchCustomFields({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

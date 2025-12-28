@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // Custom
@@ -26,10 +25,9 @@ export const AircraftCategories = ({
   handleChange,
   ...props
 }) => {
-  const navigate = useNavigate();
 
   const { data: modelCategoriesOptions = [] } = useQuery({
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
     queryKey: ['models-categories'],
     staleTime: 3600000,
     gcTime: 3600000,
@@ -38,7 +36,7 @@ export const AircraftCategories = ({
 
   const { data: customCategoriesOptions = [] } = useQuery({
     queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircrafts({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
     select: data => getUniqueCategoriesFromKey(data, "custom_category"),
