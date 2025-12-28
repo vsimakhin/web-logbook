@@ -29,16 +29,19 @@ import ImportPage from './pages/ImportPage.jsx';
 import CurrencyPage from './pages/CurrencyPage.jsx';
 import PersonsPage from './pages/PersonsPage.jsx'
 import PersonViewPage from './pages/PersonViewPage.jsx';
+import ErrorPage from './pages/ErrorPage.jsx';
 
 const router = createBrowserRouter([
   {
     Component: App,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
         Component: Root,
         id: 'root',
         loader: authLoader,
+        errorElement: <ErrorPage />,
         children: [
           { index: true, element: <LogbookPage /> },
           {
