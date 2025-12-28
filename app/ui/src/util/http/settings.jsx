@@ -2,17 +2,17 @@ import { handleFetch } from './http';
 import { API_URL } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
-export const fetchSettings = async ({ signal, navigate }) => {
+export const fetchSettings = async ({ signal }) => {
   const url = `${API_URL}/settings/list`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch settings');
+  return await handleFetch(url, options, 'Cannot fetch settings');
 }
 
-export const updateSettings = async ({ settings, navigate }) => {
+export const updateSettings = async ({ settings }) => {
   const url = `${API_URL}/settings/general`;
   settings.licenses_expiration.warning_period = parseInt(settings.licenses_expiration.warning_period) || 90;
   const options = {
@@ -20,67 +20,67 @@ export const updateSettings = async ({ settings, navigate }) => {
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(settings),
   };
-  return await handleFetch(url, options, navigate, 'Cannot update settings');
+  return await handleFetch(url, options, 'Cannot update settings');
 }
 
-export const updateSignature = async ({ settings, navigate }) => {
+export const updateSignature = async ({ settings }) => {
   const url = `${API_URL}/settings/signature`;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(settings),
   };
-  return await handleFetch(url, options, navigate, 'Cannot update signature');
+  return await handleFetch(url, options, 'Cannot update signature');
 }
 
-export const updateAirportsDBSettings = async ({ settings, navigate }) => {
+export const updateAirportsDBSettings = async ({ settings }) => {
   const url = `${API_URL}/settings/airports`;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(settings),
   };
-  return await handleFetch(url, options, navigate, 'Cannot update airports DB settings');
+  return await handleFetch(url, options, 'Cannot update airports DB settings');
 }
 
-export const fetchPdfDefaults = async ({ signal, format, navigate }) => {
+export const fetchPdfDefaults = async ({ signal, format }) => {
   const url = `${API_URL}/settings/export/defaults/${format}`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch defaults');
+  return await handleFetch(url, options, 'Cannot fetch defaults');
 }
 
-export const updatePdfSettings = async ({ settings, format, navigate }) => {
+export const updatePdfSettings = async ({ settings, format }) => {
   const url = `${API_URL}/settings/export/${format}`;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(settings),
   };
-  return await handleFetch(url, options, navigate, 'Cannot update export settings');
+  return await handleFetch(url, options, 'Cannot update export settings');
 }
 
-export const fetchVersion = async ({ signal, navigate }) => {
+export const fetchVersion = async ({ signal }) => {
   const url = `${API_URL}/version`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch version');
+  return await handleFetch(url, options, 'Cannot fetch version');
 }
 
-export const fetchAuthEnabled = async ({ signal, navigate }) => {
+export const fetchAuthEnabled = async ({ signal }) => {
   const url = `${API_URL}/auth-enabled`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch auth enabled property');
+  return await handleFetch(url, options, 'Cannot fetch auth enabled property');
 }
 
 export const fetchLatestRelease = async ({ signal }) => {
@@ -89,15 +89,15 @@ export const fetchLatestRelease = async ({ signal }) => {
     method: 'GET',
     signal: signal,
   };
-  return await handleFetch(url, options, null, 'Cannot fetch latest release');
+  return await handleFetch(url, options, 'Cannot fetch latest release');
 }
 
-export const fetchStandardFields = async ({ signal, navigate }) => {
+export const fetchStandardFields = async ({ signal }) => {
   const url = `${API_URL}/settings/standard-fields`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch standard fields');
+  return await handleFetch(url, options, 'Cannot fetch standard fields');
 }

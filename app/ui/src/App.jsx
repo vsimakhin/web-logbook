@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
-import { Outlet } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
+
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { NotificationsProvider } from '@toolpad/core/useNotifications';
@@ -29,6 +30,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { queryClient } from './util/http/http';
 import getMPTheme from './theme/getMPTheme';
 import { LicensingNavTitle } from './components/Licensing/LicensingNavTitle';
+import { setNavigate } from './util/navigation';
+
 
 dayjs.extend(updateLocale);
 dayjs.updateLocale("en", { weekStart: 1 });
@@ -68,7 +71,14 @@ const NAV_ITEMS = [
   { kind: 'divider' },
 ];
 
+function NavigationSetter() {
+  const navigate = useNavigate();
+  setNavigate(navigate);
+  return null;
+}
+
 function App() {
+
   // theme
   const lightTheme = createTheme(getMPTheme('light'));
   const darkTheme = createTheme(getMPTheme('dark'));
@@ -76,7 +86,9 @@ function App() {
 
   return (
     <ReactRouterAppProvider theme={theme} navigation={NAV_ITEMS} branding={BRANDING} >
+      <NavigationSetter />
       <LocalizationProvider dateAdapter={AdapterDayjs}>
+
         <QueryClientProvider client={queryClient}>
           <DialogsProvider>
             <NotificationsProvider>

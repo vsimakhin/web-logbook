@@ -1,20 +1,20 @@
 import { QueryClient } from '@tanstack/react-query';
+import { globalNavigate } from '../navigation';
+
 export const queryClient = new QueryClient();
 
-const handle401 = (response, navigate) => {
+const handle401 = (response) => {
   if (response.status === 401) {
-    if (navigate) {
-      return navigate('/signin', 401);
-    }
+    return globalNavigate('/signin', 401);
   }
   return;
 }
 
-export const handleFetch = async (url, options, navigate, errorMessage, returnJson = true) => {
+export const handleFetch = async (url, options, errorMessage, returnJson = true) => {
   const response = await fetch(url, options);
 
   if (!response.ok) {
-    handle401(response, navigate);
+    handle401(response);
     // if (response.status === 404) {
     //   return response;
     // }

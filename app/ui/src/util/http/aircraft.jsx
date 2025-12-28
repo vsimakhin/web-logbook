@@ -2,72 +2,72 @@ import { handleFetch } from './http';
 import { API_URL } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
-export const fetchAircraftModels = async ({ signal, navigate }) => {
+export const fetchAircraftModels = async ({ signal }) => {
   const url = `${API_URL}/aircraft/models`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch aircraft models');
+  return await handleFetch(url, options, 'Cannot fetch aircraft models');
 }
 
-export const fetchAircraftRegs = async ({ signal, navigate, last = true }) => {
+export const fetchAircraftRegs = async ({ signal, last = true }) => {
   const url = `${API_URL}/aircraft/logbook${last ? '/last' : ''}`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch aircraft regs');
+  return await handleFetch(url, options, 'Cannot fetch aircraft regs');
 }
 
-export const fetchAircraftsBuildList = async ({ signal, navigate }) => {
+export const fetchAircraftsBuildList = async ({ signal }) => {
   const url = `${API_URL}/aircraft/build-list`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch aircrafts');
+  return await handleFetch(url, options, 'Cannot fetch aircrafts');
 }
 
-export const fetchAircrafts = async ({ signal, navigate }) => {
+export const fetchAircrafts = async ({ signal }) => {
   const url = `${API_URL}/aircraft/list`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch aircrafts');
+  return await handleFetch(url, options, 'Cannot fetch aircrafts');
 }
 
-export const updateAircraftModelsCategories = async ({ payload, navigate }) => {
+export const updateAircraftModelsCategories = async ({ payload }) => {
   const url = `${API_URL}/aircraft/models-categories`;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     body: JSON.stringify(payload),
   };
-  return await handleFetch(url, options, navigate, 'Cannot update aircraft');
+  return await handleFetch(url, options, 'Cannot update aircraft');
 }
 
-export const fetchAircraftModelsCategories = async ({ signal, navigate }) => {
+export const fetchAircraftModelsCategories = async ({ signal }) => {
   const url = `${API_URL}/aircraft/models-categories`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
-  return await handleFetch(url, options, navigate, 'Cannot fetch aircraft models and categories');
+  return await handleFetch(url, options, 'Cannot fetch aircraft models and categories');
 }
 
-export const updateAircraft = async ({ payload, navigate }) => {
+export const updateAircraft = async ({ payload }) => {
   const url = `${API_URL}/aircraft/update`;
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     body: JSON.stringify(payload),
   };
-  return await handleFetch(url, options, navigate, 'Cannot update aircraft');
+  return await handleFetch(url, options, 'Cannot update aircraft');
 }
