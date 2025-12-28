@@ -51,6 +51,7 @@ const SaveButton = ({ frPerson, isNew, onClose }) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["persons", "log", frPerson.log_uuid] });
       await queryClient.invalidateQueries({ queryKey: ["persons", "flights"] })
+      await queryClient.invalidateQueries({ queryKey: ["persons", "roles"] })
     },
   });
   useErrorNotification({ isError, error, fallbackMessage: "Failed to add person to log record" });

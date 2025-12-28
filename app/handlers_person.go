@@ -172,3 +172,14 @@ func (app *application) HandlerApiPersonDelete(w http.ResponseWriter, r *http.Re
 
 	app.writeJSON(w, http.StatusOK, "Person deleted")
 }
+
+// HandlerApiPersonsRoles returns a list of persons roles
+func (app *application) HandlerApiPersonsRoles(w http.ResponseWriter, r *http.Request) {
+	roles, err := app.db.GetPersonsRoles()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, roles)
+}

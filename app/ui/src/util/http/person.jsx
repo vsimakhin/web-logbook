@@ -100,3 +100,13 @@ export const deletePerson = async ({ navigate, uuid }) => {
   };
   return await handleFetch(url, options, navigate, 'Cannot delete person');
 }
+
+export const fetchRoles = async ({ signal, navigate }) => {
+  const url = `${API_URL}/person/roles`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, navigate, 'Cannot fetch roles');
+}

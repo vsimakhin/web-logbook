@@ -6,8 +6,6 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 // Custom
 import TextField from "../../UIElements/TextField";
-import Select from "../../UIElements/Select";
-import { defaultPersonRoles } from "../../UIElements/PersonRole";
 
 export const OtherSettings = ({ settings, handleChange }) => {
   const getDefaultPagination = useCallback(() => {
@@ -30,16 +28,6 @@ export const OtherSettings = ({ settings, handleChange }) => {
         handleChange={handleChange}
         value={getDefaultPagination()}
         tooltip="Logbook Pagination (comma-separated values, e.g. 5,10,15)"
-      />
-      <Select gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-        id="person_roles"
-        label="Person Roles"
-        handleChange={handleChange}
-        value={settings.person_roles ? settings.person_roles.split(",").map(role => role.trim()) : []}
-        tooltip={"Person roles (type the role in and press enter or select from the default list)"}
-        options={defaultPersonRoles}
-        freeSolo={true}
-        multiple
       />
       <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
         <FormControlLabel
