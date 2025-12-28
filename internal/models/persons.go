@@ -194,3 +194,26 @@ func (m *DBModel) DeletePerson(uuid string) (err error) {
 	_, err = m.DB.ExecContext(ctx, query, uuid)
 	return err
 }
+
+// GetPersonsRoles returns all unique roles in the database
+func (m *DBModel) GetPersonsRoles() (roles []string, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := "SELECT DISTINCT role FROM person_to_log"
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var role string
+		if err = rows.Scan(&role); err != nil {
+			return roles, err
+		}
+		roles = append(roles, role)
+	}
+
+	return roles, nil
+}

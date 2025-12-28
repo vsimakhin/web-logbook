@@ -1,12 +1,19 @@
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 // Custom components
 import Select from "./Select";
-import useSettings from "../../hooks/useSettings";
-
-export const defaultPersonRoles = ['Captain', 'First officer', 'Second officer', 'Flight instructor', 'Examiner', 'Cabin crew'];
+import { fetchRoles } from "../../util/http/person";
 
 export const PersonRole = ({ gsize, id = "role", label = "Role", value, handleChange, ...props }) => {
+  const navigate = useNavigate();
 
-  const { settings } = useSettings();
+  const { data: options = [] } = useQuery({
+    queryKey: ['persons', 'roles'],
+    queryFn: ({ signal }) => fetchRoles({ signal, navigate }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+    select: (data) => data || [], // Ensure options is always an array
+  });
 
   return (
     <Select gsize={gsize}
@@ -15,7 +22,7 @@ export const PersonRole = ({ gsize, id = "role", label = "Role", value, handleCh
       handleChange={handleChange}
       value={value}
       tooltip={"Role on this flight"}
-      options={settings.person_roles ? settings.person_roles.split(",").map(role => role.trim()) : defaultPersonRoles}
+      options={options}
       freeSolo={true}
       inputValue={value || ''}
       onInputChange={(event, newValue) => {
