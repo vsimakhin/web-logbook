@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { fetchSettings } from '../util/http/settings';
 import { useErrorNotification } from './useAppNotifications';
 
@@ -75,12 +74,10 @@ const defaultFieldNames = {
   }
 }
 export const useSettings = () => {
-  const navigate = useNavigate();
-
   // Load settings
   const { data = { standard_fields_headers: {} }, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
     queryKey: ['settings'],
-    queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
+    queryFn: ({ signal }) => fetchSettings({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
     refetchOnWindowFocus: false,

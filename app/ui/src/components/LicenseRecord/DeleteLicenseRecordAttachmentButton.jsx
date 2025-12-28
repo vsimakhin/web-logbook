@@ -1,6 +1,5 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
@@ -14,10 +13,9 @@ import { queryClient } from '../../util/http/http';
 
 export const DeleteLicenseRecordAttachmentButton = ({ license }) => {
   const dialogs = useDialogs();
-  const navigate = useNavigate();
 
   const { mutateAsync: deleteLicense, isError, error, isSuccess } = useMutation({
-    mutationFn: () => deleteLicenseRecordAttachment({ id: license.uuid, navigate }),
+    mutationFn: () => deleteLicenseRecordAttachment({ id: license.uuid }),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['license', license.uuid] });
     }

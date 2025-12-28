@@ -2,7 +2,6 @@ import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -52,11 +51,9 @@ export const CategoriesTable = ({ ...props }) => {
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

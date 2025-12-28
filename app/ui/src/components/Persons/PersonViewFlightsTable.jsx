@@ -9,7 +9,6 @@ import {
 import { useMemo, useState, useCallback } from "react";
 import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 // MUI
 import LinearProgress from "@mui/material/LinearProgress";
@@ -47,7 +46,6 @@ const tableOptions = {
 };
 
 export const PersonsViewFlightsTable = ({ uuid }) => {
-  const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
@@ -56,7 +54,7 @@ export const PersonsViewFlightsTable = ({ uuid }) => {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["persons", "flights", uuid],
-    queryFn: ({ signal }) => fetchLogsForPerson({ signal, personUuid: uuid, navigate }),
+    queryFn: ({ signal }) => fetchLogsForPerson({ signal, personUuid: uuid }),
     staleTime: 3600000,
     gcTime: 3600000,
     refetchOnWindowFocus: false,

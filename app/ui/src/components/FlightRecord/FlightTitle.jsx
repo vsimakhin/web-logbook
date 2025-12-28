@@ -9,7 +9,7 @@ import NavigateBeforeOutlinedIcon from '@mui/icons-material/NavigateBeforeOutlin
 
 export const FlightTitle = ({ flight }) => {
   const navigate = useNavigate();
-
+  console.log("title")
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>

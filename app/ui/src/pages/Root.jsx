@@ -18,12 +18,11 @@ import { DRAWER_WIDTH } from '../constants/constants';
 import { fetchAuthEnabled, fetchLatestRelease, fetchVersion } from '../util/http/settings';
 
 const CustomAppTitle = () => {
-  const navigate = useNavigate();
   const [isNewReleaseAvailable, setIsNewReleaseAvailable] = useState(false);
 
   const { data: version } = useQuery({
     queryKey: ['version'],
-    queryFn: ({ signal }) => fetchVersion({ signal, navigate }),
+    queryFn: ({ signal }) => fetchVersion({ signal }),
     placeholderData: "",
     staleTime: 86400000,
     gcTime: 86400000,
@@ -63,7 +62,7 @@ const ToolbarActions = () => {
 
   const { data: auth } = useQuery({
     queryKey: ['auth-enabled'],
-    queryFn: ({ signal }) => fetchAuthEnabled({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAuthEnabled({ signal }),
     placeholderData: false,
     staleTime: 86400000,
     gcTime: 86400000,

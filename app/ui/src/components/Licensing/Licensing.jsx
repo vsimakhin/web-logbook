@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 // MUI
 import LinearProgress from "@mui/material/LinearProgress";
 // Custom
@@ -8,11 +7,9 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import LisencingTable from "./LicensingTable";
 
 export const Licensing = () => {
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['licensing'],
-    queryFn: ({ signal }) => fetchLicenses({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLicenses({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

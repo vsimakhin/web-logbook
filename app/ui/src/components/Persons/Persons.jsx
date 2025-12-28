@@ -9,7 +9,6 @@ import {
 import { useMemo, useState, useCallback } from "react";
 import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 // MUI
 import Box from "@mui/material/Box";
 // Custom
@@ -54,7 +53,6 @@ const tableOptions = {
 };
 
 export const Persons = () => {
-  const navigate = useNavigate();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
@@ -63,7 +61,7 @@ export const Persons = () => {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["persons"],
-    queryFn: ({ signal }) => fetchPersons({ signal, navigate }),
+    queryFn: ({ signal }) => fetchPersons({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
     refetchOnWindowFocus: false,

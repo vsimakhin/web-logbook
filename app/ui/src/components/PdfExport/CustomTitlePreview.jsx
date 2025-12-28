@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from 'react';
 import { fileTypeFromBuffer } from 'file-type';
@@ -19,12 +18,11 @@ const decodeBase64 = async (base64String) => {
 };
 
 export const CustomTitlePreview = ({ format }) => {
-  const navigate = useNavigate();
   const id = `custom_title_${format.toLowerCase()}`;
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['custom-title', format],
-    queryFn: ({ signal }) => fetchAttachment({ id, signal, navigate }),
+    queryFn: ({ signal }) => fetchAttachment({ id, signal }),
     placeholderData: { document: null },
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to custom title page' });

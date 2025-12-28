@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // Custom components
 import Select from "./Select"
@@ -7,11 +6,10 @@ import useSettings from "../../hooks/useSettings";
 import { useCallback } from "react";
 
 export const AircraftReg = ({ gsize, id = "aircraft.reg_name", label, value, handleChange, last = true, ...props }) => {
-  const navigate = useNavigate();
   const { fieldName } = useSettings();
 
   const { data: regs = {} } = useQuery({
-    queryFn: ({ signal }) => fetchAircraftRegs({ signal, navigate, last }),
+    queryFn: ({ signal }) => fetchAircraftRegs({ signal, last }),
     queryKey: ['aircrafts', 'regs', 'last', last],
     staleTime: 3600000,
     gcTime: 3600000,

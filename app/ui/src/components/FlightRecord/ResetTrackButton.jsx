@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDialogs } from '@toolpad/core/useDialogs';
@@ -14,10 +13,9 @@ import { resetTrackLog } from '../../util/http/logbook';
 
 export const ResetTrackButton = ({ flight, handleChange, handleCloseMenu }) => {
   const dialogs = useDialogs();
-  const navigate = useNavigate();
 
   const { mutateAsync: resetTrack, isError: isResetError, error: resetError, isSuccess: isResetSuccess } = useMutation({
-    mutationFn: () => resetTrackLog({ id: flight.uuid, navigate }),
+    mutationFn: () => resetTrackLog({ id: flight.uuid }),
     onSuccess: async () => {
       handleChange("redraw", Math.random());
       await queryClient.invalidateQueries({ queryKey: ['flight', flight.uuid] });

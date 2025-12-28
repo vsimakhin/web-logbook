@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Dialog from "@mui/material/Dialog";
@@ -30,8 +29,6 @@ const CloseDialogButton = ({ onClose }) => {
 };
 
 const SaveButton = ({ person, isNew, onClose }) => {
-  const navigate = useNavigate();
-
   const payload = {
     uuid: person.uuid,
     first_name: person.first_name,
@@ -40,8 +37,8 @@ const SaveButton = ({ person, isNew, onClose }) => {
   };
 
   const mutateFn = isNew
-    ? () => createPerson({ payload, navigate })
-    : () => updatePerson({ payload, navigate });
+    ? () => createPerson({ payload })
+    : () => updatePerson({ payload });
   const {
     mutateAsync: savePerson,
     isError,

@@ -16,7 +16,7 @@ export const DeleteLicenseRecordButton = ({ license }) => {
   const navigate = useNavigate();
 
   const { mutateAsync: deleteLicense, isError, error, isSuccess } = useMutation({
-    mutationFn: () => deleteLicenseRecord({ id: license.uuid, navigate }),
+    mutationFn: () => deleteLicenseRecord({ id: license.uuid }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['licensing'] });
       await queryClient.invalidateQueries({ queryKey: ['licensing-categories'] });

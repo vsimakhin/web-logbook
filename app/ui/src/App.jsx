@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { useNavigate, Outlet } from 'react-router-dom';
-
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { NotificationsProvider } from '@toolpad/core/useNotifications';
@@ -31,7 +30,6 @@ import { queryClient } from './util/http/http';
 import getMPTheme from './theme/getMPTheme';
 import { LicensingNavTitle } from './components/Licensing/LicensingNavTitle';
 import { setNavigate } from './util/navigation';
-
 
 dayjs.extend(updateLocale);
 dayjs.updateLocale("en", { weekStart: 1 });
@@ -78,7 +76,6 @@ function NavigationSetter() {
 }
 
 function App() {
-
   // theme
   const lightTheme = createTheme(getMPTheme('light'));
   const darkTheme = createTheme(getMPTheme('dark'));

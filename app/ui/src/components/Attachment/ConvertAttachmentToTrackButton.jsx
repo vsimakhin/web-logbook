@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { useNotifications } from '@toolpad/core/useNotifications';
@@ -14,11 +13,10 @@ import { uploadTrackLog } from '../../util/http/logbook';
 import { queryClient } from '../../util/http/http';
 
 export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
-  const navigate = useNavigate();
   const notifications = useNotifications();
 
   const { mutateAsync: uploadTrack, isError: isTrackError, error: trackError, isSuccess: isTrackSuccess } = useMutation({
-    mutationFn: async ({ data }) => await uploadTrackLog({ id: attachment.record_id, track: data, navigate }),
+    mutationFn: async ({ data }) => await uploadTrackLog({ id: attachment.record_id, track: data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', attachment.record_id] });
       await queryClient.invalidateQueries({ queryKey: ['flight', attachment.record_id] });
@@ -28,7 +26,7 @@ export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
   useSuccessNotification({ isSuccess: isTrackSuccess, message: 'Track log uploaded' });
 
   const handleConvert = useCallback(async () => {
-    const data = await fetchAttachment({ id: attachment.uuid, navigate });
+    const data = await fetchAttachment({ id: attachment.uuid });
     const byteCharacters = atob(data.document);
     const extractedCoordinates = parseTrackFile(byteCharacters, data.document_name);
 
@@ -44,7 +42,7 @@ export const ConvertAttachmentToTrackButton = ({ attachment, handleClose }) => {
     await uploadTrack({ data: extractedCoordinates });
 
     handleClose();
-  }, [attachment.uuid, handleClose, navigate, notifications, uploadTrack]);
+  }, [attachment.uuid, handleClose, notifications, uploadTrack]);
 
   return (
     <MenuItem onClick={handleConvert} sx={{ p: 0, pr: 1 }}>

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 // MUI
 import Grid from "@mui/material/Grid2";
 import Card from '@mui/material/Card';
@@ -20,12 +19,11 @@ import AddCustomTitleButton from "./AddCustomTitleButton";
 import DeleteCustomTitleButton from "./DeleteCustomTitleButton";
 
 export const PdfExport = ({ format }) => {
-  const navigate = useNavigate();
   const [pdfSettings, setPdfSettings] = useState({ columns: {}, headers: {} });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['settings'],
-    queryFn: ({ signal }) => fetchSettings({ signal, navigate }),
+    queryFn: ({ signal }) => fetchSettings({ signal }),
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load settings' });
 

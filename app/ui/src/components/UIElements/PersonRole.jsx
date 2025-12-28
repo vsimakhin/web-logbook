@@ -1,15 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
 // Custom components
 import Select from "./Select";
 import { fetchRoles } from "../../util/http/person";
 
 export const PersonRole = ({ gsize, id = "role", label = "Role", value, handleChange, ...props }) => {
-  const navigate = useNavigate();
 
   const { data: options = [] } = useQuery({
     queryKey: ['persons', 'roles'],
-    queryFn: ({ signal }) => fetchRoles({ signal, navigate }),
+    queryFn: ({ signal }) => fetchRoles({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
     select: (data) => data || [], // Ensure options is always an array

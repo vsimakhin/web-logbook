@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // Custom
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
@@ -8,11 +7,9 @@ import TotalsByYearTable from "./TotalsByYearTable";
 import useCustomFields from "../../../hooks/useCustomFields";
 
 export const TotalsByYear = () => {
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLogbookData({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import { useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import dayjs from 'dayjs';
@@ -8,12 +7,11 @@ import { fetchDistance, fetchNightTime } from "../util/http/logbook";
 import { useErrorNotification } from "./useAppNotifications";
 
 export const useLogbook = () => {
-  const navigate = useNavigate();
   const { getEnroute } = useCustomFields();
 
   // mutation to fetch distance between two places
   const { mutateAsync: getDistance } = useMutation({
-    mutationFn: ({ signal, departure, arrival }) => fetchDistance({ signal, departure, arrival, navigate }),
+    mutationFn: ({ signal, departure, arrival }) => fetchDistance({ signal, departure, arrival }),
   });
 
   /**
@@ -42,7 +40,7 @@ export const useLogbook = () => {
 
   // mutation to fetch night time
   const { mutateAsync: getNightTime, isError: isErrorNightTime, error: errorNightTime } = useMutation({
-    mutationFn: ({ signal, flight }) => fetchNightTime({ flight, navigate, signal }),
+    mutationFn: ({ signal, flight }) => fetchNightTime({ flight, signal }),
   });
   useErrorNotification({ isError: isErrorNightTime, error: errorNightTime, fallbackMessage: 'Failed to calculate night time' });
 

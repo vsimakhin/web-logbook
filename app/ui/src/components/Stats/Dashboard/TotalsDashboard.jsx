@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid2";
@@ -18,11 +17,10 @@ import useCustomFields from "../../../hooks/useCustomFields";
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
   const [filter, setFilter] = useState({});
-  const navigate = useNavigate();
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLogbookData({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

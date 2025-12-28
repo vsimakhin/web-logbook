@@ -4,7 +4,6 @@ dayjs.extend(isBetween);
 import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -125,13 +124,12 @@ const defaultOptions = {
 }
 
 export const Filters = ({ data, callbackFunction, options = defaultOptions }) => {
-  const navigate = useNavigate();
   const [filterStatsState, setFilterStatsState] = useLocalStorageState("filter-stats-state", {}, { codec: tableJSONCodec });
   const [filter, setFilter] = useState({ ...MAP_FILTER_INITIAL_STATE, show: filterStatsState });
 
   const { data: modelsData } = useQuery({
     queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
     refetchOnWindowFocus: false,
@@ -139,7 +137,7 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
 
   const { data: aircrafts } = useQuery({
     queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal, navigate }),
+    queryFn: ({ signal }) => fetchAircrafts({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   })

@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -31,10 +30,8 @@ const CloseDialogButton = ({ onClose }) => {
 }
 
 const SaveButton = ({ aircraft, onClose }) => {
-  const navigate = useNavigate();
-
   const { mutateAsync: update, isError, error, isSuccess } = useMutation({
-    mutationFn: () => updateAircraft({ payload: aircraft, navigate }),
+    mutationFn: () => updateAircraft({ payload: aircraft }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
       await queryClient.invalidateQueries({ queryKey: ['models-categories'] });

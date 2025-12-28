@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 // MUI UI elements
@@ -22,7 +21,6 @@ const PageSettingsFields = [
 ]
 
 export const RestoreDefaultsButton = ({ format, handleChange }) => {
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => { setAnchorEl(event.currentTarget) };
@@ -30,7 +28,7 @@ export const RestoreDefaultsButton = ({ format, handleChange }) => {
   const [section, setSection] = useState();
 
   const { mutateAsync: restore, isError, error } = useMutation({
-    mutationFn: () => fetchPdfDefaults({ format, navigate }),
+    mutationFn: () => fetchPdfDefaults({ format }),
     onSuccess: async (data) => {
       if (section === SECTION_PAGE_SETTINGS) {
         PageSettingsFields.forEach((field) => {

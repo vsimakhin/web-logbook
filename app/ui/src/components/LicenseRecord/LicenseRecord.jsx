@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
@@ -21,13 +21,11 @@ import HelpButton from "./HelpButton";
 
 export const LicenseRecord = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-
   const [license, setLicense] = useState({ ...LICENSE_INITIAL_STATE, uuid: id });
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['license', id],
-    queryFn: ({ signal }) => fetchLicense({ signal, id, navigate }),
+    queryFn: ({ signal }) => fetchLicense({ signal, id }),
     enabled: id !== "new",
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });

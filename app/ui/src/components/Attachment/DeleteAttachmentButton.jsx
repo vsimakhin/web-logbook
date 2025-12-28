@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 // MUI UI elements
@@ -13,12 +12,11 @@ import { deleteAttachment } from '../../util/http/attachment';
 import { resetTrackLog } from '../../util/http/logbook';
 
 export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
-  const navigate = useNavigate();
   const dialogs = useDialogs();
 
   // remove attachment mutation
   const { mutateAsync: removeAttachment, isError: isDeleteError, error: deleteError, isSuccess: isDeleteSuccess } = useMutation({
-    mutationFn: () => deleteAttachment({ id: attachment.uuid, navigate }),
+    mutationFn: () => deleteAttachment({ id: attachment.uuid }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['attachments', attachment.record_id] });
     }
@@ -28,7 +26,7 @@ export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
 
   // reset track and distance mutation
   const { mutateAsync: resetTrack, isError: isResetError, error: resetError, isSuccess: isResetSuccess } = useMutation({
-    mutationFn: () => resetTrackLog({ id: attachment.record_id, navigate }),
+    mutationFn: () => resetTrackLog({ id: attachment.record_id }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['flight', attachment.record_id] });
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });

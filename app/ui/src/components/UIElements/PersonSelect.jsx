@@ -1,5 +1,4 @@
 // Custom components
-import { useNavigate } from "react-router-dom";
 import { fetchPersons } from "../../util/http/person";
 import Select from "./Select";
 import { useQuery } from "@tanstack/react-query";
@@ -13,16 +12,15 @@ export const PersonSelect = ({
   handleChange,
   ...props
 }) => {
-  const navigate = useNavigate();
 
   const { data: persons = [] } = useQuery({
-    queryFn: ({ signal }) => fetchPersons({ signal, navigate }),
+    queryFn: ({ signal }) => fetchPersons({ signal }),
     queryKey: ["persons"],
     staleTime: 3600000,
     gcTime: 3600000,
   });
 
-  const options = (persons || []).map(p => ({label: printPerson(p), id: p.uuid}));
+  const options = (persons || []).map(p => ({ label: printPerson(p), id: p.uuid }));
 
   return (
     <Select

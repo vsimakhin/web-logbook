@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid2";
@@ -18,11 +17,10 @@ import useCustomFields from "../../hooks/useCustomFields";
 export const SummaryFlightMap = () => {
   const [options, setOptions] = useState({ routes: true, tracks: false });
   const [mapData, setMapData] = useState([]);
-  const navigate = useNavigate();
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook', 'map'],
-    queryFn: ({ signal }) => fetchLogbookMapData({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLogbookMapData({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

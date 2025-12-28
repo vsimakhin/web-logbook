@@ -15,8 +15,8 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   const navigate = useNavigate();
 
   const mutationFn = flight.uuid === "new"
-    ? () => createFlightRecord({ flight, navigate })
-    : () => updateFlightRecord({ flight, navigate });
+    ? () => createFlightRecord({ flight })
+    : () => updateFlightRecord({ flight });
 
   const { mutateAsync: saveFlightRecord, isError, error, isSuccess, isPending } = useMutation({
     mutationFn: () => mutationFn(),
@@ -37,8 +37,8 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
   const handleClick = useCallback(async () => {
-    await saveFlightRecord({ flight, navigate });
-  }, [saveFlightRecord, flight, navigate]);
+    await saveFlightRecord({ flight });
+  }, [saveFlightRecord, flight]);
 
   return (
     <Tooltip title="Save flight record">

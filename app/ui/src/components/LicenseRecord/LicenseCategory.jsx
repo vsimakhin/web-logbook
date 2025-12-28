@@ -1,14 +1,11 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // Custom components
 import Select from "../UIElements/Select"
 import { fetchLicenseCategory } from "../../util/http/licensing";
 
 export const LicenseCategory = ({ gsize, value, handleChange, id = "category" }) => {
-  const navigate = useNavigate();
-
   const { data: options = [] } = useQuery({
-    queryFn: ({ signal }) => fetchLicenseCategory({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLicenseCategory({ signal }),
     queryKey: ['licensing-categories'],
   })
 

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
@@ -10,10 +9,8 @@ import { queryClient } from "../../../util/http/http";
 import { updateSignature } from "../../../util/http/settings";
 
 export const SaveSignatureButton = ({ settings }) => {
-  const navigate = useNavigate();
-
   const { mutateAsync: saveSignature, isError, error, isSuccess } = useMutation({
-    mutationFn: () => updateSignature({ settings, navigate }),
+    mutationFn: () => updateSignature({ settings }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['settings'] })
     }

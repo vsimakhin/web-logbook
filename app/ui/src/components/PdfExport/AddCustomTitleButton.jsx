@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -12,11 +11,10 @@ import { useErrorNotification, useSuccessNotification } from "../../hooks/useApp
 import { uploadCustomTitle } from "../../util/http/export";
 
 export const AddCustomTitleButton = ({ format }) => {
-  const navigate = useNavigate();
   const id = `custom_title_${format.toLowerCase()}`;
 
   const { mutateAsync: upload, isPending, isError, error, isSuccess } = useMutation({
-    mutationFn: async ({ data }) => await uploadCustomTitle({ payload: data, navigate }),
+    mutationFn: async ({ data }) => await uploadCustomTitle({ payload: data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['custom-title', format] })
     }

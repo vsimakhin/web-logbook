@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 // MUI
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -12,12 +11,11 @@ import { fetchLicenses } from "../../util/http/licensing";
 import { calculateExpiry } from "./helpers";
 
 export const LicensingNavTitle = () => {
-  const navigate = useNavigate();
   const { settings } = useSettings();
 
   const { data: licenses = [] } = useQuery({
     queryKey: ["licensing"],
-    queryFn: ({ signal }) => fetchLicenses({ signal, navigate }),
+    queryFn: ({ signal }) => fetchLicenses({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });

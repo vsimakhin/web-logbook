@@ -1,7 +1,6 @@
 import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Box from '@mui/material/Box';
@@ -47,11 +46,9 @@ export const StandardAirportsTable = () => {
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  const navigate = useNavigate();
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['airports'],
-    queryFn: ({ signal }) => fetchStandardAirports({ signal, navigate }),
+    queryFn: ({ signal }) => fetchStandardAirports({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
   });
