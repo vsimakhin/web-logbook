@@ -516,7 +516,7 @@ func (p *PDFExporter) formatTimeField(timeField string) string {
 }
 
 // printBodyRemarksCell prints remarks cell in the row of the logbook
-func (p *PDFExporter) printBodyRemarksCell(w float64, value string, fill bool) {
+func (p *PDFExporter) printBodyRemarksCell(w float64, value string, signature string, uuid string, fill bool) {
 	if w <= 0 {
 		return
 	}
@@ -541,6 +541,23 @@ func (p *PDFExporter) printBodyRemarksCell(w float64, value string, fill bool) {
 
 	p.pdf.CellFormat(w, p.Export.BodyRow, value, "1", 0, "L", fill, 0, "")
 	p.pdf.SetFont(fontRegular, "", BodyFontSize)
+
+	if signature != "" {
+		// register image
+		unbased, err := base64.StdEncoding.DecodeString(strings.ReplaceAll(signature, "data:image/png;base64,", ""))
+		if err != nil {
+			err = fmt.Errorf("error adding signature for the flight record %s - %s, continue without signature", uuid, err)
+			return
+		}
+
+		r := bytes.NewReader(unbased)
+		im := p.pdf.RegisterImageReader(uuid, "png", r)
+		// need to scale image so it will be with to the p.Export.BodyRow height
+		// and placed at the end of the cell
+		scale := p.Export.BodyRow / im.Height()
+		p.pdf.Image(uuid, p.pdf.GetX()-im.Width()*scale, p.pdf.GetY(),
+			im.Width()*scale, p.Export.BodyRow, false, "", 0, "")
+	}
 }
 
 // printFooterLeftBlock prints left block in the footer of the logbook
