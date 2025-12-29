@@ -321,7 +321,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/fuelflo" title="fuelflo"><img src="https://github.com/fuelflo.png" width="40" height="40" alt="fuelflo" /></a>
   <a href="https://github.com/chrp90" title="chrp90"><img src="https://github.com/chrp90.png" width="40" height="40" alt="chrp90" /></a>
   <a href="https://github.com/machullamanuel-cmyk" title="machullamanuel-cmyk"><img src="https://github.com/machullamanuel-cmyk.png" width="40" height="40" alt="machullamanuel-cmyk" /></a>
-</p>
+  <a href="https://github.com/AngusBell97" title="AngusBell97"><img src="https://github.com/AngusBell97.png" width="40" height="40" alt="AngusBell97" /></a></p>
 
 # Used libraries
 
