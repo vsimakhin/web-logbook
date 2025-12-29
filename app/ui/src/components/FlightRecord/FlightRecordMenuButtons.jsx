@@ -33,7 +33,7 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => 
           anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           transformOrigin={{ vertical: "top", horizontal: "left" }}
         >
-          {flight.uuid !== "new" && <SignFlightRecordButton payload={flight.uuid} handleCloseMenu={handleCloseMenu} />}
+          {flight.uuid !== "new" && <SignFlightRecordButton uuid={flight.uuid} handleCloseMenu={handleCloseMenu} />}
           {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
           {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
           {flight.track && <ResetTrackButton flight={flight} handleChange={handleChange} handleCloseMenu={handleCloseMenu} />}

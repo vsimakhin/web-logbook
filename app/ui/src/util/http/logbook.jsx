@@ -159,3 +159,12 @@ export const fetchTags = async ({ signal }) => {
   return await handleFetch(url, options, 'Cannot fetch tags');
 }
 
+export const fetchFlightRecordSignature = async ({ signal, id }) => {
+  const url = `${API_URL}/logbook/${id}/signature`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, 'Cannot fetch flight record signature');
+}

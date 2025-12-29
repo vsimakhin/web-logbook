@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "18"
+	schemaVersion = "20"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -49,6 +49,7 @@ var logbookTable = NewTable("logbook", "uuid", UUID,
 		{Name: "track", Type: Blob},
 		{Name: "custom_fields", Type: FullText},
 		{Name: "tags", Type: BigText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "signature", Type: FullText, Properties: "NOT NULL DEFAULT ''"},
 	})
 
 var airportsTable = NewTable("airports", "icao", SmallText,
@@ -172,7 +173,7 @@ var logbookView = NewView("logbook_view",
 				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
 				CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
 				IFNULL(ac.cnt, 0) AS attachments_count,
-				IFNULL(tags, '') AS tags
+				IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
 			FROM logbook
 			LEFT JOIN (
   				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
@@ -190,7 +191,7 @@ var logbookView = NewView("logbook_view",
 				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
 				CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
 				IFNULL(ac.cnt, 0) AS attachments_count,
-				IFNULL(tags, '') AS tags
+				IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
 			FROM logbook
 			LEFT JOIN (
   				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id

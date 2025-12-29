@@ -7,13 +7,13 @@ import MenuItem from '@mui/material/MenuItem';
 // Custom components and libraries
 import SignModal from './SignModal';
 
-export const SignFlightRecordButton = ({ payload, handleCloseMenu }) => {
+export const SignFlightRecordButton = ({ uuid, handleCloseMenu }) => {
   const dialogs = useDialogs();
 
   const handleClick = useCallback(async () => {
     handleCloseMenu();
-    await dialogs.open(SignModal, payload)
-  }, [dialogs, payload, handleCloseMenu]);
+    await dialogs.open(SignModal, { uuid })
+  }, [dialogs, uuid, handleCloseMenu]);
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleClick}>

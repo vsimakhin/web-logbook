@@ -193,3 +193,16 @@ func (app *application) HandlerApiFlightRecordTags(w http.ResponseWriter, r *htt
 
 	app.writeJSON(w, http.StatusOK, tags)
 }
+
+// HandlerApiFlightRecordSignature returns flight record signature
+func (app *application) HandlerApiFlightRecordSignature(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	signature, err := app.db.GetFlightRecordSignature(uuid)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, signature)
+}
