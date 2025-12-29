@@ -3,10 +3,16 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
+import DrawOutlinedIcon from '@mui/icons-material/DrawOutlined';
 // Custom
 import HelpButtonDrawer from "../UIElements/HelpButtonDrawer";
 
 const HELP_CONTENT = [
+  {
+    title: "Sign flight record",
+    icon: DrawOutlinedIcon,
+    description: 'Sign the flight record. Signature will be visible in the PDF export.',
+  },
   {
     title: "New flight record",
     icon: AddBoxOutlinedIcon,

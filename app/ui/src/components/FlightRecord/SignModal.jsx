@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import SignaturePad from 'signature_pad';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -12,10 +12,13 @@ import LinearProgress from '@mui/material/LinearProgress';
 // MUI Icons
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import CleaningServicesOutlinedIcon from '@mui/icons-material/CleaningServicesOutlined';
+import ColorizeOutlinedIcon from "@mui/icons-material/ColorizeOutlined";
 // Custom
 import CardHeader from "../UIElements/CardHeader";
-import { fetchFlightRecordSignature } from '../../util/http/logbook';
+import { fetchFlightRecordSignature, updateFlightRecordSignature } from '../../util/http/logbook';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
+import { queryClient } from '../../util/http/http';
 
 const CloseDialogButton = ({ onClose }) => {
   return (
@@ -25,13 +28,19 @@ const CloseDialogButton = ({ onClose }) => {
   );
 };
 
-const SaveButton = ({ onClose, signature }) => {
+const SaveButton = ({ onClose, uuid, signature }) => {
+  const { mutateAsync, isError, error } = useMutation({
+    mutationFn: () => updateFlightRecordSignature({ id: uuid, signature }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['flight', uuid, 'signature'] });
+    },
+  });
+  useErrorNotification({ isError, error, fallbackMessage: 'Failed to update flight record signature' });
 
   const handleOnClick = useCallback(async () => {
-    console.log(signature);
-    // await mutateAsync();
+    await mutateAsync();
     onClose();
-  }, [onClose, signature]);
+  }, [mutateAsync, onClose]);
 
   return (
     <Tooltip title="Save">
@@ -42,9 +51,42 @@ const SaveButton = ({ onClose, signature }) => {
   );
 };
 
-const ActionButtons = ({ onClose, signature }) => (
+const ClearSignatureButton = ({ setSignature }) => {
+  return (
+    <Tooltip title="Clear Signature">
+      <IconButton size="small" onClick={() => setSignature('')}     >
+        <CleaningServicesOutlinedIcon />
+      </IconButton>
+    </Tooltip>
+  );
+}
+
+const PickColorButton = ({ setPenColor }) => {
+  const colorInputRef = useRef(null);
+  const handleColorChange = useCallback((event) => { setPenColor(event.target.value) }, [setPenColor]);
+
+  return (
+    <>
+      <Tooltip title="Pick Signature Color">
+        <IconButton size="small" onClick={() => colorInputRef.current.click()}>
+          <ColorizeOutlinedIcon />
+        </IconButton>
+      </Tooltip>
+      <input
+        ref={colorInputRef}
+        type="color"
+        onChange={handleColorChange}
+        style={{ display: "none" }} // Hide the input
+      />
+    </>
+  );
+};
+
+const ActionButtons = ({ onClose, uuid, signature, setSignature, setPenColor }) => (
   <>
-    <SaveButton onClose={onClose} signature={signature} />
+    <PickColorButton setPenColor={setPenColor} />
+    <ClearSignatureButton setSignature={setSignature} />
+    <SaveButton onClose={onClose} uuid={uuid} signature={signature} />
     <CloseDialogButton onClose={onClose} />
   </>
 );
@@ -52,7 +94,7 @@ const ActionButtons = ({ onClose, signature }) => (
 export const SignModal = ({ open, onClose, payload }) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
-  const penColor = '#000000'; // Default color: black
+  const [penColor, setPenColor] = useState('#000000'); // Default color: black
   const [signature, setSignature] = useState('');
 
   const { data, error: signatureError, isLoading: signatureLoading } = useQuery({
@@ -119,9 +161,7 @@ export const SignModal = ({ open, onClose, payload }) => {
     };
 
     // Wait for the dialog transition to complete a bit more reliably
-    const timer = setTimeout(() => {
-      initSignaturePad();
-    }, 100);
+    const timer = setTimeout(() => { initSignaturePad() }, 100);
 
     window.addEventListener('resize', resizeCanvas);
 
@@ -151,7 +191,8 @@ export const SignModal = ({ open, onClose, payload }) => {
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader title={"Signature"} action={<ActionButtons onClose={onClose} signature={signature} />} />
+          <CardHeader title={"Signature"}
+            action={<ActionButtons onClose={onClose} uuid={payload.uuid} signature={signature} setSignature={setSignature} setPenColor={setPenColor} />} />
           {signatureLoading && <LinearProgress />}
           <Grid container spacing={1}>
             <canvas

@@ -403,3 +403,17 @@ func (m *DBModel) GetFlightRecordSignature(uuid string) (signature string, err e
 
 	return signature, nil
 }
+
+// UpdateFlightRecordSignature updates flight record signature
+func (m *DBModel) UpdateFlightRecordSignature(uuid string, signature string) error {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := "UPDATE logbook SET signature = ? WHERE uuid = ?"
+	_, err := m.DB.ExecContext(ctx, query, signature, uuid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

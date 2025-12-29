@@ -168,3 +168,13 @@ export const fetchFlightRecordSignature = async ({ signal, id }) => {
   };
   return await handleFetch(url, options, 'Cannot fetch flight record signature');
 }
+
+export const updateFlightRecordSignature = async ({ id, signature }) => {
+  const url = `${API_URL}/logbook/${id}/signature`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(signature),
+  };
+  return await handleFetch(url, options, 'Cannot update flight record signature');
+}

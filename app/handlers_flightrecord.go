@@ -206,3 +206,23 @@ func (app *application) HandlerApiFlightRecordSignature(w http.ResponseWriter, r
 
 	app.writeJSON(w, http.StatusOK, signature)
 }
+
+// HandlerApiFlightRecordSignatureUpdate updates flight record signature
+func (app *application) HandlerApiFlightRecordSignatureUpdate(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	var signature string
+	err := json.NewDecoder(r.Body).Decode(&signature)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	err = app.db.UpdateFlightRecordSignature(uuid, signature)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Signature updated")
+}
