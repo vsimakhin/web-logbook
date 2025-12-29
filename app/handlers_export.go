@@ -93,7 +93,7 @@ func (app *application) HandlerApiUploadCustomTitle(w http.ResponseWriter, r *ht
 func (app *application) HandlerApiExportLogbook(w http.ResponseWriter, r *http.Request) {
 	format := chi.URLParam(r, "format")
 
-	flightRecords, err := app.db.GetFlightRecords()
+	flightRecords, err := app.db.GetFlightRecordsForExport()
 	if err != nil {
 		app.handleError(w, err)
 		return
