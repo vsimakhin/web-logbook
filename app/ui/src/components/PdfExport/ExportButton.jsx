@@ -10,7 +10,7 @@ import { fetchExport } from '../../util/http/export';
 
 export const ExportButton = ({ format }) => {
 
-  const { mutate: runExport, isPending: isExporting, isError: isExportError, error: exportError } = useMutation({
+  const { mutateAsync: runExport, isPending: isExporting, isError: isExportError, error: exportError } = useMutation({
     mutationFn: async (format) => {
       const blob = await fetchExport(format);
       const url = window.URL.createObjectURL(blob);
@@ -30,7 +30,7 @@ export const ExportButton = ({ format }) => {
 
   return (
     <Tooltip title="Export">
-      <IconButton onClick={() => runExport(format)} size="small">
+      <IconButton onClick={async () => await runExport(format)} size="small">
         <PictureAsPdfOutlinedIcon fontSize='small' />
       </IconButton>
     </Tooltip >

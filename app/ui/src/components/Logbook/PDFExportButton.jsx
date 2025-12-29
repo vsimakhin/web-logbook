@@ -15,7 +15,7 @@ export const PDFExportButton = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const { mutate: runExport, isPending: isExporting, isError: isExportError, error: exportError } = useMutation({
+  const { mutateAsync: runExport, isPending: isExporting, isError: isExportError, error: exportError } = useMutation({
     mutationFn: async (format) => {
       const blob = await fetchExport(format);
       const url = window.URL.createObjectURL(blob);
@@ -33,16 +33,11 @@ export const PDFExportButton = () => {
   useErrorNotification({ isError: isExportError, error: exportError, fallbackMessage: 'Failed to export PDF' });
   useSuccessNotification({ isSuccess: isExporting, message: 'PDF Exported successfully' });
 
-  const handleClick = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+  const handleClick = useCallback((event) => { setAnchorEl(event.currentTarget) }, []);
+  const handleClose = useCallback(() => { setAnchorEl(null) }, []);
 
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-
-  const handleExport = useCallback((format) => {
-    runExport(format);
+  const handleExport = useCallback(async (format) => {
+    await runExport(format);
     handleClose();
   }, [runExport, handleClose]);
 

@@ -8,7 +8,7 @@ export const fetchExport = async (format) => {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
   };
-  const blob = await handleFetch(url, options, null, 'Cannot export logbook data', false);
+  const blob = await handleFetch(url, options, 'Cannot export logbook data', false);
   return blob;
 }
 
