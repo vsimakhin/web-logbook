@@ -17,7 +17,6 @@ import CardHeader from "../UIElements/CardHeader";
 import { fetchFlightRecordSignature } from '../../util/http/logbook';
 import { useErrorNotification } from '../../hooks/useAppNotifications';
 
-
 const CloseDialogButton = ({ onClose }) => {
   return (
     <Tooltip title="Close">
@@ -65,19 +64,12 @@ export const SignModal = ({ open, onClose, payload }) => {
   })
   useErrorNotification({ isError: signatureError, error: signatureError, fallbackMessage: 'Failed to load flight record signature' });
 
-  const signatureRef = useRef(signature);
-
-  useEffect(() => {
-    signatureRef.current = signature;
-  }, [signature]);
-
   const handleSave = useCallback(() => {
     if (signaturePadRef.current?.isEmpty()) {
       return;
     }
     const dataUrl = signaturePadRef.current.toDataURL();
     setSignature(dataUrl);
-    signatureRef.current = dataUrl;
   }, []);
 
   useEffect(() => {
@@ -106,8 +98,8 @@ export const SignModal = ({ open, onClose, payload }) => {
       canvas.getContext('2d').scale(ratio, ratio);
 
       signaturePadRef.current.clear();
-      if (signatureRef.current) {
-        signaturePadRef.current.fromDataURL(signatureRef.current);
+      if (signature) {
+        signaturePadRef.current.fromDataURL(signature);
       }
     };
 
@@ -120,8 +112,8 @@ export const SignModal = ({ open, onClose, payload }) => {
         canvas.getContext('2d').scale(ratio, ratio);
 
         signaturePadRef.current.clear();
-        if (signatureRef.current) {
-          signaturePadRef.current.fromDataURL(signatureRef.current);
+        if (signature) {
+          signaturePadRef.current.fromDataURL(signature);
         }
       }
     };
@@ -143,13 +135,12 @@ export const SignModal = ({ open, onClose, payload }) => {
         signaturePadRef.current = null;
       }
     };
-  }, [handleSave, penColor, open]);
+  }, [handleSave, penColor, open, signature]);
 
   // Initial loading from query data
   useEffect(() => {
     if (data) {
       setSignature(data); // eslint-disable-line react-hooks/set-state-in-effect
-      signatureRef.current = data;
       if (signaturePadRef.current) {
         signaturePadRef.current.fromDataURL(data);
       }
