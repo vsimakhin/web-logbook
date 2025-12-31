@@ -16,7 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.21.0] - 31.12.2025
 
 - New: Added a `Sign` menu item to the Flight Record page, allowing flight records to be signed by an instructor or examiner. The signature now appears in the PDF logbook.
 - Update: Some code optimization, added error page.
@@ -30,12 +30,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Added a circular progress indicator during database download.
 - Update: Hide columns in the PDF export if the field size is set to 0.
 - New: Added option to update aircraft type in Aircrafts table, which also will update all logbook entries.
-
-## [3.19.0] - 05.12.2025
-
-- Fix: Intermittent error on the Stats/Category page.
-- Update: Landing-based expiry calculation to use the most recent qualifying landing that completes the target threshold. Previously, expiry was set to 90 days after the 3rd most recent qualifying landing.
-- Update: Golang and npm packages/security patches
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
