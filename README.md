@@ -18,6 +18,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 ## [Unreleased]
 
+- New: Added a `Sign` menu item to the Flight Record page, allowing flight records to be signed by an instructor or examiner. The signature now appears in the PDF logbook.
 - Update: Some code optimization, added error page.
 - Update: `Person Role` selector now uses the dynamic roles listed from the database instead of static defaults or manual settings.
 - New: Added Tags field to flight records. Tags are visible in the logbook table and available as filters on the `Map` and `Dashboard` pages.
@@ -113,6 +114,7 @@ You can use any modern browser with JavaScript enabled to access the app.
 * Flight map
   * KML and GPX track attachments support for SkyDemon and FlightRadar24 (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
 * Persons tracking
+* Instructor/Examiner signature
 
 ![Flight record](./readme-assets/flight-record.png)
 
@@ -168,6 +170,7 @@ You can use any modern browser with JavaScript enabled to access the app.
 * Export to EASA PDF format (A4 and A5)
 * PDF export formats with custom title pages (for example, include your CV automatically)
 * Adjustable settings for each export format
+* Instructor/Examiner signatures also included in the PDF export
 
 ![Export](./readme-assets/export.png)
 
@@ -321,7 +324,9 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/fuelflo" title="fuelflo"><img src="https://github.com/fuelflo.png" width="40" height="40" alt="fuelflo" /></a>
   <a href="https://github.com/chrp90" title="chrp90"><img src="https://github.com/chrp90.png" width="40" height="40" alt="chrp90" /></a>
   <a href="https://github.com/machullamanuel-cmyk" title="machullamanuel-cmyk"><img src="https://github.com/machullamanuel-cmyk.png" width="40" height="40" alt="machullamanuel-cmyk" /></a>
-  <a href="https://github.com/AngusBell97" title="AngusBell97"><img src="https://github.com/AngusBell97.png" width="40" height="40" alt="AngusBell97" /></a></p>
+  <a href="https://github.com/AngusBell97" title="AngusBell97"><img src="https://github.com/AngusBell97.png" width="40" height="40" alt="AngusBell97" /></a>
+  <a href="https://github.com/pedroponte" title="pedroponte"><img src="https://github.com/pedroponte.png" width="40" height="40" alt="pedroponte" /></a>
+</p>
 
 # Used libraries
 
