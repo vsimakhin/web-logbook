@@ -63,11 +63,12 @@ type FlightRecord struct {
 	PIC     string `json:"pic_name"`
 	Remarks string `json:"remarks"`
 
-	Distance float64 `json:"distance"`
-	Track    []byte  `json:"track"`
-
-	CustomFields string `json:"custom_fields"`
-	Tags         string `json:"tags"`
+	// additional fields
+	Distance     float64 `json:"distance"`
+	Track        []byte  `json:"track"`
+	CustomFields string  `json:"custom_fields"`
+	Tags         string  `json:"tags"`
+	Signature    string  `json:"signature"`
 
 	// calculated
 	PrevUUID         string `json:"prev_uuid"`

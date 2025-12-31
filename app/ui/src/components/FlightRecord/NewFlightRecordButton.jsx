@@ -28,7 +28,7 @@ export const NewFlightRecordButton = ({ setFlight, handleCloseMenu }) => {
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleNewFlight}>
-      <AddBoxOutlinedIcon color="action" sx={{ m: 1 }} />New Flight Record
+      <AddBoxOutlinedIcon color="action" sx={{ m: 1 }} />New
     </MenuItem>
   )
 }

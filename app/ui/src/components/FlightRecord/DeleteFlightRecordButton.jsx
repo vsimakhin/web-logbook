@@ -36,7 +36,7 @@ export const DeleteFlightRecordButton = ({ flight, handleCloseMenu }) => {
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleConfirmDelete}>
-      <DeleteOutlinedIcon color="action" sx={{ m: 1 }} />Delete Flight Record
+      <DeleteOutlinedIcon color="action" sx={{ m: 1 }} />Delete
     </MenuItem>
   );
 }

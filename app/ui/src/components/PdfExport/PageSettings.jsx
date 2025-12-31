@@ -138,7 +138,6 @@ export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnCh
   const theme = useTheme();
   const borderRadius = theme.shape.borderRadius;
 
-  console.log(pdfSettings.columns)
   return (
     <>
       <Grid container spacing={1} columns={16} >

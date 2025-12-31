@@ -30,7 +30,7 @@ export const CopyFlightRecordButton = ({ setFlight, handleCloseMenu }) => {
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleCopyFlight}>
-      <ContentCopyOutlinedIcon color="action" sx={{ m: 1 }} />Copy Flight Record
+      <ContentCopyOutlinedIcon color="action" sx={{ m: 1 }} />Copy
     </MenuItem>
   )
 }

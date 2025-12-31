@@ -34,6 +34,10 @@ func (app *application) routes() *chi.Mux {
 			r.With(middleware.Compress(5)).Get("/data", app.HandlerApiLogbookData)
 			r.With(middleware.Compress(5)).Get("/mapdata", app.HandlerApiLogbookMapData)
 			r.Get("/{uuid}", app.HandlerApiFlightRecordByID)
+
+			r.Get("/{uuid}/signature", app.HandlerApiFlightRecordSignature)
+			r.Put("/{uuid}/signature", app.HandlerApiFlightRecordSignatureUpdate)
+
 			r.Delete("/{uuid}", app.HandlerApiFlightRecordDelete)
 			r.Post("/new", app.HandlerApiFlightRecordNew)
 			r.Put("/{uuid}", app.HandlerApiFlightRecordUpdate)

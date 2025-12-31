@@ -297,6 +297,44 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 	return flightRecords, nil
 }
 
+// GetFlightRecordsForExport returns the flight records in the logbook table for export
+func (m *DBModel) GetFlightRecordsForExport() (flightRecords []FlightRecord, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, `
+		SELECT
+			uuid, date, m_date, departure_place, departure_time,
+			arrival_place, arrival_time, aircraft_model, reg_name,
+			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
+			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
+			sim_type, sim_time, pic_name, remarks, signature
+		FROM logbook_view
+		ORDER BY m_date desc, departure_time desc`)
+
+	if err != nil {
+		return flightRecords, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var fr FlightRecord
+		err = rows.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
+			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
+			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
+			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
+			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.Signature,
+		)
+		if err != nil {
+			return flightRecords, err
+		}
+		m.processFlightrecord(&fr)
+		flightRecords = append(flightRecords, fr)
+	}
+
+	return flightRecords, nil
+}
+
 func (m *DBModel) UpdateFlightRecordTrack(uuid string, distance float64, track []byte) error {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
@@ -320,8 +358,7 @@ func (m *DBModel) GetFlightRecordsForMap() (flightRecords []FlightRecord, err er
 			arrival_place, arrival_time, aircraft_model, reg_name,
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
-			sim_type, sim_time, pic_name, remarks, distance, track, custom_fields,
-			tags
+			sim_type, sim_time, pic_name, remarks, distance, track, custom_fields
 		FROM logbook_view
 		ORDER BY m_date desc, departure_time desc`)
 
@@ -337,7 +374,6 @@ func (m *DBModel) GetFlightRecordsForMap() (flightRecords []FlightRecord, err er
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
 			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.Distance, &fr.Track, &fr.CustomFields,
-			&fr.Tags,
 		)
 		if err != nil {
 			return flightRecords, err
@@ -388,4 +424,34 @@ func (m *DBModel) GetFlightRecordsTags() (tags []string, err error) {
 	sort.Strings(tags)
 
 	return tags, nil
+}
+
+// GetFlightRecordSignature returns flight record signature
+func (m *DBModel) GetFlightRecordSignature(uuid string) (signature string, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := "SELECT signature FROM logbook_view WHERE uuid = ?"
+	row := m.DB.QueryRowContext(ctx, query, uuid)
+
+	err = row.Scan(&signature)
+	if err != nil {
+		return signature, err
+	}
+
+	return signature, nil
+}
+
+// UpdateFlightRecordSignature updates flight record signature
+func (m *DBModel) UpdateFlightRecordSignature(uuid string, signature string) error {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	query := "UPDATE logbook SET signature = ? WHERE uuid = ?"
+	_, err := m.DB.ExecContext(ctx, query, signature, uuid)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

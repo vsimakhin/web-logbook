@@ -167,7 +167,7 @@ func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	}
 	p.printBodyTimeCell(p.columns.w3[20], record.SIM.Type, fill)
 	p.printBodyTimeCell(p.columns.w3[21], p.formatTimeField(record.SIM.Time), fill)
-	p.printBodyRemarksCell(p.columns.w3[22], record.Remarks, fill)
+	p.printBodyRemarksCell(p.columns.w3[22], record.Remarks, record.Signature, record.UUID, fill)
 
 	p.pdf.Ln(-1)
 	p.pdf.SetX(p.Export.LeftMargin)
