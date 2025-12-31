@@ -88,7 +88,7 @@ export const ShowHideFieldsButton = ({ handleCloseMenu }) => {
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleOnClick}>
-      <ViewColumnIcon color="action" sx={{ m: 1 }} />Show/Hide Fields
+      <ViewColumnIcon color="action" sx={{ m: 1 }} />Fields
     </MenuItem>
   )
 }

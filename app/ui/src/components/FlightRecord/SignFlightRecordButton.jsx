@@ -17,7 +17,7 @@ export const SignFlightRecordButton = ({ uuid, handleCloseMenu }) => {
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleClick}>
-      <DrawOutlinedIcon color="action" sx={{ m: 1 }} />Sign Flight Record
+      <DrawOutlinedIcon color="action" sx={{ m: 1 }} />Sign
     </MenuItem>
   );
 };

@@ -38,7 +38,7 @@ export const ResetTrackButton = ({ flight, handleChange, handleCloseMenu }) => {
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleReset}>
-      <RouteOutlinedIcon color="action" sx={{ m: 1 }} />Reset track and distance
+      <RouteOutlinedIcon color="action" sx={{ m: 1 }} />Reset track
     </MenuItem>
   )
 }
