@@ -172,8 +172,9 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
 
     if (events.length < rule.target_value) return null;
     events.sort((a, b) => b.valueOf() - a.valueOf());
-    const third = events[2];
-    return getEndDate(rule, third)
+
+    const event = events[rule.target_value !== 0 ? rule.target_value - 1 : 0];
+    return getEndDate(rule, event)
   }
 
   // Time-based (e.g., time.pic_time, time.total_time, sim.time):

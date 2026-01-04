@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Corrected expiry date calculation for landing-based rules.
+
 ## [3.21.0] - 31.12.2025
 
 - New: Added a `Sign` menu item to the Flight Record page, allowing flight records to be signed by an instructor or examiner. The signature now appears in the PDF logbook.
