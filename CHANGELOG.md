@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.21.1] - 04.01.2026
 
 - Fix: Corrected expiry date calculation for landing-based rules.
 
