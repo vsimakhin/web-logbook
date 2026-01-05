@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 // MUI Icons
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 // MUI UI elements
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import TextField from "../UIElements/TextField";
 import DatePicker from "../UIElements/DatePicker";
 import IconButton from "@mui/material/IconButton";

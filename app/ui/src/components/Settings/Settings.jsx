@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 // MUI
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import GeneralSettings from "./GeneralSettings/GeneralSettings";

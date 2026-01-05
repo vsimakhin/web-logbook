@@ -2,7 +2,7 @@ import { useMemo } from "react";
 // MUI
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 // Custom
 import CardHeader from "../../UIElements/CardHeader";
