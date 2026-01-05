@@ -10,6 +10,8 @@ import XToolbar from './XToolbar';
 import XToolbarColumnsPanel from './XToolbarColumnsPanel';
 import XToolbarFilterPanel from './XToolbarFilterPanel';
 import { FilterProvider, useFilter } from './FilterContext';
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -33,6 +35,82 @@ const toMinutes = (val) => {
   return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
 };
 
+const StyledDataGrid = styled(DataGrid)(({ theme }) => {
+  const isLight = theme.palette.mode === 'light';
+
+  return {
+    border: 0,
+    color: isLight ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)',
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    WebkitFontSmoothing: 'auto',
+    letterSpacing: 'normal',
+
+    // Column header container
+    '& .MuiDataGrid-columnsContainer': {
+      backgroundColor: isLight ? '#f5f5f5' : '#1d1d1d',
+      borderBottom: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
+    },
+
+    // Column headers
+    '& .MuiDataGrid-columnHeader': {
+      borderRight: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
+      fontWeight: 600,
+    },
+
+    // Cells
+    '& .MuiDataGrid-cell': {
+      borderRight: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
+      borderBottom: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
+      color: isLight ? 'rgba(0,0,0,0.87)' : 'rgba(255,255,255,0.65)',
+      backgroundColor: 'transparent',
+    },
+
+    '& .MuiDataGrid-columnSeparator': {
+      color: isLight ? '#e0e0e0' : '#303030',
+    },
+
+    // Row hover effect
+    '& .MuiDataGrid-row:hover': {
+      backgroundColor: isLight
+        ? 'rgba(0, 0, 0, 0.08) !important' // slightly darker than row bg
+        : 'rgba(255, 255, 255, 0.08) !important',
+    },
+
+    // Pagination items
+    '& .MuiPaginationItem-root': {
+      borderRadius: 0,
+    },
+
+    // Sort icons / checkbox colors
+    '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+      outline: 'none',
+    },
+
+    '& .MuiDataGrid-row.Mui-selected': {
+      backgroundColor: isLight
+        ? 'rgba(25, 118, 210, 0.15) !important' // light blue highlight
+        : 'rgba(255, 255, 255, 0.2) !important',
+    },
+    '& .MuiDataGrid-row.Mui-selected:hover': {
+      backgroundColor: isLight
+        ? 'rgba(25, 118, 210, 0.25) !important' // slightly darker on hover
+        : 'rgba(255, 255, 255, 0.25) !important',
+    },
+  };
+});
+
+
 const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
   const apiRef = useGridApiRef();
   const [paginationModel, setPaginationModel] = useLocalStorageState(`${tableId}-pagination`, { pageSize: defaultPageSize, page: 0 }, { codec: codec });
@@ -53,6 +131,7 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
       apiRef.current.subscribeEvent('columnWidthChange', save),
       apiRef.current.subscribeEvent('columnVisibilityModelChange', save),
       apiRef.current.subscribeEvent('columnOrderChange', save),
+      apiRef.current.subscribeEvent('debouncedResize', save),
     ];
 
     return () => {
@@ -123,36 +202,38 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
   }), []);
 
   return (
-    <DataGrid
-      sx={{
-        '& .MuiDataGrid-cell': { px: 0.5 },
-        '& .MuiDataGrid-columnHeaderTitle': { px: 0.1 },
-      }}
-      key={tableId}
-      apiRef={apiRef}
-      rows={filteredRows}
-      columns={columns}
-      rowHeight={36}
-      density="compact"
-      initialState={{ columns: columnsState, ...props.initialState }}
-      // pagination
-      paginationModel={paginationModel}
-      onPaginationModelChange={setPaginationModel}
-      // filtering
-      pageSizeOptions={props.pageSizeOptions || [5, 10, 15, 20, 25, 50, 75, 100, { value: -1, label: 'All' }]}
-      slots={slots}
-      slotProps={{
-        basePagination: {
-          material: {
-            ActionsComponent: XPagination,
+    <Box sx={{ borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
+      <StyledDataGrid
+        sx={{
+          '& .MuiDataGrid-cell': { px: 0.5 },
+          '& .MuiDataGrid-columnHeaderTitle': { px: 0.1 },
+        }}
+        key={tableId}
+        apiRef={apiRef}
+        rows={filteredRows}
+        columns={columns}
+        rowHeight={36}
+        density="compact"
+        initialState={{ columns: columnsState, ...props.initialState }}
+        // pagination
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        // filtering
+        pageSizeOptions={props.pageSizeOptions || [5, 10, 15, 20, 25, 50, 75, 100, { value: -1, label: 'All' }]}
+        slots={slots}
+        slotProps={{
+          basePagination: {
+            material: {
+              ActionsComponent: XPagination,
+            },
           },
-        },
-        footer: { fieldIdTotalLabel: props.footerFieldIdTotalLabel, showAggregationFooter: props.showAggregationFooter },
-        toolbar: { initialColumns: columns },
-      }}
-      showToolbar
-      {...props}
-    />
+          footer: { fieldIdTotalLabel: props.footerFieldIdTotalLabel, showAggregationFooter: props.showAggregationFooter },
+          toolbar: { initialColumns: columns },
+        }}
+        showToolbar
+        {...props}
+      />
+    </Box>
   );
 };
 

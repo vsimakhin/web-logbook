@@ -24,6 +24,14 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 // Custom
 import { useFilter } from './FilterContext';
 
+const DRAWER_SX = {
+  '& .MuiDrawer-paper': {
+    marginTop: '64px',
+    height: 'calc(100% - 64px)',
+    boxSizing: 'border-box',
+  },
+};
+
 const collectGroupLeaves = (group, leaves = []) => {
   group.children.forEach((child) => {
     if (isLeaf(child)) {
@@ -276,11 +284,7 @@ export const XToolbarFilterPanelTrigger = () => {
           </Badge>
         </ToolbarButton>
       </Tooltip>
-      <Drawer
-        anchor="right"
-        open={filterDrawerOpen}
-        onClose={toggleFilterDrawerClose}
-      >
+      <Drawer anchor="right" open={filterDrawerOpen} onClose={toggleFilterDrawerClose} sx={DRAWER_SX}>
         <Box sx={{ width: 350, p: 2 }}>
           <XToolbarFilterPanel />
         </Box>

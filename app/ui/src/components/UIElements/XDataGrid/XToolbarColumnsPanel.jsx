@@ -17,6 +17,14 @@ import Tooltip from '@mui/material/Tooltip';
 import Drawer from '@mui/material/Drawer';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 
+const DRAWER_SX = {
+  '& .MuiDrawer-paper': {
+    marginTop: '64px',
+    height: 'calc(100% - 64px)',
+    boxSizing: 'border-box',
+  },
+};
+
 const collectGroupLeaves = (group, leaves = []) => {
   group.children.forEach((child) => {
     if (isLeaf(child)) {
@@ -216,7 +224,7 @@ export const XToolbarColumnsPanelTrigger = () => {
         </ToolbarButton>
       </Tooltip>
 
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+      <Drawer anchor="right" open={open} onClose={() => setOpen(false)} sx={DRAWER_SX}>
         <Box sx={{ minWidth: 250, p: 1 }}>
           <XToolbarColumnsPanel />
         </Box>

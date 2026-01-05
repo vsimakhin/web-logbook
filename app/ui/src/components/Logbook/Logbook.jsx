@@ -4,7 +4,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import { fetchLogbookData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import LogbookTable from "./LogbookTable";
+import { XLogbookTable } from "./XLogbookTable";
 
 export const Logbook = () => {
   const { data, isLoading, isError, error } = useQuery({
@@ -18,7 +18,7 @@ export const Logbook = () => {
   return (
     <>
       {isLoading && <LinearProgress />}
-      <LogbookTable data={data} isLoading={isLoading} />
+      <XLogbookTable data={data} isLoading={isLoading} />
     </>
   );
 }
