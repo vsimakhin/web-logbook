@@ -18,6 +18,7 @@
     "@mapbox/togeojson": "^0.16.2",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
+    "@mui/x-data-grid": "^8.23.0",
     "@mui/x-date-pickers": "^8.23.0",
     "@tanstack/react-query": "^5.62.7",
     "@toolpad/core": "^0.16.0",
