@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
@@ -45,6 +45,17 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     ]
   ), [fieldNameF]);
 
+  const handlePicNameDoubleClick = useCallback(() => {
+    setFlight((prev) => ({
+      ...prev,
+      pic_name: "Self",
+      time: {
+        ...prev.time,
+        pic_time: prev.time.total_time,
+      },
+    }));
+  }, [setFlight]);
+
   return (
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>
@@ -81,7 +92,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               label={fieldNameF("pic_name")}
               handleChange={handleChange}
               value={flight.pic_name ?? ""}
-              onDoubleClick={() => handleChange("pic_name", "Self")}
+              onDoubleClick={handlePicNameDoubleClick}
             />
           </Grid>
 
