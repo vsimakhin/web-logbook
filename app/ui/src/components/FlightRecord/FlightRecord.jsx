@@ -63,6 +63,11 @@ export const FlightRecord = () => {
         }
       });
 
+      // Auto fill pic time
+      if (key === "pic_name" && value === "Self") {
+        updatedFlight.time.pic_time = updatedFlight.time.total_time;
+      }
+
       return updatedFlight;
     });
   }, []);
