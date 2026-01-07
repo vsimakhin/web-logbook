@@ -269,8 +269,18 @@ type Aircraft struct {
 }
 
 type Category struct {
-	Model    string `json:"model"`
-	Category string `json:"category"`
+	Model              string `json:"model"`
+	Category           string `json:"category"`
+	TimeFieldsAutoFill struct {
+		SE         bool `json:"se_time"`
+		ME         bool `json:"me_time"`
+		MCC        bool `json:"mcc_time"`
+		IFR        bool `json:"ifr_time"`
+		PIC        bool `json:"pic_time"`
+		CoPilot    bool `json:"co_pilot_time"`
+		Dual       bool `json:"dual_time"`
+		Instructor bool `json:"instructor_time"`
+	} `json:"time_fields_auto_fill"`
 }
 
 // Currency is a type for tracking pilot currencies

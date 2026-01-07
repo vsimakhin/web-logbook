@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -9,6 +9,8 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid2";
 import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 // MUI Icons
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -19,6 +21,8 @@ import AircraftCategories from '../UIElements/AircraftCategories';
 import { updateAircraftModelsCategories } from '../../util/http/aircraft';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
+import useSettings from '../../hooks/useSettings';
+import { Box, Paper } from '@mui/material';
 
 const CloseDialogButton = ({ onClose }) => {
   return (
@@ -53,11 +57,30 @@ const SaveButton = ({ category, onClose }) => {
 
 export const EditCategoriesModal = ({ open, onClose, payload }) => {
   const [category, setCategory] = useState({ ...payload });
+  const { fieldNameF } = useSettings();
 
   const handleChange = useCallback((key, value) => {
     setCategory(prev => ({ ...prev, [key]: value }));
   }, []);
 
+  const handleTimeFieldChange = useCallback((key, value) => {
+    setCategory(prev => ({ ...prev, time_fields_auto_fill: { ...prev.time_fields_auto_fill, [key]: value } }));
+  }, []);
+
+  const timeFields = useMemo(() => (
+    [
+      { id: "se_time", label: fieldNameF("se") },
+      { id: "me_time", label: fieldNameF("me") },
+      { id: "mcc_time", label: fieldNameF("mcc") },
+      { id: "ifr_time", label: fieldNameF("ifr") },
+      { id: "pic_time", label: fieldNameF("pic") },
+      { id: "co_pilot_time", label: fieldNameF("cop") },
+      { id: "dual_time", label: fieldNameF("dual") },
+      { id: "instructor_time", label: fieldNameF("instr") },
+    ]
+  ), [fieldNameF]);
+
+  console.log(category);
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
@@ -81,6 +104,26 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
               handleChange={handleChange} value={category.category ? category.category.split(',') : []}
             />
           </Grid>
+          <Box sx={{ p: 1, mt: 1, border: '1px solid #ccc', borderRadius: '8px' }}>
+            <Typography variant="caption" color="textSecondary">
+              Automatically copy Total time to other time fields
+            </Typography>
+            <Grid container spacing={1} sx={{ mt: 1 }}>
+
+              {timeFields.map((field) => (
+                <Grid key={field.id} size={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                  <FormControlLabel label={field.label} sx={{ width: "100%" }}
+                    control={
+                      <Switch
+                        checked={category.time_fields_auto_fill?.[field.id] ?? true}
+                        onChange={(event) => handleTimeFieldChange(field.id, event.target.checked)}
+                      />
+                    }
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
           <Divider sx={{ m: 1 }} />
           <Typography variant="caption" color="textSecondary">
             * To create a new category, type the name in the input field and press Enter
