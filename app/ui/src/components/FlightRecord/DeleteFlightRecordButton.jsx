@@ -10,12 +10,12 @@ import { useErrorNotification, useSuccessNotification } from '../../hooks/useApp
 import { deleteFlightRecord } from '../../util/http/logbook';
 import { queryClient } from '../../util/http/http';
 
-export const DeleteFlightRecordButton = ({ flight, handleCloseMenu }) => {
+export const DeleteFlightRecordButton = ({ uuid, handleCloseMenu }) => {
   const dialogs = useDialogs();
   const navigate = useNavigate();
 
   const { mutateAsync: deleteFlight, isError, error, isSuccess } = useMutation({
-    mutationFn: () => deleteFlightRecord({ id: flight.uuid }),
+    mutationFn: () => deleteFlightRecord({ id: uuid }),
     onSuccess: async () => {
       handleCloseMenu();
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
