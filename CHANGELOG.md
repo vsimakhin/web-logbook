@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Error when selecting license category and the list of categories is empty.
 - Fix: (MySQL) removed default value for `TEXT` fields which caused error during schema update.
 
 ## [3.21.1] - 04.01.2026
