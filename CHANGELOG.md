@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.21.2] - 08.01.2026
 
 - Fix: Error when selecting license category and the list of categories is empty.
 - Fix: (MySQL) removed default value for `TEXT` fields which caused error during schema update.
