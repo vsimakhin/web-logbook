@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: (MySQL) removed default value for `TEXT` fields which caused error during schema update.
+
 ## [3.21.1] - 04.01.2026
 
 - Fix: Corrected expiry date calculation for landing-based rules.
