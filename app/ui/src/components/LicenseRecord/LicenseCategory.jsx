@@ -7,6 +7,7 @@ export const LicenseCategory = ({ gsize, value, handleChange, id = "category" })
   const { data: options = [] } = useQuery({
     queryFn: ({ signal }) => fetchLicenseCategory({ signal }),
     queryKey: ['licensing-categories'],
+    select: (data) => data || [], // Ensure options is always an array
   })
 
   return (
