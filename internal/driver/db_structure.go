@@ -49,7 +49,7 @@ var logbookTable = NewTable("logbook", "uuid", UUID,
 		{Name: "track", Type: Blob},
 		{Name: "custom_fields", Type: FullText},
 		{Name: "tags", Type: BigText, Properties: "NOT NULL DEFAULT ''"},
-		{Name: "signature", Type: FullText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "signature", Type: FullText},
 	})
 
 var airportsTable = NewTable("airports", "icao", SmallText,
