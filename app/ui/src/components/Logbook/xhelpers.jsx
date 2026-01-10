@@ -135,7 +135,7 @@ export const createHasAttachmentColumn = ({ field, width = 20, headerAlign = 'ce
   renderCell: (params) => (
     params.row.attachments_count > 0 ?
       <Badge badgeContent={params.row.attachments_count}>
-        <AttachFileOutlinedIcon fontSize="small" />
+        <AttachFileOutlinedIcon fontSize="16" />
       </Badge>
       : ""
   ),

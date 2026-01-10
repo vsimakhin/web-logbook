@@ -166,6 +166,10 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
           return String(rowValue || '').toLowerCase().includes(String(value).toLowerCase());
         }
 
+        if (operator === 'equals') {
+          return !!rowValue === !!value;
+        }
+
         if (operator === '>=' || operator === '<=') {
           if (!hasRowValue) return false;
 

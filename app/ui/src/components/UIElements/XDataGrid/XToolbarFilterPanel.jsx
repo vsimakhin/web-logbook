@@ -19,6 +19,8 @@ import Typography from '@mui/material/Typography';
 import Drawer from '@mui/material/Drawer';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 // MUI icons
 import FilterListIcon from '@mui/icons-material/FilterList';
 // Custom
@@ -136,6 +138,54 @@ const TextFilterField = ({ label, values, onChange }) => (
   />
 );
 
+const BooleanFilterField = ({ label, values, onChange }) => {
+  const value = values.equals; // true, false, or undefined
+
+  const handleChange = useCallback(() => {
+    if (value === undefined) {
+      // from unset → true
+      onChange('equals', true);
+    } else if (value === true) {
+      // from true → false
+      onChange('equals', false);
+    } else {
+      // from false → unset
+      onChange('equals', undefined);
+    }
+  }, [value, onChange]);
+
+  const tooltipContent = useMemo(() => (
+    <Box>
+      <Typography variant="body2"><strong>Include:</strong> Include only items where this is true</Typography>
+      <Typography variant="body2"><strong>Exclude:</strong> Include only items where this is false</Typography>
+      <Typography variant="body2"><strong>Doesn’t matter:</strong> Don’t filter based on this field</Typography>
+    </Box>
+  ), []);
+
+  return (
+    <Box sx={{ mb: -0.5, mt: -0.5 }}>
+      <Tooltip title={tooltipContent} disableInteractive>
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={value === true}
+              indeterminate={value === undefined}
+              onChange={handleChange}
+              color="primary"
+            />
+          }
+          label={
+            <Typography variant="body2">
+              Filter by {label} {value === undefined ? "(Doesn't matter)" : value ? '(Include)' : '(Exclude)'}
+            </Typography>
+          }
+        />
+      </Tooltip>
+    </Box>
+  );
+};
+
 const FilterField = ({ column, filterModel, onChange }) => {
   const field = column.field;
   const label = column.headerName ?? field;
@@ -163,6 +213,7 @@ const FilterField = ({ column, filterModel, onChange }) => {
   if (type === 'number') return <NumberFilterField label={label} values={values} onChange={handleChange} />;
   if (type === 'date') return <DateFilterField label={label} values={values} onChange={handleChange} />;
   if (type === 'time') return <TimeFilterField label={label} values={values} onChange={handleChange} />;
+  if (type === 'boolean') return <BooleanFilterField label={label} values={values} onChange={handleChange} />;
   return <TextFilterField label={label} values={values} onChange={handleChange} />;
 };
 

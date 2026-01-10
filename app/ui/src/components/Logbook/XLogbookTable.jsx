@@ -207,7 +207,7 @@ export const XLogbookTable = ({ data, isLoading }) => {
   return (
     <XDataGrid
       tableId='logbook'
-      // loading={isLoading}
+      loading={isLoading}
       rows={data}
       columns={columns}
       columnGroupingModel={columnGroupingModel}
