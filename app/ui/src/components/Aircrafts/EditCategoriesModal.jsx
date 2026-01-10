@@ -81,7 +81,7 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
   ), [fieldNameF]);
 
   const copyTotalTimeCaption = useMemo(() =>
-    (`Autofill '${fieldNameF("total")}' to the time fields`), [fieldNameF]
+    (`Auto-fill selected time fields from ${fieldNameF("total")}`), [fieldNameF]
   );
 
   return (
