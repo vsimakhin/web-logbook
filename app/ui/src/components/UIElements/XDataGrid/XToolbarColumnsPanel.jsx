@@ -25,23 +25,25 @@ const DRAWER_SX = {
   },
 };
 
-const collectGroupLeaves = (group, leaves = []) => {
+const collectGroupLeaves = (group, columnLookup, leaves = []) => {
   group.children.forEach((child) => {
     if (isLeaf(child)) {
-      leaves.push(child.field);
+      if (columnLookup[child.field]?.hideable !== false) {
+        leaves.push(child.field);
+      }
     } else {
-      collectGroupLeaves(child, leaves);
+      collectGroupLeaves(child, columnLookup, leaves);
     }
   });
   return leaves;
 };
 
-const buildGroupingMaps = (columnGroupingModel) => {
+const buildGroupingMaps = (columnGroupingModel, columnLookup) => {
   const groupLeavesMap = new Map();      // groupId -> fields[]
   const fieldToGroupMap = new Map();     // field -> top-level group
 
   const walk = (group, topGroup) => {
-    const leaves = collectGroupLeaves(group);
+    const leaves = collectGroupLeaves(group, columnLookup);
     groupLeavesMap.set(group.groupId, leaves);
 
     leaves.forEach((field) => {
@@ -66,9 +68,10 @@ const ColumnGroup = ({
   columnLookup,
   columnVisibilityModel,
   apiRef,
+  groupLeavesMap,
 }) => {
   const isGroupChecked = useMemo(() => (
-    leaves.every((field) => columnVisibilityModel[field] !== false)
+    leaves.some((field) => columnVisibilityModel[field] !== false)
   ), [leaves, columnVisibilityModel]);
 
   const toggleGroup = useCallback((_, checked) => {
@@ -94,32 +97,42 @@ const ColumnGroup = ({
       />
 
       <Box sx={{ pl: 3 }}>
-        {group.children.map((child) =>
-          isLeaf(child) ? (
-            <Stack direction="row" key={child.field}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={columnVisibilityModel[child.field] !== false}
-                    size="small"
-                    sx={{ p: 0.5, mt: 0.5 }}
-                  />
-                }
-                label={columnLookup[child.field]?.headerName ?? child.field}
-                onChange={(e, checked) => toggleColumn(e, checked, child.field)}
+        {group.children
+          .filter((child) => {
+            if (isLeaf(child)) {
+              return columnLookup[child.field]?.hideable !== false;
+            }
+            // For groups, we only show them if they have at least one hideable leaf
+            const groupLeaves = groupLeavesMap.get(child.groupId) || [];
+            return groupLeaves.some((f) => columnLookup[f]?.hideable !== false);
+          })
+          .map((child) =>
+            isLeaf(child) ? (
+              <Stack direction="row" key={child.field}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={columnVisibilityModel[child.field] !== false}
+                      size="small"
+                      sx={{ p: 0.5, mt: 0.5 }}
+                    />
+                  }
+                  label={columnLookup[child.field]?.headerName ?? child.field}
+                  onChange={(e, checked) => toggleColumn(e, checked, child.field)}
+                />
+              </Stack>
+            ) : (
+              <ColumnGroup
+                key={child.groupId}
+                group={child}
+                leaves={groupLeavesMap.get(child.groupId) || []}
+                columnLookup={columnLookup}
+                columnVisibilityModel={columnVisibilityModel}
+                apiRef={apiRef}
+                groupLeavesMap={groupLeavesMap}
               />
-            </Stack>
-          ) : (
-            <ColumnGroup
-              key={child.groupId}
-              group={child}
-              leaves={leaves}
-              columnLookup={columnLookup}
-              columnVisibilityModel={columnVisibilityModel}
-              apiRef={apiRef}
-            />
-          )
-        )}
+            )
+          )}
       </Box>
     </>
   );
@@ -138,8 +151,8 @@ export const XToolbarColumnsPanel = (props) => {
     if (!columnGroupingModel) {
       return { groupLeavesMap: new Map(), fieldToGroupMap: new Map() };
     }
-    return buildGroupingMaps(columnGroupingModel);
-  }, [columnGroupingModel]);
+    return buildGroupingMaps(columnGroupingModel, columnLookup);
+  }, [columnGroupingModel, columnLookup]);
 
   const items = useMemo(() => {
     if (!columnGroupingModel) return [];
@@ -190,6 +203,7 @@ export const XToolbarColumnsPanel = (props) => {
             columnLookup={columnLookup}
             columnVisibilityModel={columnVisibilityModel}
             apiRef={apiRef}
+            groupLeavesMap={groupLeavesMap}
           />
         ) : (
           <Stack direction="row" key={item.field}>
