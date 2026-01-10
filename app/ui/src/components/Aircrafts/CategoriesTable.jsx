@@ -2,7 +2,6 @@ import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { useQuery } from '@tanstack/react-query';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
@@ -12,8 +11,6 @@ import Tooltip from '@mui/material/Tooltip';
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
-import { useErrorNotification } from '../../hooks/useAppNotifications';
 import EditCategoriesModal from './EditCategoriesModal';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
@@ -43,21 +40,13 @@ const tableOptions = {
   enableRowActions: true,
 }
 
-export const CategoriesTable = ({ ...props }) => {
+export const CategoriesTable = ({ data, isLoading, ...props }) => {
   const dialogs = useDialogs();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load categories' });
 
   const columns = useMemo(() => [
     { accessorKey: "model", header: "Type", size: 130 },

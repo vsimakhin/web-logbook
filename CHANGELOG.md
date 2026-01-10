@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Automatically set PIC time to total time for new records when PIC name is Self.
+- New: Aircraft categories can now define time fields that are automatically filled when creating a new record.
+
 ## [3.21.2] - 08.01.2026
 
 - Fix: Error when selecting license category and the list of categories is empty.

@@ -11,14 +11,14 @@ import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { resetTrackLog } from '../../util/http/logbook';
 
-export const ResetTrackButton = ({ flight, handleChange, handleCloseMenu }) => {
+export const ResetTrackButton = ({ uuid, handleChange, handleCloseMenu }) => {
   const dialogs = useDialogs();
 
   const { mutateAsync: resetTrack, isError: isResetError, error: resetError, isSuccess: isResetSuccess } = useMutation({
-    mutationFn: () => resetTrackLog({ id: flight.uuid }),
+    mutationFn: () => resetTrackLog({ id: uuid }),
     onSuccess: async () => {
       handleChange("redraw", Math.random());
-      await queryClient.invalidateQueries({ queryKey: ['flight', flight.uuid] });
+      await queryClient.invalidateQueries({ queryKey: ['flight', uuid] });
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
     }
   });

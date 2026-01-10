@@ -36,13 +36,13 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => 
           {flight.uuid !== "new" && <SignFlightRecordButton uuid={flight.uuid} handleCloseMenu={handleCloseMenu} />}
           {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
           {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
-          {flight.track && <ResetTrackButton flight={flight} handleChange={handleChange} handleCloseMenu={handleCloseMenu} />}
-          {flight.uuid !== "new" && <DeleteFlightRecordButton flight={flight} handleCloseMenu={handleCloseMenu} />}
+          {flight.track && <ResetTrackButton uuid={flight.uuid} handleChange={handleChange} handleCloseMenu={handleCloseMenu} />}
+          {flight.uuid !== "new" && <DeleteFlightRecordButton uuid={flight.uuid} handleCloseMenu={handleCloseMenu} />}
           <ShowHideFieldsButton handleCloseMenu={handleCloseMenu} />
         </Menu>
       </>
     )
-  }, [handleClick, anchorEl, handleCloseMenu, flight, setFlight, handleChange]);
+  }, [handleClick, anchorEl, handleCloseMenu, flight.uuid, flight.track, setFlight, handleChange]);
 
   return (
     <>

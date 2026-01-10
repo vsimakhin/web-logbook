@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
 import Grid from "@mui/material/Grid2";
@@ -21,6 +22,7 @@ import FlightRecordMenuButtons from './FlightRecordMenuButtons';
 import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
+import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() =>
@@ -44,6 +46,46 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
       { id: "time.instructor_time", label: fieldNameF("instr") },
     ]
   ), [fieldNameF]);
+
+  const { data: models = [] } = useQuery({
+    queryKey: ['models-categories'],
+    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+    refetchOnWindowFocus: false,
+    select: (data) => data || [], // Ensure options is always an array
+  });
+
+  const handlePicNameDoubleClick = useCallback(() => {
+    setFlight((prev) => ({ ...prev, pic_name: "Self" }));
+  }, [setFlight]);
+
+  // Auto fill pic time
+  useEffect(() => {
+    if (flight.uuid === "new" && flight.pic_name === "Self" && !flight.time.pic_time && flight.time.total_time) {
+      setFlight((prev) => ({ ...prev, time: { ...prev.time, pic_time: prev.time.total_time } }));
+    }
+  }, [flight.uuid, flight.pic_name, flight.time.pic_time, flight.time.total_time, setFlight])
+
+  // Auto fill time fields
+  useEffect(() => {
+    const timeUpdates = {};
+
+    if (flight.uuid === "new" && flight.aircraft.model && models.length > 0) {
+      const modelData = models.find(m => m.model === flight.aircraft.model);
+      if (modelData && modelData.time_fields_auto_fill) {
+        Object.entries(modelData.time_fields_auto_fill).forEach(([key, autoFill]) => {
+          if (autoFill && !flight.time[key]) {
+            timeUpdates[key] = flight.time.total_time;
+          }
+        });
+      }
+
+      if (Object.keys(timeUpdates).length > 0) {
+        setFlight(prev => ({ ...prev, time: { ...prev.time, ...timeUpdates } }));
+      }
+    }
+  }, [flight.aircraft.model, flight.uuid, models, setFlight])
 
   return (
     <>
@@ -81,7 +123,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               label={fieldNameF("pic_name")}
               handleChange={handleChange}
               value={flight.pic_name ?? ""}
-              onDoubleClick={() => handleChange("pic_name", "Self")}
+              onDoubleClick={handlePicNameDoubleClick}
             />
           </Grid>
 

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -187,7 +188,7 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := `SELECT model, categories
+	query := `SELECT model, categories, time_fields_auto_fill
 		FROM aircraft_categories
 		WHERE model IN (SELECT DISTINCT lv.aircraft_model FROM logbook_view lv)
 		ORDER BY model`
@@ -199,8 +200,14 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 
 	for rows.Next() {
 		var cat Category
-		if err = rows.Scan(&cat.Model, &cat.Category); err != nil {
+		var autoFill string
+		if err = rows.Scan(&cat.Model, &cat.Category, &autoFill); err != nil {
 			return categories, err
+		}
+		if autoFill != "" {
+			if err = json.Unmarshal([]byte(autoFill), &cat.TimeFieldsAutoFill); err != nil {
+				return categories, err
+			}
 		}
 		categories = append(categories, cat)
 	}
@@ -236,10 +243,11 @@ func (m *DBModel) UpdateAircraftModelsCategories(category Category) (err error) 
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
+	autoFill, _ := json.Marshal(category.TimeFieldsAutoFill)
 	query := `UPDATE aircraft_categories
-		SET categories = ?
+		SET categories = ?, time_fields_auto_fill = ?
 		WHERE model = ?`
-	_, err = m.DB.ExecContext(ctx, query, category.Category, category.Model)
+	_, err = m.DB.ExecContext(ctx, query, category.Category, autoFill, category.Model)
 
 	return nil
 }
