@@ -16,7 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.22.0] - 10.01.2026
 
 - New: Automatically set PIC time to total time for new records when PIC name is Self.
 - New: Aircraft categories can now define time fields that are automatically filled when creating a new record.
@@ -36,14 +36,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 - Update: Some code optimization, added error page.
 - Update: `Person Role` selector now uses the dynamic roles listed from the database instead of static defaults or manual settings.
 - New: Added Tags field to flight records. Tags are visible in the logbook table and available as filters on the `Map` and `Dashboard` pages.
-
-## [3.20.0] - 25.12.2025
-
-- Update: Golang and npm packages/security patches.
-- Update: Added another option (dd/mm/yy) for date autorecognition during the import.
-- Update: Added a circular progress indicator during database download.
-- Update: Hide columns in the PDF export if the field size is set to 0.
-- New: Added option to update aircraft type in Aircrafts table, which also will update all logbook entries.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.22.0] - 10.01.2026
 
 - New: Automatically set PIC time to total time for new records when PIC name is Self.
 - New: Aircraft categories can now define time fields that are automatically filled when creating a new record.
