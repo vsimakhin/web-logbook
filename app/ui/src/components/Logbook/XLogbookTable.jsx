@@ -211,6 +211,7 @@ export const XLogbookTable = ({ data, isLoading }) => {
       rows={data}
       columns={columns}
       columnGroupingModel={columnGroupingModel}
+      pageSizeOptions={paginationOptions}
       getRowId={(row) => row.uuid}
       footerFieldIdTotalLabel='aircraft_reg'
       showAggregationFooter={true}
