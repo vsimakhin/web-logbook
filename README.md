@@ -16,6 +16,11 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Automatically set PIC time to total time for new records when PIC name is Self.
+- New: Aircraft categories can now define time fields that are automatically filled when creating a new record.
+
 ## [3.21.2] - 08.01.2026
 
 - Fix: Error when selecting license category and the list of categories is empty.
@@ -329,6 +334,8 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/machullamanuel-cmyk" title="machullamanuel-cmyk"><img src="https://github.com/machullamanuel-cmyk.png" width="40" height="40" alt="machullamanuel-cmyk" /></a>
   <a href="https://github.com/AngusBell97" title="AngusBell97"><img src="https://github.com/AngusBell97.png" width="40" height="40" alt="AngusBell97" /></a>
   <a href="https://github.com/pedroponte" title="pedroponte"><img src="https://github.com/pedroponte.png" width="40" height="40" alt="pedroponte" /></a>
+  <a href="https://github.com/benbox69" title="benbox69"><img src="https://github.com/benbox69.png" width="40" height="40" alt="benbox69" /></a>
+  <a href="https://github.com/WildBlueUK" title="WildBlueUK"><img src="https://github.com/WildBlueUK.png" width="40" height="40" alt="WildBlueUK" /></a>
 </p>
 
 # Used libraries
