@@ -1,7 +1,6 @@
 import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-import { useQuery } from "@tanstack/react-query";
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
@@ -11,8 +10,6 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 // Custom components and libraries
 import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import { fetchAircraftsBuildList } from "../../util/http/aircraft";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { dateFilterFn } from '../../util/helpers';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import TableFilterDrawer from '../UIElements/TableFilterDrawer';
@@ -44,7 +41,7 @@ const tableOptions = {
   enableRowActions: true,
 }
 
-export const AircraftsTable = ({ ...props }) => {
+export const AircraftsTable = ({ data, isLoading, ...props }) => {
   const dialogs = useDialogs();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -52,14 +49,6 @@ export const AircraftsTable = ({ ...props }) => {
   const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
   const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
   const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['aircrafts', 'build-list'],
-    queryFn: ({ signal }) => fetchAircraftsBuildList({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load aircrafts' });
 
   const columns = useMemo(() => [
     { accessorKey: "reg", header: "Registration", size: 120 },
