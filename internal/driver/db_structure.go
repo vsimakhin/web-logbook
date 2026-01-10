@@ -114,7 +114,7 @@ var aircraftsTable = NewTable("aircrafts", "reg_name", SmallText,
 var aircraftCategoriesTable = NewTable("aircraft_categories", "model", SmallText,
 	[]Column{
 		{Name: "categories", Type: BigText, Properties: "NOT NULL"},
-		{Name: "time_fields_auto_fill", Type: FullText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "time_fields_auto_fill", Type: FullText},
 	})
 
 var currencyTable = NewTable("currency", "uuid", UUID,

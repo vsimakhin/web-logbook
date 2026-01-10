@@ -188,7 +188,7 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := `SELECT model, categories, time_fields_auto_fill
+	query := `SELECT model, categories, IFNULL(time_fields_auto_fill, '') AS time_fields_auto_fill
 		FROM aircraft_categories
 		WHERE model IN (SELECT DISTINCT lv.aircraft_model FROM logbook_view lv)
 		ORDER BY model`
