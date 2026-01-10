@@ -11,6 +11,7 @@ import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import Box from '@mui/material/Box';
 // MUI Icons
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -22,7 +23,6 @@ import { updateAircraftModelsCategories } from '../../util/http/aircraft';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import useSettings from '../../hooks/useSettings';
-import { Box, Paper } from '@mui/material';
 
 const CloseDialogButton = ({ onClose }) => {
   return (
@@ -80,7 +80,10 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
     ]
   ), [fieldNameF]);
 
-  console.log(category);
+  const copyTotalTimeCaption = useMemo(() =>
+    (`Autofill '${fieldNameF("total")}' to the time fields`), [fieldNameF]
+  );
+
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
@@ -104,15 +107,18 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
               handleChange={handleChange} value={category.category ? category.category.split(',') : []}
             />
           </Grid>
-          <Box sx={{ p: 1, mt: 1, border: '1px solid #ccc', borderRadius: '8px' }}>
-            <Typography variant="caption" color="textSecondary">
-              Automatically copy Total time to other time fields
+          <Box component="fieldset" sx={{
+            border: '1px solid divider',
+            borderRadius: '8px',
+            m: 0, width: '100%',
+          }}>
+            <Typography component="legend" variant="caption" color="textSecondary">
+              {copyTotalTimeCaption}
             </Typography>
             <Grid container spacing={1} sx={{ mt: 1 }}>
-
               {timeFields.map((field) => (
                 <Grid key={field.id} size={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
-                  <FormControlLabel label={field.label} sx={{ width: "100%" }}
+                  <FormControlLabel label={field.label} sx={{ width: "100%", ml: 0.5 }}
                     control={
                       <Switch
                         checked={category.time_fields_auto_fill?.[field.id] ?? true}
