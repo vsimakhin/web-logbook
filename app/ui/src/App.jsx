@@ -28,7 +28,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 // Custom components and libraries
 import { queryClient } from './util/http/http';
 import getMPTheme from './theme/getMPTheme';
-import { LicensingNavTitle } from './components/Licensing/LicensingNavTitle';
+import LicensingNavTitle from './components/Licensing/LicensingNavTitle';
 import { setNavigate } from './util/navigation';
 
 dayjs.extend(updateLocale);
@@ -41,7 +41,7 @@ const BRANDING = {
 
 const NAV_ITEMS = [
   { segment: 'logbook', title: 'Logbook', icon: <AutoStoriesOutlinedIcon /> },
-  { segment: 'licensing', title: <LicensingNavTitle />, icon: <ContactPageOutlinedIcon /> },
+  { segment: 'licensing', title: (<>Licensing <LicensingNavTitle /></>), icon: <ContactPageOutlinedIcon /> },
   { segment: 'map', title: 'Map', icon: <MapOutlinedIcon /> },
   { segment: 'aircrafts', title: 'Aircrafts', icon: <FlightOutlinedIcon /> },
   { segment: 'airports', title: 'Airports', icon: <FlightTakeoffOutlinedIcon /> },
