@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid'
 import {
   createColumn, createDateColumn, createLandingColumn,
@@ -8,9 +7,13 @@ import {
   createHasTrackColumn,
   createHasAttachmentColumn
 } from './xhelpers';
+import Box from '@mui/material/Box';
+import NewFlightRecordButton from './NewFlightRecordButton';
 import useSettings from '../../hooks/useSettings';
 import useCustomFields from '../../hooks/useCustomFields';
 import TableHeader from '../UIElements/TableHeader';
+import CSVExportButton from '../UIElements/CSVExportButton';
+import PDFExportButton from './PDFExportButton';
 
 export const XLogbookTable = ({ data, isLoading }) => {
   const { isSettingsLoading, fieldName, paginationOptions } = useSettings();
@@ -204,6 +207,14 @@ export const XLogbookTable = ({ data, isLoading }) => {
     ].filter(Boolean);
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 
+  const customActions = useMemo(() => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <NewFlightRecordButton />
+      <CSVExportButton type="logbook" />
+      <PDFExportButton />
+    </Box>
+  ), []);
+
   return (
     <XDataGrid
       tableId='logbook'
@@ -217,6 +228,7 @@ export const XLogbookTable = ({ data, isLoading }) => {
       showAggregationFooter={true}
       disableColumnMenu
       disableColumnSorting
+      customActions={customActions}
     />
   )
 }

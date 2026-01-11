@@ -9,7 +9,7 @@ import XToolbarFilterPanelTrigger from './XToolbarFilterPanel';
 const EMPTY_COLUMNS = [];
 
 export const XToolbar = ({
-  CustomActions,
+  customActions,
   showQuickFilter = true,
   showColumnsPanel = true,
   showResetColumns = true,
@@ -19,7 +19,7 @@ export const XToolbar = ({
   return (
     <Toolbar>
       <Box sx={{ flex: 1, mx: 0.5 }}>
-        {CustomActions}
+        {customActions}
       </Box>
 
       {showFilters && <XToolbarFilterPanelTrigger />}

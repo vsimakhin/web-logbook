@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 
 const FilterContext = createContext();
 
 export const FilterProvider = ({ children }) => {
   const [filterModel, setFilterModel] = useState({ items: [] });
+  const [filteredRows, setFilteredRows] = useState([]);
 
   const updateFilter = useCallback((field, operator, value) => {
     setFilterModel((prev) => {
@@ -30,7 +31,7 @@ export const FilterProvider = ({ children }) => {
   }, []);
 
   return (
-    <FilterContext.Provider value={{ filterModel, updateFilter, clearFilters }}>
+    <FilterContext.Provider value={{ filterModel, updateFilter, clearFilters, filteredRows, setFilteredRows }}>
       {children}
     </FilterContext.Provider>
   );
