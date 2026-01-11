@@ -92,7 +92,10 @@ export const Root = () => {
         appTitle: CustomAppTitle,
         toolbarActions: ToolbarActions
       }}>
-      <PageContainer maxWidth={false} title="" breadcrumbs={[]}>
+      <PageContainer
+        maxWidth={true}
+        title="" breadcrumbs={[]}
+        disableGutters sx={{ mt: -3, ml: 1, paddingRight: 2 }}>
         <Outlet />
       </PageContainer>
     </DashboardLayout>
