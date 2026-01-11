@@ -48,13 +48,13 @@ const exportMappers = {
   })),
 
   licensing: (rows) => rows.map((row) => ({
-    "Category": row.original.category,
-    "Name": row.original.name,
-    "Number": row.original.number,
-    "Issued": row.original.issued,
-    "Valid From": row.original.valid_from,
-    "Valid Until": row.original.valid_until,
-    "Remarks": row.original.remarks,
+    "Category": row.category,
+    "Name": row.name,
+    "Number": row.number,
+    "Issued": row.issued,
+    "Valid From": row.valid_from,
+    "Valid Until": row.valid_until,
+    "Remarks": row.remarks,
   })),
 
   logbook: (rows) => rows.map((row) => ({
