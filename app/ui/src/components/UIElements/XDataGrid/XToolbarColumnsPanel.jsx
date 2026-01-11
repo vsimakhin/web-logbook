@@ -6,7 +6,6 @@ import {
   isLeaf,
   gridColumnLookupSelector,
   useGridSelector,
-  GridColumnsPanel,
   ToolbarButton,
 } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
@@ -24,6 +23,8 @@ const DRAWER_SX = {
     boxSizing: 'border-box',
   },
 };
+
+const switchSx = { p: 0.5, mt: 0.5, mr: 0.5 };
 
 const collectGroupLeaves = (group, columnLookup, leaves = []) => {
   group.children.forEach((child) => {
@@ -89,9 +90,7 @@ const ColumnGroup = ({
   return (
     <>
       <FormControlLabel
-        control={
-          <Switch checked={isGroupChecked} size="small" sx={{ p: 0.5, mt: 0.5 }} />
-        }
+        control={<Switch checked={isGroupChecked} size="small" sx={switchSx} />}
         label={group.headerName ?? group.groupId}
         onChange={toggleGroup}
       />
@@ -110,13 +109,7 @@ const ColumnGroup = ({
             isLeaf(child) ? (
               <Stack direction="row" key={child.field}>
                 <FormControlLabel
-                  control={
-                    <Switch
-                      checked={columnVisibilityModel[child.field] !== false}
-                      size="small"
-                      sx={{ p: 0.5, mt: 0.5 }}
-                    />
-                  }
+                  control={<Switch checked={columnVisibilityModel[child.field] !== false} size="small" sx={switchSx} />}
                   label={columnLookup[child.field]?.headerName ?? child.field}
                   onChange={(e, checked) => toggleColumn(e, checked, child.field)}
                 />
@@ -138,7 +131,7 @@ const ColumnGroup = ({
   );
 };
 
-export const XToolbarColumnsPanel = (props) => {
+export const XToolbarColumnsPanel = () => {
   const apiRef = useGridApiContext();
   const rootProps = useGridRootProps();
 
@@ -155,8 +148,6 @@ export const XToolbarColumnsPanel = (props) => {
   }, [columnGroupingModel, columnLookup]);
 
   const items = useMemo(() => {
-    if (!columnGroupingModel) return [];
-
     const renderedFields = new Set();
     const renderedGroups = new Set();
     const result = [];
@@ -182,15 +173,12 @@ export const XToolbarColumnsPanel = (props) => {
     });
 
     return result;
-  }, [rootProps.columns, fieldToGroupMap, groupLeavesMap, columnGroupingModel]);
+  }, [rootProps.columns, fieldToGroupMap, groupLeavesMap]);
 
   const toggleColumn = useCallback((_, checked, field) => {
     apiRef.current.setColumnVisibility(field, checked);
   }, [apiRef]);
 
-  if (!columnGroupingModel) {
-    return <GridColumnsPanel {...props} />;
-  }
 
   return (
     <Box sx={{ px: 2, py: 0.5 }}>
@@ -208,17 +196,9 @@ export const XToolbarColumnsPanel = (props) => {
         ) : (
           <Stack direction="row" key={item.field}>
             <FormControlLabel
-              control={
-                <Switch
-                  checked={columnVisibilityModel[item.field] !== false}
-                  size="small"
-                  sx={{ p: 0.5, mt: 0.5 }}
-                />
-              }
+              control={<Switch checked={columnVisibilityModel[item.field] !== false} size="small" sx={switchSx} />}
               label={columnLookup[item.field]?.headerName ?? item.field}
-              onChange={(e, checked) =>
-                toggleColumn(e, checked, item.field)
-              }
+              onChange={(e, checked) => toggleColumn(e, checked, item.field)}
             />
           </Stack>
         )
