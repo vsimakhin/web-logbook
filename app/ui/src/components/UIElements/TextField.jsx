@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import MUITextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
 
 export const TextField = ({ gsize, id, name = id, label, handleChange, tooltip = label, ...props }) => {

@@ -1,4 +1,4 @@
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 // Custom
 import Tile from "../UIElements/Tile";
 import { getStats } from "../../util/helpers";

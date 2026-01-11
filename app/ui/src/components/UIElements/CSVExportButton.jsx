@@ -48,39 +48,39 @@ const exportMappers = {
   })),
 
   licensing: (rows) => rows.map((row) => ({
-    "Category": row.original.category,
-    "Name": row.original.name,
-    "Number": row.original.number,
-    "Issued": row.original.issued,
-    "Valid From": row.original.valid_from,
-    "Valid Until": row.original.valid_until,
-    "Remarks": row.original.remarks,
+    "Category": row.category,
+    "Name": row.name,
+    "Number": row.number,
+    "Issued": row.issued,
+    "Valid From": row.valid_from,
+    "Valid Until": row.valid_until,
+    "Remarks": row.remarks,
   })),
 
   logbook: (rows) => rows.map((row) => ({
-    "Date": row.original.date,
-    "Departure Place": row.original.departure.place,
-    "Departure Time": row.original.departure.time,
-    "Arrival Place": row.original.arrival.place,
-    "Arrival Time": row.original.arrival.time,
-    "Aircraft Model": row.original.aircraft.model,
-    "Aircraft Reg": row.original.aircraft.reg_name,
-    "Time SE": row.original.time.se_time,
-    "Time ME": row.original.time.me_time,
-    "Time MCC": row.original.time.mcc_time,
-    "Time Total": row.original.time.total_time,
-    "Landings Day": row.original.landings.day,
-    "Landings Night": row.original.landings.night,
-    "Time Night": row.original.time.night_time,
-    "Time IFR": row.original.time.ifr_time,
-    "Time PIC": row.original.time.pic_time,
-    "Time CoPilot": row.original.time.co_pilot_time,
-    "Time Dual": row.original.time.dual_time,
-    "Time Instructor": row.original.time.instructor_time,
-    "SIM Type": row.original.sim.type,
-    "SIM Time": row.original.sim.time,
-    "PIC Name": row.original.pic_name,
-    "Remarks": row.original.remarks,
+    "Date": row.date,
+    "Departure Place": row.departure.place,
+    "Departure Time": row.departure.time,
+    "Arrival Place": row.arrival.place,
+    "Arrival Time": row.arrival.time,
+    "Aircraft Model": row.aircraft.model,
+    "Aircraft Reg": row.aircraft.reg_name,
+    "Time SE": row.time.se_time,
+    "Time ME": row.time.me_time,
+    "Time MCC": row.time.mcc_time,
+    "Time Total": row.time.total_time,
+    "Landings Day": row.landings.day,
+    "Landings Night": row.landings.night,
+    "Time Night": row.time.night_time,
+    "Time IFR": row.time.ifr_time,
+    "Time PIC": row.time.pic_time,
+    "Time CoPilot": row.time.co_pilot_time,
+    "Time Dual": row.time.dual_time,
+    "Time Instructor": row.time.instructor_time,
+    "SIM Type": row.sim.type,
+    "SIM Time": row.sim.time,
+    "PIC Name": row.pic_name,
+    "Remarks": row.remarks,
   })),
 
   "totals-by-year": (rows) => rows.map((row) => ({
@@ -131,14 +131,14 @@ const handleExportRows = (rows, type) => {
   download(csvConfig)(csv);
 };
 
-export const CSVExportButton = ({ table, type }) => {
-  const handleCSVExport = useCallback((table, type) => {
-    handleExportRows(table.getPrePaginationRowModel().rows, type);
-  }, []);
+export const CSVExportButton = ({ rows, type }) => {
+  const handleCSVExport = useCallback(() => {
+    handleExportRows(rows, type);
+  }, [rows, type]);
 
   return (
     <Tooltip title="Quick CSV Export">
-      <IconButton onClick={() => handleCSVExport(table, type)} size="small">
+      <IconButton onClick={handleCSVExport} size="small">
         <FileDownloadOutlinedIcon />
       </IconButton>
     </Tooltip>

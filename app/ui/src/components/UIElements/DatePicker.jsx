@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { DatePicker as MUIDatePicker } from '@mui/x-date-pickers/DatePicker';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
 import dayjs from 'dayjs';
 
