@@ -5,6 +5,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { fetchLicenses } from "../../util/http/licensing";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import LisencingTable from "./LicensingTable";
+import XLicensingTable from "./XLicensingTable";
 
 export const Licensing = () => {
   const { data, isLoading, isError, error } = useQuery({
@@ -18,6 +19,7 @@ export const Licensing = () => {
   return (
     <>
       {isLoading && <LinearProgress />}
+      <XLicensingTable data={data} isLoading={isLoading} />
       <LisencingTable data={data} isLoading={isLoading} />
     </>
   )
