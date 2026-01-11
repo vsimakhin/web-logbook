@@ -10,7 +10,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor-mui': ['@mui/material', '@mui/icons-material'],
-          'vendor-react-table': ['material-react-table'],
           'vendor-maps': ['ol'],
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-tanstack': ['@tanstack/react-query'],
