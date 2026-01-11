@@ -2,6 +2,23 @@ import { useCallback, useMemo } from "react";
 import useSettings from "../../hooks/useSettings";
 import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import dayjs from "dayjs";
+import { Typography } from "@mui/material";
+import { Link } from "react-router";
+
+const calculateExpiry = (validUntil) => {
+  if (!validUntil) return null;
+
+  const today = dayjs();
+  const expiryDate = dayjs(validUntil, "DD/MM/YYYY");
+
+  if (!expiryDate.isValid()) return null;
+
+  const diffMonths = expiryDate.diff(today, 'month');
+  const remainingDays = expiryDate.diff(today.add(diffMonths, 'month'), 'day');
+  const diffDays = expiryDate.diff(today, 'day');
+
+  return { months: diffMonths, days: remainingDays, diffDays };
+};
 
 export const XLicensingTable = ({ data, isLoading }) => {
   const { settings, isSettingsLoading } = useSettings();
@@ -29,10 +46,18 @@ export const XLicensingTable = ({ data, isLoading }) => {
         field: "name",
         headerName: "Name",
         width: 250,
+        renderCell: (params) => (
+          <Typography variant="body2" color="primary">
+            <Link to={`/licensing/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
+              {params.formattedValue}
+            </Link>
+          </Typography>
+        ),
       },
       {
         field: "number",
         headerName: "Number",
+        width: 200,
       },
       {
         field: "issued",
@@ -58,17 +83,28 @@ export const XLicensingTable = ({ data, isLoading }) => {
       {
         field: "expire",
         headerName: "Expire",
-        type: "date",
-        valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-        valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+        width: 150,
+        renderCell: (params) => {
+          const expiry = calculateExpiry(params.row.valid_until);
+          if (!expiry) return null;
+
+          return (
+            <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
+              {expiry.diffDays < 0
+                ? 'Expired'
+                : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
+            </Typography>
+          );
+        },
       },
       {
         field: "remarks",
         headerName: "Remarks",
-        width: 150,
+        flex: 1,
+
       },
     ];
-  }, [isSettingsLoading]);
+  }, [isSettingsLoading, getExpireColor]);
 
   const customActions = useMemo(() => (
     <></>
@@ -88,8 +124,8 @@ export const XLicensingTable = ({ data, isLoading }) => {
       getRowId={(row) => row.uuid}
       showAggregationFooter={false}
       disableColumnMenu
-      // disableColumnSorting
       customActions={customActions}
+    // rowSpanning={true}
     />
   )
 }
