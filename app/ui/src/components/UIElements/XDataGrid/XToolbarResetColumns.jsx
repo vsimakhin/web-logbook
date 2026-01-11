@@ -17,7 +17,7 @@ export const XToolbarResetColumns = ({ initialColumns = [] }) => {
   return (
     <Tooltip title="Reset Column Sizing">
       <ToolbarButton onClick={resetColumns} color="default">
-        <SettingsBackupRestoreOutlinedIcon fontSize="small" />
+        <SettingsBackupRestoreOutlinedIcon />
       </ToolbarButton>
     </Tooltip>
   );

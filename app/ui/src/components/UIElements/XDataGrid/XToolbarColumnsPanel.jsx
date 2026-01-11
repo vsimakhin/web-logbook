@@ -234,7 +234,7 @@ export const XToolbarColumnsPanelTrigger = () => {
     <>
       <Tooltip title="Columns">
         <ToolbarButton color="default" onClick={() => setOpen(true)}>
-          <ViewColumnIcon fontSize="small" />
+          <ViewColumnIcon />
         </ToolbarButton>
       </Tooltip>
 

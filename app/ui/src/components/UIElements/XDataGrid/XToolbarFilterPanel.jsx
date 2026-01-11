@@ -331,7 +331,7 @@ export const XToolbarFilterPanelTrigger = () => {
       <Tooltip title="Filters">
         <ToolbarButton color="default" onClick={toggleFilterDrawerOpen}>
           <Badge badgeContent={filterModel.items.length}>
-            <FilterListIcon fontSize="small" />
+            <FilterListIcon />
           </Badge>
         </ToolbarButton>
       </Tooltip>

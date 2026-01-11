@@ -47,7 +47,7 @@ export const XToolbarQuickFilter = () => {
               color="default"
               aria-disabled={state.expanded}
             >
-              <SearchOutlinedIcon fontSize="small" />
+              <SearchOutlinedIcon />
             </StyledToolbarButton>
           </Tooltip>
         )}
