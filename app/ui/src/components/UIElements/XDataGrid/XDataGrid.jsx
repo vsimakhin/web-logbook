@@ -116,7 +116,7 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
   const [paginationModel, setPaginationModel] = useLocalStorageState(`${tableId}-pagination`, { pageSize: defaultPageSize, page: 0 }, { codec: codec });
   const [columnsState, setColumnsState] = useLocalStorageState(`${tableId}-columns`, {}, { codec: codec });
 
-  const { filterModel, setFilteredRows } = useFilter();
+  const { filterModel } = useFilter();
   const deferredFilterModel = useDeferredValue(filterModel);
 
   useEffect(() => {
@@ -147,11 +147,10 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
 
   const filteredRows = useMemo(() => {
     if (!deferredFilterModel.items.length) {
-      setFilteredRows(rows);
       return rows;
     }
 
-    const filtered = rows.filter((row) => {
+    return rows.filter((row) => {
       return deferredFilterModel.items.every((filter) => {
         const { field, operator, value } = filter;
         // const column = columns.find((col) => col.field === field);
@@ -197,9 +196,7 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
         return true;
       });
     });
-    setFilteredRows(filtered);
-    return filtered;
-  }, [rows, deferredFilterModel, columnMap, setFilteredRows]);
+  }, [rows, deferredFilterModel, columnMap]);
 
   const slots = useMemo(() => ({
     footer: XFooter,

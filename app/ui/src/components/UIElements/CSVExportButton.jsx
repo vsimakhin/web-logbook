@@ -6,7 +6,6 @@ import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { convertMinutesToTime } from '../../util/helpers';
-import { useFilter } from './XDataGrid/FilterContext';
 
 const defaultConfig = {
   fieldSeparator: ',',
@@ -132,12 +131,10 @@ const handleExportRows = (rows, type) => {
   download(csvConfig)(csv);
 };
 
-export const CSVExportButton = ({ type }) => {
-  const { filteredRows } = useFilter();
-
+export const CSVExportButton = ({ rows, type }) => {
   const handleCSVExport = useCallback(() => {
-    handleExportRows(filteredRows, type);
-  }, [filteredRows, type]);
+    handleExportRows(rows, type);
+  }, [rows, type]);
 
   return (
     <Tooltip title="Quick CSV Export">

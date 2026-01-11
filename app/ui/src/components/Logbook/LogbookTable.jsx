@@ -1,64 +1,24 @@
+import { useMemo } from 'react';
+import XDataGrid from '../UIElements/XDataGrid/XDataGrid'
 import {
-  MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
-  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton, useMaterialReactTable
-} from 'material-react-table';
-import { useCallback, useMemo, useState } from 'react';
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-// MUI
+  createColumn, createDateColumn, createLandingColumn,
+  createTimeColumn, sumTime, createCustomFieldColumns,
+  getCustomFieldColumnsForGrouping,
+  createHasTrackColumn,
+  createHasAttachmentColumn
+} from './helpers';
 import Box from '@mui/material/Box';
-// Custom components and libraries
-import PDFExportButton from './PDFExportButton';
 import NewFlightRecordButton from './NewFlightRecordButton';
-import { tableJSONCodec } from '../../constants/constants';
-import {
-  createColumn, createDateColumn, createLandingColumn, createTimeColumn,
-  renderProps, renderTextProps, renderTotalFooter, createCustomFieldColumns,
-  createCustomFieldColumnGroup, createHasTrackColumn, getFilterLabel,
-  timeFilterFn, createAttachmentColumn
-} from "./helpers";
-import { dateFilterFn } from '../../util/helpers';
-import CSVExportButton from '../UIElements/CSVExportButton';
-import TableFilterDrawer from '../UIElements/TableFilterDrawer';
-import TableHeader from '../UIElements/TableHeader';
-import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 import useSettings from '../../hooks/useSettings';
 import useCustomFields from '../../hooks/useCustomFields';
-
-const paginationKey = 'logbook-table-page-size';
-const columnVisibilityKey = 'logbook-table-column-visibility';
-const columnSizingKey = 'logbook-table-column-sizing';
-
-const tableOptions = {
-  initialState: { density: 'compact' },
-  enableColumnResizing: true,
-  enableGlobalFilterModes: true,
-  enableColumnFilters: true,
-  enableColumnDragging: false,
-  enableColumnPinning: false,
-  enableGrouping: true,
-  enableDensityToggle: false,
-  columnResizeMode: 'onEnd',
-  muiTablePaperProps: { variant: 'outlined', elevation: 0 },
-  columnFilterDisplayMode: 'custom',
-  enableFacetedValues: true,
-  enableSorting: false,
-  enableColumnActions: false,
-};
+import TableHeader from '../UIElements/TableHeader';
+import CSVExportButton from '../UIElements/CSVExportButton';
+import PDFExportButton from './PDFExportButton';
 
 export const LogbookTable = ({ data, isLoading }) => {
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, { attachments_count: false, has_track: false }, { codec: tableJSONCodec });
-  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-
   const { isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
-  const filterFns = useMemo(() => ({
-    dateFilterFn: dateFilterFn,
-    timeFilterFn: timeFilterFn,
-  }), []);
 
   const columns = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -66,169 +26,211 @@ export const LogbookTable = ({ data, isLoading }) => {
     }
 
     return [
-      {
-        header: <TableHeader title={fieldName("date")} />, ...renderTextProps, columns: [
-          createDateColumn("date", "", 90),
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("departure")} />, ...renderProps, columns: [
-          createColumn("departure.place", fieldName("dep_place"), 55),
-          createColumn("departure.time", fieldName("dep_time"), 50),
-          ...createCustomFieldColumns(customFields, fieldName("departure"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("arrival")} />, columns: [
-          createColumn("arrival.place", fieldName("arr_place"), 55),
-          createColumn("arrival.time", fieldName("arr_time"), 50),
-          ...createCustomFieldColumns(customFields, fieldName("arrival"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("aircraft")} />, columns: [
-          createColumn("aircraft.model", fieldName("model"), 80),
-          createColumn("aircraft.reg_name", fieldName("reg"), 80, false, renderTotalFooter()),
-          ...createCustomFieldColumns(customFields, fieldName("aircraft"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("spt")} />,
-        columns: [
-          createTimeColumn("time.se_time", fieldName("se")),
-          createTimeColumn("time.me_time", fieldName("me")),
-          ...createCustomFieldColumns(customFields, fieldName("spt"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("mcc")} />, columns: [
-          createTimeColumn("time.mcc_time", ""),
-          ...createCustomFieldColumns(customFields, fieldName("mcc"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("total")} />, columns: [
-          createTimeColumn("time.total_time", ""),
-          ...createCustomFieldColumns(customFields, fieldName("total"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("pic_name")} />,
-        columns: [
-          createColumn("pic_name", "", 150, true)
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("landings")} />, columns: [
-          createLandingColumn("landings.day", fieldName("land_day")),
-          createLandingColumn("landings.night", fieldName("land_night")),
-          ...createCustomFieldColumns(customFields, fieldName("landings"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("oct")} />,
-        columns: [
-          createTimeColumn("time.night_time", fieldName("night")),
-          createTimeColumn("time.ifr_time", fieldName("ifr")),
-          ...createCustomFieldColumns(customFields, fieldName("oct"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("pft")} />,
-        columns: [
-          createTimeColumn("time.pic_time", fieldName("pic")),
-          createTimeColumn("time.co_pilot_time", fieldName("cop")),
-          createTimeColumn("time.dual_time", fieldName("dual")),
-          createTimeColumn("time.instructor_time", fieldName("instr")),
-          ...createCustomFieldColumns(customFields, fieldName("pft"))
-        ]
-      },
-      {
-        header: <TableHeader title={fieldName("fstd")} />,
-        columns: [
-          createColumn("sim.type", fieldName("sim_type"), 70),
-          createTimeColumn("sim.time", fieldName("sim_time")),
-          ...createCustomFieldColumns(customFields, fieldName("fstd"))
-        ]
-      },
-      ...createCustomFieldColumnGroup(customFields),
-      {
-        header: <TableHeader title={fieldName("remarks")} />, grow: true, columns: [
-          { accessorKey: "remarks", header: "", grow: true, ...renderTextProps },
-          ...createCustomFieldColumns(customFields, fieldName("remarks"))
-        ]
-      },
-      {
-        header: <TableHeader title={"Misc"} />, columns: [
-          createHasTrackColumn("has_track", 30),
-          createAttachmentColumn("attachments_count", 30),
-          createColumn("tags", fieldName("tags"), 150)
-        ]
-      }
-    ];
-  }, [customFields, isCustomFieldsLoading, fieldName, isSettingsLoading]);
+      // date
+      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90 }),
+      // departure
+      createColumn({ field: "departure_place", headerName: fieldName("dep_place"), width: 60, valueGetter: (_value, row) => row.departure?.place }),
+      createColumn({ field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.departure?.time }),
+      ...createCustomFieldColumns(customFields, fieldName("departure")),
+      // arrival
+      createColumn({ field: "arrival_place", headerName: fieldName("arr_place"), width: 60, valueGetter: (_value, row) => row.arrival?.place }),
+      createColumn({ field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.arrival?.time }),
+      ...createCustomFieldColumns(customFields, fieldName("arrival")),
+      // aircraft
+      createColumn({ field: "aircraft_model", headerName: fieldName("model"), width: 70, valueGetter: (_value, row) => row.aircraft?.model }),
+      createColumn({ field: "aircraft_reg", headerName: fieldName("reg"), width: 75, valueGetter: (_value, row) => row.aircraft?.reg_name }),
+      ...createCustomFieldColumns(customFields, fieldName("aircraft")),
+      // single pilot time
+      createTimeColumn({ field: "se_time", headerName: fieldName("se") }),
+      createTimeColumn({ field: "me_time", headerName: fieldName("me"), valueGetter: (_value, row) => row.time.mcc_time !== "" ? "" : row.time.me_time }),
+      ...createCustomFieldColumns(customFields, fieldName("spt")),
+      // MCC time
+      createTimeColumn({ field: "mcc_time", headerName: fieldName("mcc") }),
+      ...createCustomFieldColumns(customFields, fieldName("mcc")),
+      // total
+      createTimeColumn({ field: "total_time", headerName: fieldName("total") }),
+      ...createCustomFieldColumns(customFields, fieldName("total")),
+      // pic name
+      createColumn({ field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left' }),
+      // landings
+      createLandingColumn({ field: "landings_day", headerName: fieldName("land_day") }),
+      createLandingColumn({ field: "landings_night", headerName: fieldName("land_night") }),
+      ...createCustomFieldColumns(customFields, fieldName("landings")),
+      // operation condition time
+      createTimeColumn({ field: "night_time", headerName: fieldName("night"), width: 60 }),
+      createTimeColumn({ field: "ifr_time", headerName: fieldName("ifr"), width: 59 }),
+      ...createCustomFieldColumns(customFields, fieldName("oct")),
+      // pilot function time
+      createTimeColumn({ field: "pic_time", headerName: fieldName("pic") }),
+      createTimeColumn({ field: "co_pilot_time", headerName: fieldName("cop") }),
+      createTimeColumn({ field: "dual_time", headerName: fieldName("dual") }),
+      createTimeColumn({ field: "instructor_time", headerName: fieldName("instr") }),
+      ...createCustomFieldColumns(customFields, fieldName("pft")),
+      // sim
+      createColumn({ field: "sim_type", headerName: fieldName("sim_type"), width: 60, valueGetter: (_value, row) => row.sim.type }),
+      createColumn({ field: "sim_time", headerName: fieldName("sim_time"), width: 55, headerAlign: 'center', align: 'center', type: 'time', valueGetter: (_value, row) => row.sim.time, aggregationFn: sumTime }),
+      ...createCustomFieldColumns(customFields, fieldName("fstd")),
+      // custom
+      ...createCustomFieldColumns(customFields, "Custom"),
+      // remarks
+      createColumn({ field: "remarks", headerName: fieldName("remarks"), align: 'left', flex: 1, minWidth: 50 }),
+      ...createCustomFieldColumns(customFields, fieldName("remarks")),
+      // misc
+      createHasTrackColumn({ field: "has_track" }),
+      createHasAttachmentColumn({ field: "has_attachment" }),
+      createColumn({ field: "tags", headerName: fieldName("tags"), align: 'left' }),
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
+    ];
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
+
+  const columnGroupingModel = useMemo(() => {
+    if (isCustomFieldsLoading || isSettingsLoading) {
+      return [];
+    }
+
+    return [
+      {
+        groupId: 'Departure',
+        headerName: <TableHeader title={fieldName("departure")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'departure_place' }, { field: 'departure_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("departure"))
+        ],
+      },
+      {
+        groupId: 'Arrival',
+        headerName: <TableHeader title={fieldName("arrival")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'arrival_place' }, { field: 'arrival_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("arrival"))
+        ],
+      },
+      {
+        groupId: 'Aircraft',
+        headerName: <TableHeader title={fieldName("aircraft")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'aircraft_model' }, { field: 'aircraft_reg' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("aircraft"))
+        ],
+      },
+      {
+        groupId: 'Single Pilot',
+        headerName: <TableHeader title={fieldName("spt")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'se_time' }, { field: 'me_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("spt"))
+        ],
+      },
+      getCustomFieldColumnsForGrouping(customFields, fieldName("mcc")).length > 0 && {
+        groupId: 'MCC',
+        headerName: <TableHeader title={fieldName("mcc")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'mcc_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("mcc"))
+        ],
+      },
+      getCustomFieldColumnsForGrouping(customFields, fieldName("total")).length > 0 && {
+        groupId: 'Total',
+        headerName: <TableHeader title={fieldName("total")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'total_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("total"))
+        ],
+      },
+      {
+        groupId: 'Landings',
+        headerName: <TableHeader title={fieldName("landings")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'landings_day' }, { field: 'landings_night' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("landings"))
+        ],
+      },
+      {
+        groupId: 'Operational Condition Time',
+        headerName: <TableHeader title={fieldName("oct")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'night_time' }, { field: 'ifr_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("oct"))
+        ],
+      },
+      {
+        groupId: 'Pilot Function Time',
+        headerName: <TableHeader title={fieldName("pft")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'pic_time' }, { field: 'co_pilot_time' }, { field: 'dual_time' }, { field: 'instructor_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("pft"))
+        ],
+      },
+      {
+        groupId: 'FSTD Sessions',
+        headerName: <TableHeader title={fieldName("fstd")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'sim_type' }, { field: 'sim_time' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("fstd"))
+        ],
+      },
+      getCustomFieldColumnsForGrouping(customFields, "Custom").length > 0 && {
+        groupId: 'Custom',
+        headerName: <TableHeader title={"Custom"} />,
+        headerAlign: 'center',
+        children: [
+          ...getCustomFieldColumnsForGrouping(customFields, "Custom")
+        ],
+      },
+      getCustomFieldColumnsForGrouping(customFields, fieldName("remarks")).length > 0 && {
+        groupId: 'Remarks',
+        headerName: <TableHeader title={fieldName("remarks")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'remarks' },
+          ...getCustomFieldColumnsForGrouping(customFields, fieldName("remarks"))
+        ],
+      },
+      {
+        groupId: 'Misc',
+        headerName: <TableHeader title={"Misc"} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'has_track' }, { field: 'has_attachment' }, { field: 'tags' },
+        ],
+      },
+    ].filter(Boolean);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
+
+  const customActions = useMemo(() => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
       <NewFlightRecordButton />
-      <CSVExportButton table={table} type="logbook" />
+      <CSVExportButton rows={data} type="logbook" />
       <PDFExportButton />
     </Box>
-  ), []);
-
-  const renderToolbarInternalActions = useCallback(({ table }) => (
-    <>
-      <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ToggleFiltersButton table={table} />
-      <MRT_ShowHideColumnsButton table={table} />
-      <MRT_ToggleFullScreenButton table={table} />
-      <ResetColumnSizingButton resetFunction={setColumnSizing} />
-    </>
-  ), [setColumnSizing]);
-
-  const filterDrawOpen = useCallback(() => {
-    setIsFilterDrawerOpen(true);
-  }, []);
-
-  const filterDrawClose = useCallback(() => {
-    setIsFilterDrawerOpen(false);
-  }, []);
-
-  const getMuiFilterTextFieldProps = useCallback(({ column }) => (
-    getFilterLabel(column, fieldName)
-  ), [fieldName]);
-
-  const table = useMaterialReactTable({
-    columns: columns,
-    data: data ?? [],
-    isLoading: isLoading || isSettingsLoading || isCustomFieldsLoading,
-    onShowColumnFiltersChange: filterDrawOpen,
-    filterFns: filterFns,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnSizingChange: setColumnSizing,
-    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    onPaginationChange: setPagination,
-    state: {
-      pagination,
-      columnFilters: columnFilters,
-      columnVisibility,
-      columnSizing: columnSizing
-    },
-    defaultColumn: { muiFilterTextFieldProps: getMuiFilterTextFieldProps },
-    renderToolbarInternalActions: renderToolbarInternalActions,
-    muiPaginationProps: {
-      rowsPerPageOptions: paginationOptions,
-    },
-    ...tableOptions,
-  });
+  ), [data]);
 
   return (
-    <>
-      <MaterialReactTable table={table} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
-    </>
-  );
+    <XDataGrid
+      tableId='logbook'
+      loading={isLoading}
+      rows={data}
+      columns={columns}
+      columnGroupingModel={columnGroupingModel}
+      pageSizeOptions={paginationOptions}
+      getRowId={(row) => row.uuid}
+      footerFieldIdTotalLabel='aircraft_reg'
+      showAggregationFooter={true}
+      disableColumnMenu
+      disableColumnSorting
+      customActions={customActions}
+    />
+  )
 }
 
 export default LogbookTable;
