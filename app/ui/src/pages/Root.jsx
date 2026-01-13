@@ -95,7 +95,7 @@ export const Root = () => {
       <PageContainer
         maxWidth={true}
         title="" breadcrumbs={[]}
-        disableGutters sx={{ mt: -3, ml: 1, paddingRight: 2 }}>
+        disableGutters sx={{ mt: -3, ml: 2, paddingRight: 2 }}>
         <Outlet />
       </PageContainer>
     </DashboardLayout>
