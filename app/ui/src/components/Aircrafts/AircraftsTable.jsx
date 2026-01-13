@@ -5,6 +5,7 @@ import { GridActionsCell, GridActionsCellItem } from '@mui/x-data-grid';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import CSVExportButton from '../UIElements/CSVExportButton';
 import EditAircraftModal from './EditAircraftModal';
@@ -21,7 +22,11 @@ export const AircraftsTable = ({ data, isLoading }) => {
       width: 50,
       renderCell: (params) => (
         <GridActionsCell {...params}>
-          <GridActionsCellItem icon={<EditOutlinedIcon />} onClick={async () => await dialogs.open(EditAircraftModal, params.row)} label="Edit Aircraft" />
+          <GridActionsCellItem
+            icon={<Tooltip title="Edit Aircraft"><EditOutlinedIcon /></Tooltip>}
+            onClick={async () => await dialogs.open(EditAircraftModal, params.row)}
+            label="Edit Aircraft"
+          />
         </GridActionsCell>
       ),
     },

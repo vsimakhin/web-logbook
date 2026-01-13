@@ -5,6 +5,7 @@ import { GridActionsCell, GridActionsCellItem } from '@mui/x-data-grid';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import EditCategoriesModal from './EditCategoriesModal';
 import CSVExportButton from '../UIElements/CSVExportButton';
@@ -22,7 +23,7 @@ export const CategoriesTable = ({ data, isLoading }) => {
       renderCell: (params) => (
         <GridActionsCell {...params}>
           <GridActionsCellItem
-            icon={<EditOutlinedIcon />}
+            icon={<Tooltip title="Edit Category"><EditOutlinedIcon /></Tooltip>}
             onClick={async () => await dialogs.open(EditCategoriesModal, params.row)}
             label="Edit Category"
           />

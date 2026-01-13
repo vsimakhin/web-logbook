@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid";
 import Card from '@mui/material/Card';
@@ -6,15 +7,35 @@ import CardContent from '@mui/material/CardContent';
 import StandardAirportsTable from "./StandardAirportsTable";
 import AirportsDB from "./AirportsDB";
 import CustomAirportsTable from "./CustomAirportsTable";
+import CardHeader from "../UIElements/CardHeader";
+import { useErrorNotification } from "../../hooks/useAppNotifications";
+import { fetchCustomAirports, fetchStandardAirports } from "../../util/http/airport";
 
 export const Airports = () => {
+  const { data: standardAirportsData, isLoading: isStandardAirportsLoading, isError: isStandardAirportsError, error: standardAirportsError } = useQuery({
+    queryKey: ['airports'],
+    queryFn: ({ signal }) => fetchStandardAirports({ signal }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+  });
+  useErrorNotification({ isStandardAirportsError, standardAirportsError, fallbackMessage: 'Failed to load airports' });
+
+  const { data: customAirportsData, isLoading: isCustomAirportsLoading, isError: isCustomAirportsError, error: customAirportsError } = useQuery({
+    queryKey: ['custom-airports'],
+    queryFn: ({ signal }) => fetchCustomAirports({ signal }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+  });
+  useErrorNotification({ isCustomAirportsError, customAirportsError, fallbackMessage: 'Failed to load airports' });
+
   return (
     <>
       <Grid container spacing={1} >
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
-              <StandardAirportsTable />
+              <CardHeader title="Standard Airports" />
+              <StandardAirportsTable data={standardAirportsData} isLoading={isStandardAirportsLoading} />
             </CardContent>
           </Card >
         </Grid>
@@ -28,7 +49,8 @@ export const Airports = () => {
 
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
-              <CustomAirportsTable />
+              <CardHeader title="Custom Airports" />
+              <CustomAirportsTable data={customAirportsData} isLoading={isCustomAirportsLoading} />
             </CardContent>
           </Card >
         </Grid>
