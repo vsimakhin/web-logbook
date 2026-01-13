@@ -9,7 +9,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-mui': ['@mui/material', '@mui/icons-material'],
+          'vendor-mui-material': ['@mui/material'],
+          'vendor-mui-icons': ['@mui/icons-material'],
           'vendor-maps': ['ol'],
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-tanstack': ['@tanstack/react-query'],
