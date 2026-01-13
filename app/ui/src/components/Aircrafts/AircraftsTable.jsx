@@ -9,7 +9,6 @@ import Box from '@mui/material/Box';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import EditAircraftModal from './EditAircraftModal';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
-import CardHeader from '../UIElements/CardHeader';
 
 export const AircraftsTable = ({ data, isLoading }) => {
   const dialogs = useDialogs();
@@ -51,10 +50,6 @@ export const AircraftsTable = ({ data, isLoading }) => {
 
   const customActions = useMemo(() => (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <CardHeader
-        title="Aircrafts"
-        sx={{ p: 0, '& .MuiCardHeader-content': { alignItems: 'center' } }}
-      />
       <CSVExportButton rows={data} type="aircrafts" />
     </Box>
   ), [data]);

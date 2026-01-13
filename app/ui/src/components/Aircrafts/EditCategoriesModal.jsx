@@ -41,7 +41,7 @@ const SaveButton = ({ category, onClose }) => {
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to update categories' });
-  useSuccessNotification({ isSuccess, message: 'Categories updates' });
+  useSuccessNotification({ isSuccess, message: 'Categories updated' });
 
   const handleOnClick = async () => {
     await updateCategory();

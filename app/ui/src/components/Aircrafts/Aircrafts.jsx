@@ -31,7 +31,12 @@ export const Aircrafts = () => {
   return (
     <Grid container spacing={1} >
       <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-        <AircraftsTable data={aircrafts} isLoading={isLoadingAircrafts} />
+        <Card variant="outlined" sx={{ mb: 1 }}>
+          <CardContent>
+            <CardHeader title="Aircrafts" />
+            <AircraftsTable data={aircrafts} isLoading={isLoadingAircrafts} />
+          </CardContent>
+        </Card>
       </Grid>
 
       <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
@@ -40,6 +45,7 @@ export const Aircrafts = () => {
             <CardHeader title="Types & Categories" />
             <CategoriesTable data={categories} isLoading={isLoadingCategories} />
           </CardContent>
+
         </Card >
       </Grid>
     </Grid>

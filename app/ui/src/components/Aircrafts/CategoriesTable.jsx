@@ -1,117 +1,68 @@
-import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
-import { useCallback, useMemo, useState } from 'react';
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useMemo } from 'react';
 import { useDialogs } from '@toolpad/core/useDialogs';
+import { GridActionsCell, GridActionsCellItem } from '@mui/x-data-grid';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import LinearProgress from '@mui/material/LinearProgress';
 // Custom components and libraries
-import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
 import EditCategoriesModal from './EditCategoriesModal';
 import CSVExportButton from '../UIElements/CSVExportButton';
-import TableFilterDrawer from '../UIElements/TableFilterDrawer';
-import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
+import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 
-const paginationKey = 'categories-table-page-size';
-const columnVisibilityKey = 'categories-table-column-visibility';
-const columnSizingKey = 'categories-table-column-sizing';
-
-const tableOptions = {
-  initialState: { density: 'compact' },
-  positionToolbarAlertBanner: 'bottom',
-  groupedColumnMode: 'remove',
-  enableColumnResizing: true,
-  enableGlobalFilterModes: true,
-  enableColumnFilters: true,
-  enableColumnDragging: false,
-  enableColumnPinning: false,
-  enableGrouping: true,
-  enableDensityToggle: false,
-  columnResizeMode: 'onEnd',
-  muiTablePaperProps: { variant: 'outlined', elevation: 0 },
-  columnFilterDisplayMode: 'custom',
-  enableFacetedValues: true,
-  enableSorting: true,
-  enableColumnActions: true,
-  enableRowActions: true,
-}
-
-export const CategoriesTable = ({ data, isLoading, ...props }) => {
+export const CategoriesTable = ({ data, isLoading }) => {
   const dialogs = useDialogs();
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
-  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
 
-  const columns = useMemo(() => [
-    { accessorKey: "model", header: "Type", size: 130 },
-    { accessorKey: "category", header: "Category", grow: true },
-  ], []);
-
-  const renderRowActions = useCallback(({ row }) => {
-    const payload = row.original;
-    return (
-      <Tooltip title="Edit Category">
-        <IconButton onClick={async () => await dialogs.open(EditCategoriesModal, payload)}>
-          <EditOutlinedIcon fontSize='small' />
-        </IconButton>
-      </Tooltip >
-    );
+  const columns = useMemo(() => {
+    return [
+      {
+        field: 'actions',
+        type: 'actions',
+        headerName: 'Actions',
+        width: 50,
+        renderCell: (params) => (
+          <GridActionsCell {...params}>
+            <GridActionsCellItem
+              icon={<EditOutlinedIcon />}
+              onClick={async () => await dialogs.open(EditCategoriesModal, params.row)}
+              label="Edit Category"
+            />
+          </GridActionsCell>
+        ),
+      },
+      {
+        field: "model",
+        headerName: "Type",
+        headerAlign: "center",
+        width: 90,
+      },
+      {
+        field: "category",
+        headerName: "Category",
+        headerAlign: "center",
+        flex: 1
+      },
+    ];
   }, [dialogs]);
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-      <CSVExportButton table={table} type="categories" />
+  const customActions = useMemo(() => (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <CSVExportButton rows={data} type="categories" />
     </Box>
-  ), []);
-
-  const renderToolbarInternalActions = useCallback(({ table }) => (
-    <>
-      <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ToggleFiltersButton table={table} />
-      <MRT_ShowHideColumnsButton table={table} />
-      <MRT_ToggleFullScreenButton table={table} />
-      <ResetColumnSizingButton resetFunction={setColumnSizing} />
-    </>
-  ), [setColumnSizing]);
-
-  const filterDrawOpen = useCallback(() => {
-    setIsFilterDrawerOpen(true);
-  }, []);
-
-  const filterDrawClose = useCallback(() => {
-    setIsFilterDrawerOpen(false);
-  }, []);
-
-  const table = useMaterialReactTable({
-    isLoading: isLoading,
-    columns: columns,
-    data: data ?? [],
-    onShowColumnFiltersChange: filterDrawOpen,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnSizingChange: setColumnSizing,
-    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    renderToolbarInternalActions: renderToolbarInternalActions,
-    onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing },
-    defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
-    renderRowActions: renderRowActions,
-    ...tableOptions
-  });
+  ), [data]);
 
   return (
-    <>
-      {isLoading && <LinearProgress />}
-      <MaterialReactTable table={table} {...props} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
-    </>
-  );
+    <XDataGrid
+      tableId='categories'
+      loading={isLoading}
+      rows={data}
+      columns={columns}
+      getRowId={(row) => row.model}
+      showAggregationFooter={false}
+      disableColumnMenu
+      customActions={customActions}
+    />
+  )
 }
 
 export default CategoriesTable;
