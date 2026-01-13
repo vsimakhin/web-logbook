@@ -13,40 +13,38 @@ import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 export const AircraftsTable = ({ data, isLoading }) => {
   const dialogs = useDialogs();
 
-  const columns = useMemo(() => {
-    return [
-      {
-        field: 'actions',
-        type: 'actions',
-        headerName: 'Actions',
-        width: 50,
-        renderCell: (params) => (
-          <GridActionsCell {...params}>
-            <GridActionsCellItem icon={<EditOutlinedIcon />} onClick={async () => await dialogs.open(EditAircraftModal, params.row)} label="Edit Aircraft" />
-          </GridActionsCell>
-        ),
-      },
-      {
-        field: "reg",
-        headerName: "Registration",
-        headerAlign: "center",
-        width: 120,
-      },
-      {
-        field: "model",
-        headerName: "Type",
-        headerAlign: "center",
-        align: "center",
-        width: 90
-      },
-      {
-        field: "category",
-        headerName: "Category",
-        headerAlign: "center",
-        flex: 1
-      },
-    ];
-  }, [dialogs]);
+  const columns = useMemo(() => [
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 50,
+      renderCell: (params) => (
+        <GridActionsCell {...params}>
+          <GridActionsCellItem icon={<EditOutlinedIcon />} onClick={async () => await dialogs.open(EditAircraftModal, params.row)} label="Edit Aircraft" />
+        </GridActionsCell>
+      ),
+    },
+    {
+      field: "reg",
+      headerName: "Registration",
+      headerAlign: "center",
+      width: 120,
+    },
+    {
+      field: "model",
+      headerName: "Type",
+      headerAlign: "center",
+      align: "center",
+      width: 90
+    },
+    {
+      field: "category",
+      headerName: "Category",
+      headerAlign: "center",
+      flex: 1
+    },
+  ], [dialogs]);
 
   const customActions = useMemo(() => (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
