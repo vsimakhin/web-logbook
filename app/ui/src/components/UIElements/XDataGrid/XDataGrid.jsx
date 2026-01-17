@@ -231,7 +231,12 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
               ActionsComponent: XPagination,
             },
           },
-          footer: { fieldIdTotalLabel: props.footerFieldIdTotalLabel, showAggregationFooter: props.showAggregationFooter },
+          footer: {
+            fieldIdTotalLabel: props.footerFieldIdTotalLabel,
+            showAggregationFooter: props.showAggregationFooter,
+            showPagination: props.showPagination,
+            showPageTotal: props.showPageTotal,
+          },
           toolbar: { initialColumns: columns, customActions: props.customActions },
         }}
         showToolbar

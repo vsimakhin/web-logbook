@@ -35,9 +35,11 @@ const AggregationRow = ({ label, values, columns, ...props }) => {
           displayText = label;
         } else if (isAggregated) {
           if (value === undefined || value === null || value === '' || (isTimeField && (value === 0 || value === '0.0'))) {
-            displayText = isTimeField ? '0:00' : '0';
+            displayText = isTimeField ? '00:00' : '0';
           } else {
-            displayText = value;
+            displayText = typeof column.aggregationFormatter === 'function'
+              ? column.aggregationFormatter(value)
+              : value;
           }
         }
 
@@ -65,7 +67,7 @@ const AggregationRow = ({ label, values, columns, ...props }) => {
   );
 };
 
-const XFooter = ({ ...props }) => {
+const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
   const apiRef = useGridApiContext();
   const visibleColumns = useGridSelector(apiRef, gridVisibleColumnDefinitionsSelector);
   const allRowIds = useGridSelector(apiRef, gridFilteredSortedRowIdsSelector);
@@ -170,22 +172,20 @@ const XFooter = ({ ...props }) => {
   return (
     <GridFooterContainer sx={{ flexDirection: 'column', alignItems: 'stretch', minHeight: 'auto' }}>
       {props.showAggregationFooter && (
-        <Box
-          ref={scrollRef}
-          sx={{
-            overflow: 'hidden',
-            width: '100%',
-          }}
-        >
+        <Box ref={scrollRef} sx={{ overflow: 'hidden', width: '100%' }}>
           <Box sx={{ width: totalWidth, display: 'flex', flexDirection: 'column' }}>
-            <AggregationRow label="Page:" values={pageTotals} columns={visibleColumns} {...props} />
+            {showPageTotal && (
+              <AggregationRow label="Page:" values={pageTotals} columns={visibleColumns} {...props} />
+            )}
             <AggregationRow label="Total:" values={grandTotals} columns={visibleColumns} {...props} />
           </Box>
         </Box>
       )}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', p: 0.5, borderTop: '1px solid rgba(224, 224, 224, 1)' }}>
-        <GridPagination />
-      </Box>
+      {showPagination && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', p: 0.5, borderTop: '1px solid rgba(224, 224, 224, 1)' }}>
+          <GridPagination />
+        </Box>
+      )}
     </GridFooterContainer>
   );
 };

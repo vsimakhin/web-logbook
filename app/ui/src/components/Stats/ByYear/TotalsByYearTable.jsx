@@ -6,7 +6,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 // Custom
 import useSettings from '../../../hooks/useSettings';
-import { convertMinutesToTime, getCustomFieldValue, getValue } from '../../../util/helpers';
+import { convertMinutesToTime, getValue } from '../../../util/helpers';
 import XDataGrid from '../../UIElements/XDataGrid/XDataGrid';
 
 const useTotalsData = (data) => {
@@ -34,26 +34,18 @@ const useTotalsData = (data) => {
   return { dataByYear, sortedYears };
 };
 
-const sumTimeField = (values) => {
-  let totalMinutes = 0;
-  values.forEach(v => {
-    // if (typeof v === 'string' && v.includes(':')) {
-    //   const parts = v.split(':');
-    //   if (parts.length === 2) {
-    //     const hh = parseInt(parts[0], 10) || 0;
-    //     const mm = parseInt(parts[1], 10) || 0;
-    //     totalMinutes += (hh * 60) + mm;
-    //   }
-    // } else if (typeof v === 'number') {
-    //   totalMinutes += Math.round(v * 60);
-    // }
-    totalMinutes += v;
-  });
-
-  const hh = Math.floor(totalMinutes / 60);
-  const mm = totalMinutes % 60;
-  return `${hh}:${mm.toString().padStart(2, '0')}`;
-}
+const timeColumn = (field, name) => ({
+  field: field,
+  headerName: name,
+  width: 65,
+  headerAlign: 'center',
+  align: 'center',
+  aggregation: 'sum',
+  type: 'number',
+  aggregationFormatter: (value) => convertMinutesToTime(value),
+  valueGetter: (_, row) => getValue(row, field),
+  valueFormatter: (value) => convertMinutesToTime(value),
+});
 
 export const TotalsTab = ({ data, isLoading, customFields = [] }) => {
   const { dataByYear, sortedYears } = useTotalsData(data);
@@ -61,23 +53,13 @@ export const TotalsTab = ({ data, isLoading, customFields = [] }) => {
   const { fieldName } = useSettings();
 
   const columns = useMemo(() => {
-    const timeColumn = (field, name) => ({
-      field: field,
-      headerName: name,
-      width: 90,
-      headerAlign: 'center',
-      align: 'center',
-      type: 'time',
-      aggregationFn: sumTimeField,
-      valueGetter: (_, row) => getValue(row, field),
-      valueFormatter: (value) => convertMinutesToTime(value),
-    });
-
     const baseColumns = [
       {
         field: "month",
         headerName: "Month",
-        width: 90,
+        headerAlign: 'center',
+        align: 'center',
+        width: 70,
         renderCell: (params) => new Date(0, parseInt(params.value) - 1).toLocaleString('default', { month: 'short' })
       },
       timeColumn("time.se_time", fieldName("se")),
@@ -92,36 +74,69 @@ export const TotalsTab = ({ data, isLoading, customFields = [] }) => {
       timeColumn("time.cc_time", "CC"),
       timeColumn("sim.time", `${fieldName("fstd")} ${fieldName("sim_time")}`),
       {
-        field: "landings",
-        headerName: `${fieldName("land_day")}/${fieldName("land_night")}`,
-        width: 100,
+        field: "land_day",
+        headerName: `${fieldName("land_day")} ${fieldName("landings")}`,
+        width: 50,
         headerAlign: 'center',
         align: 'center',
-        valueGetter: (_, row) => `${row.landings.day}/${row.landings.night}`,
+        type: 'number',
+        aggregation: 'sum',
+        valueGetter: (_, row) => (row.landings.day),
+      },
+      {
+        field: "land_night",
+        headerName: `${fieldName("land_night")} ${fieldName("landings")}`,
+        width: 50,
+        headerAlign: 'center',
+        align: 'center',
+        type: 'number',
+        aggregation: 'sum',
+        valueGetter: (_, row) => (row.landings.night),
       },
       {
         field: "distance",
         headerName: "Distance",
         width: 100,
-        headerAlign: 'right',
-        align: 'right',
+        headerAlign: 'center',
+        align: 'center',
+        type: 'number',
+        aggregation: 'sum',
+        aggregationFormatter: (value) => value ? value.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0',
         valueFormatter: (value) => value ? value.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0',
       },
     ];
 
     const customFieldColumns = customFields
       .filter(field => field.stats_function !== 'none')
-      .map(field => ({
-        field: `custom_fields.${field.uuid}`,
-        headerName: field.name,
-        width: 120,
-        headerAlign: 'center',
-        align: 'center',
-        valueGetter: (_, row) => {
-          const value = getValue(row, `custom_fields.${field.uuid}`);
-          return getCustomFieldValue(value, field);
-        },
-      }));
+      .map(field => {
+        const isDuration = field.type === 'duration';
+        const isSum = field.stats_function === 'sum';
+        const isAvg = field.stats_function === 'average';
+
+        return {
+          field: `custom_fields.${field.uuid}`,
+          headerName: field.name,
+          width: 80,
+          headerAlign: 'center',
+          align: 'center',
+          type: (isDuration && isSum) ? 'time' : 'number',
+          aggregation: isAvg ? 'avg' : field.stats_function,
+          aggregationFormatter: isDuration ? (value) => convertMinutesToTime(value) : undefined,
+          valueGetter: (_, row) => {
+            const fieldData = getValue(row, `custom_fields.${field.uuid}`);
+            if (!fieldData) return 0;
+            if (isSum) return fieldData.sum;
+            if (isAvg) return fieldData.count > 0 ? fieldData.sum / fieldData.count : 0;
+            if (field.stats_function === 'count') return fieldData.count;
+            return 0;
+          },
+          valueFormatter: (value) => {
+            if (isDuration) return convertMinutesToTime(value);
+            if (isAvg) return Number(value.toFixed(2));
+            return value;
+          }
+        };
+      });
 
     return [
       ...baseColumns,
@@ -137,24 +152,14 @@ export const TotalsTab = ({ data, isLoading, customFields = [] }) => {
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={activeTab}
-          onChange={(e, v) => setActiveTab(v)}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
+        <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)} variant="scrollable">
           {sortedYears.map((year) => (
             <Tab key={year} label={year} />
           ))}
         </Tabs>
       </Box>
       {sortedYears.map((year, index) => (
-        <Box
-          key={year}
-          role="tabpanel"
-          hidden={activeTab !== index}
-          sx={{ p: (theme) => theme.spacing(1, 0) }}
-        >
+        <Box key={year} role="tabpanel" hidden={activeTab !== index} sx={{ p: (theme) => theme.spacing(1, 0) }}>
           {activeTab === index && (
             <XDataGrid
               tableId={`totals-year`}
@@ -162,8 +167,11 @@ export const TotalsTab = ({ data, isLoading, customFields = [] }) => {
               columns={columns}
               getRowId={(row) => row.month}
               showAggregationFooter={true}
+              footerFieldIdTotalLabel='month'
               disableColumnMenu
               showPagination={false}
+              showPageTotal={false}
+              disableColumnSorting
             />
           )}
         </Box>
