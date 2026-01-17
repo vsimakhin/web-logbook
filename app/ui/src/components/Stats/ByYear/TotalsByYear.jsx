@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../../util/http/logbook";
 import { getTotalsByMonthAndYear } from "../../../util/helpers";
-import TotalsByYearTable from "./TotalsByYearTable";
+import { TotalsTab } from "./TotalsByYearTable";
 import useCustomFields from "../../../hooks/useCustomFields";
 
 export const TotalsByYear = () => {
@@ -18,11 +18,12 @@ export const TotalsByYear = () => {
   const { customFields } = useCustomFields();
 
   return (
-    <TotalsByYearTable
-      data={getTotalsByMonthAndYear(data ?? [], customFields ?? [])}
-      isLoading={isLoading}
-      customFields={customFields ?? []}
-    />
+    <>
+      <TotalsTab data={getTotalsByMonthAndYear(data ?? [], customFields ?? [])}
+        isLoading={isLoading}
+        customFields={customFields ?? []}
+      />
+    </>
   );
 }
 
