@@ -4,15 +4,6 @@ import (
 	"fmt"
 )
 
-// GetPersonsDBRecordsCount returns the number of records in the persons table
-func (m *DBModel) GetPersonsDBRecordsCount() (count int, err error) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	err = m.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM persons").Scan(&count)
-	return count, nil
-}
-
 // fetchPersons is a helper function to fetch persons based on a query and a scan function
 func (m *DBModel) fetchPersons(query string, params ...any) (persons []Person, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
@@ -27,7 +18,8 @@ func (m *DBModel) fetchPersons(query string, params ...any) (persons []Person, e
 	persons = []Person{}
 	for rows.Next() {
 		var person Person
-		if err = rows.Scan(&person.UUID, &person.FirstName, &person.MiddleName, &person.LastName); err != nil {
+		if err = rows.Scan(&person.UUID, &person.FirstName, &person.MiddleName, &person.LastName,
+			&person.Phone, &person.Email, &person.Remarks); err != nil {
 			return persons, err
 		}
 		persons = append(persons, person)
@@ -38,12 +30,12 @@ func (m *DBModel) fetchPersons(query string, params ...any) (persons []Person, e
 
 // GetPersons returns all persons
 func (m *DBModel) GetPersons() (persons []Person, err error) {
-	query := "SELECT uuid, first_name, middle_name, last_name FROM persons"
+	query := "SELECT uuid, first_name, middle_name, last_name, phone, email, remarks FROM persons"
 	return m.fetchPersons(query)
 }
 
 func (m *DBModel) GetPersonById(uuid string) (person Person, err error) {
-	query := "SELECT uuid, first_name, middle_name, last_name FROM persons WHERE uuid = ?"
+	query := "SELECT uuid, first_name, middle_name, last_name, phone, email, remarks FROM persons WHERE uuid = ?"
 	persons, err := m.fetchPersons(query, uuid)
 	return persons[0], err
 }
@@ -52,7 +44,7 @@ func (m *DBModel) GetPersonsForLog(logUuid string) (persons []PersonForLog, err 
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "SELECT p.uuid, p.first_name, p.middle_name, p.last_name, ptl.role FROM person_to_log AS ptl INNER JOIN persons as p ON ptl.person_uuid = p.uuid WHERE ptl.log_uuid = ?"
+	query := "SELECT p.uuid, p.first_name, p.middle_name, p.last_name, p.phone, p.email, p.remarks, ptl.role FROM person_to_log AS ptl INNER JOIN persons as p ON ptl.person_uuid = p.uuid WHERE ptl.log_uuid = ?"
 	rows, err := m.DB.QueryContext(ctx, query, logUuid)
 	if err != nil {
 		return nil, err
@@ -61,7 +53,8 @@ func (m *DBModel) GetPersonsForLog(logUuid string) (persons []PersonForLog, err 
 
 	for rows.Next() {
 		var person PersonForLog
-		if err = rows.Scan(&person.UUID, &person.FirstName, &person.MiddleName, &person.LastName, &person.Role); err != nil {
+		if err = rows.Scan(&person.UUID, &person.FirstName, &person.MiddleName, &person.LastName,
+			&person.Phone, &person.Email, &person.Remarks, &person.Role); err != nil {
 			return persons, err
 		}
 		persons = append(persons, person)
@@ -82,10 +75,11 @@ func (m *DBModel) AddPerson(person Person) error {
 		return fmt.Errorf("Person %s %s %s already exists", person.FirstName, person.MiddleName, person.LastName)
 	}
 
-	query = `INSERT INTO persons (uuid, first_name, middle_name, last_name)
-		VALUES (?, ?, ?, ?)`
+	query = `INSERT INTO persons (uuid, first_name, middle_name, last_name, phone, email, remarks)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`
 	_, err := m.DB.ExecContext(ctx, query,
 		person.UUID, person.FirstName, person.MiddleName, person.LastName,
+		person.Phone, person.Email, person.Remarks,
 	)
 
 	if err != nil {
@@ -100,8 +94,11 @@ func (m *DBModel) UpdatePerson(person Person) error {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "UPDATE persons SET first_name = ?, middle_name = ?, last_name = ? WHERE uuid = ?"
-	_, err := m.DB.ExecContext(ctx, query, person.FirstName, person.MiddleName, person.LastName, person.UUID)
+	query := "UPDATE persons SET first_name = ?, middle_name = ?, last_name = ?, phone = ?, email = ?, remarks = ? WHERE uuid = ?"
+	_, err := m.DB.ExecContext(ctx, query,
+		person.FirstName, person.MiddleName, person.LastName,
+		person.Phone, person.Email, person.Remarks, person.UUID,
+	)
 	return err
 }
 
@@ -154,7 +151,7 @@ func (m *DBModel) GetFlightRecordsForPerson(personUuid string) (records []Flight
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := `SELECT lb.uuid, ptl.role, lb.date, lb.m_date, lb.departure_place, lb.arrival_place,
+	query := `SELECT lb.uuid, ptl.role, lb.date, lb.m_date, lb.departure_place, lb.arrival_place, lb.total_time,
 			lb.aircraft_model, lb.reg_name, lb.sim_type
 		FROM person_to_log AS ptl
 		INNER JOIN logbook_view AS lb ON ptl.log_uuid = lb.uuid
@@ -168,7 +165,9 @@ func (m *DBModel) GetFlightRecordsForPerson(personUuid string) (records []Flight
 
 	for rows.Next() {
 		var record FlightRecordForPerson
-		if err = rows.Scan(&record.LogUUID, &record.Role, &record.Date, &record.MDate, &record.Departure, &record.Arrival, &record.Aircraft.Model, &record.Aircraft.Reg, &record.SimType); err != nil {
+		if err = rows.Scan(&record.LogUUID, &record.Role, &record.Date, &record.MDate,
+			&record.Departure, &record.Arrival, &record.TotalTime, &record.Aircraft.Model,
+			&record.Aircraft.Reg, &record.SimType); err != nil {
 			return records, err
 		}
 		records = append(records, record)

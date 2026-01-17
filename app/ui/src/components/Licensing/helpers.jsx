@@ -1,13 +1,4 @@
 import dayjs from "dayjs";
-import TableHeader from "../UIElements/TableHeader";
-
-export const createDateColumn = (id, name) => ({
-  accessorKey: id,
-  header: <TableHeader title={name} />,
-  size: 150,
-  filterVariant: "date-range", filterFn: "dateFilterFn",
-  muiFilterDatePickerProps: { format: "DD/MM/YYYY" },
-})
 
 export const calculateExpiry = (validUntil) => {
   if (!validUntil) return null;
