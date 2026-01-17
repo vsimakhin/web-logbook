@@ -8,6 +8,7 @@ import EditCustomAirportButton from './EditCustomAirportButton';
 import DeleteCustomAirportButton from './DeleteCustomAirportButton';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 import AddCustomAirportButton from './AddCustomAirportButton';
+import TableActionHeader from '../UIElements/TableActionHeader';
 
 export const CustomAirportsTable = ({ data, isLoading }) => {
 
@@ -17,6 +18,7 @@ export const CustomAirportsTable = ({ data, isLoading }) => {
       type: 'actions',
       headerName: 'Actions',
       width: 50,
+      renderHeader: () => <TableActionHeader />,
       renderCell: (params) => (
         <GridActionsCell {...params} suppressChildrenValidation>
           <EditCustomAirportButton params={params} showInMenu />

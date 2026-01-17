@@ -95,6 +95,9 @@ type Person struct {
 	FirstName  string `json:"first_name"`
 	MiddleName string `json:"middle_name"`
 	LastName   string `json:"last_name"`
+	Phone      string `json:"phone"`
+	Email      string `json:"email"`
+	Remarks    string `json:"remarks"`
 }
 
 type PersonToLog struct {
@@ -116,6 +119,7 @@ type FlightRecordForPerson struct {
 	MDate     string `json:"m_date"`
 	Departure string `json:"departure"`
 	Arrival   string `json:"arrival"`
+	TotalTime string `json:"total_time"`
 	Aircraft  struct {
 		Model string `json:"model"`
 		Reg   string `json:"reg_name"`

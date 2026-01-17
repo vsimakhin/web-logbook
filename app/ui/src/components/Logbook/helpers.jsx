@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
@@ -37,11 +38,13 @@ export const createDateColumn = ({ field, headerName, width = 90 }) => ({
   valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
   valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
   renderCell: (params) => (
-    <Typography variant="body2" color="primary">
-      <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
-        {params.formattedValue}
-      </Link>
-    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+      <Typography variant="body2" color="primary">
+        <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
+          {params.formattedValue}
+        </Link>
+      </Typography>
+    </Box>
   ),
 })
 

@@ -119,6 +119,22 @@ const exportMappers = {
     "Distance": row.distance,
     "Total": convertMinutesToTime(row.time.total_time),
   })),
+
+  "persons": (rows) => rows.map((row) => ({
+    "First Name": row.first_name,
+    "Middle Name": row.middle_name,
+    "Last Name": row.last_name,
+  })),
+
+  "person-flights": (rows) => rows.map((row) => ({
+    "Date": row.date,
+    "Role": row.role,
+    "Departure": row.departure,
+    "Arrival": row.arrival,
+    "Aircraft Model": row.aircraft.model,
+    "Aircraft Reg": row.aircraft.reg_name,
+    "SIM Type": row.sim_type,
+  })),
 };
 
 const handleExportRows = (rows, type) => {

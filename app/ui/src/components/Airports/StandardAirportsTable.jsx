@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 import CopyAirportButton from './CopyAirportButton';
+import TableActionHeader from '../UIElements/TableActionHeader';
 
 export const StandardAirportsTable = ({ data, isLoading }) => {
 
@@ -15,6 +16,7 @@ export const StandardAirportsTable = ({ data, isLoading }) => {
       type: 'actions',
       headerName: 'Actions',
       width: 50,
+      renderHeader: () => <TableActionHeader />,
       renderCell: (params) => (
         <GridActionsCell {...params} suppressChildrenValidation>
           <CopyAirportButton params={params} />

@@ -216,7 +216,7 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
         apiRef={apiRef}
         rows={filteredRows}
         columns={columns}
-        rowHeight={36}
+        rowHeight={38}
         density="compact"
         initialState={{ columns: columnsState, ...props.initialState }}
         // pagination

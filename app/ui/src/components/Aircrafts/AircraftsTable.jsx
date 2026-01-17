@@ -10,6 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import EditAircraftModal from './EditAircraftModal';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
+import TableActionHeader from '../UIElements/TableActionHeader';
 
 export const AircraftsTable = ({ data, isLoading }) => {
   const dialogs = useDialogs();
@@ -20,6 +21,7 @@ export const AircraftsTable = ({ data, isLoading }) => {
       type: 'actions',
       headerName: 'Actions',
       width: 50,
+      renderHeader: () => <TableActionHeader />,
       renderCell: (params) => (
         <GridActionsCell {...params}>
           <GridActionsCellItem

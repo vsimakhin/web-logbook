@@ -32,9 +32,11 @@ export const LicensingTable = ({ data, isLoading }) => {
         headerAlign: "center",
         width: 150,
         renderCell: (params) => (
-          <Typography fontWeight="500">
-            {params.formattedValue}
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+            <Typography fontWeight="500">
+              {params.formattedValue}
+            </Typography>
+          </Box>
         ),
       },
       {
@@ -43,11 +45,13 @@ export const LicensingTable = ({ data, isLoading }) => {
         headerAlign: "center",
         width: 250,
         renderCell: (params) => (
-          <Typography variant="body2" color="primary">
-            <Link to={`/licensing/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
-              {params.formattedValue}
-            </Link>
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+            <Typography variant="body2" color="primary">
+              <Link to={`/licensing/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
+                {params.formattedValue}
+              </Link>
+            </Typography>
+          </Box>
         ),
       },
       {
@@ -94,11 +98,13 @@ export const LicensingTable = ({ data, isLoading }) => {
           if (!expiry) return null;
 
           return (
-            <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
-              {expiry.diffDays < 0
-                ? 'Expired'
-                : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+              <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
+                {expiry.diffDays < 0
+                  ? 'Expired'
+                  : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
+              </Typography>
+            </Box >
           );
         },
       },
