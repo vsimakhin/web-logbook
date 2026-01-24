@@ -1,11 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import LinearProgress from "@mui/material/LinearProgress";
 // Custom
-import CardHeader from "../UIElements/CardHeader";
 import CurrencyTable from "./CurrencyTable";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../util/http/logbook";
@@ -42,12 +39,7 @@ export const Currency = () => {
   return (
     <Grid container spacing={1} >
       <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-        <Card variant="outlined" sx={{ mb: 1 }}>
-          <CardContent>
-            <CardHeader title="Currency" />
-            <CurrencyTable logbookData={logbookData} currencyData={currencyData} aircrafts={aircrafts} />
-          </CardContent>
-        </Card >
+        <CurrencyTable logbookData={logbookData} currencyData={currencyData} aircrafts={aircrafts} />
       </Grid>
     </Grid>
   );

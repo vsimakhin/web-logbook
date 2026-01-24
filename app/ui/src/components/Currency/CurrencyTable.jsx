@@ -1,16 +1,12 @@
-import {
-  MaterialReactTable, MRT_ShowHideColumnsButton,
-  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton, useMaterialReactTable
-} from 'material-react-table';
-import { useCallback, useMemo, useState } from 'react';
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useMemo } from 'react';
+import { GridActionsCell } from '@mui/x-data-grid';
 // MUI UI elements
-import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box'
+import LinearProgress from '@mui/material/LinearProgress'
+// MUI Icons
+import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 // Custom components and libraries
-import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import TableFilterDrawer from '../UIElements/TableFilterDrawer';
-import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
 import dayjs from 'dayjs';
@@ -19,39 +15,10 @@ import EditCurrencyButton from './EditCurrencyButton';
 import DeleteCurrencyButton from './DeleteCurrencyButton';
 import HelpButton from './HelpButton';
 import useSettings from '../../hooks/useSettings';
-
-const paginationKey = 'currency-table-page-size';
-const columnVisibilityKey = 'currency-table-column-visibility';
-const columnSizingKey = 'currency-table-column-sizing';
-
-const tableOptions = {
-  initialState: { density: 'compact' },
-  positionToolbarAlertBanner: 'bottom',
-  groupedColumnMode: 'remove',
-  enableColumnResizing: true,
-  enableGlobalFilterModes: true,
-  enableColumnFilters: true,
-  enableColumnDragging: false,
-  enableColumnPinning: false,
-  enableGrouping: true,
-  enableDensityToggle: false,
-  columnResizeMode: 'onEnd',
-  muiTablePaperProps: { variant: 'outlined', elevation: 0 },
-  columnFilterDisplayMode: 'custom',
-  enableFacetedValues: true,
-  enableSorting: true,
-  enableColumnActions: true,
-  enableRowActions: true,
-  displayColumnDefOptions: { "mrt-row-actions": { size: 90, grow: false } },
-}
+import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
+import TableActionHeader from '../UIElements/TableActionHeader';
 
 export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
-  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-
   const { fieldNameF } = useSettings();
 
   const metricOptions = useMemo(() => (
@@ -73,33 +40,49 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
     ]
   ), [fieldNameF]);
 
-  const renderRowActions = useCallback(({ row }) => (
-    <>
-      <EditCurrencyButton payload={row.original} />
-      <DeleteCurrencyButton payload={row.original} />
-    </>
-  ), []);
-
   const columns = useMemo(() => (
     [
-      { accessorKey: "name", header: "Name", size: 200 },
       {
-        accessorKey: "metric", header: "Metric", size: 140,
-        Cell: ({ cell }) => {
-          const metricValue = cell.getValue();
+        field: 'actions',
+        type: 'actions',
+        headerName: 'Actions',
+        width: 50,
+        renderHeader: () => <TableActionHeader />,
+        renderCell: (params) => (
+          <GridActionsCell {...params} suppressChildrenValidation>
+            <EditCurrencyButton params={params} showInMenu />
+            <DeleteCurrencyButton params={params} showInMenu />
+          </GridActionsCell>
+        ),
+      },
+      { field: "name", headerName: "Name", headerAlign: 'center', width: 200 },
+      {
+        field: "metric",
+        headerName: "Metric",
+        headerAlign: 'center',
+        width: 150,
+        renderCell: (params) => {
+          const metricValue = params.row.metric;
           const option = metricOptions.find(opt => opt.value === metricValue);
           return option ? option.label : metricValue;
         }
       },
-      { accessorKey: "comparison", header: "Comparison", size: 150 },
-      { accessorKey: "target_value", header: "Target", size: 110 },
       {
-        id: "time_frame_combined",
-        header: "Time Frame",
-        size: 200,
-        accessorFn: (row) => ({ unit: row.time_frame?.unit, value: row.time_frame?.value, since: row.time_frame?.since }),
-        Cell: ({ cell }) => {
-          const cellData = cell.getValue();
+        field: "comparison",
+        headerName: "Comparison",
+        headerAlign: 'center',
+        align: 'center',
+        width: 40,
+        renderHeader: () => <CalculateOutlinedIcon />,
+      },
+      { field: "target_value", headerName: "Target", headerAlign: 'center', width: 80 },
+      {
+        field: "time_frame_combined",
+        headerName: "Time Frame",
+        headerAlign: 'center',
+        width: 170,
+        renderCell: (params) => {
+          const cellData = params.row.time_frame;
           const unitOption = timeframeUnitOptions.find(opt => opt.value === cellData.unit);
           const unitLabel = unitOption ? unitOption.label : cellData.unit;
 
@@ -112,32 +95,27 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
           }
         }
       },
-      { accessorKey: "filters", header: "Filters", size: 120 },
+      { field: "filters", headerName: "Filters", headerAlign: 'center', width: 150 },
       {
-        id: "valid_until",
-        header: "Valid Until",
-        size: 160,
-        accessorFn: (row) => (getCurrencyExpiryForRule(logbookData, row, aircrafts)),
-        Cell: ({ cell }) => {
-          const expiry = cell.getValue();
+        field: "valid_until",
+        headerName: "Valid Until",
+        headerAlign: 'center',
+        width: 150,
+        renderCell: (params) => {
+          const expiry = getCurrencyExpiryForRule(logbookData, params.row, aircrafts);
           return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
         }
       },
       {
-        id: "expire",
-        header: "Expire",
-        size: 120,
-        accessorFn: (row) => {
-          const expiry = getCurrencyExpiryForRule(logbookData, row, aircrafts);
-          row.expiry = expiry; // Cache for use in Cell
-          if (!expiry) return null;
-
+        field: "expire",
+        headerName: "Expire",
+        headerAlign: 'center',
+        width: 150,
+        renderCell: (params) => {
+          const expiry = getCurrencyExpiryForRule(logbookData, params.row, aircrafts);
           const today = dayjs().startOf('day');
-          return dayjs(row._expiry).startOf('day').diff(today, 'day');
-        },
-        Cell: ({ cell }) => {
-          const days = cell.getValue();
-          const row = cell.row.original;
+          const days = dayjs(expiry).startOf('day').diff(today, 'day');
+          const row = params.row;
 
           if (days === null || days === undefined) {
             // If we can't compute an expiry, still show "Expired" for time-based rules
@@ -154,7 +132,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
             return '—';
           }
 
-          const expiryStr = dayjs(cell.row.original.expiry).format('DD/MM/YYYY');
+          const expiryStr = dayjs(expiry).format('DD/MM/YYYY');
           const exp = calculateExpiry(expiryStr);
           if (!exp) return '—';
 
@@ -169,56 +147,55 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         }
       },
       {
-        id: "status", header: "Status", grow: true,
-        accessorFn: (row) => (evaluateCurrency(logbookData, row, aircrafts)),
-        Cell: ({ cell }) => {
-          const cellData = cell.getValue();
+        field: "status",
+        headerName: "Status",
+        headerAlign: "center",
+        width: 200,
+        renderCell: (params) => {
+          const status = evaluateCurrency(logbookData, params.row, aircrafts)
+          const value = formatCurrencyValue(status?.current, params.row.metric)
+          const percent = status.meetsRequirement
+            ? 100
+            : Math.min(100, (status.current / params.row.target_value) * 100)
+          const percentLabel = percent === 100 ? '' : `(${Math.round(percent)}%)`
+          const color = status.meetsRequirement ? 'success' : percent > 75 ? 'warning' : 'error'
           return (
-            <Chip size='small'
-              label={formatCurrencyValue(cellData?.current, cellData?.rule.metric)}
-              color={cellData?.meetsRequirement ? 'success' : 'error'}
-            />
+            <Box sx={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center', height: '100%' }}>
+              <LinearProgress sx={{ height: 20, borderRadius: 0, width: '100%' }}
+                variant="determinate"
+                value={percent}
+                color={color}
+              />
+              <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Typography variant="caption" fontWeight={500}>
+                  {value} {percentLabel}
+                </Typography>
+              </Box>
+            </Box>
           )
         }
-      },
+      }
     ]
-  ), [logbookData, aircrafts, metricOptions]);
+  ), [metricOptions, logbookData, aircrafts])
 
-  const renderToolbarInternalActions = useCallback(({ table }) => (
-    <>
+  const customActions = useMemo(() => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <NewCurrencyButton />
       <HelpButton />
-      <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ShowHideColumnsButton table={table} />
-      <MRT_ToggleFullScreenButton table={table} />
-      <ResetColumnSizingButton resetFunction={setColumnSizing} />
-    </>
-  ), [setColumnSizing]);
-
-  const renderTopToolbarCustomActions = useCallback(() => (
-    <NewCurrencyButton />
+    </Box>
   ), []);
 
-  const table = useMaterialReactTable({
-    columns: columns,
-    data: currencyData ?? [],
-    onShowColumnFiltersChange: () => (setIsFilterDrawerOpen(true)),
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnSizingChange: setColumnSizing,
-    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing: columnSizing },
-    defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
-    renderToolbarInternalActions: renderToolbarInternalActions,
-    renderRowActions: renderRowActions,
-    ...tableOptions
-  });
-
   return (
-    <>
-      <MaterialReactTable table={table} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={() => setIsFilterDrawerOpen(false)} />
-    </>
+    <XDataGrid
+      tableId={`currency`}
+      rows={currencyData}
+      columns={columns}
+      getRowId={(row) => `${row.name}`}
+      showAggregationFooter={false}
+      disableColumnMenu
+      showPageTotal={false}
+      customActions={customActions}
+    />
   );
 }
 
