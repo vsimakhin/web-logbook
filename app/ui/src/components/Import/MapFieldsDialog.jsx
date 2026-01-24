@@ -106,7 +106,7 @@ const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
         <CardContent>
           <CardHeader title="Map Fields" action={actionButtons} />
           <Grid container spacing={1}>
-            {fields.map((field, index) => (
+            {fields.map((field) => (
               <Select gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
                 key={field.id}
                 id={field.id}

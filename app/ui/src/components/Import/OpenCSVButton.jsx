@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // Custom components
 import MapFieldsDialog from "./MapFieldsDialog";
-import { autoTimeRecog, convertToDDMMYYYY } from './helpers';
+import { autoTimeRecog, convertToDDMMYYYY, marshallItem } from './helpers';
 
 export const OpenCSVButton = ({ setData }) => {
   const dialogs = useDialogs();
@@ -56,7 +56,11 @@ export const OpenCSVButton = ({ setData }) => {
                   return newRow;
                 }).filter(row => row !== null);
 
-                setData(data);
+                const convertedData = [];
+                for (const item of data) {
+                  convertedData.push(marshallItem(item));
+                }
+                setData(convertedData);
               }
             }
           }

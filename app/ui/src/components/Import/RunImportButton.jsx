@@ -5,7 +5,6 @@ import IconButton from "@mui/material/IconButton";
 // MUI Icons
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 // Custom components
-import { marshallItem } from "./helpers";
 import { useMutation } from "@tanstack/react-query";
 import { runImport } from "../../util/http/import";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
@@ -29,14 +28,9 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
   const importData = async (recalculate) => {
     setInProgress(true);
 
-    const convertedData = [];
-    for (const item of data) {
-      convertedData.push(marshallItem(item));
-    }
-
     const payload = {
       recalculate_night_time: recalculate,
-      data: convertedData,
+      data: data,
     };
 
     try {
