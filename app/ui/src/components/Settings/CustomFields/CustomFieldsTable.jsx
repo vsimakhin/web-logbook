@@ -1,103 +1,65 @@
-import {
-  MaterialReactTable, MRT_ShowHideColumnsButton,
-  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton, useMaterialReactTable
-} from 'material-react-table';
-import { useCallback, useMemo, useState } from 'react';
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+
+import { useMemo } from 'react';
+import { GridActionsCell } from '@mui/x-data-grid';
 // MUI UI elements
-import LinearProgress from '@mui/material/LinearProgress';
+import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
+// MUI Icons
+import SwapVertOutlinedIcon from '@mui/icons-material/SwapVertOutlined';
 // Custom components and libraries
-import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../../constants/constants';
-import ResetColumnSizingButton from '../../UIElements/ResetColumnSizingButton';
 import NewCustomFieldButton from './NewCustomFieldButton';
 import EditCustomFieldButton from './EditCustomFieldButton';
 import DeleteCustomFieldButton from './DeleteCustomFieldButton';
 import useCustomFields from '../../../hooks/useCustomFields';
-
-const paginationKey = 'customfields-table-page-size';
-const columnVisibilityKey = 'customfields-table-column-visibility';
-const columnSizingKey = 'customfields-table-column-sizing';
-
-const tableOptions = {
-  initialState: { density: 'compact' },
-  positionToolbarAlertBanner: 'bottom',
-  groupedColumnMode: 'remove',
-  enableColumnResizing: true,
-  enableGlobalFilterModes: true,
-  enableColumnDragging: false,
-  enableColumnPinning: false,
-  enableGrouping: true,
-  enableDensityToggle: false,
-  columnResizeMode: 'onEnd',
-  muiTablePaperProps: { variant: 'outlined', elevation: 0 },
-  columnFilterDisplayMode: 'custom',
-  enableFacetedValues: true,
-  enableSorting: true,
-  enableColumnActions: true,
-}
+import TableActionHeader from '../../UIElements/TableActionHeader';
+import XDataGrid from '../../UIElements/XDataGrid/XDataGrid';
 
 export const CustomFieldsTable = () => {
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
-  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-
   const { data, isCustomFieldsLoading } = useCustomFields();
 
   const columns = useMemo(() => [
     {
-      id: 'actions',
-      header: 'Actions',
-      size: 90,
-      Cell: ({ row }) => (
-        <>
-          <EditCustomFieldButton payload={row.original} />
-          <DeleteCustomFieldButton payload={row.original} />
-        </>
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 50,
+      renderHeader: () => <TableActionHeader />,
+      renderCell: (params) => (
+        <GridActionsCell {...params} suppressChildrenValidation>
+          <EditCustomFieldButton params={params} showInMenu />
+          <DeleteCustomFieldButton params={params} showInMenu />
+        </GridActionsCell>
       ),
     },
-    { accessorKey: "display_order", header: "Order", size: 100 },
-    { accessorKey: "name", header: "Name", size: 150 },
-    { accessorKey: "description", header: "Description", size: 200 },
-    { accessorKey: "category", header: "Category", size: 150 },
-    { accessorKey: "type", header: "Type", size: 100 },
-    { accessorKey: "stats_function", header: "Stats Function", size: 150 },
+    {
+      field: "display_order", headerName: "Order", headerAlign: "center", align: "center", width: 50,
+      renderHeader: () => (<Tooltip title="Order"><SwapVertOutlinedIcon /></Tooltip>),
+    },
+    { field: "name", headerName: "Name", headerAlign: "center", flex: 1 },
+    { field: "description", headerName: "Description", headerAlign: "center", flex: 1 },
+    { field: "category", headerName: "Category", headerAlign: "center", width: 150 },
+    { field: "type", headerName: "Type", headerAlign: "center", width: 100 },
+    { field: "stats_function", headerName: "Stats Function", headerAlign: "center", width: 120 },
   ], []);
 
-  const renderToolbarInternalActions = useCallback(({ table }) => (
-    <>
-      <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ShowHideColumnsButton table={table} />
-      <MRT_ToggleFullScreenButton table={table} />
-      <ResetColumnSizingButton resetFunction={setColumnSizing} />
-    </>
-  ), [setColumnSizing]);
-
-  const renderTopToolbarCustomActions = useCallback(() => (
-    <NewCustomFieldButton />
+  const customActions = useMemo(() => (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <NewCustomFieldButton />
+    </Box>
   ), []);
 
-  const table = useMaterialReactTable({
-    isLoading: isCustomFieldsLoading,
-    columns: columns,
-    data: data ?? [],
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnSizingChange: setColumnSizing,
-    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    onPaginationChange: setPagination,
-    state: { pagination, columnFilters: columnFilters, columnVisibility, columnSizing: columnSizing },
-    defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
-    renderToolbarInternalActions: renderToolbarInternalActions,
-    ...tableOptions
-  });
-
   return (
-    <>
-      {(isCustomFieldsLoading) && <LinearProgress />}
-      <MaterialReactTable table={table} />
-    </>
-  );
+    <XDataGrid
+      tableId='custom-fields'
+      loading={isCustomFieldsLoading}
+      rows={data}
+      columns={columns}
+      getRowId={(row) => row.uuid}
+      showAggregationFooter={false}
+      disableColumnMenu
+      customActions={customActions}
+    />
+  )
 }
 
 export default CustomFieldsTable;

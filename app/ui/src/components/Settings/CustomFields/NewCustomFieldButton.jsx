@@ -19,7 +19,7 @@ export const NewCustomFieldButton = () => {
   return (
     <Tooltip title="New Custom Field">
       <IconButton onClick={handleClick}>
-        <AddBoxOutlinedIcon fontSize='small' />
+        <AddBoxOutlinedIcon />
       </IconButton>
     </Tooltip >
   );
