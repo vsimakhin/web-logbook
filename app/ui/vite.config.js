@@ -11,6 +11,8 @@ export default defineConfig({
         manualChunks: {
           'vendor-mui-material': ['@mui/material'],
           'vendor-mui-icons': ['@mui/icons-material'],
+          'vendor-mui-x-data-grid': ['@mui/x-data-grid'],
+          'vendor-mui-x-date-pickers': ['@mui/x-date-pickers'],
           'vendor-maps': ['ol'],
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-tanstack': ['@tanstack/react-query'],

@@ -1,6 +1,6 @@
 import { ToolbarButton, useGridApiContext } from "@mui/x-data-grid";
 import { useCallback } from "react";
-import { Tooltip } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBackupRestoreOutlined';
 
 export const XToolbarResetColumns = ({ initialColumns = [] }) => {
