@@ -1,11 +1,15 @@
 import { useCallback, useMemo } from "react";
-import useSettings from "../../hooks/useSettings";
-import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import dayjs from "dayjs";
+import { Link } from "react-router";
+// MUI components
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Link } from "react-router";
+// MUI icons
+import ContactPageOutlinedIcon from '@mui/icons-material/ContactPageOutlined';
+// Custom
 import { calculateExpiry } from "./helpers";
+import useSettings from "../../hooks/useSettings";
+import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import CSVExportButton from "../UIElements/CSVExportButton";
 import NewLicenseRecordButton from "./NewLicenseRecordButton";
 
@@ -119,15 +123,17 @@ export const LicensingTable = ({ data, isLoading }) => {
   }, [isSettingsLoading, getExpireColor]);
 
   const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+    <>
       <NewLicenseRecordButton />
       <CSVExportButton rows={data} type="licensing" />
-    </Box>
+    </>
   ), [data]);
 
   return (
     <XDataGrid
       tableId='licensing'
+      title="Licensing"
+      icon={<ContactPageOutlinedIcon />}
       loading={isLoading}
       rows={data}
       columns={columns}

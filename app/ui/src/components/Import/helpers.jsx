@@ -53,6 +53,7 @@ export const autoTimeRecog = (time) => {
 
 export const marshallItem = (item) => {
   return {
+    generated_id: item.generated_id,
     uuid: "",
     date: item.date,
     departure: {

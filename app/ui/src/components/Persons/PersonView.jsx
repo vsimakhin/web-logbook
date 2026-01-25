@@ -53,12 +53,7 @@ export const PersonView = () => {
   return (
     <Grid container spacing={1}>
       <Grid size={{ xs: 12, sm: 12, md: 12, lg: 8, xl: 8 }}>
-        <Card variant="outlined" sx={{ mb: 1 }}>
-          <CardContent>
-            <CardHeader title={flightsTitle} />
-            <PersonsViewFlightsTable data={personFlightsData} isLoading={personFlightsIsLoading} />
-          </CardContent>
-        </Card>
+        <PersonsViewFlightsTable title={flightsTitle} data={personFlightsData} isLoading={personFlightsIsLoading} />
       </Grid>
 
       <Grid size={{ xs: 12, sm: 12, md: 12, lg: 4, xl: 4 }}>

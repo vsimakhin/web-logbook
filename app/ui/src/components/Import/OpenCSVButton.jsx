@@ -2,12 +2,12 @@ import Papa from 'papaparse';
 import { useDialogs } from '@toolpad/core/useDialogs';
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // Custom components
 import MapFieldsDialog from "./MapFieldsDialog";
 import { autoTimeRecog, convertToDDMMYYYY, marshallItem } from './helpers';
+import { ToolbarButton } from '@mui/x-data-grid';
 
 export const OpenCSVButton = ({ setData }) => {
   const dialogs = useDialogs();
@@ -26,9 +26,11 @@ export const OpenCSVButton = ({ setData }) => {
 
               if (mapped) {
                 const picSelf = mapped["pic_self_replace"]?.toLowerCase().trim();
-
+                let generatedId = 0;
                 const data = results.data.slice(1).map((row) => {
                   const newRow = {};
+
+                  newRow["generated_id"] = generatedId++;
                   for (const key in mapped) {
                     newRow[key] = row[headers.indexOf(mapped[key])];
                   }
@@ -71,10 +73,10 @@ export const OpenCSVButton = ({ setData }) => {
 
   return (
     <Tooltip title="Open CSV for import">
-      <IconButton size="small" component="label" ><AddBoxOutlinedIcon />
+      <ToolbarButton color="default" label="Open CSV" component="label" ><AddBoxOutlinedIcon />
         <input hidden type="file" name="document" id="document" onChange={handleFileChange}
           accept=".csv, text/csv, application/csv, text/comma-separated-values" />
-      </IconButton>
+      </ToolbarButton>
     </Tooltip>
   );
 }

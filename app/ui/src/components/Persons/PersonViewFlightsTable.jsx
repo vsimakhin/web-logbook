@@ -7,13 +7,14 @@ import Tooltip from "@mui/material/Tooltip";
 // MUI Icons
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 // Custom
 import dayjs from "dayjs";
 import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import CSVExportButton from "../UIElements/CSVExportButton";
 import { sumTime } from "../Logbook/helpers";
 
-export const PersonsViewFlightsTable = ({ data, isLoading }) => {
+export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
 
   const columns = useMemo(() => [
     {
@@ -99,6 +100,8 @@ export const PersonsViewFlightsTable = ({ data, isLoading }) => {
   return (
     <XDataGrid
       tableId='person-flights'
+      title={title}
+      icon={<AutoStoriesOutlinedIcon />}
       loading={isLoading}
       rows={data}
       columns={columns}

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GridActionsCell } from "@mui/x-data-grid";
-// MUI
-import Box from "@mui/material/Box";
+// MUI Icons
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 // Custom
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchPersons } from "../../util/http/person";
@@ -48,15 +48,17 @@ export const Persons = () => {
   ], []);
 
   const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <>
       <AddPersonButton />
       <CSVExportButton rows={data} type="persons" />
-    </Box>
+    </>
   ), [data]);
 
   return (
     <XDataGrid
       tableId='persons'
+      title="Persons"
+      icon={<PersonOutlinedIcon />}
       loading={isLoading}
       rows={data}
       columns={columns}

@@ -3,8 +3,8 @@ import { useDialogs } from '@toolpad/core/useDialogs';
 import { GridActionsCell, GridActionsCellItem } from '@mui/x-data-grid';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
 // MUI UI elements
-import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import CSVExportButton from '../UIElements/CSVExportButton';
@@ -53,15 +53,13 @@ export const AircraftsTable = ({ data, isLoading }) => {
     },
   ], [dialogs]);
 
-  const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <CSVExportButton rows={data} type="aircrafts" />
-    </Box>
-  ), [data]);
+  const customActions = useMemo(() => (<CSVExportButton rows={data} type="aircrafts" />), [data]);
 
   return (
     <XDataGrid
       tableId='aircrafts'
+      title="Aircrafts"
+      icon={<FlightOutlinedIcon />}
       loading={isLoading}
       rows={data}
       columns={columns}

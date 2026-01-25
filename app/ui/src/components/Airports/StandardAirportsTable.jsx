@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { GridActionsCell } from '@mui/x-data-grid';
-// MUI UI elements
-import Box from '@mui/material/Box';
+// MUI Icons
+import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
 // Custom components and libraries
 import CSVExportButton from '../UIElements/CSVExportButton';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
@@ -33,15 +33,13 @@ export const StandardAirportsTable = ({ data, isLoading }) => {
     { field: "lon", headerName: "Lon", headerAlign: "center", width: 70 },
   ], []);
 
-  const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <CSVExportButton rows={data} type="airports" />
-    </Box>
-  ), [data]);
+  const customActions = useMemo(() => (<CSVExportButton rows={data} type="airports" />), [data]);
 
   return (
     <XDataGrid
       tableId='standard-airports'
+      title="Standard Airports"
+      icon={<FlightTakeoffOutlinedIcon />}
       loading={isLoading}
       rows={data}
       columns={columns}

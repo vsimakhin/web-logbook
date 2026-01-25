@@ -19,11 +19,21 @@ import XToolbarFilterPanelTrigger from './XToolbarFilterPanel';
 
 const EMPTY_COLUMNS = [];
 
-const ToolbarTitle = ({ icon, title }) => (
+const ToolbarTitle = ({ icon, title, hideTitle }) => (
   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    {icon && <Icon color="action" sx={{ mr: 1 }}>{icon}</Icon>}
+    {icon && <Icon color="action" sx={{ mr: 1, visibility: 'visible' }}>{icon}</Icon>}
     {title && (
-      <Typography variant="overline" sx={{ mr: 1, display: { xs: icon ? 'none' : 'inline', md: 'inline' } }}>
+      <Typography
+        variant="overline"
+        sx={{
+          mr: 1,
+          opacity: hideTitle ? 0 : 1,
+          width: hideTitle ? 0 : 'auto',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          transition: (theme) => theme.transitions.create(['opacity', 'width']),
+        }}
+      >
         {title}
       </Typography>
     )}
@@ -42,6 +52,7 @@ export const XToolbar = ({
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [isQuickFilterActive, setIsQuickFilterActive] = useState(false);
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
   const mobileMenuOpen = Boolean(mobileMenuAnchor);
 
@@ -96,7 +107,7 @@ export const XToolbar = ({
     return items;
   }, [customActions, handleMobileMenuClose, initialColumns, showColumnsPanel, showFilters, showQuickFilter, showResetColumns]);
 
-  const toolbarTitle = <ToolbarTitle icon={icon} title={title} />;
+  const toolbarTitle = <ToolbarTitle icon={icon} title={title} hideTitle={isMobile && isQuickFilterActive} />;
 
   if (isMobile) {
     return (
@@ -105,7 +116,7 @@ export const XToolbar = ({
           {toolbarTitle}
         </Box>
 
-        {showQuickFilter && <XToolbarQuickFilter />}
+        {showQuickFilter && <XToolbarQuickFilter onActiveChange={setIsQuickFilterActive} />}
         <IconButton onClick={handleMobileMenuOpen}>
           <MoreVertOutlinedIcon />
         </IconButton>
@@ -138,7 +149,7 @@ export const XToolbar = ({
         </>
       )}
 
-      {showQuickFilter && <XToolbarQuickFilter />}
+      {showQuickFilter && <XToolbarQuickFilter onActiveChange={setIsQuickFilterActive} />}
       {showFilters && <XToolbarFilterPanelTrigger />}
       {showColumnsPanel && <XToolbarColumnsPanelTrigger />}
       {showResetColumns && <XToolbarResetColumns initialColumns={initialColumns} />}

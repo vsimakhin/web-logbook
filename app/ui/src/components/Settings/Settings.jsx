@@ -5,9 +5,9 @@ import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import GeneralSettings from "./GeneralSettings/GeneralSettings";
 import LogbookSignature from "./Signature/LogbookSignature";
-import CustomFields from "./CustomFields/CustomFields";
 import StandardFields from "./StandardFields/StandardFields";
 import useSettings from "../../hooks/useSettings";
+import CustomFieldsTable from "./CustomFields/CustomFieldsTable";
 
 export const Settings = () => {
   const { data, isLoading } = useSettings();
@@ -53,7 +53,7 @@ export const Settings = () => {
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
           <StandardFields settings={settings} handleChange={handleChange} />
-          <CustomFields />
+          <CustomFieldsTable />
         </Grid>
       </Grid>
     </>

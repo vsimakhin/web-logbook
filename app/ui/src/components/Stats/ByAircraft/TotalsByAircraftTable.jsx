@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 // MUI UI elements
-import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+// MUI icons
+import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 // Custom
 import CSVExportButton from '../../UIElements/CSVExportButton';
 import useSettings from '../../../hooks/useSettings';
@@ -24,17 +26,15 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
     ]
   }, [type, fieldName, customFields]);
 
-  const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-      <CSVExportButton rows={data} type="totals-by-aircraft" />
-    </Box>
-  ), [data]);
+  const customActions = useMemo(() => (<CSVExportButton rows={data} type="totals-by-aircraft" />), [data]);
 
   if (isLoading) return <LinearProgress />;
 
   return (
     <XDataGrid sx={{ '& .dg-zero': { color: 'text.disabled' } }}
       tableId={`totals-${type}`}
+      title={`Stats by ${type}`}
+      icon={type === "type" ? <FlightOutlinedIcon /> : <CategoryOutlinedIcon />}
       rows={data}
       columns={columns}
       getRowId={(row) => `${row.model}`}

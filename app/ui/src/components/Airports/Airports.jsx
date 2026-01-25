@@ -7,7 +7,6 @@ import CardContent from '@mui/material/CardContent';
 import StandardAirportsTable from "./StandardAirportsTable";
 import AirportsDB from "./AirportsDB";
 import CustomAirportsTable from "./CustomAirportsTable";
-import CardHeader from "../UIElements/CardHeader";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchCustomAirports, fetchStandardAirports } from "../../util/http/airport";
 
@@ -32,12 +31,7 @@ export const Airports = () => {
     <>
       <Grid container spacing={1} >
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Standard Airports" />
-              <StandardAirportsTable data={standardAirportsData} isLoading={isStandardAirportsLoading} />
-            </CardContent>
-          </Card >
+          <StandardAirportsTable data={standardAirportsData} isLoading={isStandardAirportsLoading} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
@@ -47,12 +41,7 @@ export const Airports = () => {
             </CardContent>
           </Card >
 
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Custom Airports" />
-              <CustomAirportsTable data={customAirportsData} isLoading={isCustomAirportsLoading} />
-            </CardContent>
-          </Card >
+          <CustomAirportsTable data={customAirportsData} isLoading={isCustomAirportsLoading} />
         </Grid>
       </Grid>
     </>

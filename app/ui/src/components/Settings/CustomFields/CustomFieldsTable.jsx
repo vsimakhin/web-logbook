@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import { GridActionsCell } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import Box from '@mui/material/Box';
 // MUI Icons
 import SwapVertOutlinedIcon from '@mui/icons-material/SwapVertOutlined';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 // Custom components and libraries
 import NewCustomFieldButton from './NewCustomFieldButton';
 import EditCustomFieldButton from './EditCustomFieldButton';
@@ -13,6 +13,7 @@ import DeleteCustomFieldButton from './DeleteCustomFieldButton';
 import useCustomFields from '../../../hooks/useCustomFields';
 import TableActionHeader from '../../UIElements/TableActionHeader';
 import XDataGrid from '../../UIElements/XDataGrid/XDataGrid';
+import HelpButton from './HelpButton';
 
 export const CustomFieldsTable = () => {
   const { data, isCustomFieldsLoading } = useCustomFields();
@@ -43,14 +44,17 @@ export const CustomFieldsTable = () => {
   ], []);
 
   const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <>
+      <HelpButton />
       <NewCustomFieldButton />
-    </Box>
+    </>
   ), []);
 
   return (
     <XDataGrid
       tableId='custom-fields'
+      title='Custom Fields'
+      icon={<TuneOutlinedIcon />}
       loading={isCustomFieldsLoading}
       rows={data}
       columns={columns}

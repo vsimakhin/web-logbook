@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import LinearProgress from '@mui/material/LinearProgress'
 // MUI Icons
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
+import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
 // Custom components and libraries
 import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
@@ -179,15 +180,17 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   ), [metricOptions, logbookData, aircrafts])
 
   const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+    <>
       <NewCurrencyButton />
       <HelpButton />
-    </Box>
+    </>
   ), []);
 
   return (
     <XDataGrid
-      tableId={`currency`}
+      tableId="currency"
+      title="Currency"
+      icon={<SecurityUpdateGoodOutlinedIcon />}
       rows={currencyData}
       columns={columns}
       getRowId={(row) => `${row.name}`}

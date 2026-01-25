@@ -19,7 +19,6 @@ export const LogbookTable = ({ data, isLoading }) => {
   const { isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
-
   const columns = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
       return [];

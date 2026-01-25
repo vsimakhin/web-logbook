@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import {
   ToolbarButton,
@@ -35,21 +36,34 @@ const StyledTextField = styled(TextField)(({ theme, ownerState }) => ({
   transition: theme.transitions.create(['width', 'opacity']),
 }));
 
-export const XToolbarQuickFilter = () => {
+
+const StateHandler = ({ expanded, onActiveChange }) => {
+  useEffect(() => {
+    if (onActiveChange) {
+      onActiveChange(expanded);
+    }
+  }, [expanded, onActiveChange]);
+  return null;
+};
+
+export const XToolbarQuickFilter = ({ onActiveChange }) => {
   return (
     <StyledQuickFilter>
       <QuickFilterTrigger
         render={(triggerProps, state) => (
-          <Tooltip title="Search" enterDelay={0}>
-            <StyledToolbarButton
-              {...triggerProps}
-              ownerState={{ expanded: state.expanded }}
-              color="default"
-              aria-disabled={state.expanded}
-            >
-              <SearchOutlinedIcon />
-            </StyledToolbarButton>
-          </Tooltip>
+          <>
+            <StateHandler expanded={state.expanded} onActiveChange={onActiveChange} />
+            <Tooltip title="Search" enterDelay={0}>
+              <StyledToolbarButton
+                {...triggerProps}
+                ownerState={{ expanded: state.expanded }}
+                color="default"
+                aria-disabled={state.expanded}
+              >
+                <SearchOutlinedIcon />
+              </StyledToolbarButton>
+            </Tooltip>
+          </>
         )}
       />
       <QuickFilterControl

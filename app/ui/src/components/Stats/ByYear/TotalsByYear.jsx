@@ -6,6 +6,8 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
+// MUI icons
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 // Custom
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { fetchLogbookData } from "../../../util/http/logbook";
@@ -74,12 +76,7 @@ export const TotalsByYear = () => {
   }, [fieldName, customFields]);
 
   const activeYear = sortedYears[activeTab];
-
-  const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-      <CSVExportButton rows={dataByYear[activeYear]} type="totals-by-year" />
-    </Box>
-  ), [dataByYear, activeYear]);
+  const customActions = useMemo(() => (<CSVExportButton rows={dataByYear[activeYear]} type="totals-by-year" />), [dataByYear, activeYear]);
 
   if (isLoading) return <LinearProgress />;
   if (!sortedYears.length) return <Typography variant="body1">No data available</Typography>;
@@ -98,6 +95,8 @@ export const TotalsByYear = () => {
         <XDataGrid sx={{ '& .dg-zero': { color: 'text.disabled' } }}
           key={activeYear}
           tableId="totals-year"
+          title={`Stats by Year ${activeYear}`}
+          icon={<CalendarMonthOutlinedIcon />}
           rows={dataByYear[activeYear]}
           columns={columns}
           getRowId={(row) => `${row.year}-${row.month}`}

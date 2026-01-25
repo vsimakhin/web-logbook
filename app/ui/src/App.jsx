@@ -20,7 +20,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
-import PersonIcon from '@mui/icons-material/Person';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -45,7 +45,7 @@ const NAV_ITEMS = [
   { segment: 'map', title: 'Map', icon: <MapOutlinedIcon /> },
   { segment: 'aircrafts', title: 'Aircrafts', icon: <FlightOutlinedIcon /> },
   { segment: 'airports', title: 'Airports', icon: <FlightTakeoffOutlinedIcon /> },
-  { segment: 'persons', title: 'Persons', icon: <PersonIcon /> },
+  { segment: 'persons', title: 'Persons', icon: <PersonOutlinedIcon /> },
   { kind: 'divider' },
   {
     segment: 'stats', title: 'Stats', icon: <QueryStatsOutlinedIcon />, children: [

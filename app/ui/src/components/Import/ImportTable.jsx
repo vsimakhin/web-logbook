@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 // MUI UI elements
-import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+// MUI Icons
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 // Custom components and libraries
 import OpenCSVButton from './OpenCSVButton';
 import ClearTableButton from './ClearTableButton';
@@ -136,12 +137,12 @@ export const ImportTable = () => {
   }, [isSettingsLoading, fieldName]);
 
   const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+    <>
       <HelpButton />
       <ClearTableButton setData={setData} />
       <OpenCSVButton setData={setData} />
       <RunImportButton data={data} inProgress={inProgress} setInProgress={setInProgress} />
-    </Box>
+    </>
   ), [data, inProgress]);
 
   return (
@@ -149,10 +150,12 @@ export const ImportTable = () => {
       {inProgress && <LinearProgress />}
       <XDataGrid
         tableId='import-logbook'
+        title="Import"
+        icon={<FileUploadOutlinedIcon />}
         rows={data}
         columns={columns}
         columnGroupingModel={columnGroupingModel}
-        getRowId={(row) => `${row.date}-${row.departure_place}-${row.departure_time}-${row.arrival_place}-${row.arrival_time}-${row.aircraft_reg}-${row.sim.type}-${row.sim.time}-${row.pic_name}`}
+        getRowId={(row) => row.generated_id}
         footerFieldIdTotalLabel='aircraft_reg'
         showAggregationFooter={true}
         disableColumnMenu
