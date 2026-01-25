@@ -40,6 +40,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
 
   return {
     border: 0,
+    backgroundColor: theme.palette.background.paper,
     color: isLight ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)',
     fontFamily: [
       '-apple-system',
@@ -58,7 +59,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
 
     // Column header container
     '& .MuiDataGrid-columnsContainer': {
-      backgroundColor: isLight ? '#f5f5f5' : '#1d1d1d',
+      backgroundColor: theme.palette.background.paper,
       borderBottom: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
     },
 
@@ -66,6 +67,8 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
     '& .MuiDataGrid-columnHeader': {
       borderRight: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
       fontWeight: 600,
+      backgroundColor: theme.palette.background.paper,
+
     },
 
     // Cells
@@ -73,7 +76,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
       borderRight: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
       borderBottom: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
       color: isLight ? 'rgba(0,0,0,0.87)' : 'rgba(255,255,255,0.65)',
-      backgroundColor: 'transparent',
+      backgroundColor: theme.palette.background.paper,
     },
 
     '& .MuiDataGrid-columnSeparator': {
