@@ -78,8 +78,7 @@ export const LogbookTable = ({ data, isLoading }) => {
       createHasTrackColumn({ field: "has_track" }),
       createHasAttachmentColumn({ field: "has_attachment" }),
       createColumn({ field: "tags", headerName: fieldName("tags"), align: 'left' }),
-
-    ];
+    ].map(col => ({ ...col, sortable: col.field === 'date' }));
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 
   const columnGroupingModel = useMemo(() => {
@@ -228,7 +227,6 @@ export const LogbookTable = ({ data, isLoading }) => {
       footerFieldIdTotalLabel='aircraft_reg'
       showAggregationFooter={true}
       disableColumnMenu
-      disableColumnSorting
       customActions={customActions}
     />
   )
