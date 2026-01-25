@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid";
@@ -13,10 +13,12 @@ import { fetchLogbookData } from "../../../util/http/logbook";
 import DashboardTiles from "./DashboardTiles";
 import CustomFieldsTiles from "./CustomFieldsTiles";
 import useCustomFields from "../../../hooks/useCustomFields";
+import { fetchAirports } from "../../../util/http/airport";
 
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
   const [filter, setFilter] = useState({});
+  const [airportsMap, setAirportsMap] = useState(new Map());
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook'],
@@ -25,6 +27,27 @@ export const TotalsDashboard = () => {
     gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
+
+  const { data: airports } = useQuery({
+    queryKey: ['airports'],
+    queryFn: ({ signal }) => fetchAirports({ signal }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+  });
+
+  useEffect(() => {
+    if (airports) {
+      const map = new Map();
+      airports.forEach(a => {
+        map.set(a.icao, a);
+        if (a.iata) {
+          map.set(a.iata, a);
+        }
+      });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAirportsMap(map);
+    }
+  }, [airports]);
 
   const { customFields } = useCustomFields();
 
@@ -47,7 +70,7 @@ export const TotalsDashboard = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <DashboardTiles data={dashboardData} filter={filter} />
+          <DashboardTiles data={dashboardData} filter={filter} airportsMap={airportsMap} />
           <CustomFieldsTiles data={dashboardData} customFields={customFields} />
         </Grid>
       </Grid>

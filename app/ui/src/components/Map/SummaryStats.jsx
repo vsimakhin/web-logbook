@@ -5,8 +5,8 @@ import { getStats } from "../../util/helpers";
 
 const size = { xs: 6, sm: 4, md: 12, lg: 6, xl: 6 };
 
-export const SummaryStats = ({ data }) => {
-  const stats = getStats(data);
+export const SummaryStats = ({ data, airportsMap }) => {
+  const stats = getStats(data, airportsMap);
 
   return (
     <Grid container spacing={1}>
@@ -14,6 +14,7 @@ export const SummaryStats = ({ data }) => {
       <Tile title="Total Flights" value={data.length} size={size} />
       <Tile title="Airports" value={stats.airports} size={size} />
       <Tile title="Routes" value={stats.routes} size={size} />
+      <Tile title="Countries" value={stats.countries} size={size} />
       <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} size={size} />
       <Tile title="Landings (D/N)" value={`${stats.totals.landings.day}/${stats.totals.landings.night}`} size={size} />
     </Grid>

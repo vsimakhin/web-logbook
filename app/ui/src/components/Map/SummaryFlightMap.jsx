@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid";
@@ -13,10 +13,12 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
 import useCustomFields from "../../hooks/useCustomFields";
+import { fetchAirports } from "../../util/http/airport";
 
 export const SummaryFlightMap = () => {
   const [options, setOptions] = useState({ routes: true, tracks: false });
   const [mapData, setMapData] = useState([]);
+  const [airportsMap, setAirportsMap] = useState(new Map());
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook', 'map'],
@@ -25,6 +27,27 @@ export const SummaryFlightMap = () => {
     gcTime: 3600000,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
+
+  const { data: airports } = useQuery({
+    queryKey: ['airports'],
+    queryFn: ({ signal }) => fetchAirports({ signal }),
+    staleTime: 3600000,
+    gcTime: 3600000,
+  });
+
+  useEffect(() => {
+    if (airports) {
+      const map = new Map();
+      airports.forEach(a => {
+        map.set(a.icao, a);
+        if (a.iata) {
+          map.set(a.iata, a);
+        }
+      });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAirportsMap(map);
+    }
+  }, [airports]);
 
   const { getEnroute } = useCustomFields();
 
@@ -52,13 +75,13 @@ export const SummaryFlightMap = () => {
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Stats" />
-              <SummaryStats data={mapData} />
+              <SummaryStats data={mapData} airportsMap={airportsMap} />
             </CardContent>
           </Card >
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <FlightMap data={mapData} options={options} getEnroute={getEnroute} />
+          <FlightMap data={mapData} options={options} getEnroute={getEnroute} airportsMap={airportsMap} />
         </Grid>
       </Grid>
     </>

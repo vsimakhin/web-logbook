@@ -22,28 +22,17 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 // Custom components and libraries
-import { queryClient } from '../../util/http/http';
 import { CardHeader } from '../UIElements/CardHeader';
 import icon from "../../assets/favicon.ico";
-import { fetchAirport } from '../../util/http/airport';
 
-const getAirportData = async (id) => {
-  try {
-    // Check cache first
-    const cachedData = queryClient.getQueryData(["airports", id]);
-    if (cachedData) {
-      return cachedData;
+const getAirportData = async (id, airportsMap) => {
+  if (airportsMap) {
+    const airport = airportsMap.get(id);
+    if (airport) {
+      return airport;
     }
-
-    const response = await queryClient.fetchQuery({
-      queryKey: ["airports", id],
-      queryFn: ({ signal }) => fetchAirport({ signal, id }),
-      staleTime: 86400000, // 24 hours
-      gcTime: 86400000, // 24 hours
-    });
-
-    return response;
-  } catch {
+  } else {
+    console.warn("No airportsMap provided");
     return null;
   }
 }
@@ -131,7 +120,7 @@ const drawTrackLog = (flightTrack, vectorSource) => {
   vectorSource.addFeature(feature);
 }
 
-export const FlightMap = ({ data, options = { routes: true, tracks: false }, title = "Flight Map", getEnroute, sx }) => {
+export const FlightMap = ({ data, options = { routes: true, tracks: false }, title = "Flight Map", getEnroute, sx, airportsMap }) => {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
   const closerRef = useRef(null);
@@ -201,8 +190,8 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
             if (!flight.departure.place || !flight.arrival.place) return null;
 
             const [departure, arrival] = await Promise.all([
-              getAirportData(flight.departure.place),
-              getAirportData(flight.arrival.place),
+              getAirportData(flight.departure.place, airportsMap),
+              getAirportData(flight.arrival.place, airportsMap),
             ]);
 
             if (!departure || !arrival) return null;
@@ -216,7 +205,7 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
             if (enrouteCodes && Array.isArray(enrouteCodes)) {
               for (const code of enrouteCodes) {
                 if (code !== flight.departure.place && code !== flight.arrival.place) {
-                  const airport = await getAirportData(code);
+                  const airport = await getAirportData(code, airportsMap);
                   if (airport) {
                     fullRoute.push(airport);
                     addMarker(features, airport);
@@ -264,7 +253,7 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
         map.setTarget(null);
       }
     };
-  }, [data, handleMapClick, getEnroute, options.routes, options.tracks]);
+  }, [data, handleMapClick, getEnroute, options.routes, options.tracks, airportsMap]);
 
 
   return (

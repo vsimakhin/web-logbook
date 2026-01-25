@@ -12,8 +12,8 @@ import useSettings from '../../../hooks/useSettings';
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
-export const DashboardTiles = ({ data, filter }) => {
-  const stats = useMemo(() => getStats(data), [data]);
+export const DashboardTiles = ({ data, filter, airportsMap }) => {
+  const stats = useMemo(() => getStats(data, airportsMap), [data, airportsMap]);
   const { fieldNameF } = useSettings();
 
   const tiles = useMemo(() => [
@@ -48,6 +48,7 @@ export const DashboardTiles = ({ data, filter }) => {
           <Tile title="Total Flights" value={data.length} size={size} />
           <Tile title="Airports" value={stats.airports} size={size} />
           <Tile title="Routes" value={stats.routes} size={size} />
+          <Tile title="Countries" value={stats.countries} size={size} />
           <Tile title="Aircrafts" value={stats.aircraftRegs} size={size} />
           <Tile title="Aircraft Types" value={stats.aircraftModels} size={size} />
           <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString(undefined, { maximumFractionDigits: 0 })} size={size} />
