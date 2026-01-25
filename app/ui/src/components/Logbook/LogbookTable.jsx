@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid'
 import {
   createColumn, createDateColumn, createLandingColumn,
@@ -7,7 +8,6 @@ import {
   createHasTrackColumn,
   createHasAttachmentColumn
 } from './helpers';
-import Box from '@mui/material/Box';
 import NewFlightRecordButton from './NewFlightRecordButton';
 import useSettings from '../../hooks/useSettings';
 import useCustomFields from '../../hooks/useCustomFields';
@@ -208,16 +208,18 @@ export const LogbookTable = ({ data, isLoading }) => {
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 
   const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+    <>
       <NewFlightRecordButton />
       <CSVExportButton rows={data} type="logbook" />
       <PDFExportButton />
-    </Box>
+    </>
   ), [data]);
 
   return (
     <XDataGrid
       tableId='logbook'
+      title='Logbook'
+      icon={<AutoStoriesOutlinedIcon />}
       loading={isLoading}
       rows={data}
       columns={columns}

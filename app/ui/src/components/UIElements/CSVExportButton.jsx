@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
+import { ToolbarButton } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+// Custom
 import { convertMinutesToTime } from '../../util/helpers';
 
 const defaultConfig = {
@@ -154,9 +155,9 @@ export const CSVExportButton = ({ rows, type }) => {
 
   return (
     <Tooltip title="Quick CSV Export">
-      <IconButton onClick={handleCSVExport} size="small">
+      <ToolbarButton onClick={handleCSVExport} color="default" label='Quick CSV Export'>
         <FileDownloadOutlinedIcon />
-      </IconButton>
+      </ToolbarButton>
     </Tooltip>
   )
 }

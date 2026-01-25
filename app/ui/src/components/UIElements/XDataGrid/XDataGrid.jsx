@@ -240,7 +240,7 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
             showPagination: props.showPagination,
             showPageTotal: props.showPageTotal,
           },
-          toolbar: { initialColumns: columns, customActions: props.customActions },
+          toolbar: { initialColumns: columns, customActions: props.customActions, title: props.title, icon: props.icon },
         }}
         showToolbar
         {...props}
