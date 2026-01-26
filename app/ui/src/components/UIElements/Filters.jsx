@@ -33,8 +33,6 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_category: "",
   tags: "",
   place: "",
-  routes: true,
-  tracks: false,
   show: {},
 };
 
@@ -234,24 +232,6 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
         tooltip="Departure/Arrival"
         value={filter?.place}
       />
-      {options.showMapSelectors &&
-        <>
-          <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-            <FormControlLabel label="Route Lines" sx={{ width: '100%' }}
-              control={
-                <Switch checked={filter?.routes ?? false} onChange={(event) => handleChange("routes", event.target.checked)} />
-              }
-            />
-          </Grid>
-          <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-            <FormControlLabel label="Tracks" sx={{ width: '100%' }}
-              control={
-                <Switch checked={filter?.tracks ?? false} onChange={(event) => handleChange("tracks", event.target.checked)} />
-              }
-            />
-          </Grid>
-        </>
-      }
       {options.showStatsFilters &&
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
           <Accordion variant="outlined" sx={{ width: '100%' }}>

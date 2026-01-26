@@ -14,9 +14,14 @@ import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
 import useCustomFields from "../../hooks/useCustomFields";
 import { fetchAirports } from "../../util/http/airport";
+import MapOptions from "./MapOptions";
+import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
+import { tableJSONCodec } from "../../constants/constants";
 
 export const SummaryFlightMap = () => {
-  const [options, setOptions] = useState({ routes: true, tracks: false });
+  // const [options, setOptions] = useState({ routes: true, tracks: false });
+  const [options, setOptions] = useLocalStorageState("map-options", { routes: true, tracks: false, airport_ids: true, icon: 'ico' }, { codec: tableJSONCodec });
+
   const [mapData, setMapData] = useState([]);
   const [airportsMap, setAirportsMap] = useState(new Map());
 
@@ -51,14 +56,8 @@ export const SummaryFlightMap = () => {
 
   const { getEnroute } = useCustomFields();
 
-  const callbackFunction = useCallback((filteredData, filter) => {
+  const callbackFunction = useCallback((filteredData) => {
     setMapData(filteredData);
-
-    setOptions((prev) => ({
-      ...prev,
-      routes: filter.routes,
-      tracks: filter.tracks,
-    }));
   }, [setMapData]);
 
   return (
@@ -72,6 +71,7 @@ export const SummaryFlightMap = () => {
               <Filters data={data} callbackFunction={callbackFunction} />
             </CardContent>
           </Card >
+          <MapOptions options={options} setOptions={setOptions} />
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Stats" />
