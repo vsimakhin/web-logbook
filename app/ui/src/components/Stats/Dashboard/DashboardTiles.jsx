@@ -12,7 +12,7 @@ import useSettings from '../../../hooks/useSettings';
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
-export const DashboardTiles = ({ data, filter, airportsMap }) => {
+export const DashboardTiles = ({ data, dashboardOptions, airportsMap }) => {
   const stats = useMemo(() => getStats(data, airportsMap), [data, airportsMap]);
   const { fieldNameF } = useSettings();
 
@@ -37,7 +37,7 @@ export const DashboardTiles = ({ data, filter, airportsMap }) => {
       <CardContent>
         <CardHeader title="Stats" />
         <Grid container spacing={1}>
-          {tiles.filter(({ key }) => filter?.show?.[key] ?? true) // Apply filtering
+          {tiles.filter(({ key }) => dashboardOptions?.[key] ?? true) // Apply filtering
             .map(({ key, title, path, format }) => {
               const value = getValue(stats, path);
               return <Tile key={key} title={title} value={format ? format(value) : value} size={size} />;

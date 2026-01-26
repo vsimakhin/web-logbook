@@ -14,10 +14,13 @@ import DashboardTiles from "./DashboardTiles";
 import CustomFieldsTiles from "./CustomFieldsTiles";
 import useCustomFields from "../../../hooks/useCustomFields";
 import { fetchAirports } from "../../../util/http/airport";
+import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
+import { tableJSONCodec } from "../../../constants/constants";
+import DashboardOptions from "./DashboardOptions";
 
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
-  const [filter, setFilter] = useState({});
+  const [dashboardOptions, setDashboardOptions] = useLocalStorageState("dashboard-options", {}, { codec: tableJSONCodec });
   const [airportsMap, setAirportsMap] = useState(new Map());
 
   const { data, isLoading, isError, error } = useQuery({
@@ -51,10 +54,7 @@ export const TotalsDashboard = () => {
 
   const { customFields } = useCustomFields();
 
-  const callbackFunction = useCallback((filteredData, filter) => {
-    setDashboardData(filteredData);
-    setFilter(filter);
-  }, []);
+  const callbackFunction = useCallback((filteredData) => { setDashboardData(filteredData) }, []);
 
   return (
     <>
@@ -64,13 +64,15 @@ export const TotalsDashboard = () => {
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Filters" />
-              <Filters data={data} callbackFunction={callbackFunction} options={{ showMapSelectors: false, defaultQuickSelect: "All Time", showStatsFilters: true }} />
+              <Filters data={data} callbackFunction={callbackFunction} quickSelect={"All Time"} />
             </CardContent>
           </Card >
+          <DashboardOptions dashboardOptions={dashboardOptions} setDashboardOptions={setDashboardOptions} />
+
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <DashboardTiles data={dashboardData} filter={filter} airportsMap={airportsMap} />
+          <DashboardTiles data={dashboardData} dashboardOptions={dashboardOptions} airportsMap={airportsMap} />
           <CustomFieldsTiles data={dashboardData} customFields={customFields} />
         </Grid>
       </Grid>

@@ -56,9 +56,7 @@ export const SummaryFlightMap = () => {
 
   const { getEnroute } = useCustomFields();
 
-  const callbackFunction = useCallback((filteredData) => {
-    setMapData(filteredData);
-  }, [setMapData]);
+  const callbackFunction = useCallback((filteredData) => { setMapData(filteredData) }, [setMapData]);
 
   return (
     <>

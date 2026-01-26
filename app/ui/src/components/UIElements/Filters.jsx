@@ -1,19 +1,10 @@
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(isBetween);
-import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
-// MUI Icons
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // Custom
 import DatePicker from "./DatePicker";
 import AircraftReg from "./AircraftReg";
@@ -21,7 +12,6 @@ import AircraftType from "./AircraftType";
 import AircraftCategories from "./AircraftCategories";
 import TextField from "./TextField";
 import Select from "./Select";
-import { tableJSONCodec } from "../../constants/constants";
 import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
 import FlightTags from "./FlightTags";
 
@@ -33,23 +23,7 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_category: "",
   tags: "",
   place: "",
-  show: {},
 };
-
-const STATS_FILTERS = [
-  { id: 'total_time', label: 'Total Time' },
-  { id: 'se_time', label: 'SE Time' },
-  { id: 'me_time', label: 'ME Time' },
-  { id: 'mcc_time', label: 'MCC Time' },
-  { id: 'night_time', label: 'Night Time' },
-  { id: 'ifr_time', label: 'IFR Time' },
-  { id: 'pic_time', label: 'PIC Time' },
-  { id: 'co_pilot_time', label: 'Co-Pilot Time' },
-  { id: 'dual_time', label: 'Dual Time' },
-  { id: 'instructor_time', label: 'Instructor Time' },
-  { id: 'cc_time', label: 'Cross-Country Time' },
-  { id: 'sim_time', label: 'Simulator Time' },
-];
 
 const getModelsByCategory = (modelsData, category) => {
   if (!category || !modelsData) return [];
@@ -115,15 +89,10 @@ const dateRanges = [
   { label: 'All Time', fn: () => ({ start: dayjs('17/12/1903', 'DD/MM/YYYY'), end: dayjs() }) }
 ];
 
-const defaultOptions = {
-  defaultQuickSelect: "This Year",
-  showMapSelectors: true,
-  showStatsFilters: false,
-}
+const defaultQuickSelect = "This Year";
 
-export const Filters = ({ data, callbackFunction, options = defaultOptions }) => {
-  const [filterStatsState, setFilterStatsState] = useLocalStorageState("filter-stats-state", {}, { codec: tableJSONCodec });
-  const [filter, setFilter] = useState({ ...MAP_FILTER_INITIAL_STATE, show: filterStatsState });
+export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSelect }) => {
+  const [filter, setFilter] = useState({ ...MAP_FILTER_INITIAL_STATE });
 
   const { data: modelsData } = useQuery({
     queryKey: ['models-categories'],
@@ -144,11 +113,6 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
     setFilter(prev => ({ ...prev, [key]: value }))
   }, []);
 
-  const handleStatsStateChange = useCallback((key, value) => {
-    setFilterStatsState(prev => ({ ...prev, [key]: value }));
-    setFilter(prev => ({ ...prev, show: { ...prev.show, [key]: value } }));
-  }, [setFilterStatsState]);
-
   const handleQuickSelect = useCallback((_, value) => {
     const range = dateRanges.find(r => r.label === value);
     if (range) {
@@ -166,15 +130,15 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    handleQuickSelect(null, options.defaultQuickSelect)
-  }, [handleQuickSelect, options.defaultQuickSelect]);
+    handleQuickSelect(null, quickSelect)
+  }, [handleQuickSelect, quickSelect]);
 
   return (
     <Grid container spacing={1}>
       <Select gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
         label="Quick Date Range"
         onChange={handleQuickSelect}
-        defaultValue={options.defaultQuickSelect}
+        defaultValue={quickSelect}
         options={dateRanges.map((range) => (range.label))}
       />
       <DatePicker
@@ -232,27 +196,6 @@ export const Filters = ({ data, callbackFunction, options = defaultOptions }) =>
         tooltip="Departure/Arrival"
         value={filter?.place}
       />
-      {options.showStatsFilters &&
-        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-          <Accordion variant="outlined" sx={{ width: '100%' }}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Stats Filters</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {STATS_FILTERS.map(({ id, label }) => (
-                <FormControlLabel key={id} label={`Show ${label}`} id={id} sx={{ width: '100%' }}
-                  control={
-                    <Switch
-                      checked={filterStatsState[id] ?? true}
-                      onChange={(event) => handleStatsStateChange(id, event.target.checked)}
-                    />
-                  }
-                />
-              ))}
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-      }
     </Grid >
   );
 }
