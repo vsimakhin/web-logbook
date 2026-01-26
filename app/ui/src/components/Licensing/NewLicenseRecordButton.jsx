@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
+import { ToolbarButton } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 
@@ -15,9 +15,9 @@ export const NewLicenseRecordButton = () => {
 
   return (
     <Tooltip title="Add New License Record">
-      <IconButton onClick={handleOnClick} size="small">
+      <ToolbarButton onClick={handleOnClick} color="default" label="Add New License Record">
         <AddBoxOutlinedIcon />
-      </IconButton>
+      </ToolbarButton>
     </Tooltip>
   )
 }

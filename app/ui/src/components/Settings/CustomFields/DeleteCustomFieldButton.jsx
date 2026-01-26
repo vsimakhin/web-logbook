@@ -4,18 +4,18 @@ import { useCallback } from 'react';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // MUI UI elements
-import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import { queryClient } from '../../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { deleteCustomField } from '../../../util/http/fields';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
-export const DeleteCustomFieldButton = ({ payload }) => {
+export const DeleteCustomFieldButton = ({ params }) => {
   const dialogs = useDialogs();
 
   const { mutateAsync, isError, isSuccess, error } = useMutation({
-    mutationFn: () => deleteCustomField({ uuid: payload.uuid }),
+    mutationFn: () => deleteCustomField({ uuid: params.row.uuid }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['custom-fields'] })
     }
@@ -24,7 +24,7 @@ export const DeleteCustomFieldButton = ({ payload }) => {
   useSuccessNotification({ isSuccess, message: 'Custom field deleted' });
 
   const handleClick = useCallback(async () => {
-    const msg = `Are you sure you want to delete "${payload.name}" custom field?
+    const msg = `Are you sure you want to delete "${params.row.name}" custom field?
         This action cannot be undone and will remove all data associated with this field.`;
 
     const status = await dialogs.confirm(msg, {
@@ -34,16 +34,16 @@ export const DeleteCustomFieldButton = ({ payload }) => {
       cancelText: 'Arrr, no',
     });
     if (status) {
-      await mutateAsync({ payload });
+      await mutateAsync();
     }
-  }, [dialogs, mutateAsync, payload]);
+  }, [dialogs, mutateAsync, params.row]);
 
   return (
-    <Tooltip title="Delete Custom Field">
-      <IconButton onClick={handleClick}>
-        <DeleteOutlinedIcon fontSize='small' />
-      </IconButton>
-    </Tooltip >
+    <GridActionsCellItem
+      icon={<Tooltip title="Delete Custom Field"><DeleteOutlinedIcon /></Tooltip>}
+      onClick={handleClick}
+      label="Delete Custom Field" showInMenu
+    />
   );
 };
 

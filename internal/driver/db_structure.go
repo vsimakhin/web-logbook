@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "21"
+	schemaVersion = "22"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -147,6 +147,9 @@ var personsTable = NewTable("persons", "uuid", UUID,
 		{Name: "first_name", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "middle_name", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "last_name", Type: SmallText, Properties: "NOT NULL"},
+		{Name: "phone", Type: SmallText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "email", Type: SmallText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "remarks", Type: BigText, Properties: "NOT NULL DEFAULT ''"},
 	})
 
 // TODO: currently the table has an index of uuid. But this is not necessary as

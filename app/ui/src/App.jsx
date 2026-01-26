@@ -20,7 +20,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
-import PersonIcon from '@mui/icons-material/Person';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -28,7 +28,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 // Custom components and libraries
 import { queryClient } from './util/http/http';
 import getMPTheme from './theme/getMPTheme';
-import { LicensingNavTitle } from './components/Licensing/LicensingNavTitle';
+import LicensingNavTitle from './components/Licensing/LicensingNavTitle';
 import { setNavigate } from './util/navigation';
 
 dayjs.extend(updateLocale);
@@ -41,11 +41,11 @@ const BRANDING = {
 
 const NAV_ITEMS = [
   { segment: 'logbook', title: 'Logbook', icon: <AutoStoriesOutlinedIcon /> },
-  { segment: 'licensing', title: <LicensingNavTitle />, icon: <ContactPageOutlinedIcon /> },
+  { segment: 'licensing', title: (<>Licensing <LicensingNavTitle /></>), icon: <ContactPageOutlinedIcon /> },
   { segment: 'map', title: 'Map', icon: <MapOutlinedIcon /> },
   { segment: 'aircrafts', title: 'Aircrafts', icon: <FlightOutlinedIcon /> },
   { segment: 'airports', title: 'Airports', icon: <FlightTakeoffOutlinedIcon /> },
-  { segment: 'persons', title: 'Persons', icon: <PersonIcon /> },
+  { segment: 'persons', title: 'Persons', icon: <PersonOutlinedIcon /> },
   { kind: 'divider' },
   {
     segment: 'stats', title: 'Stats', icon: <QueryStatsOutlinedIcon />, children: [

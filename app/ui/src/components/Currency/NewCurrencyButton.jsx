@@ -19,7 +19,7 @@ export const NewCurrencyButton = () => {
   return (
     <Tooltip title="New Currency">
       <IconButton onClick={handleClick}>
-        <AddBoxOutlinedIcon fontSize='small' />
+        <AddBoxOutlinedIcon />
       </IconButton>
     </Tooltip >
   );

@@ -346,7 +346,6 @@ Frontend:
 * React https://react.dev/
 * Material UI https://mui.com/material-ui/
 * Material Toolpad core https://mui.com/toolpad/core/introduction/
-* Material React Table https://material-react-table.com
 * Openlayers https://openlayers.org/
 * dayjs https://github.com/iamkun/dayjs
 * TanStack Query https://tanstack.com/query/

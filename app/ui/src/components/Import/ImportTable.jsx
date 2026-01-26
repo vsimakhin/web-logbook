@@ -1,143 +1,167 @@
-import { MaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFullScreenButton, MRT_ToggleGlobalFilterButton, useMaterialReactTable } from 'material-react-table';
-import { useCallback, useMemo, useState } from 'react';
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useMemo, useState } from 'react';
 // MUI UI elements
-import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+// MUI Icons
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 // Custom components and libraries
-import { tableJSONCodec } from '../../constants/constants';
-import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, renderProps, renderTextProps, renderTotalFooter } from "./helpers";
 import OpenCSVButton from './OpenCSVButton';
 import ClearTableButton from './ClearTableButton';
 import RunImportButton from './RunImportButton';
-import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
 import HelpButton from './HelpButton';
-
-const paginationKey = 'import-table-page-size';
-const columnVisibilityKey = 'import-table-column-visibility';
-const columnSizingKey = 'logbook-table-column-sizing';
-
-const tableOptions = {
-  initialState: { density: 'compact' },
-  enableColumnResizing: true,
-  enableGlobalFilterModes: true,
-  enableColumnFilters: false,
-  enableColumnDragging: false,
-  enableColumnPinning: false,
-  enableGrouping: true,
-  enableDensityToggle: false,
-  columnResizeMode: 'onEnd',
-  muiTablePaperProps: { variant: 'outlined', elevation: 0 },
-  columnFilterDisplayMode: 'custom',
-  enableFacetedValues: true,
-  enableSorting: false,
-  enableColumnActions: false,
-};
+import useSettings from '../../hooks/useSettings';
+import TableHeader from '../UIElements/TableHeader';
+import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
+import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, sumTime } from '../Logbook/helpers';
 
 export const ImportTable = () => {
   const [data, setData] = useState([]);
   const [inProgress, setInProgress] = useState(false);
+  const { isSettingsLoading, fieldName } = useSettings();
 
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
-  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-
-  const columns = useMemo(() => [
-    {
-      header: "Date", ...renderTextProps, columns: [
-        createDateColumn("date", "", 90),
-      ]
-    },
-    {
-      header: "Departure", ...renderProps, columns: [
-        createColumn("departure_place", "Place", 55),
-        createColumn("departure_time", "Time", 50)
-      ]
-    },
-    {
-      header: "Arrival", columns: [
-        createColumn("arrival_place", "Place", 55),
-        createColumn("arrival_time", "Time", 50)
-      ]
-    },
-    {
-      header: "Aircraft", columns: [
-        createColumn("aircraft_model", "Type", 80),
-        createColumn("aircraft_reg_name", "Reg", 80, false, renderTotalFooter())
-      ]
-    },
-    {
-      header: "Time", columns: [
-        createTimeColumn("se_time", "SE"),
-        createTimeColumn("me_time", "ME"),
-        createTimeColumn("mcc_time", "MCC"),
-        createTimeColumn("total_time", "Total"),
-        createTimeColumn("night_time", "Night"),
-        createTimeColumn("ifr_time", "IFR"),
-        createTimeColumn("pic_time", "PIC"),
-        createTimeColumn("co_pilot_time", "COP"),
-        createTimeColumn("dual_time", "Dual"),
-        createTimeColumn("instructor_time", "Instr")
-      ]
-    },
-    {
-      header: "Landings", columns: [
-        createLandingColumn("landings_day", "Day"),
-        createLandingColumn("landings_night", "Night")
-      ]
-    },
-    {
-      header: "FSTD Session", columns: [
-        createColumn("sim_type", "Type", 70),
-        createTimeColumn("sim_time", "Time")
-      ]
-    },
-    {
-      header: "PIC Name", columns: [
-        createColumn("pic_name", "", 150, true)
-      ]
-    },
-    {
-      header: "Remarks", grow: true, columns: [
-        { accessorKey: "remarks", header: "", grow: true, ...renderTextProps },
-      ]
+  const columns = useMemo(() => {
+    if (isSettingsLoading) {
+      return [];
     }
-  ], []);
 
-  const renderTopToolbarCustomActions = useCallback(() => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+    return [
+      // date
+      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90 }),
+      // departure
+      createColumn({ field: "departure_place", headerName: fieldName("dep_place"), width: 60, valueGetter: (_value, row) => row.departure?.place }),
+      createColumn({ field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.departure?.time }),
+      // arrival
+      createColumn({ field: "arrival_place", headerName: fieldName("arr_place"), width: 60, valueGetter: (_value, row) => row.arrival?.place }),
+      createColumn({ field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.arrival?.time }),
+      // aircraft
+      createColumn({ field: "aircraft_model", headerName: fieldName("model"), width: 70, valueGetter: (_value, row) => row.aircraft?.model }),
+      createColumn({ field: "aircraft_reg", headerName: fieldName("reg"), width: 75, valueGetter: (_value, row) => row.aircraft?.reg_name }),
+      // single pilot time
+      createTimeColumn({ field: "se_time", headerName: fieldName("se") }),
+      createTimeColumn({ field: "me_time", headerName: fieldName("me"), valueGetter: (_value, row) => row.time.mcc_time !== "" ? "" : row.time.me_time }),
+      // MCC time
+      createTimeColumn({ field: "mcc_time", headerName: fieldName("mcc") }),
+      // total
+      createTimeColumn({ field: "total_time", headerName: fieldName("total") }),
+      // pic name
+      createColumn({ field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left' }),
+      // landings
+      createLandingColumn({ field: "landings_day", headerName: fieldName("land_day") }),
+      createLandingColumn({ field: "landings_night", headerName: fieldName("land_night") }),
+      // operation condition time
+      createTimeColumn({ field: "night_time", headerName: fieldName("night"), width: 60 }),
+      createTimeColumn({ field: "ifr_time", headerName: fieldName("ifr"), width: 59 }),
+      // pilot function time
+      createTimeColumn({ field: "pic_time", headerName: fieldName("pic") }),
+      createTimeColumn({ field: "co_pilot_time", headerName: fieldName("cop") }),
+      createTimeColumn({ field: "dual_time", headerName: fieldName("dual") }),
+      createTimeColumn({ field: "instructor_time", headerName: fieldName("instr") }),
+      // sim
+      createColumn({ field: "sim_type", headerName: fieldName("sim_type"), width: 60, valueGetter: (_value, row) => row.sim.type }),
+      createColumn({ field: "sim_time", headerName: fieldName("sim_time"), width: 55, headerAlign: 'center', align: 'center', type: 'time', valueGetter: (_value, row) => row.sim.time, aggregationFn: sumTime }),
+      // remarks
+      createColumn({ field: "remarks", headerName: fieldName("remarks"), align: 'left', flex: 1, minWidth: 50 }),
+    ];
+  }, [isSettingsLoading, fieldName]);
+
+  const columnGroupingModel = useMemo(() => {
+    if (isSettingsLoading) {
+      return [];
+    }
+
+    return [
+      {
+        groupId: 'Departure',
+        headerName: <TableHeader title={fieldName("departure")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'departure_place' }, { field: 'departure_time' },
+        ],
+      },
+      {
+        groupId: 'Arrival',
+        headerName: <TableHeader title={fieldName("arrival")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'arrival_place' }, { field: 'arrival_time' },
+        ],
+      },
+      {
+        groupId: 'Aircraft',
+        headerName: <TableHeader title={fieldName("aircraft")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'aircraft_model' }, { field: 'aircraft_reg' },
+        ],
+      },
+      {
+        groupId: 'Single Pilot',
+        headerName: <TableHeader title={fieldName("spt")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'se_time' }, { field: 'me_time' },
+        ],
+      },
+      {
+        groupId: 'Landings',
+        headerName: <TableHeader title={fieldName("landings")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'landings_day' }, { field: 'landings_night' },
+        ],
+      },
+      {
+        groupId: 'Operational Condition Time',
+        headerName: <TableHeader title={fieldName("oct")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'night_time' }, { field: 'ifr_time' },
+        ],
+      },
+      {
+        groupId: 'Pilot Function Time',
+        headerName: <TableHeader title={fieldName("pft")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'pic_time' }, { field: 'co_pilot_time' }, { field: 'dual_time' }, { field: 'instructor_time' },
+        ],
+      },
+      {
+        groupId: 'FSTD Sessions',
+        headerName: <TableHeader title={fieldName("fstd")} />,
+        headerAlign: 'center',
+        children: [
+          { field: 'sim_type' }, { field: 'sim_time' },
+        ],
+      },
+    ];
+  }, [isSettingsLoading, fieldName]);
+
+  const customActions = useMemo(() => (
+    <>
+      <HelpButton />
       <ClearTableButton setData={setData} />
       <OpenCSVButton setData={setData} />
       <RunImportButton data={data} inProgress={inProgress} setInProgress={setInProgress} />
-    </Box>
-  ), [data, inProgress, setInProgress, setData]);
-
-  const renderToolbarInternalActions = useCallback(({ table }) => (
-    <>
-      <HelpButton />
-      <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ShowHideColumnsButton table={table} />
-      <MRT_ToggleFullScreenButton table={table} />
-      <ResetColumnSizingButton resetFunction={setColumnSizing} />
     </>
-  ), [setColumnSizing]);
-
-  const table = useMaterialReactTable({
-    columns: columns,
-    data: data ?? [],
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnSizingChange: setColumnSizing,
-    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    renderToolbarInternalActions: renderToolbarInternalActions,
-    onPaginationChange: setPagination,
-    state: { pagination, columnVisibility, columnSizing },
-    ...tableOptions,
-  });
+  ), [data, inProgress]);
 
   return (
     <>
       {inProgress && <LinearProgress />}
-      <MaterialReactTable table={table} />
+      <XDataGrid
+        tableId='import-logbook'
+        title="Import"
+        icon={<FileUploadOutlinedIcon />}
+        rows={data}
+        columns={columns}
+        columnGroupingModel={columnGroupingModel}
+        getRowId={(row) => row.generated_id}
+        footerFieldIdTotalLabel='aircraft_reg'
+        showAggregationFooter={true}
+        disableColumnMenu
+        disableColumnSorting
+        customActions={customActions}
+      />
     </>
   );
 }

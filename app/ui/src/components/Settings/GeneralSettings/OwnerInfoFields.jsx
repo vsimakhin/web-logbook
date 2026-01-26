@@ -1,4 +1,4 @@
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import TextField from "../../UIElements/TextField";
 
 export const OwnerInfoFields = ({ settings, handleChange }) => {

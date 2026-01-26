@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
+import { ToolbarButton } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 
@@ -15,7 +15,9 @@ export const NewFlightRecordButton = () => {
 
   return (
     <Tooltip title="Add New Flight Record">
-      <IconButton onClick={handleOnClick} size="small"><AddBoxOutlinedIcon /></IconButton>
+      <ToolbarButton onClick={handleOnClick} color="default" label='Add New Flight Record'>
+        <AddBoxOutlinedIcon />
+      </ToolbarButton>
     </Tooltip>
   )
 }

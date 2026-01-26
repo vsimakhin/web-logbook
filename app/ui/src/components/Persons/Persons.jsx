@@ -1,64 +1,20 @@
-import {
-  MaterialReactTable,
-  MRT_ShowHideColumnsButton,
-  MRT_ToggleFiltersButton,
-  MRT_ToggleFullScreenButton,
-  MRT_ToggleGlobalFilterButton,
-  useMaterialReactTable,
-} from "material-react-table";
-import { useMemo, useState, useCallback } from "react";
-import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-// MUI
-import Box from "@mui/material/Box";
+import { GridActionsCell } from "@mui/x-data-grid";
+// MUI Icons
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 // Custom
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchPersons } from "../../util/http/person";
-import { defaultColumnFilterTextFieldProps, tableJSONCodec } from "../../constants/constants";
 import AddPersonButton from "./AddPersonButton";
 import EditPersonButton from "./EditPersonButton";
 import DeletePersonButton from "./DeletePersonButton";
 import ViewPersonButton from "./ViewPersonButton";
-import ResetColumnSizingButton from "../UIElements/ResetColumnSizingButton";
-import TableFilterDrawer from "../UIElements/TableFilterDrawer";
-
-const paginationKey = "persons-table-page-size";
-const columnVisibilityKey = "persons-table-column-visibility";
-const columnSizingKey = 'persons-table-column-sizing';
-
-const tableOptions = {
-  initialState: { density: "compact" },
-  positionToolbarAlertBanner: "bottom",
-  groupedColumnMode: "remove",
-  enableColumnResizing: true,
-  enableGlobalFilterModes: true,
-  enableColumnFilters: true,
-  enableColumnDragging: false,
-  enableColumnPinning: false,
-  enableGrouping: false,
-  enableDensityToggle: false,
-  columnResizeMode: "onEnd",
-  muiTablePaperProps: { variant: "outlined", elevation: 0 },
-  columnFilterDisplayMode: "custom",
-  enableFacetedValues: true,
-  enableSorting: true,
-  enableColumnActions: true,
-  enableRowActions: true,
-  displayColumnDefOptions: {
-    "mrt-row-actions": {
-      size: 120, //if using layoutMode that is not 'semantic', the columns will not auto-size, so you need to set the size manually
-      grow: false,
-    },
-  },
-};
+import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
+import TableActionHeader from "../UIElements/TableActionHeader";
+import CSVExportButton from "../UIElements/CSVExportButton";
 
 export const Persons = () => {
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
-  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["persons"],
     queryFn: ({ signal }) => fetchPersons({ signal }),
@@ -69,71 +25,49 @@ export const Persons = () => {
   useErrorNotification({ isError, error, fallbackMessage: "Failed to load persons" });
 
   const columns = useMemo(() => [
-    { accessorKey: "first_name", header: "First name" },
-    { accessorKey: "middle_name", header: "Middle name" },
-    { accessorKey: "last_name", header: "Last name" },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 50,
+      renderHeader: () => <TableActionHeader />,
+      renderCell: (params) => (
+        <GridActionsCell {...params} suppressChildrenValidation>
+          <ViewPersonButton params={params} showInMenu />
+          <EditPersonButton params={params} showInMenu />
+          <DeletePersonButton params={params} showInMenu />
+        </GridActionsCell>
+      ),
+    },
+    { field: "first_name", headerName: "First name", headerAlign: "center", width: 120 },
+    { field: "middle_name", headerName: "Middle name", headerAlign: "center", width: 120 },
+    { field: "last_name", headerName: "Last name", headerAlign: "center", width: 120 },
+    { field: "phone", headerName: "Phone", headerAlign: "center", width: 160 },
+    { field: "email", headerName: "Email", headerAlign: "center", width: 200 },
+    { field: "remarks", headerName: "Remarks", headerAlign: "center", flex: 1 },
   ], []);
 
-  const filterDrawOpen = useCallback(() => {
-    setIsFilterDrawerOpen(true);
-  }, []);
-
-  const filterDrawClose = useCallback(() => {
-    setIsFilterDrawerOpen(false);
-  }, []);
-
-  const renderTopToolbarCustomActions = useCallback(() => (
-    <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-      <AddPersonButton />
-    </Box>
-  ), []);
-
-  const renderRowActions = useCallback(({ row }) => {
-    const payload = row.original;
-    return (
-      <Box>
-        <EditPersonButton payload={payload} />
-        <DeletePersonButton payload={payload} />
-        <ViewPersonButton payload={payload} />
-      </Box>
-    );
-  }, []);
-
-  const renderToolbarInternalActions = useCallback(({ table }) => (
+  const customActions = useMemo(() => (
     <>
-      <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ToggleFiltersButton table={table} />
-      <MRT_ShowHideColumnsButton table={table} />
-      <MRT_ToggleFullScreenButton table={table} />
-      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+      <AddPersonButton />
+      <CSVExportButton rows={data} type="persons" />
     </>
-  ), [setColumnSizing]);
-
-  const table = useMaterialReactTable({
-    isLoading,
-    columns: columns,
-    data: data ?? [],
-    onShowColumnFiltersChange: filterDrawOpen,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    renderRowActions: renderRowActions,
-    onPaginationChange: setPagination,
-    onColumnSizingChange: setColumnSizing,
-    state: { pagination, columnFilters, columnVisibility, columnSizing },
-    defaultColumn: {
-      muiFilterTextFieldProps: defaultColumnFilterTextFieldProps,
-    },
-    renderToolbarInternalActions: renderToolbarInternalActions,
-    ...tableOptions,
-  });
+  ), [data]);
 
   return (
-    <>
-      <MaterialReactTable table={table} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
-    </>
-  );
-};
+    <XDataGrid
+      tableId='persons'
+      title="Persons"
+      icon={<PersonOutlinedIcon />}
+      loading={isLoading}
+      rows={data}
+      columns={columns}
+      getRowId={(row) => row.uuid}
+      showAggregationFooter={false}
+      disableColumnMenu
+      customActions={customActions}
+    />
+  )
+}
 
 export default Persons;

@@ -48,7 +48,7 @@ const CustomAppTitle = () => {
     <Stack direction="row" alignItems="center" spacing={2}>
       <Typography variant="h6">Logbook</Typography>
       <Badge color="primary" badgeContent={"New"} invisible={!isNewReleaseAvailable}>
-        <Chip size="small" label={version} color="success" variant="outlined"
+        <Chip size="small" label={version} color="error" variant="outlined"
           component="a" href="https://github.com/vsimakhin/web-logbook/releases"
           clickable target="_blank" rel="noopener noreferrer"
         />
@@ -92,10 +92,14 @@ export const Root = () => {
         appTitle: CustomAppTitle,
         toolbarActions: ToolbarActions
       }}>
-      <PageContainer maxWidth={false} title="" breadcrumbs={[]}>
+      <PageContainer
+        maxWidth={true}
+        title="" breadcrumbs={[]}
+        disableGutters sx={{ mt: -3, ml: 1, paddingRight: 2 }}
+      >
         <Outlet />
       </PageContainer>
-    </DashboardLayout>
+    </DashboardLayout >
   );
 };
 

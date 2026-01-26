@@ -1,26 +1,26 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 // MUI Icons
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 // Custom components and libraries
 import AddEditCustomAirportModal from './AddEditCustomAirportModal';
 
-export const CopyAirportButton = ({ payload }) => {
+export const CopyAirportButton = ({ params }) => {
   const dialogs = useDialogs();
 
   const handleOnClick = useCallback(async () => {
-    await dialogs.open(AddEditCustomAirportModal, { ...payload, isNew: true });
-  }, [dialogs, payload]);
+    await dialogs.open(AddEditCustomAirportModal, { ...params.row, isNew: true });
+  }, [dialogs, params.row]);
 
   return (
-    <Tooltip title="Copy to Custom Airport">
-      <IconButton onClick={handleOnClick}>
-        <ContentCopyOutlinedIcon fontSize='small' />
-      </IconButton>
-    </Tooltip >
+    <GridActionsCellItem
+      icon={<Tooltip title="Copy to Custom Airport"><ContentCopyOutlinedIcon /></Tooltip>}
+      onClick={handleOnClick}
+      label="Copy to Custom Airport"
+    />
   )
 }
 

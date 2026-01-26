@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
 // MUI UI elements
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Divider from '@mui/material/Divider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';

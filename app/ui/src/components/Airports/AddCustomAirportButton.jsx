@@ -4,9 +4,9 @@ import { useCallback } from 'react';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 // Custom components and libraries
 import AddEditCustomAirportModal from './AddEditCustomAirportModal';
+import { ToolbarButton } from '@mui/x-data-grid';
 
 export const AddCustomAirportButton = () => {
   const dialogs = useDialogs();
@@ -18,9 +18,9 @@ export const AddCustomAirportButton = () => {
 
   return (
     <Tooltip title="New Custom Airport">
-      <IconButton onClick={handleOnClick}>
+      <ToolbarButton onClick={handleOnClick} color="default" label="Add Custom Airport">
         <AddBoxOutlinedIcon fontSize='small' />
-      </IconButton>
+      </ToolbarButton>
     </Tooltip >
   )
 }

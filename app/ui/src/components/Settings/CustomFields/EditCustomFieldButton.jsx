@@ -3,24 +3,24 @@ import { useCallback } from 'react';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 // MUI UI elements
-import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import CustomFieldModal from './CustomFieldModal';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
-export const EditCustomFieldButton = ({ payload }) => {
+export const EditCustomFieldButton = ({ params }) => {
   const dialogs = useDialogs();
 
   const handleClick = useCallback(async () => {
-    await dialogs.open(CustomFieldModal, payload)
-  }, [dialogs, payload]);
+    await dialogs.open(CustomFieldModal, params.row)
+  }, [dialogs, params.row]);
 
   return (
-    <Tooltip title="Edit Custom Field">
-      <IconButton onClick={handleClick}>
-        <EditOutlinedIcon fontSize='small' />
-      </IconButton>
-    </Tooltip >
+    <GridActionsCellItem
+      icon={<Tooltip title="Edit Custom Field"><EditOutlinedIcon /></Tooltip>}
+      onClick={handleClick}
+      label="Edit Custom Field" showInMenu
+    />
   );
 };
 
