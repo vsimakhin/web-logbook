@@ -77,6 +77,42 @@ type FlightRecord struct {
 	AttachmentsCount int    `json:"attachments_count"`
 }
 
+type FlightRecordStats struct {
+	FlightRecord
+
+	DateISO string `json:"date_iso"`
+
+	// Redefine nested structs to add new field
+	Departure struct {
+		Place    string `json:"place"`
+		Time     string `json:"time"`
+		Datetime string `json:"datetime"`
+	} `json:"departure"`
+
+	Arrival struct {
+		Place    string `json:"place"`
+		Time     string `json:"time"`
+		Datetime string `json:"datetime"`
+	} `json:"arrival"`
+
+	// New minutes fields for all time categories
+	TimeMinutes struct {
+		SE         int `json:"se_time_m"`
+		ME         int `json:"me_time_m"`
+		MCC        int `json:"mcc_time_m"`
+		Total      int `json:"total_time_m"`
+		Night      int `json:"night_time_m"`
+		IFR        int `json:"ifr_time_m"`
+		PIC        int `json:"pic_time_m"`
+		CoPilot    int `json:"co_pilot_time_m"`
+		Dual       int `json:"dual_time_m"`
+		Instructor int `json:"instructor_time_m"`
+		SIM        int `json:"sim_time_m"`
+
+		CrossCountry int `json:"cc_time_m"`
+	} `json:"time_m"`
+}
+
 // Airpot is a structure for airport record
 type Airport struct {
 	ICAO      string  `json:"icao"`

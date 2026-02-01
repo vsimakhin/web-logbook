@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "22"
+	schemaVersion = "35"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -203,6 +203,375 @@ var logbookView = NewView("logbook_view",
 		`,
 	},
 )
+
+var logbookStatsView = NewView("logbook_stats_view",
+	SQLQuery{
+		SQLite: `
+			WITH BASE AS (
+				SELECT 
+					uuid,
+					ROW_NUMBER() OVER (ORDER BY substr(date,7,4) || substr(date,4,2) || substr(date,0,3), departure_time) AS rn,
+					date,
+					substr(date,7,4) || '-' || substr(date,4,2) || '-' || substr(date,1,2) AS date_iso,
+					substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date, 
+					departure_place,
+					departure_time,
+					arrival_place,
+					arrival_time, 
+					CASE
+						WHEN departure_time IS NULL OR departure_time = '' OR length(departure_time) != 4
+						THEN datetime(
+							substr(date,7,4) || '-' || substr(date,4,2) || '-' || substr(date,1,2) || ' 00:00'
+						)
+						ELSE datetime(
+							substr(date,7,4) || '-' || substr(date,4,2) || '-' || substr(date,1,2)
+							|| ' ' || substr(departure_time,1,2) || ':' || substr(departure_time,3,2)
+						)
+					END AS departure_dt,
+					CASE
+						WHEN arrival_time IS NULL OR arrival_time = '' OR length(arrival_time) != 4
+						THEN datetime(
+							substr(date,7,4) || '-' || substr(date,4,2) || '-' || substr(date,1,2) || ' 00:00'
+							)
+						ELSE datetime(
+							substr(date,7,4) || '-' || substr(date,4,2) || '-' || substr(date,1,2)
+							|| ' ' || substr(arrival_time,1,2) || ':' || substr(arrival_time,3,2),
+							CASE
+								WHEN departure_time IS NOT NULL
+									AND departure_time != ''
+									AND arrival_time < departure_time
+								THEN '+1 day'
+								ELSE '0 day'
+							END
+						)
+					END AS arrival_dt,
+					aircraft_model,
+					reg_name,
+					se_time,
+					CAST(
+						CASE
+							WHEN se_time IS NULL OR se_time = '' OR instr(se_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(se_time,1,instr(se_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(se_time,instr(se_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS se_time_m,
+					me_time,
+					CAST(
+						CASE
+							WHEN me_time IS NULL OR me_time = '' OR instr(me_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(me_time,1,instr(me_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(me_time,instr(me_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS me_time_m,
+					mcc_time,
+					CAST(
+						CASE
+							WHEN mcc_time IS NULL OR mcc_time = '' OR instr(mcc_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(mcc_time,1,instr(mcc_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(mcc_time,instr(mcc_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS mcc_time_m,
+					total_time,
+					CAST(
+						CASE
+							WHEN total_time IS NULL OR total_time = '' OR instr(total_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(total_time,1,instr(total_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(total_time,instr(total_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS total_time_m,
+					iif(day_landings='',0,day_landings) as day_landings, 
+					iif(night_landings='',0,night_landings) as night_landings,
+					night_time,
+					CAST(
+						CASE
+							WHEN night_time IS NULL OR night_time = '' OR instr(night_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(night_time,1,instr(night_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(night_time,instr(night_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS night_time_m,
+					ifr_time,
+					CAST(
+						CASE
+							WHEN ifr_time IS NULL OR ifr_time = '' OR instr(ifr_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(ifr_time,1,instr(ifr_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(ifr_time,instr(ifr_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS ifr_time_m,
+					pic_time,
+					CAST(
+						CASE
+							WHEN pic_time IS NULL OR pic_time = '' OR instr(pic_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(pic_time,1,instr(pic_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(pic_time,instr(pic_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS pic_time_m,
+					co_pilot_time,
+					CAST(
+						CASE
+							WHEN co_pilot_time IS NULL OR co_pilot_time = '' OR instr(co_pilot_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(co_pilot_time,1,instr(co_pilot_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(co_pilot_time,instr(co_pilot_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS co_pilot_time_m,
+					dual_time,
+					CAST(
+						CASE
+							WHEN dual_time IS NULL OR dual_time = '' OR instr(dual_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(dual_time,1,instr(dual_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(dual_time,instr(dual_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS dual_time_m,
+					instructor_time,
+					CAST(
+						CASE
+							WHEN instructor_time IS NULL OR instructor_time = '' OR instr(instructor_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(instructor_time,1,instr(instructor_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(instructor_time,instr(instructor_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS instructor_time_m,
+					sim_type,
+					sim_time,
+					CAST(
+						CASE
+							WHEN sim_time IS NULL OR sim_time = '' OR instr(sim_time, ':') = 0
+							THEN 0
+							ELSE CAST(substr(sim_time,1,instr(sim_time,':')-1) AS INTEGER) * 60
+								+ CAST(substr(sim_time,instr(sim_time,':')+1) AS INTEGER)
+						END AS INTEGER
+					) AS sim_time_m,
+					pic_name,
+					remarks,
+					IFNULL(distance, 0) distance,
+					track,
+					IFNULL(custom_fields, '{}') as custom_fields,
+					CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
+					IFNULL(ac.cnt, 0) AS attachments_count,
+					IFNULL(tags, '') AS tags,
+					IFNULL(signature, '') AS signature
+				FROM logbook
+				LEFT JOIN (
+					SELECT record_id, COUNT(*) AS cnt
+					FROM attachments
+					GROUP BY record_id
+				) ac ON ac.record_id = logbook.uuid
+			)
+			SELECT
+				*,
+				IFNULL(LAG(uuid) OVER (ORDER BY date_iso, departure_dt), '') AS prev_uuid,
+				IFNULL(LEAD(uuid) OVER (ORDER BY date_iso, departure_dt), '') AS next_uuid
+			FROM base
+			LEFT JOIN (
+				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
+			) ac ON ac.record_id = base.uuid;
+	`,
+		MySQL: `
+			WITH base AS (
+				SELECT
+					l.uuid,
+					ROW_NUMBER() OVER (ORDER BY CONCAT(SUBSTRING(l.date, 7, 4),SUBSTRING(l.date, 4, 2),SUBSTRING(l.date, 1, 2),departure_time)) AS rn,
+					l.date,
+					CASE
+						WHEN l.date IS NULL OR l.date = ''
+						THEN NULL
+						ELSE STR_TO_DATE(l.date, '%d/%m/%Y')
+					END AS date_iso,
+					CONCAT(
+						SUBSTRING(l.date, 7, 4),
+						SUBSTRING(l.date, 4, 2),
+						SUBSTRING(l.date, 1, 2)
+					) AS m_date,
+					l.departure_place,
+					l.departure_time,
+					l.arrival_place,
+					l.arrival_time,
+					CASE
+						WHEN l.departure_time IS NULL OR l.departure_time = '' OR CHAR_LENGTH(l.departure_time) != 4
+						THEN STR_TO_DATE(
+							CONCAT(
+								SUBSTRING(l.date, 7, 4), '-',
+								SUBSTRING(l.date, 4, 2), '-',
+								SUBSTRING(l.date, 1, 2), ' ',
+								'00:00'
+							),
+							'%Y-%m-%d %H:%i'
+						)
+						ELSE STR_TO_DATE(
+							CONCAT(
+								SUBSTRING(l.date, 7, 4), '-',
+								SUBSTRING(l.date, 4, 2), '-',
+								SUBSTRING(l.date, 1, 2), ' ',
+								SUBSTRING(l.departure_time, 1, 2), ':',
+								SUBSTRING(l.departure_time, 3, 2)
+							),
+							'%Y-%m-%d %H:%i'
+						)
+					END AS departure_dt,
+					CASE
+						WHEN l.arrival_time IS NULL OR l.arrival_time = '' OR CHAR_LENGTH(l.arrival_time) != 4
+						THEN STR_TO_DATE(
+							CONCAT(
+								SUBSTRING(l.date, 7, 4), '-',
+								SUBSTRING(l.date, 4, 2), '-',
+								SUBSTRING(l.date, 1, 2), ' ',
+								'00:00'
+							),
+							'%Y-%m-%d %H:%i'
+						)
+						ELSE DATE_ADD(
+							STR_TO_DATE(
+								CONCAT(
+									SUBSTRING(l.date, 7, 4), '-',
+									SUBSTRING(l.date, 4, 2), '-',
+									SUBSTRING(l.date, 1, 2), ' ',
+									SUBSTRING(l.arrival_time, 1, 2), ':',
+									SUBSTRING(l.arrival_time, 3, 2)
+								),
+								'%Y-%m-%d %H:%i'
+							),
+							INTERVAL
+							CASE
+								WHEN l.departure_time IS NOT NULL AND l.departure_time != '' AND l.arrival_time < l.departure_time
+								THEN 1 ELSE 0
+							END DAY
+						)
+					END AS arrival_dt,
+					l.aircraft_model,
+					l.reg_name,
+					l.se_time,
+					CAST(
+						CASE
+							WHEN l.se_time IS NULL OR l.se_time = '' OR LOCATE(':', l.se_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.se_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.se_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS se_time_m,
+					l.me_time,
+					CAST(
+						CASE
+							WHEN l.me_time IS NULL OR l.me_time = '' OR LOCATE(':', l.me_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.me_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.me_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS me_time_m,
+					l.mcc_time,
+					CAST(
+						CASE
+							WHEN l.mcc_time IS NULL OR l.mcc_time = '' OR LOCATE(':', l.mcc_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.mcc_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.mcc_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS mcc_time_m,
+					l.total_time,
+					CAST(
+						CASE
+							WHEN l.total_time IS NULL OR l.total_time = '' OR LOCATE(':', l.total_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.total_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.total_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS total_time_m,
+					IF(l.day_landings = '', 0, l.day_landings) AS day_landings,
+					IF(l.night_landings = '', 0, l.night_landings) AS night_landings,
+					l.night_time,
+					CAST(
+						CASE
+							WHEN l.night_time IS NULL OR l.night_time = '' OR LOCATE(':', l.night_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.night_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.night_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS night_time_m,
+					l.ifr_time,
+					CAST(
+						CASE
+							WHEN l.ifr_time IS NULL OR l.ifr_time = '' OR LOCATE(':', l.ifr_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.ifr_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.ifr_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS ifr_time_m,
+					l.pic_time,
+					CAST(
+						CASE
+							WHEN l.pic_time IS NULL OR l.pic_time = '' OR LOCATE(':', l.pic_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.pic_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.pic_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS pic_time_m,
+					l.co_pilot_time,
+					CAST(
+						CASE
+							WHEN l.co_pilot_time IS NULL OR l.co_pilot_time = '' OR LOCATE(':', l.co_pilot_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.co_pilot_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.co_pilot_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS co_pilot_time_m,
+					l.dual_time,
+					CAST(
+						CASE
+							WHEN l.dual_time IS NULL OR l.dual_time = '' OR LOCATE(':', l.dual_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.dual_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.dual_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS dual_time_m,
+					l.instructor_time,
+					CAST(
+						CASE
+							WHEN l.instructor_time IS NULL OR l.instructor_time = '' OR LOCATE(':', l.instructor_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.instructor_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.instructor_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS instructor_time_m,
+					l.sim_type,
+					l.sim_time,
+					CAST(
+						CASE
+							WHEN l.sim_time IS NULL OR l.sim_time = '' OR LOCATE(':', l.sim_time) = 0
+							THEN 0
+							ELSE CAST(SUBSTRING_INDEX(l.sim_time, ':', 1) AS UNSIGNED) * 60
+								+ CAST(SUBSTRING_INDEX(l.sim_time, ':', -1) AS UNSIGNED)
+						END AS UNSIGNED
+					) AS sim_time_m,
+					l.pic_name,
+					l.remarks,
+					IFNULL(l.distance, 0) AS distance,
+					l.track,
+					IFNULL(l.custom_fields, '{}') AS custom_fields,
+					CASE WHEN l.track IS NULL THEN 0 ELSE 1 END AS has_track,
+					IFNULL(ac.cnt, 0) AS attachments_count,
+					IFNULL(l.tags, '') AS tags,
+					IFNULL(l.signature, '') AS signature
+				FROM logbook l
+				LEFT JOIN (
+					SELECT record_id, COUNT(*) AS cnt 
+					FROM attachments
+					GROUP BY record_id
+				) ac ON ac.record_id = l.uuid
+			)
+			SELECT
+				*,
+				IFNULL(LAG(uuid) OVER (ORDER BY date_iso, departure_dt), '') AS prev_uuid,
+				IFNULL(LEAD(uuid) OVER (ORDER BY date_iso, departure_dt), '') AS next_uuid
+			FROM base
+	`,
+	})
 
 var airportsView = NewView("airports_view",
 	SQLQuery{

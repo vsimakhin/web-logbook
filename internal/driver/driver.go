@@ -57,7 +57,7 @@ func validateDB(db *sql.DB, engine string) error {
 		}
 
 		// check views
-		views := []*View{logbookView, airportsView, aircraftsView}
+		views := []*View{logbookView, airportsView, aircraftsView, logbookStatsView}
 		for _, view := range views {
 			if err := view.initView(db, engine); err != nil {
 				return err

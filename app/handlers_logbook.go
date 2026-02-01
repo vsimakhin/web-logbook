@@ -45,3 +45,13 @@ func (app *application) HandlerApiLogbookMapData(w http.ResponseWriter, r *http.
 
 	app.writeJSON(w, http.StatusOK, flightRecords)
 }
+
+func (app *application) HandlerApiLogbookStatsData(w http.ResponseWriter, r *http.Request) {
+	flightRecords, err := app.db.GetFlightRecordsStats()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, flightRecords)
+}

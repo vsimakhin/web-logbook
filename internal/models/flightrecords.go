@@ -455,3 +455,58 @@ func (m *DBModel) UpdateFlightRecordSignature(uuid string, signature string) err
 
 	return nil
 }
+
+func (m *DBModel) GetFlightRecordsStats() (flightRecords []FlightRecordStats, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, `
+		SELECT
+			uuid, date, m_date, date_iso, departure_place, departure_time, departure_dt,
+			arrival_place, arrival_time, arrival_dt, aircraft_model, reg_name,
+			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
+			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
+			se_time_m, me_time_m, mcc_time_m, total_time_m, 
+			night_time_m, ifr_time_m, pic_time_m, co_pilot_time_m, 
+			dual_time_m, instructor_time_m, sim_time_m,
+			sim_type, sim_time, pic_name, remarks, distance, custom_fields,
+			has_track, attachments_count, tags,
+			next_uuid, prev_uuid
+		FROM logbook_stats_view
+		ORDER BY m_date desc, departure_time desc`)
+
+	if err != nil {
+		return flightRecords, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var fr FlightRecordStats
+		err = rows.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.DateISO, &fr.Departure.Place, &fr.Departure.Time, &fr.Departure.Datetime,
+			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Arrival.Datetime, &fr.Aircraft.Model, &fr.Aircraft.Reg,
+			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
+			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
+			&fr.TimeMinutes.SE, &fr.TimeMinutes.ME, &fr.TimeMinutes.MCC, &fr.TimeMinutes.Total,
+			&fr.TimeMinutes.Night, &fr.TimeMinutes.IFR, &fr.TimeMinutes.PIC, &fr.TimeMinutes.CoPilot,
+			&fr.TimeMinutes.Dual, &fr.TimeMinutes.Instructor, &fr.TimeMinutes.SIM,
+			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.Distance, &fr.CustomFields,
+			&fr.HasTrack, &fr.AttachmentsCount, &fr.Tags,
+			&fr.NextUUID, &fr.PrevUUID,
+		)
+		if err != nil {
+			return flightRecords, err
+		}
+
+		if fr.Departure.Place != fr.Arrival.Place {
+			fr.Time.CrossCountry = fr.Time.Total
+			fr.TimeMinutes.CrossCountry = fr.TimeMinutes.Total
+		} else {
+			fr.Time.CrossCountry = "0:00"
+			fr.TimeMinutes.CrossCountry = 0
+		}
+
+		flightRecords = append(flightRecords, fr)
+	}
+
+	return flightRecords, nil
+}
