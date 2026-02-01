@@ -16,6 +16,11 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [3.23.0] - 01.02.2026
+
+- Note: Likely the last release of v3 before version 4.
+- Update: Golang and npm packages updated; applied security patches.
+
 ## [3.22.0] - 10.01.2026
 
 - New: Automatically set PIC time to total time for new records when PIC name is Self.
