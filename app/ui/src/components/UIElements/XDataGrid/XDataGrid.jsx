@@ -88,7 +88,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
     },
 
     // Row hover effect
-    '& .MuiDataGrid-row:hover': {
+    '& .MuiDataGrid-row:hover, & .MuiDataGrid-row:hover .MuiDataGrid-cell': {
       backgroundColor: isLight
         ? 'rgba(0, 0, 0, 0.08) !important' // slightly darker than row bg
         : 'rgba(255, 255, 255, 0.08) !important',
@@ -104,15 +104,15 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
       outline: 'none',
     },
 
-    '& .MuiDataGrid-row.Mui-selected': {
+    '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected .MuiDataGrid-cell': {
       backgroundColor: isLight
-        ? 'rgba(25, 118, 210, 0.15) !important' // light blue highlight
-        : 'rgba(255, 255, 255, 0.2) !important',
+        ? 'rgba(0, 0, 0, 0.12) !important' // slightly darker than row bg
+        : 'rgba(255, 255, 255, 0.12) !important',
     },
-    '& .MuiDataGrid-row.Mui-selected:hover': {
+    '& .MuiDataGrid-row.Mui-selected:hover, & .MuiDataGrid-row.Mui-selected:hover .MuiDataGrid-cell': {
       backgroundColor: isLight
-        ? 'rgba(25, 118, 210, 0.25) !important' // slightly darker on hover
-        : 'rgba(255, 255, 255, 0.25) !important',
+        ? 'rgba(0, 0, 0, 0.12) !important' // slightly darker than row bg
+        : 'rgba(255, 255, 255, 0.12) !important',
     },
   };
 });
