@@ -1,6 +1,6 @@
 module github.com/vsimakhin/web-logbook
 
-go 1.24.11
+go 1.25.6
 
 require (
 	codeberg.org/go-pdf/fpdf v0.11.1

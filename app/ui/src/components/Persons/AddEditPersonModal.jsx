@@ -1,67 +1,24 @@
 import { useCallback, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Dialog from "@mui/material/Dialog";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 // MUI Icons
 import DisabledByDefaultOutlinedIcon from "@mui/icons-material/DisabledByDefaultOutlined";
-import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 // Custom
 import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
-import { queryClient } from "../../util/http/http";
 import { printPerson } from "../../util/helpers";
-import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
-import { updatePerson, createPerson } from "../../util/http/person";
+import SavePersonButton from "./SavePersonButton";
 
 const CloseDialogButton = ({ onClose }) => {
   return (
     <Tooltip title="Close">
       <IconButton size="small" onClick={onClose}>
         <DisabledByDefaultOutlinedIcon />
-      </IconButton>
-    </Tooltip>
-  );
-};
-
-const SaveButton = ({ person, isNew, onClose }) => {
-  const payload = {
-    uuid: person.uuid,
-    first_name: person.first_name,
-    middle_name: person.middle_name,
-    last_name: person.last_name,
-  };
-
-  const mutateFn = isNew
-    ? () => createPerson({ payload })
-    : () => updatePerson({ payload });
-  const {
-    mutateAsync: savePerson,
-    isError,
-    error,
-    isSuccess,
-  } = useMutation({
-    mutationFn: mutateFn,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["persons"] });
-    },
-  });
-  useErrorNotification({ isError, error, fallbackMessage: "Failed to save person" });
-  useSuccessNotification({ isSuccess, message: "Person saved" });
-
-  const handleOnClick = useCallback(async () => {
-    const savedPerson = await savePerson();
-    onClose(savedPerson);
-  }, [savePerson, onClose]);
-
-  return (
-    <Tooltip title="Save">
-      <IconButton size="small" onClick={handleOnClick}>
-        <SaveOutlinedIcon />
       </IconButton>
     </Tooltip>
   );
@@ -83,7 +40,7 @@ export const AddEditPersonModal = ({ open, onClose, payload }) => {
             title={isNew ? 'New person' : `Person: ${printPerson(person)}`}
             action={
               <>
-                <SaveButton person={person} onClose={onClose} isNew={isNew} />
+                <SavePersonButton person={person} onClose={onClose} isNew={isNew} />
                 <CloseDialogButton onClose={() => onClose()} />
               </>
             }
@@ -109,6 +66,27 @@ export const AddEditPersonModal = ({ open, onClose, payload }) => {
               label="Last name"
               handleChange={handleChange}
               value={person.last_name}
+            />
+            <TextField
+              gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+              id="phone"
+              label="Phone"
+              handleChange={handleChange}
+              value={person.phone}
+            />
+            <TextField
+              gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+              id="email"
+              label="Email"
+              handleChange={handleChange}
+              value={person.email}
+            />
+            <TextField
+              gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+              id="remarks"
+              label="Remarks"
+              handleChange={handleChange}
+              value={person.remarks}
             />
           </Grid>
         </CardContent>

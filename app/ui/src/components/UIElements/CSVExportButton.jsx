@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
+import { ToolbarButton } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 // MUI Icons
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+// Custom
 import { convertMinutesToTime } from '../../util/helpers';
 
 const defaultConfig = {
@@ -17,111 +18,129 @@ const defaultConfig = {
 // Separate mappers for different exports
 const exportMappers = {
   aircrafts: (rows) => rows.map((row) => ({
-    "Registration": row.original.reg,
-    "Model": row.original.model,
-    "Category": row.original.category,
+    "Registration": row.reg,
+    "Model": row.model,
+    "Category": row.category,
   })),
 
   categories: (rows) => rows.map((row) => ({
-    "Type": row.original.model,
-    "Category": row.original.category,
+    "Type": row.model,
+    "Category": row.category,
   })),
 
   airports: (rows) => rows.map((row) => ({
-    "ICAO": row.original.icao,
-    "IATA": row.original.iata,
-    "Name": row.original.name,
-    "City": row.original.city,
-    "Country": row.original.country,
-    "Elevation": row.original.elevation,
-    "Lat": row.original.lat,
-    "Lon": row.original.lon,
+    "ICAO": row.icao,
+    "IATA": row.iata,
+    "Name": row.name,
+    "City": row.city,
+    "Country": row.country,
+    "Elevation": row.elevation,
+    "Lat": row.lat,
+    "Lon": row.lon,
   })),
 
   "custom-airports": (rows) => rows.map((row) => ({
-    "Name": row.original.name,
-    "City": row.original.city,
-    "Country": row.original.country,
-    "Elevation": row.original.elevation,
-    "Lat": row.original.lat,
-    "Lon": row.original.lon,
+    "Name": row.name,
+    "City": row.city,
+    "Country": row.country,
+    "Elevation": row.elevation,
+    "Lat": row.lat,
+    "Lon": row.lon,
   })),
 
   licensing: (rows) => rows.map((row) => ({
-    "Category": row.original.category,
-    "Name": row.original.name,
-    "Number": row.original.number,
-    "Issued": row.original.issued,
-    "Valid From": row.original.valid_from,
-    "Valid Until": row.original.valid_until,
-    "Remarks": row.original.remarks,
+    "Category": row.category,
+    "Name": row.name,
+    "Number": row.number,
+    "Issued": row.issued,
+    "Valid From": row.valid_from,
+    "Valid Until": row.valid_until,
+    "Remarks": row.remarks,
   })),
 
   logbook: (rows) => rows.map((row) => ({
-    "Date": row.original.date,
-    "Departure Place": row.original.departure.place,
-    "Departure Time": row.original.departure.time,
-    "Arrival Place": row.original.arrival.place,
-    "Arrival Time": row.original.arrival.time,
-    "Aircraft Model": row.original.aircraft.model,
-    "Aircraft Reg": row.original.aircraft.reg_name,
-    "Time SE": row.original.time.se_time,
-    "Time ME": row.original.time.me_time,
-    "Time MCC": row.original.time.mcc_time,
-    "Time Total": row.original.time.total_time,
-    "Landings Day": row.original.landings.day,
-    "Landings Night": row.original.landings.night,
-    "Time Night": row.original.time.night_time,
-    "Time IFR": row.original.time.ifr_time,
-    "Time PIC": row.original.time.pic_time,
-    "Time CoPilot": row.original.time.co_pilot_time,
-    "Time Dual": row.original.time.dual_time,
-    "Time Instructor": row.original.time.instructor_time,
-    "SIM Type": row.original.sim.type,
-    "SIM Time": row.original.sim.time,
-    "PIC Name": row.original.pic_name,
-    "Remarks": row.original.remarks,
+    "Date": row.date,
+    "Departure Place": row.departure.place,
+    "Departure Time": row.departure.time,
+    "Arrival Place": row.arrival.place,
+    "Arrival Time": row.arrival.time,
+    "Aircraft Model": row.aircraft.model,
+    "Aircraft Reg": row.aircraft.reg_name,
+    "Time SE": row.time.se_time,
+    "Time ME": row.time.me_time,
+    "Time MCC": row.time.mcc_time,
+    "Time Total": row.time.total_time,
+    "Landings Day": row.landings.day,
+    "Landings Night": row.landings.night,
+    "Time Night": row.time.night_time,
+    "Time IFR": row.time.ifr_time,
+    "Time PIC": row.time.pic_time,
+    "Time CoPilot": row.time.co_pilot_time,
+    "Time Dual": row.time.dual_time,
+    "Time Instructor": row.time.instructor_time,
+    "SIM Type": row.sim.type,
+    "SIM Time": row.sim.time,
+    "PIC Name": row.pic_name,
+    "Remarks": row.remarks,
   })),
 
   "totals-by-year": (rows) => rows.map((row) => ({
-    "Year": row.original.year,
-    "Month": row.original.month,
-    "SE": convertMinutesToTime(row.original.time.se_time),
-    "ME": convertMinutesToTime(row.original.time.me_time),
-    "MCC": convertMinutesToTime(row.original.time.mcc_time),
-    "Night": convertMinutesToTime(row.original.time.night_time),
-    "IFR": convertMinutesToTime(row.original.time.ifr_time),
-    "PIC": convertMinutesToTime(row.original.time.pic_time),
-    "Co-Pilot": convertMinutesToTime(row.original.time.copilot_time),
-    "Dual": convertMinutesToTime(row.original.time.dual_time),
-    "Instructor": convertMinutesToTime(row.original.time.instructor_time),
-    "CC": convertMinutesToTime(row.original.time.cc_time),
-    "Sim": convertMinutesToTime(row.original.sim.time),
-    "D/N": `${row.original.landings.day}/${row.original.landings.night}`,
-    "Distance": row.original.distance,
-    "Total": convertMinutesToTime(row.original.time.total_time),
+    "Year": row.year,
+    "Month": row.month,
+    "SE": convertMinutesToTime(row.time.se_time),
+    "ME": convertMinutesToTime(row.time.me_time),
+    "MCC": convertMinutesToTime(row.time.mcc_time),
+    "Night": convertMinutesToTime(row.time.night_time),
+    "IFR": convertMinutesToTime(row.time.ifr_time),
+    "PIC": convertMinutesToTime(row.time.pic_time),
+    "Co-Pilot": convertMinutesToTime(row.time.copilot_time),
+    "Dual": convertMinutesToTime(row.time.dual_time),
+    "Instructor": convertMinutesToTime(row.time.instructor_time),
+    "CC": convertMinutesToTime(row.time.cc_time),
+    "Sim": convertMinutesToTime(row.sim.time),
+    "D/N": `${row.landings.day}/${row.landings.night}`,
+    "Distance": row.distance,
+    "Total": convertMinutesToTime(row.time.total_time),
   })),
 
   "totals-by-aircraft": (rows) => rows.map((row) => ({
-    "Type/Category": row.original.model,
-    "SE": convertMinutesToTime(row.original.time.se_time),
-    "ME": convertMinutesToTime(row.original.time.me_time),
-    "MCC": convertMinutesToTime(row.original.time.mcc_time),
-    "Night": convertMinutesToTime(row.original.time.night_time),
-    "IFR": convertMinutesToTime(row.original.time.ifr_time),
-    "PIC": convertMinutesToTime(row.original.time.pic_time),
-    "Co-Pilot": convertMinutesToTime(row.original.time.copilot_time),
-    "Dual": convertMinutesToTime(row.original.time.dual_time),
-    "Instructor": convertMinutesToTime(row.original.time.instructor_time),
-    "CC": convertMinutesToTime(row.original.time.cc_time),
-    "Sim": convertMinutesToTime(row.original.sim.time),
-    "D/N": `${row.original.landings.day}/${row.original.landings.night}`,
-    "Distance": row.original.distance,
-    "Total": convertMinutesToTime(row.original.time.total_time),
+    "Type/Category": row.model,
+    "SE": convertMinutesToTime(row.time.se_time),
+    "ME": convertMinutesToTime(row.time.me_time),
+    "MCC": convertMinutesToTime(row.time.mcc_time),
+    "Night": convertMinutesToTime(row.time.night_time),
+    "IFR": convertMinutesToTime(row.time.ifr_time),
+    "PIC": convertMinutesToTime(row.time.pic_time),
+    "Co-Pilot": convertMinutesToTime(row.time.copilot_time),
+    "Dual": convertMinutesToTime(row.time.dual_time),
+    "Instructor": convertMinutesToTime(row.time.instructor_time),
+    "CC": convertMinutesToTime(row.time.cc_time),
+    "Sim": convertMinutesToTime(row.sim.time),
+    "D/N": `${row.landings.day}/${row.landings.night}`,
+    "Distance": row.distance,
+    "Total": convertMinutesToTime(row.time.total_time),
+  })),
+
+  "persons": (rows) => rows.map((row) => ({
+    "First Name": row.first_name,
+    "Middle Name": row.middle_name,
+    "Last Name": row.last_name,
+  })),
+
+  "person-flights": (rows) => rows.map((row) => ({
+    "Date": row.date,
+    "Role": row.role,
+    "Departure": row.departure,
+    "Arrival": row.arrival,
+    "Aircraft Model": row.aircraft.model,
+    "Aircraft Reg": row.aircraft.reg_name,
+    "SIM Type": row.sim_type,
   })),
 };
 
 const handleExportRows = (rows, type) => {
+  if (!rows || rows.length === 0) return;
+
   const mapper = exportMappers[type];
   if (!mapper) return;
 
@@ -131,16 +150,16 @@ const handleExportRows = (rows, type) => {
   download(csvConfig)(csv);
 };
 
-export const CSVExportButton = ({ table, type }) => {
-  const handleCSVExport = useCallback((table, type) => {
-    handleExportRows(table.getPrePaginationRowModel().rows, type);
-  }, []);
+export const CSVExportButton = ({ rows, type }) => {
+  const handleCSVExport = useCallback(() => {
+    handleExportRows(rows, type);
+  }, [rows, type]);
 
   return (
     <Tooltip title="Quick CSV Export">
-      <IconButton onClick={() => handleCSVExport(table, type)} size="small">
+      <ToolbarButton onClick={handleCSVExport} color="default" label='Quick CSV Export'>
         <FileDownloadOutlinedIcon />
-      </IconButton>
+      </ToolbarButton>
     </Tooltip>
   )
 }

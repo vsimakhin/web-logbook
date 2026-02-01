@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
@@ -106,7 +106,7 @@ const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
         <CardContent>
           <CardHeader title="Map Fields" action={actionButtons} />
           <Grid container spacing={1}>
-            {fields.map((field, index) => (
+            {fields.map((field) => (
               <Select gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
                 key={field.id}
                 id={field.id}

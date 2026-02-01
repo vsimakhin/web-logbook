@@ -22,33 +22,47 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 // Custom components and libraries
-import { queryClient } from '../../util/http/http';
 import { CardHeader } from '../UIElements/CardHeader';
-import icon from "../../assets/favicon.ico";
+import { queryClient } from '../../util/http/http';
 import { fetchAirport } from '../../util/http/airport';
 
-const getAirportData = async (id) => {
-  try {
-    // Check cache first
-    const cachedData = queryClient.getQueryData(["airports", id]);
-    if (cachedData) {
-      return cachedData;
+import icon1 from "../../assets/favicon.ico";
+import icon2 from "../../assets/map-pin.png";
+
+const icons = {
+  ico: { src: icon1, displacement: [0, 0] },
+  pin: { src: icon2, displacement: [0, 14] }
+};
+
+const getAirportData = async (id, airportsMap) => {
+  if (airportsMap) {
+    const airport = airportsMap.get(id);
+    if (airport) {
+      return airport;
     }
+  } else {
+    try {
+      // Check cache first
+      const cachedData = queryClient.getQueryData(["airports", id]);
+      if (cachedData) {
+        return cachedData;
+      }
 
-    const response = await queryClient.fetchQuery({
-      queryKey: ["airports", id],
-      queryFn: ({ signal }) => fetchAirport({ signal, id }),
-      staleTime: 86400000, // 24 hours
-      gcTime: 86400000, // 24 hours
-    });
+      const response = await queryClient.fetchQuery({
+        queryKey: ["airports", id],
+        queryFn: ({ signal }) => fetchAirport({ signal, id }),
+        staleTime: 86400000, // 24 hours
+        gcTime: 86400000, // 24 hours
+      });
 
-    return response;
-  } catch {
-    return null;
+      return response;
+    } catch {
+      return null;
+    }
   }
 }
 
-const addMarker = (features, airport) => {
+const addMarker = (features, airport, options) => {
   /**
    * Code string for an airport based on its IATA and ICAO codes.
    * If the airport has both IATA and ICAO codes and they are different, 
@@ -72,15 +86,15 @@ const addMarker = (features, airport) => {
 
   feature.setStyle(
     new Style({
-      image: new Icon({ src: icon }),
-      text: new Text({
+      image: new Icon({ ...icons[options.icon] }),
+      text: options.airport_ids ? new Text({
         text: code,
         offsetY: -12,
         scale: 1.3,
         fill: new Fill({
           color: '#333',
         }),
-      }),
+      }) : null,
     }),
   );
 
@@ -131,7 +145,7 @@ const drawTrackLog = (flightTrack, vectorSource) => {
   vectorSource.addFeature(feature);
 }
 
-export const FlightMap = ({ data, options = { routes: true, tracks: false }, title = "Flight Map", getEnroute, sx }) => {
+export const FlightMap = ({ data, options = { routes: true, tracks: false, airport_ids: true, icon: 'ico' }, title = "Flight Map", getEnroute, sx, airportsMap }) => {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
   const closerRef = useRef(null);
@@ -201,14 +215,14 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
             if (!flight.departure.place || !flight.arrival.place) return null;
 
             const [departure, arrival] = await Promise.all([
-              getAirportData(flight.departure.place),
-              getAirportData(flight.arrival.place),
+              getAirportData(flight.departure.place, airportsMap),
+              getAirportData(flight.arrival.place, airportsMap),
             ]);
 
             if (!departure || !arrival) return null;
 
-            addMarker(features, departure);
-            addMarker(features, arrival);
+            addMarker(features, departure, options);
+            addMarker(features, arrival, options);
 
             const fullRoute = [departure];
             // get airport data for enroute
@@ -216,10 +230,10 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
             if (enrouteCodes && Array.isArray(enrouteCodes)) {
               for (const code of enrouteCodes) {
                 if (code !== flight.departure.place && code !== flight.arrival.place) {
-                  const airport = await getAirportData(code);
+                  const airport = await getAirportData(code, airportsMap);
                   if (airport) {
                     fullRoute.push(airport);
-                    addMarker(features, airport);
+                    addMarker(features, airport, options);
                   }
                 }
               }
@@ -264,7 +278,7 @@ export const FlightMap = ({ data, options = { routes: true, tracks: false }, tit
         map.setTarget(null);
       }
     };
-  }, [data, handleMapClick, getEnroute, options.routes, options.tracks]);
+  }, [data, handleMapClick, getEnroute, options, airportsMap]);
 
 
   return (

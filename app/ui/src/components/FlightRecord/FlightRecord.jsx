@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import FlightRecordDetails from "./FlightRecordDetails";
@@ -67,7 +67,7 @@ export const FlightRecord = () => {
     });
   }, []);
 
-  const options = flight?.track ? { routes: false, tracks: true } : { routes: true, tracks: false };
+  const options = flight?.track ? { routes: false, tracks: true, airport_ids: true, icon: 'ico' } : { routes: true, tracks: false, airport_ids: true, icon: 'ico' };
 
   return (
     <>

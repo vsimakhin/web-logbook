@@ -134,12 +134,13 @@ const formatTimeTotals = (totals) => ({
   distance: totals.distance
 });
 
-export const getStats = (data) => {
+export const getStats = (data, airportsMap) => {
   const sets = {
     airports: new Set(),
     routes: new Set(),
     aircraftRegs: new Set(),
     aircraftModels: new Set(),
+    countries: new Set(),
   };
 
   const totals = createInitialTotals();
@@ -156,6 +157,18 @@ export const getStats = (data) => {
       sets.routes.add(`${departure.place}-${arrival.place}`);
     }
 
+    if (departure.place && airportsMap) {
+      const airport = airportsMap.get(departure.place);
+      if (airport) {
+        sets.countries.add(airport.country);
+      }
+    }
+    if (arrival.place && airportsMap) {
+      const airport = airportsMap.get(arrival.place);
+      if (airport) {
+        sets.countries.add(airport.country);
+      }
+    }
     // Update totals
     updateTotals(totals, flight);
   });
@@ -195,6 +208,7 @@ export const getTotalsByMonthAndYear = (flights, customFields = []) => {
 };
 
 export const getTotalsByAircraft = (flights, type, models, aircrafts, customFields) => {
+  if (!flights || flights.length === 0) return [];
   if (!customFields) customFields = [];
 
   const modelCategories = type === "category" ?

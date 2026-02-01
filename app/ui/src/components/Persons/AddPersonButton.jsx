@@ -1,10 +1,10 @@
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
+import { ToolbarButton } from '@mui/x-data-grid';
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 import AddEditPersonModal from './AddEditPersonModal';
 
 export const AddPersonButton = ({ onSave }) => {
@@ -17,10 +17,10 @@ export const AddPersonButton = ({ onSave }) => {
   }, [dialogs, onSave]);
 
   return (
-    <Tooltip title="New person">
-      <IconButton onClick={handleOnClick}>
+    <Tooltip title="Add Person">
+      <ToolbarButton onClick={handleOnClick} color="default" label="Add Person">
         <AddBoxOutlinedIcon />
-      </IconButton>
+      </ToolbarButton>
     </Tooltip >
   )
 }

@@ -1,7 +1,7 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 
 export const Tile = ({ title, value, size = { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } }) => {
   return (

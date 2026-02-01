@@ -4,18 +4,18 @@ import { useCallback } from 'react';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // MUI UI elements
-import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import { deleteCurrency } from '../../util/http/currency';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
-export const DeleteCurrencyButton = ({ payload }) => {
+export const DeleteCurrencyButton = ({ params }) => {
   const dialogs = useDialogs();
 
   const { mutateAsync: removeCurrency, isError, isSuccess, error } = useMutation({
-    mutationFn: () => deleteCurrency({ uuid: payload.uuid }),
+    mutationFn: () => deleteCurrency({ uuid: params.row.uuid }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['currency'] })
     }
@@ -24,18 +24,22 @@ export const DeleteCurrencyButton = ({ payload }) => {
   useSuccessNotification({ isSuccess, message: 'Currency deleted' });
 
   const handleClick = useCallback(async () => {
-    const status = await dialogs.confirm("Are you sure you want to delete this currency?");
+    const status = await dialogs.confirm(`Are you sure you want to delete this currency - ${params.row.name}?`, {
+      title: 'Delete currency',
+      severity: 'error',
+      okText: 'Delete'
+    });
     if (status) {
-      await removeCurrency({ payload });
+      await removeCurrency();
     }
-  }, [dialogs, payload, removeCurrency]);
+  }, [dialogs, removeCurrency, params.row.name]);
 
   return (
-    <Tooltip title="Delete Currency">
-      <IconButton onClick={handleClick}>
-        <DeleteOutlinedIcon fontSize='small' />
-      </IconButton>
-    </Tooltip >
+    <GridActionsCellItem
+      icon={<Tooltip title="Delete Currency"><DeleteOutlinedIcon /></Tooltip>}
+      onClick={handleClick}
+      label="Delete Currency" showInMenu
+    />
   );
 };
 

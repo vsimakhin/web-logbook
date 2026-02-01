@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // MUI
-import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 // Custom
 import useSettings from "../../hooks/useSettings";
@@ -47,9 +45,7 @@ export const LicensingNavTitle = () => {
   const showExpired = settings?.licenses_expiration?.show_expired;
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-      <Typography>Licensing</Typography>
-
+    <>
       {showWarning && warning > 0 && (
         <Tooltip title={`${warning} license${warning > 1 ? "s" : ""} expiring soon`}>
           <Chip size="small" label={warning} color="warning" variant="outlined" />
@@ -61,6 +57,8 @@ export const LicensingNavTitle = () => {
           <Chip size="small" label={expired} color="error" variant="outlined" />
         </Tooltip>
       )}
-    </Box>
+    </>
   );
 };
+
+export default LicensingNavTitle;

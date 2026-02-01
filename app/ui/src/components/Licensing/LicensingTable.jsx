@@ -1,58 +1,20 @@
-import {
-  MaterialReactTable, useMaterialReactTable, MRT_ShowHideColumnsButton, MRT_ToggleFiltersButton,
-  MRT_ToggleGlobalFilterButton, MRT_ToggleFullScreenButton
-} from 'material-react-table';
-import { useCallback, useMemo, useState } from 'react';
-import { Link } from "react-router-dom";
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
-// MUI UI elements
-import Box from '@mui/material/Box';
+import { useCallback, useMemo } from "react";
+import dayjs from "dayjs";
+import { Link } from "react-router";
+// MUI components
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-// Custom components and libraries
-import NewLicenseRecordButton from './NewLicenseRecordButton';
-import { calculateExpiry, createDateColumn } from "./helpers";
-import { defaultColumnFilterTextFieldProps, tableJSONCodec } from '../../constants/constants';
-import { dateFilterFn } from '../../util/helpers';
-import CSVExportButton from '../UIElements/CSVExportButton';
-import TableFilterDrawer from '../UIElements/TableFilterDrawer';
-import ResetColumnSizingButton from '../UIElements/ResetColumnSizingButton';
-import useSettings from '../../hooks/useSettings';
+// MUI icons
+import ContactPageOutlinedIcon from '@mui/icons-material/ContactPageOutlined';
+// Custom
+import { calculateExpiry } from "./helpers";
+import useSettings from "../../hooks/useSettings";
+import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
+import CSVExportButton from "../UIElements/CSVExportButton";
+import NewLicenseRecordButton from "./NewLicenseRecordButton";
 
-const paginationKey = 'licensing-table-page-size';
-const columnVisibilityKey = 'licensing-table-column-visibility';
-const columnSizingKey = 'licensing-table-column-sizing';
-
-const tableOptions = {
-  initialState: {
-    density: 'compact',
-    expanded: true,
-    grouping: ['category']
-  },
-  positionToolbarAlertBanner: 'bottom',
-  groupedColumnMode: 'remove',
-  enableColumnResizing: true,
-  enableGlobalFilterModes: true,
-  enableColumnFilters: true,
-  enableColumnDragging: false,
-  enableColumnPinning: false,
-  enableGrouping: true,
-  enableDensityToggle: false,
-  columnResizeMode: 'onEnd',
-  muiTablePaperProps: { variant: 'outlined', elevation: 0 },
-  columnFilterDisplayMode: 'custom',
-  enableFacetedValues: true,
-  enableSorting: true,
-  enableColumnActions: true,
-}
-
-export const LisencingTable = ({ data, isLoading }) => {
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(columnVisibilityKey, {}, { codec: tableJSONCodec });
-  const [pagination, setPagination] = useLocalStorageState(paginationKey, { pageIndex: 0, pageSize: 15 }, { codec: tableJSONCodec });
-  const [columnSizing, setColumnSizing] = useLocalStorageState(columnSizingKey, {}, { codec: tableJSONCodec });
-  const filterFns = useMemo(() => ({ dateFilterFn: dateFilterFn }), []);
-  const { settings } = useSettings();
+export const LicensingTable = ({ data, isLoading }) => {
+  const { settings, isSettingsLoading } = useSettings();
 
   const getExpireColor = useCallback((days) => {
     const warning = settings?.licenses_expiration?.warning_period || 90;
@@ -62,96 +24,126 @@ export const LisencingTable = ({ data, isLoading }) => {
     return 'inherit';
   }, [settings]);
 
-  const columns = useMemo(() => [
-    { accessorKey: "category", header: "Category", size: 150 },
-    {
-      accessorKey: "name",
-      header: "Name",
-      Cell: ({ renderedCellValue, row }) => (
-        <Typography variant="body2" color="primary">
-          <Link to={`/licensing/${row.original.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>{renderedCellValue}</Link>
-        </Typography>
-      ),
-      size: 250,
-    },
-    { accessorKey: "number", header: "Number" },
-    createDateColumn("issued", "Issued"),
-    createDateColumn("valid_from", "Valid From"),
-    createDateColumn("valid_until", "Valid Until"),
-    {
-      accessorId: "expire",
-      header: "Expire",
-      Cell: ({ row }) => {
-        const expiry = calculateExpiry(row.original.valid_until);
-        if (!expiry) return null;
+  const columns = useMemo(() => {
+    if (isSettingsLoading) {
+      return [];
+    }
 
-        return (
-          <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
-            {expiry.diffDays < 0
-              ? 'Expired'
-              : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
-          </Typography>
-        );
+    return [
+      {
+        field: "category",
+        headerName: "Category",
+        headerAlign: "center",
+        width: 150,
+        renderCell: (params) => (
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+            <Typography fontWeight="500">
+              {params.formattedValue}
+            </Typography>
+          </Box>
+        ),
       },
-      size: 150,
-    },
-    { accessorKey: "remarks", header: "Remarks", grow: true },
-  ], [getExpireColor]);
+      {
+        field: "name",
+        headerName: "Name",
+        headerAlign: "center",
+        width: 250,
+        renderCell: (params) => (
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+            <Typography variant="body2" color="primary">
+              <Link to={`/licensing/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
+                {params.formattedValue}
+              </Link>
+            </Typography>
+          </Box>
+        ),
+      },
+      {
+        field: "number",
+        headerName: "Number",
+        headerAlign: "center",
+        width: 200,
+        rowSpanValueGetter: () => null,
+      },
+      {
+        field: "issued",
+        headerName: "Issued",
+        headerAlign: "center",
+        type: "date",
+        align: "center",
+        valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
+        valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+      },
+      {
+        field: "valid_from",
+        headerName: "Valid From",
+        headerAlign: "center",
+        type: "date",
+        align: "center",
+        valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
+        valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+      },
+      {
+        field: "valid_until",
+        headerName: "Valid Until",
+        headerAlign: "center",
+        align: "center",
+        type: "date",
+        valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
+        valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+      },
+      {
+        field: "expire",
+        headerName: "Expire",
+        headerAlign: "center",
+        width: 150,
+        renderCell: (params) => {
+          const expiry = calculateExpiry(params.row.valid_until);
+          if (!expiry) return null;
 
-  const renderTopToolbarCustomActions = useCallback(({ table }) => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-      <NewLicenseRecordButton />
-      <CSVExportButton table={table} type="licensing" />
-    </Box>
-  ), []);
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+              <Typography variant="body2" color={getExpireColor(expiry.diffDays)}>
+                {expiry.diffDays < 0
+                  ? 'Expired'
+                  : `${expiry.months > 0 ? `${expiry.months} month${expiry.months === 1 ? '' : 's'} ` : ''}${expiry.days} day${expiry.days === 1 ? '' : 's'}`}
+              </Typography>
+            </Box >
+          );
+        },
+      },
+      {
+        field: "remarks",
+        headerName: "Remarks",
+        headerAlign: "center",
+        width: 250,
+        rowSpanValueGetter: () => null,
+      },
+    ];
+  }, [isSettingsLoading, getExpireColor]);
 
-  const renderToolbarInternalActions = useCallback(({ table }) => (
+  const customActions = useMemo(() => (
     <>
-      <MRT_ToggleGlobalFilterButton table={table} />
-      <MRT_ToggleFiltersButton table={table} />
-      <MRT_ShowHideColumnsButton table={table} />
-      <MRT_ToggleFullScreenButton table={table} />
-      <ResetColumnSizingButton resetFunction={setColumnSizing} />
+      <NewLicenseRecordButton />
+      <CSVExportButton rows={data} type="licensing" />
     </>
-  ), [setColumnSizing]);
-
-
-  const filterDrawOpen = useCallback(() => {
-    setIsFilterDrawerOpen(true);
-  }, []);
-
-  const filterDrawClose = useCallback(() => {
-    setIsFilterDrawerOpen(false);
-  }, []);
-
-  const table = useMaterialReactTable({
-    isLoading: isLoading,
-    columns: columns,
-    data: data ?? [],
-    onShowColumnFiltersChange: filterDrawOpen,
-    filterFns: filterFns,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnSizingChange: setColumnSizing,
-    renderTopToolbarCustomActions: renderTopToolbarCustomActions,
-    onPaginationChange: setPagination,
-    state: {
-      pagination,
-      columnFilters: columnFilters,
-      columnVisibility,
-      columnSizing: columnSizing
-    },
-    defaultColumn: { muiFilterTextFieldProps: defaultColumnFilterTextFieldProps },
-    renderToolbarInternalActions: renderToolbarInternalActions,
-    ...tableOptions
-  });
+  ), [data]);
 
   return (
-    <>
-      <MaterialReactTable table={table} />
-      <TableFilterDrawer table={table} isFilterDrawerOpen={isFilterDrawerOpen} onClose={filterDrawClose} />
-    </>
-  );
+    <XDataGrid
+      tableId='licensing'
+      title="Licensing"
+      icon={<ContactPageOutlinedIcon />}
+      loading={isLoading}
+      rows={data}
+      columns={columns}
+      getRowId={(row) => row.uuid}
+      showAggregationFooter={false}
+      disableColumnMenu
+      customActions={customActions}
+      rowSpanning={true}
+    />
+  )
 }
 
-export default LisencingTable;
+export default LicensingTable;

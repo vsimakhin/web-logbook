@@ -2,7 +2,7 @@ import { useMemo } from "react";
 // MUI
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 // Custom
 import CardHeader from "../../UIElements/CardHeader";
@@ -12,8 +12,8 @@ import useSettings from '../../../hooks/useSettings';
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
-export const DashboardTiles = ({ data, filter }) => {
-  const stats = useMemo(() => getStats(data), [data]);
+export const DashboardTiles = ({ data, dashboardOptions, airportsMap }) => {
+  const stats = useMemo(() => getStats(data, airportsMap), [data, airportsMap]);
   const { fieldNameF } = useSettings();
 
   const tiles = useMemo(() => [
@@ -37,7 +37,7 @@ export const DashboardTiles = ({ data, filter }) => {
       <CardContent>
         <CardHeader title="Stats" />
         <Grid container spacing={1}>
-          {tiles.filter(({ key }) => filter?.show?.[key] ?? true) // Apply filtering
+          {tiles.filter(({ key }) => dashboardOptions?.[key] ?? true) // Apply filtering
             .map(({ key, title, path, format }) => {
               const value = getValue(stats, path);
               return <Tile key={key} title={title} value={format ? format(value) : value} size={size} />;
@@ -48,6 +48,7 @@ export const DashboardTiles = ({ data, filter }) => {
           <Tile title="Total Flights" value={data.length} size={size} />
           <Tile title="Airports" value={stats.airports} size={size} />
           <Tile title="Routes" value={stats.routes} size={size} />
+          <Tile title="Countries" value={stats.countries} size={size} />
           <Tile title="Aircrafts" value={stats.aircraftRegs} size={size} />
           <Tile title="Aircraft Types" value={stats.aircraftModels} size={size} />
           <Tile title="Distance (nm)" value={stats.totals.distance.toLocaleString(undefined, { maximumFractionDigits: 0 })} size={size} />

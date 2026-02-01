@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { ToolbarButton } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
@@ -44,9 +44,9 @@ export const PDFExportButton = () => {
   return (
     <>
       <Tooltip title="PDF Export">
-        <IconButton onClick={handleClick} size="small">
+        <ToolbarButton onClick={handleClick} color="default" label='PDF Export'>
           <PictureAsPdfOutlinedIcon />
-        </IconButton>
+        </ToolbarButton>
       </Tooltip>
       <Menu
         anchorEl={anchorEl}

@@ -8,14 +8,15 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 // MUI Icons
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 // Custom
 import CardHeader from "../UIElements/CardHeader";
 import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
-import { FormControlLabel, Switch } from '@mui/material';
 import useSettings from '../../hooks/useSettings';
 
 const CloseDialogButton = ({ onClose }) => {

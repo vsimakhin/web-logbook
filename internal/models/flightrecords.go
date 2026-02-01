@@ -67,42 +67,6 @@ func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
 	return totals
 }
 
-func (m *DBModel) GetFlightRecordNextAndPrevUUID(uuid string) (prevUUID string, nextUUID string) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	query := `
-		WITH numbered AS (
-			SELECT
-				uuid,
-				ROW_NUMBER() OVER (ORDER BY m_date, departure_time) AS rn
-			FROM logbook_view
-		),
-		current AS (
-			SELECT rn FROM numbered WHERE uuid = ?
-		)
-		SELECT
-			(SELECT uuid FROM numbered WHERE rn = current.rn - 1) AS prev_uuid,
-			(SELECT uuid FROM numbered WHERE rn = current.rn + 1) AS next_uuid
-		FROM current
-		`
-	var prev, next sql.NullString
-	row := m.DB.QueryRowContext(ctx, query, uuid)
-
-	err := row.Scan(&prev, &next)
-	if err != nil {
-		return prevUUID, nextUUID
-	}
-
-	if prev.Valid {
-		prevUUID = prev.String
-	}
-	if next.Valid {
-		nextUUID = next.String
-	}
-	return prevUUID, nextUUID
-}
-
 // GetFlightRecordByID returns flight record by UUID
 func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
@@ -115,7 +79,7 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) 
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks, distance, track, custom_fields,
-			tags
+			tags, prev_uuid, next_uuid
 		FROM logbook_view 
 		WHERE uuid = ?`
 	row := m.DB.QueryRowContext(ctx, query, uuid)
@@ -126,16 +90,13 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) 
 		&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 		&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
 		&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.Distance, &fr.Track, &fr.CustomFields,
-		&fr.Tags,
+		&fr.Tags, &fr.PrevUUID, &fr.NextUUID,
 	)
 	if err != nil {
 		return fr, err
 	}
 	// process flight record
 	m.processFlightrecord(&fr)
-
-	// get previous and next records uuid
-	fr.PrevUUID, fr.NextUUID = m.GetFlightRecordNextAndPrevUUID(uuid)
 
 	return fr, nil
 }
@@ -269,7 +230,7 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks, distance, custom_fields,
-			has_track, attachments_count, tags
+			has_track, attachments_count, tags, prev_uuid, next_uuid
 		FROM logbook_view
 		ORDER BY m_date desc, departure_time desc`)
 
@@ -285,7 +246,7 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
 			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.Distance, &fr.CustomFields,
-			&fr.HasTrack, &fr.AttachmentsCount, &fr.Tags,
+			&fr.HasTrack, &fr.AttachmentsCount, &fr.Tags, &fr.PrevUUID, &fr.NextUUID,
 		)
 		if err != nil {
 			return flightRecords, err
@@ -454,4 +415,59 @@ func (m *DBModel) UpdateFlightRecordSignature(uuid string, signature string) err
 	}
 
 	return nil
+}
+
+func (m *DBModel) GetFlightRecordsStats() (flightRecords []FlightRecordStats, err error) {
+	ctx, cancel := m.ContextWithDefaultTimeout()
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, `
+		SELECT
+			uuid, date, m_date, date_iso, departure_place, departure_time, departure_dt,
+			arrival_place, arrival_time, arrival_dt, aircraft_model, reg_name,
+			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
+			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
+			se_time_m, me_time_m, mcc_time_m, total_time_m, 
+			night_time_m, ifr_time_m, pic_time_m, co_pilot_time_m, 
+			dual_time_m, instructor_time_m, sim_time_m,
+			sim_type, sim_time, pic_name, remarks, distance, custom_fields,
+			has_track, attachments_count, tags,
+			next_uuid, prev_uuid
+		FROM logbook_stats_view
+		ORDER BY m_date desc, departure_time desc`)
+
+	if err != nil {
+		return flightRecords, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var fr FlightRecordStats
+		err = rows.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.DateISO, &fr.Departure.Place, &fr.Departure.Time, &fr.Departure.Datetime,
+			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Arrival.Datetime, &fr.Aircraft.Model, &fr.Aircraft.Reg,
+			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
+			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
+			&fr.TimeMinutes.SE, &fr.TimeMinutes.ME, &fr.TimeMinutes.MCC, &fr.TimeMinutes.Total,
+			&fr.TimeMinutes.Night, &fr.TimeMinutes.IFR, &fr.TimeMinutes.PIC, &fr.TimeMinutes.CoPilot,
+			&fr.TimeMinutes.Dual, &fr.TimeMinutes.Instructor, &fr.TimeMinutes.SIM,
+			&fr.SIM.Type, &fr.SIM.Time, &fr.PIC, &fr.Remarks, &fr.Distance, &fr.CustomFields,
+			&fr.HasTrack, &fr.AttachmentsCount, &fr.Tags,
+			&fr.NextUUID, &fr.PrevUUID,
+		)
+		if err != nil {
+			return flightRecords, err
+		}
+
+		if fr.Departure.Place != fr.Arrival.Place {
+			fr.Time.CrossCountry = fr.Time.Total
+			fr.TimeMinutes.CrossCountry = fr.TimeMinutes.Total
+		} else {
+			fr.Time.CrossCountry = "0:00"
+			fr.TimeMinutes.CrossCountry = 0
+		}
+
+		flightRecords = append(flightRecords, fr)
+	}
+
+	return flightRecords, nil
 }

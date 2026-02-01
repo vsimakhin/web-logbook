@@ -6,7 +6,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -41,7 +41,7 @@ const SaveButton = ({ category, onClose }) => {
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to update categories' });
-  useSuccessNotification({ isSuccess, message: 'Categories updates' });
+  useSuccessNotification({ isSuccess, message: 'Categories updated' });
 
   const handleOnClick = async () => {
     await updateCategory();
