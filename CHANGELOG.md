@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.0.0-alpha1] - 01.02.2026
 
 - New: Custom DataGrid component based on standard MUI X DataGrid to replace unsupported Material React Table. This introduces new views for tables, filters, and column selection, which work faster and require less code and resources. The only disadvantage: it lacks row grouping, so the Stats by Year page had to be refactored with a new view.
 - Update: Latest versions of MUI libs and components.

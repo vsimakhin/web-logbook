@@ -16,8 +16,9 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [4.0.0-alpha1] - 01.02.2026
 
+- :warning: **Note**: This is a pre-release version. Make sure to backup your data before upgrading :warning:
 - New: Custom DataGrid component based on standard MUI X DataGrid to replace unsupported Material React Table. This introduces new views for tables, filters, and column selection, which work faster and require less code and resources. The only disadvantage: it lacks row grouping, so the Stats by Year page had to be refactored with a new view.
 - Update: Latest versions of MUI libs and components.
 - Update: The previous two bullet points enabled slight style updates across the app; dark mode is updated and mobile view is now slightly more user-friendly.
@@ -31,27 +32,6 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - Note: Likely the last release of v3 before version 4.
 - Update: Golang and npm packages updated; applied security patches.
-
-## [3.22.0] - 10.01.2026
-
-- New: Automatically set PIC time to total time for new records when PIC name is Self.
-- New: Aircraft categories can now define time fields that are automatically filled when creating a new record.
-
-## [3.21.2] - 08.01.2026
-
-- Fix: Error when selecting license category and the list of categories is empty.
-- Fix: (MySQL) removed default value for `TEXT` fields which caused error during schema update.
-
-## [3.21.1] - 04.01.2026
-
-- Fix: Corrected expiry date calculation for landing-based rules.
-
-## [3.21.0] - 31.12.2025
-
-- New: Added a `Sign` menu item to the Flight Record page, allowing flight records to be signed by an instructor or examiner. The signature now appears in the PDF logbook.
-- Update: Some code optimization, added error page.
-- Update: `Person Role` selector now uses the dynamic roles listed from the database instead of static defaults or manual settings.
-- New: Added Tags field to flight records. Tags are visible in the logbook table and available as filters on the `Map` and `Dashboard` pages.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
