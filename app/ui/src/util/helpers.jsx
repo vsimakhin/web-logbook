@@ -208,6 +208,7 @@ export const getTotalsByMonthAndYear = (flights, customFields = []) => {
 };
 
 export const getTotalsByAircraft = (flights, type, models, aircrafts, customFields) => {
+  if (!flights || flights.length === 0) return [];
   if (!customFields) customFields = [];
 
   const modelCategories = type === "category" ?

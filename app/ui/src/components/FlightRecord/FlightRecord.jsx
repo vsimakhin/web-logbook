@@ -67,7 +67,7 @@ export const FlightRecord = () => {
     });
   }, []);
 
-  const options = flight?.track ? { routes: false, tracks: true } : { routes: true, tracks: false };
+  const options = flight?.track ? { routes: false, tracks: true, airport_ids: true, icon: 'ico' } : { routes: true, tracks: false, airport_ids: true, icon: 'ico' };
 
   return (
     <>

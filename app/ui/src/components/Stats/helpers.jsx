@@ -20,6 +20,7 @@ export const timeColumn = (field, name) => ({
 });
 
 export const buildCustomFieldColumns = (customFields) => {
+  if (!customFields || customFields.length === 0) return [];
   return customFields
     .filter(field => field.stats_function !== 'none')
     .map(field => {

@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 // MUI icons
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 // Custom
@@ -79,7 +78,6 @@ export const TotalsByYear = () => {
   const customActions = useMemo(() => (<CSVExportButton rows={dataByYear[activeYear]} type="totals-by-year" />), [dataByYear, activeYear]);
 
   if (isLoading) return <LinearProgress />;
-  if (!sortedYears.length) return <Typography variant="body1">No data available</Typography>;
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -95,7 +93,7 @@ export const TotalsByYear = () => {
         <XDataGrid sx={{ '& .dg-zero': { color: 'text.disabled' } }}
           key={activeYear}
           tableId="totals-year"
-          title={`Stats by Year ${activeYear}`}
+          title={`Stats by Year ${activeYear || ''}`}
           icon={<CalendarMonthOutlinedIcon />}
           rows={dataByYear[activeYear]}
           columns={columns}

@@ -139,6 +139,8 @@ const exportMappers = {
 };
 
 const handleExportRows = (rows, type) => {
+  if (!rows || rows.length === 0) return;
+
   const mapper = exportMappers[type];
   if (!mapper) return;
 
