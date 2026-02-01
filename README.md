@@ -16,7 +16,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [3.23.0] - 01.02.2026
 
 - Note: Likely the last release of v3 before version 4.
 - Update: Golang and npm packages updated; applied security patches.
