@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "35"
+	schemaVersion = "37"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -166,40 +166,62 @@ var personToLogTable = NewTable("person_to_log", "uuid", UUID,
 var logbookView = NewView("logbook_view",
 	SQLQuery{
 		SQLite: `
-			SELECT uuid, date, 
-				substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date, 
-				departure_place, departure_time, arrival_place, arrival_time, 
-				aircraft_model, reg_name, se_time, me_time, mcc_time, total_time, 
-				iif(day_landings='',0,day_landings) as day_landings, 
-				iif(night_landings='',0,night_landings) as night_landings,
-				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks,
-				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
-				CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
-				IFNULL(ac.cnt, 0) AS attachments_count,
-				IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
-			FROM logbook
-			LEFT JOIN (
-  				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
-			) ac ON ac.record_id = logbook.uuid;
+			WITH base AS (
+				SELECT
+					uuid,
+					date,
+					ROW_NUMBER() OVER (ORDER BY substr(date,7,4) || substr(date,4,2) || substr(date,0,3), departure_time) AS rn,
+					substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date,
+					departure_place, departure_time, arrival_place, arrival_time,
+					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
+					iif(day_landings='',0,day_landings) as day_landings,
+					iif(night_landings='',0,night_landings) as night_landings,
+					night_time, ifr_time, pic_time, co_pilot_time, dual_time,
+					instructor_time, sim_type, sim_time, pic_name, remarks,
+					IFNULL(distance, 0) distance,
+					track,
+					IFNULL(custom_fields, '{}') as custom_fields,
+					CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
+					IFNULL(ac.cnt, 0) AS attachments_count,
+					IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
+				FROM logbook
+				LEFT JOIN (
+					SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
+				) ac ON ac.record_id = logbook.uuid
+			)
+			SELECT
+				*,
+				IFNULL(LAG(uuid) OVER (ORDER BY m_date, departure_time), '') AS prev_uuid,
+				IFNULL(LEAD(uuid) OVER (ORDER BY m_date, departure_time), '') AS next_uuid
+			FROM base
 			`,
 		MySQL: `
-			SELECT uuid, date, 
-				CONCAT(SUBSTRING(date,7,4), SUBSTRING(date,4,2), SUBSTRING(date,1,2)) as m_date, 
-				departure_place, departure_time, arrival_place, arrival_time, 
-				aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
-				IF(day_landings='',0,day_landings) as day_landings, 
-				IF(night_landings='',0,night_landings) as night_landings,
-				night_time, ifr_time, pic_time, co_pilot_time, dual_time, 
-				instructor_time, sim_type, sim_time, pic_name, remarks,
-				IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
-				CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
-				IFNULL(ac.cnt, 0) AS attachments_count,
-				IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
-			FROM logbook
-			LEFT JOIN (
-  				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
-			) ac ON ac.record_id = logbook.uuid;
+			WITH base AS (
+				SELECT
+					uuid,
+					date,
+					ROW_NUMBER() OVER (ORDER BY CONCAT(SUBSTRING(date, 7, 4),SUBSTRING(date, 4, 2),SUBSTRING(date, 1, 2),departure_time)) AS rn,
+					CONCAT(SUBSTRING(date,7,4), SUBSTRING(date,4,2), SUBSTRING(date,1,2)) as m_date,
+					departure_place, departure_time, arrival_place, arrival_time,
+					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
+					IF(day_landings='',0,day_landings) as day_landings,
+					IF(night_landings='',0,night_landings) as night_landings,
+					night_time, ifr_time, pic_time, co_pilot_time, dual_time,
+					instructor_time, sim_type, sim_time, pic_name, remarks,
+					IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
+					CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
+					IFNULL(ac.cnt, 0) AS attachments_count,
+					IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
+				FROM logbook
+				LEFT JOIN (
+					SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
+				) ac ON ac.record_id = logbook.uuid
+			)
+			SELECT
+				*,
+				IFNULL(LAG(uuid) OVER (ORDER BY m_date, departure_time), '') AS prev_uuid,
+				IFNULL(LEAD(uuid) OVER (ORDER BY m_date, departure_time), '') AS next_uuid
+			FROM base
 		`,
 	},
 )
@@ -207,17 +229,17 @@ var logbookView = NewView("logbook_view",
 var logbookStatsView = NewView("logbook_stats_view",
 	SQLQuery{
 		SQLite: `
-			WITH BASE AS (
-				SELECT 
+			WITH base AS (
+				SELECT
 					uuid,
 					ROW_NUMBER() OVER (ORDER BY substr(date,7,4) || substr(date,4,2) || substr(date,0,3), departure_time) AS rn,
 					date,
 					substr(date,7,4) || '-' || substr(date,4,2) || '-' || substr(date,1,2) AS date_iso,
-					substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date, 
+					substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date,
 					departure_place,
 					departure_time,
 					arrival_place,
-					arrival_time, 
+					arrival_time,
 					CASE
 						WHEN departure_time IS NULL OR departure_time = '' OR length(departure_time) != 4
 						THEN datetime(
@@ -367,13 +389,10 @@ var logbookStatsView = NewView("logbook_stats_view",
 			)
 			SELECT
 				*,
-				IFNULL(LAG(uuid) OVER (ORDER BY date_iso, departure_dt), '') AS prev_uuid,
-				IFNULL(LEAD(uuid) OVER (ORDER BY date_iso, departure_dt), '') AS next_uuid
+				IFNULL(LAG(uuid) OVER (ORDER BY m_date, departure_time), '') AS prev_uuid,
+				IFNULL(LEAD(uuid) OVER (ORDER BY m_date, departure_time), '') AS next_uuid
 			FROM base
-			LEFT JOIN (
-				SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
-			) ac ON ac.record_id = base.uuid;
-	`,
+			`,
 		MySQL: `
 			WITH base AS (
 				SELECT
