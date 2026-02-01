@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Custom DataGrid component based on standard MUI X DataGrid to replace unsupported Material React Table. This introduces new views for tables, filters, and column selection, which work faster and require less code and resources. The only disadvantage: it lacks row grouping, so the Stats by Year page had to be refactored with a new view.
+- Update: Latest versions of MUI libs and components.
+- Update: The previous two bullet points enabled slight style updates across the app; dark mode is updated and mobile view is now slightly more user-friendly.
+- New: Added phone, email, and remarks fields for Persons.
+- Update: Golang updated to 1.26.x.
+- Update: Refactored Filter panel layout. Map Settings and Dashboard Settings are now separate components.
+- Update: Added option to hide airport codes on the map and added new pin icon.
+- New: For advanced users, added SQL view `logbook_stats_view` for flight statistics. Dates are converted to ISO format, departure/arrival times include dates, and time fields are cast to minutes. Also added API endpoint `/api/logbook/stats-data`.
+
 ## [3.23.0] - 01.02.2026
 
 - Note: Likely the last release of v3 before version 4.
