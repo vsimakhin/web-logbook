@@ -117,6 +117,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
             <AircraftReg gsize={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}
               handleChange={handleChange}
               value={flight.aircraft.reg_name}
+              aircraft_model={flight.aircraft.model}
             />
             <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="pic_name"

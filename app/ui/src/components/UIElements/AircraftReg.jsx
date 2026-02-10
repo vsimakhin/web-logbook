@@ -16,7 +16,11 @@ export const AircraftReg = ({ gsize, id = "aircraft.reg_name", label, value, han
   })
 
   const fieldLabel = label ? label : `${fieldName("aircraft", "flightRecord")} ${fieldName("reg", "flightRecord")}`;
-  const options = Object.keys(regs);
+  let options = Object.keys(regs);
+  if (props.aircraft_model) {
+    // filter regs by aircraft_model
+    options = options.filter((key) => regs[key] === props.aircraft_model);
+  }
 
   const handleRegChange = useCallback((key, value) => {
     handleChange(key, value)
