@@ -104,7 +104,7 @@ export const AddEditFlightrecordPersonModal = ({ open, onClose, payload }) => {
                   value={frPerson.person_uuid}
                 />
                 <Grid size={{ xs: "grow", sm: "grow", md: "grow", lg: "grow", xl: "grow" }}>
-                  <AddPersonButton onSave={onNewPerson} />
+                  <AddPersonButton onSave={onNewPerson} isToolbarButton={false} />
                 </Grid>
               </>
             )}

@@ -19,6 +19,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [Unreleased]
 
 - Fix: Bug with custom pagination settings for Logbook table.
+- Fix: Fixed a bug triggered by clicking the Add Person button in Flight Records.
 
 ## [4.0.0-alpha1] - 01.02.2026
 

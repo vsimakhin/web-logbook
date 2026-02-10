@@ -6,8 +6,9 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
 import AddEditPersonModal from './AddEditPersonModal';
+import { IconButton } from '@mui/material';
 
-export const AddPersonButton = ({ onSave }) => {
+export const AddPersonButton = ({ onSave, isToolbarButton = true }) => {
   const dialogs = useDialogs();
 
   const handleOnClick = useCallback(async () => {
@@ -18,9 +19,13 @@ export const AddPersonButton = ({ onSave }) => {
 
   return (
     <Tooltip title="Add Person">
-      <ToolbarButton onClick={handleOnClick} color="default" label="Add Person">
-        <AddBoxOutlinedIcon />
-      </ToolbarButton>
+      {isToolbarButton
+        ? <ToolbarButton onClick={handleOnClick} color="default" label="Add Person">
+          <AddBoxOutlinedIcon />
+        </ToolbarButton>
+        : <IconButton size="small" component="label" onClick={handleOnClick}>
+          <AddBoxOutlinedIcon />
+        </IconButton>}
     </Tooltip >
   )
 }
