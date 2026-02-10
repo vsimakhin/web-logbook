@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Bug with custom pagination settings for Logbook table.
+
 ## [4.0.0-alpha1] - 01.02.2026
 
 - :warning: **Note**: This is a pre-release version. Make sure to backup your data before upgrading :warning:

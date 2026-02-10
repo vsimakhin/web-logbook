@@ -212,6 +212,13 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
     filterPanel: XToolbarFilterPanel,
   }), []);
 
+  // if pageSize is not in pageSizeOptions, add it
+  if (props.pageSizeOptions && !props.pageSizeOptions.includes(paginationModel.pageSize)) {
+    props.pageSizeOptions.push(paginationModel.pageSize);
+    // sort pageSizeOptions
+    props.pageSizeOptions.sort((a, b) => a - b);
+  }
+
   return (
     <Box sx={{ borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
       <StyledDataGrid
