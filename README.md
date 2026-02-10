@@ -16,8 +16,9 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
-## [Unreleased]
+## [4.0.0-alpha2] - 10.02.2026
 
+- :warning: **Note**: This is a pre-release version. Make sure to backup your data before upgrading :warning:
 - Fix: Bug with custom pagination settings for Logbook table.
 - Fix: Fixed a bug triggered by clicking the Add Person button in Flight Records.
 - New: Added a new setting `Self PIC Label` to allow user to change the label used when PIC. By default it is `Self`, but can be changed to any other value (e.g. `SELF` according to [AMC1 FCL.050, section i, subsection 5](https://www.easa.europa.eu/en/document-library/easy-access-rules/online-publications/easy-access-rules-aircrew-regulation-eu-no?page=5#_Toc512863430)).

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.0.0-alpha2] - 10.02.2026
 
 - Fix: Bug with custom pagination settings for Logbook table.
 - Fix: Fixed a bug triggered by clicking the Add Person button in Flight Records.
