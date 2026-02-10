@@ -87,4 +87,4 @@ jobs:
           tags: |
             vsimakhin/web-logbook:${{ env.TAG }}
             vsimakhin/web-logbook:4
-            # vsimakhin/web-logbook:latest
+#            vsimakhin/web-logbook:latest
