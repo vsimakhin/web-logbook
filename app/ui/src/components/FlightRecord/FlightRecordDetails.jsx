@@ -29,7 +29,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
     [flight.prev_uuid, flight.next_uuid]
   );
-  const { fieldNameF } = useSettings();
+  const { fieldNameF, settings } = useSettings();
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
 
   const timeFields = useMemo(() => (
@@ -57,15 +57,15 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   });
 
   const handlePicNameDoubleClick = useCallback(() => {
-    setFlight((prev) => ({ ...prev, pic_name: "Self" }));
-  }, [setFlight]);
+    setFlight((prev) => ({ ...prev, pic_name: settings.self_pic_label || "Self" }));
+  }, [setFlight, settings.self_pic_label]);
 
   // Auto fill pic time
   useEffect(() => {
-    if (flight.uuid === "new" && flight.pic_name === "Self" && !flight.time.pic_time && flight.time.total_time) {
+    if (flight.uuid === "new" && flight.pic_name === (settings.self_pic_label || "Self") && !flight.time.pic_time && flight.time.total_time) {
       setFlight((prev) => ({ ...prev, time: { ...prev.time, pic_time: prev.time.total_time } }));
     }
-  }, [flight.uuid, flight.pic_name, flight.time.pic_time, flight.time.total_time, setFlight])
+  }, [flight.uuid, flight.pic_name, flight.time.pic_time, flight.time.total_time, setFlight, settings.self_pic_label])
 
   // Auto fill time fields
   useEffect(() => {

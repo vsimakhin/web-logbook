@@ -29,6 +29,14 @@ export const OtherSettings = ({ settings, handleChange }) => {
         value={getDefaultPagination()}
         tooltip="Logbook Pagination (comma-separated values, e.g. 5,10,15)"
       />
+      <TextField
+        gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+        id="self_pic_label"
+        label="Self PIC Label"
+        handleChange={handleChange}
+        value={settings.self_pic_label || "Self"}
+        tooltip="Text used when you are PIC"
+      />
       <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
         <FormControlLabel
           sx={{ m: 0, width: '100%', display: 'flex', justifyContent: 'space-between' }}

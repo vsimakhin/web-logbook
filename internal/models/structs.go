@@ -263,6 +263,7 @@ type Settings struct {
 	ExportA5 ExportPDF `json:"export_a5"`
 
 	LogbookPagination     string        `json:"logbook_pagination"`
+	SelfPICLabel          string        `json:"self_pic_label"`
 	TimeFieldsAutoFormat  byte          `json:"time_fields_auto_format"`
 	EnableCustomNames     bool          `json:"enable_custom_names"`
 	StandardFieldsHeaders ColumnsHeader `json:"standard_fields_headers"`
