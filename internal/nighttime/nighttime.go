@@ -98,6 +98,13 @@ func (route *Route) NightTime() time.Duration {
 	}
 }
 
+func (route *Route) IsNightLanding() bool {
+	loc := solar.NewLocation(route.Arrival.Lat, route.Arrival.Lon)
+	elevation := solar.Elevation(loc, route.Arrival.Time.UTC())
+
+	return elevation <= NIGHT_SUN_ELEVATION
+}
+
 func nightCircuits(start Place, end Place) time.Duration {
 	loc := solar.NewLocation(end.Lat, end.Lon)
 	nightTime := 0
@@ -111,7 +118,6 @@ func nightCircuits(start Place, end Place) time.Duration {
 	}
 
 	return time.Duration(nightTime) * time.Minute
-
 }
 
 func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute float64) time.Duration {

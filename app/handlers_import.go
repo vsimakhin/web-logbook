@@ -55,16 +55,25 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 
 			// recalculate night time?
 			if importData.RecalculateNightTime {
-				night, err := app.calculateNightTime(fr)
+				night, isNightLanding, err := app.calculateNightTime(fr)
 				if err != nil {
 					// nevermind, add error to the log
 					importLog = append(importLog, fmt.Sprintf("cannot calculate night time for %s - %s", infoMsg, err))
 				} else {
 					if night != time.Duration(0) {
 						prev := fr.Time.Night
+						if prev == "" {
+							prev = "0:00"
+						}
 						fr.Time.Night = app.db.DtoA(night)
 						if prev != fr.Time.Night {
 							importLog = append(importLog, fmt.Sprintf("Night time changed for %s from %s to %s", infoMsg, prev, fr.Time.Night))
+						}
+
+						if isNightLanding && (fr.Landings.Day != 0 && fr.Landings.Night == 0) {
+							fr.Landings.Night = fr.Landings.Day
+							fr.Landings.Day = 0
+							importLog = append(importLog, fmt.Sprintf("Landings for %s: %d day landings changed to night landings", infoMsg, fr.Landings.Night))
 						}
 					}
 				}

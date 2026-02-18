@@ -65,30 +65,30 @@ func (app *application) handleError(w http.ResponseWriter, err error) {
 
 // calculateNightTime returns the nighttime.Route object which later can be called
 // to calculate night time, like obj.NightTime()
-func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duration, error) {
+func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duration, bool, error) {
 	night := time.Duration(0)
 	if fr.Departure.Place == "" || fr.Arrival.Place == "" || fr.Departure.Time == "" || fr.Arrival.Time == "" {
-		return night, nil
+		return night, false, nil
 	}
 
 	departure_place, err := app.db.GetAirportByID(fr.Departure.Place)
 	if err != nil {
-		return night, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err)
+		return night, false, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err)
 	}
 
 	departure_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
 	if err != nil {
-		return night, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err)
+		return night, false, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err)
 	}
 
 	arrival_place, err := app.db.GetAirportByID(fr.Arrival.Place)
 	if err != nil {
-		return night, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err)
+		return night, false, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err)
 	}
 
 	arrival_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
 	if err != nil {
-		return night, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err)
+		return night, false, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err)
 	}
 
 	// correct arrival time if the flight is through midnight
@@ -110,7 +110,7 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duratio
 	}
 	night = route.NightTime()
 
-	return night, nil
+	return night, route.IsNightLanding(), nil
 }
 
 func (app *application) formatTimeField(timeField string) string {
