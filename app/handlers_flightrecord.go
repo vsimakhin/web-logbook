@@ -37,7 +37,7 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	night, err := app.calculateNightTime(fr)
+	night, _, err := app.calculateNightTime(fr)
 	if err != nil {
 		app.errorLog.Println(err)
 		return
