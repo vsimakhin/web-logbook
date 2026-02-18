@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Added record number column to the Logbook table (hidden by default). Can be used in the filter panel in case you need to calculate totals for specific range of the records.
+
 ## [4.0.0-alpha2] - 10.02.2026
 
 - :warning: **Note**: This is a pre-release version. Make sure to backup your data before upgrading :warning:

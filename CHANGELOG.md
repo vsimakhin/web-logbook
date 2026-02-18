@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Added record number column to the Logbook table (hidden by default). Can be used in the filter panel in case you need to calculate totals for specific range of the records.
+
 ## [4.0.0-alpha2] - 10.02.2026
 
 - Fix: Bug with custom pagination settings for Logbook table.
