@@ -71,6 +71,7 @@ type FlightRecord struct {
 	Signature    string  `json:"signature"`
 
 	// calculated
+	RecordNumber     int    `json:"record_number"`
 	PrevUUID         string `json:"prev_uuid"`
 	NextUUID         string `json:"next_uuid"`
 	HasTrack         int    `json:"has_track"`

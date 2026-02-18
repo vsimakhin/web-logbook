@@ -219,6 +219,20 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
     props.pageSizeOptions.sort((a, b) => a - b);
   }
 
+  const mergedColumnsState = useMemo(() => {
+    if (!props.customColumnVisibilityModel) {
+      return columnsState;
+    }
+
+    return {
+      ...columnsState,
+      columnVisibilityModel: {
+        ...props.customColumnVisibilityModel,
+        ...(columnsState?.columnVisibilityModel || {}),
+      },
+    };
+  }, [columnsState, props.customColumnVisibilityModel]);
+
   return (
     <Box sx={{ borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
       <StyledDataGrid
@@ -232,7 +246,7 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
         columns={columns}
         rowHeight={38}
         density="compact"
-        initialState={{ columns: columnsState, ...props.initialState }}
+        initialState={{ columns: mergedColumnsState, ...props.initialState }}
         // pagination
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}

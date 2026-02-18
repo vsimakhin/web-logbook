@@ -25,6 +25,8 @@ export const LogbookTable = ({ data, isLoading }) => {
     }
 
     return [
+      // record number
+      createColumn({ field: "record_number", headerName: "#", width: 30, type: 'number', align: 'center', valueFormatter: (value) => value.toString() }),
       // date
       createDateColumn({ field: "date", headerName: fieldName("date"), width: 90 }),
       // departure
@@ -78,7 +80,7 @@ export const LogbookTable = ({ data, isLoading }) => {
       createHasTrackColumn({ field: "has_track" }),
       createHasAttachmentColumn({ field: "has_attachment" }),
       createColumn({ field: "tags", headerName: fieldName("tags"), align: 'left' }),
-    ].map(col => ({ ...col, sortable: col.field === 'date' }));
+    ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 
   const columnGroupingModel = useMemo(() => {
@@ -228,6 +230,12 @@ export const LogbookTable = ({ data, isLoading }) => {
       showAggregationFooter={true}
       disableColumnMenu
       customActions={customActions}
+      customColumnVisibilityModel={{
+        record_number: false,
+        has_track: false,
+        has_attachment: false,
+        tags: false,
+      }}
     />
   )
 }
