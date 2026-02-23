@@ -228,6 +228,7 @@ export const LogbookTable = ({ data, isLoading }) => {
       getRowId={(row) => row.uuid}
       footerFieldIdTotalLabel='aircraft_reg'
       showAggregationFooter={true}
+      showPreviousPagesTotal={true}
       disableColumnMenu
       customActions={customActions}
       customColumnVisibilityModel={{
