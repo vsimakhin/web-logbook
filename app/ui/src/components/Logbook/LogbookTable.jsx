@@ -16,7 +16,7 @@ import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
 
 export const LogbookTable = ({ data, isLoading }) => {
-  const { isSettingsLoading, fieldName, paginationOptions } = useSettings();
+  const { settings, isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
   const columns = useMemo(() => {
@@ -228,7 +228,7 @@ export const LogbookTable = ({ data, isLoading }) => {
       getRowId={(row) => row.uuid}
       footerFieldIdTotalLabel='aircraft_reg'
       showAggregationFooter={true}
-      showPreviousPagesTotal={true}
+      showPreviousPagesTotal={settings.logbook_totals_view === 1}
       disableColumnMenu
       customActions={customActions}
       customColumnVisibilityModel={{
