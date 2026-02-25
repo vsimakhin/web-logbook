@@ -19,6 +19,10 @@ export const OtherSettings = ({ settings, handleChange }) => {
     handleChange('time_fields_auto_format', parseInt(value));
   }, [handleChange]);
 
+  const onTotalsViewChange = useCallback((_, value) => {
+    handleChange('logbook_totals_view', parseInt(value));
+  }, [handleChange]);
+
   return (
     <Grid container spacing={1} sx={{ mt: 2 }}>
       <TextField
@@ -54,6 +58,25 @@ export const OtherSettings = ({ settings, handleChange }) => {
             </ToggleButtonGroup>
           }
           label="Logbook table time fields autoformat"
+          labelPlacement="start"
+        />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+        <FormControlLabel
+          sx={{ m: 0, width: '100%', display: 'flex', justifyContent: 'space-between' }}
+          control={
+            <ToggleButtonGroup
+              size="small"
+              sx={{ ml: 1 }}
+              value={parseInt(settings.logbook_totals_view) || 0}
+              onChange={onTotalsViewChange}
+              exclusive
+            >
+              <ToggleButton value={0}>Standard</ToggleButton>
+              <ToggleButton value={1}>Paper Logbook</ToggleButton>
+            </ToggleButtonGroup>
+          }
+          label="Logbook table totals view"
           labelPlacement="start"
         />
       </Grid>

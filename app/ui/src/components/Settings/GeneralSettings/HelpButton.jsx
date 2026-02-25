@@ -16,8 +16,13 @@ const HELP_CONTENT = [
     description: "Set a custom number of rows displayed per page in the main logbook table.",
   },
   {
-    title: "Person Roles",
-    description: "Define and customize roles assigned to persons in the logbook.",
+    title: "Self PIC Label",
+    description: "Text used when you're PIC. This text will be displayed in the 'PIC' field for the flight record when you double click on it.",
+  },
+  {
+    title: "Logbook table totals view",
+    description: `There are 2 options. Standard will show you the current page totals and grand totals through the whole logbook. 
+      Paper Logbook will show you the totals for each page, previous page and the totals will be a summary of these 2 values.`
   },
   {
     title: "Time Fields Auto-format",

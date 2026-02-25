@@ -20,6 +20,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 - New: Added record number column to the Logbook table (hidden by default). Can be used in the filter panel in case you need to calculate totals for specific range of the records.
 - New: Added night landings recalculation on import. If night time recalculated option is selected and it is more than 0 minutes, then night landings are set to the same value as day landings (if day landings > 0).
+- New: Added a new setting `Logbook totals view` to allow user to change the way totals are displayed in the Logbook table. There are 2 options. `Standard` will show you the current page totals and grand totals through the whole logbook. `Paper Logbook` will show you the totals for each page, previous page and the totals will be a summary of these 2 values.
 
 ## [4.0.0-alpha2] - 10.02.2026
 

@@ -4,6 +4,7 @@ import {
   gridVisibleColumnDefinitionsSelector,
   gridFilteredSortedRowIdsSelector,
   gridPaginationModelSelector,
+  gridSortModelSelector,
   useGridApiContext,
   useGridSelector,
   GridFooterContainer,
@@ -13,18 +14,7 @@ import Box from '@mui/material/Box';
 
 const AggregationRow = ({ label, values, columns, ...props }) => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        fontWeight: '500',
-        minHeight: 28,
-        height: 28,
-        alignItems: 'center',
-        width: '100%',
-        fontSize: '0.9rem',
-      }}
-    >
+    <Box sx={{ display: 'flex', flexDirection: 'row', fontWeight: '500', minHeight: 28, height: 28, alignItems: 'center', width: '100%', fontSize: '0.9rem' }}>
       {columns.map((column) => {
         const isAggregated = ['sum', 'avg', 'count'].includes(column.aggregation) || typeof column.aggregationFn === 'function';
         const isTimeField = column.field.includes('_time');
@@ -44,8 +34,7 @@ const AggregationRow = ({ label, values, columns, ...props }) => {
         }
 
         return (
-          <Box
-            key={column.field}
+          <Box key={column.field}
             sx={{
               width: column.computedWidth,
               minWidth: column.computedWidth,
@@ -67,13 +56,16 @@ const AggregationRow = ({ label, values, columns, ...props }) => {
   );
 };
 
-const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
+const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPagesTotal = false, ...props }) => {
   const apiRef = useGridApiContext();
   const visibleColumns = useGridSelector(apiRef, gridVisibleColumnDefinitionsSelector);
   const allRowIds = useGridSelector(apiRef, gridFilteredSortedRowIdsSelector);
   const paginationModel = useGridSelector(apiRef, gridPaginationModelSelector);
+  const sortModel = useGridSelector(apiRef, gridSortModelSelector);
 
   const [pageTotals, setPageTotals] = useState({});
+  const [previousPagesTotals, setPreviousPagesTotals] = useState({});
+  const [pageAndPreviousTotals, setPageAndPreviousTotals] = useState({});
   const [grandTotals, setGrandTotals] = useState({});
 
   const scrollRef = useRef(null);
@@ -92,13 +84,22 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
 
   useEffect(() => {
     const pTotals = {};
+    const ppTotals = {};
+    const ppSumTotals = {};
     const gTotals = {};
 
     // Calculate page range
     const { page, pageSize } = paginationModel;
+    const isDesc = (sortModel && sortModel.length > 0 && sortModel[0].sort === 'desc') ||
+      (sortModel && sortModel.length === 0)
+
     const pageRowIds = pageSize > 0
       ? allRowIds.slice(page * pageSize, (page + 1) * pageSize)
       : allRowIds;
+
+    const previousPagesRowIds = pageSize > 0
+      ? (isDesc ? allRowIds.slice((page + 1) * pageSize) : allRowIds.slice(0, page * pageSize))
+      : [];
 
     visibleColumns.forEach((column) => {
       const field = column.field;
@@ -108,6 +109,7 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
 
       if (isAggregatable) {
         let pValues = [];
+        let ppValues = [];
         let gValues = [];
 
         // Collect Page Values
@@ -119,6 +121,18 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
             }
           }
         });
+
+        // Collect Previous Pages Values
+        if (showPreviousPagesTotal) {
+          previousPagesRowIds.forEach((rowId) => {
+            if (rowId !== undefined && rowId !== null) {
+              const val = apiRef.current.getCellValue(rowId, field);
+              if (val !== undefined && val !== null && val !== '') {
+                ppValues.push(val);
+              }
+            }
+          });
+        }
 
         // Collect Grand Values
         allRowIds.forEach((rowId) => {
@@ -132,6 +146,10 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
 
         if (hasAggregationFn) {
           pTotals[field] = column.aggregationFn(pValues);
+          if (showPreviousPagesTotal) {
+            ppTotals[field] = column.aggregationFn(ppValues);
+            ppSumTotals[field] = column.aggregationFn([...ppValues, ...pValues]);
+          }
           gTotals[field] = column.aggregationFn(gValues);
         } else {
           const numericValues = (arr) => arr.map(v => {
@@ -144,6 +162,15 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
             const ps = sum(pValues);
             pTotals[field] = field.includes('_time') ? ps.toFixed(1) : ps;
 
+            let pps = 0;
+            if (showPreviousPagesTotal) {
+              pps = sum(ppValues);
+              ppTotals[field] = field.includes('_time') ? pps.toFixed(1) : pps;
+
+              const ppbSum = sum([...ppValues, ...pValues]);
+              ppSumTotals[field] = field.includes('_time') ? ppbSum.toFixed(1) : ppbSum;
+            }
+
             const gs = sum(gValues);
             gTotals[field] = field.includes('_time') ? gs.toFixed(1) : gs;
           } else if (aggType === 'avg') {
@@ -152,9 +179,17 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
               return nums.length > 0 ? (nums.reduce((acc, val) => acc + val, 0) / nums.length) : 0;
             };
             pTotals[field] = avg(pValues).toFixed(2);
+            if (showPreviousPagesTotal) {
+              ppTotals[field] = avg(ppValues).toFixed(2);
+              ppSumTotals[field] = avg([...ppValues, ...pValues]).toFixed(2);
+            }
             gTotals[field] = avg(gValues).toFixed(2);
           } else if (aggType === 'count') {
             pTotals[field] = pValues.length;
+            if (showPreviousPagesTotal) {
+              ppTotals[field] = ppValues.length;
+              ppSumTotals[field] = ppValues.length + pValues.length;
+            }
             gTotals[field] = gValues.length;
           }
         }
@@ -163,8 +198,12 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPageTotals(pTotals);
+    if (showPreviousPagesTotal) {
+      setPreviousPagesTotals(ppTotals);
+      setPageAndPreviousTotals(ppSumTotals);
+    }
     setGrandTotals(gTotals);
-  }, [visibleColumns, allRowIds, paginationModel, apiRef]);
+  }, [visibleColumns, allRowIds, paginationModel, apiRef, showPreviousPagesTotal, sortModel]);
 
   // Total width for the internal content wrapper to allow overflow: hidden sync
   const totalWidth = visibleColumns.reduce((acc, col) => acc + col.computedWidth, 0);
@@ -177,7 +216,14 @@ const XFooter = ({ showPageTotal = true, showPagination = true, ...props }) => {
             {showPageTotal && (
               <AggregationRow label="Page:" values={pageTotals} columns={visibleColumns} {...props} />
             )}
-            <AggregationRow label="Total:" values={grandTotals} columns={visibleColumns} {...props} />
+            {showPreviousPagesTotal && (
+              <>
+                <AggregationRow label="Previous:" values={previousPagesTotals} columns={visibleColumns} {...props} />
+                <AggregationRow label="Total:" values={pageAndPreviousTotals} columns={visibleColumns} {...props} />
+              </>
+            ) || (
+                <AggregationRow label="Total:" values={grandTotals} columns={visibleColumns} {...props} />
+              )}
           </Box>
         </Box>
       )}
