@@ -11,11 +11,11 @@ import (
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
 
-// HandlerGetAttachments generates attachments
-func (app *application) HandlerApiGetAttachments(w http.ResponseWriter, r *http.Request) {
+// HandlerApiGetFlightRecordAttachments returns attachments for a flight record
+func (app *application) HandlerApiGetFlightRecordAttachments(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 
-	attachments, err := app.db.GetAttachments(uuid)
+	attachments, err := app.db.GetFlightRecordAttachments(uuid)
 	if err != nil {
 		app.handleError(w, err)
 		return

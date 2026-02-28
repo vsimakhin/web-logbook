@@ -5,8 +5,8 @@ import (
 	"errors"
 )
 
-// GetAttachments returns attachments array for a specific record_id
-func (m *DBModel) GetAttachments(recordID string) (attachments []Attachment, err error) {
+// GetFlightRecordAttachments returns attachments array for a specific record_id
+func (m *DBModel) GetFlightRecordAttachments(recordID string) (attachments []Attachment, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
