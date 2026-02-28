@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Added custom import profiles. User can save custom import profiles and load them later. The custom profile is stored in the browser's local storage and is not shared between different browsers or devices.
+
 ## [4.0.0-beta1] - 25.02.2026
 
 - New: Added record number column to the Logbook table (hidden by default). Can be used in the filter panel in case you need to calculate totals for specific range of the records.

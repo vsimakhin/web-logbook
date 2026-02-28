@@ -16,6 +16,10 @@ You also can easily export all flight records into EASA style pdf format, print 
 
 # Changelog
 
+## [Unreleased]
+
+- New: Added custom import profiles. User can save custom import profiles and load them later. The custom profile is stored in the browser's local storage and is not shared between different browsers or devices.
+
 ## [4.0.0-beta1] - 25.02.2026
 
 - :warning: **Note**: This is a pre-release version. Make sure to backup your data before upgrading :warning:

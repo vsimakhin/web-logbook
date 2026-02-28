@@ -91,7 +91,7 @@ const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
     <Box display="flex" alignItems="center" gap={0}>
       <SaveCustomProfileButton profile={profile} setCustomProfile={setCustomProfile} />
       <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
-      <LoadCustomProfileButton customProfile={customProfile} setProfile={setProfile} />
+      <LoadCustomProfileButton customProfile={customProfile} setProfile={setProfile} headers={headers} />
       <ProfileButton tooltip="Apply Leon Mapping"
         fieldKey="leon"
         icon={PetsIcon}
