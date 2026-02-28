@@ -17,6 +17,20 @@ import PetsIcon from '@mui/icons-material/Pets';
 import Select from '../UIElements/Select';
 import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
+import { useLocalStorageState } from "@toolpad/core";
+import SaveCustomProfileButton from "./SaveCustomProfileButton";
+import LoadCustomProfileButton from "./LoadCustomProfileButton";
+
+const codec = {
+  parse: (value) => {
+    try {
+      return JSON.parse(value)
+    } catch {
+      return {};
+    }
+  },
+  stringify: (value) => JSON.stringify(value),
+}
 
 const getHeader = (key, headers) => (headers.includes(key) ? key : "");
 
@@ -70,10 +84,14 @@ const ProfileButton = ({ tooltip, icon: Icon, fieldKey, setProfile, headers }) =
 
 const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
   const [profile, setProfile] = useState({});
+  const [customProfile, setCustomProfile] = useLocalStorageState("custom-import-profile", {}, { codec: codec });
   const handleChange = useCallback((key, value) => { setProfile((prev) => ({ ...prev, [key]: value })) }, [setProfile]);
 
   const actionButtons = useMemo(() => (
     <Box display="flex" alignItems="center" gap={0}>
+      <SaveCustomProfileButton profile={profile} setCustomProfile={setCustomProfile} />
+      <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+      <LoadCustomProfileButton customProfile={customProfile} setProfile={setProfile} headers={headers} />
       <ProfileButton tooltip="Apply Leon Mapping"
         fieldKey="leon"
         icon={PetsIcon}
@@ -98,7 +116,7 @@ const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
         </IconButton>
       </Tooltip>
     </Box>
-  ), [onClose, profile, setProfile, headers]);
+  ), [onClose, profile, setProfile, headers, customProfile, setCustomProfile]);
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose(null)}>
