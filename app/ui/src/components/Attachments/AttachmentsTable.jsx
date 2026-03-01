@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { Link } from 'react-router';
 import dayjs from "dayjs";
+import { GridActionsCell } from "@mui/x-data-grid";
 // MUI
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -9,6 +10,8 @@ import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 // Custom
 import TableActionHeader from "../UIElements/TableActionHeader";
 import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
+import DownloadAttachmentButton from "./DownloadAttachmentButton";
+import DeleteAttachmentButton from "./DeleteAttachmentButton";
 
 
 export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
@@ -21,14 +24,10 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
       width: 50,
       renderHeader: () => <TableActionHeader />,
       renderCell: (params) => (
-        <></>
-        // <GridActionsCell {...params}>
-        //   <GridActionsCellItem
-        //     icon={<Tooltip title="Edit Aircraft"><EditOutlinedIcon /></Tooltip>}
-        //     onClick={async () => await dialogs.open(EditAircraftModal, params.row)}
-        //     label="Edit Aircraft"
-        //   />
-        // </GridActionsCell>
+        <GridActionsCell suppressChildrenValidation {...params} >
+          <DownloadAttachmentButton attachment={params.row} showInMenu />
+          <DeleteAttachmentButton attachment={params.row} showInMenu />
+        </GridActionsCell>
       ),
     },
     {

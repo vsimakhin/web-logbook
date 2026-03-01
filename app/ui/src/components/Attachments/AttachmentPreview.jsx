@@ -74,11 +74,7 @@ export const AttachmentPreview = ({ attachment }) => {
         />
       );
     } else {
-      return (
-        <Typography>
-          No preview available for this file type: {mimeType}
-        </Typography>
-      );
+      return (<Typography>No preview available for this file type</Typography>);
     }
   };
 

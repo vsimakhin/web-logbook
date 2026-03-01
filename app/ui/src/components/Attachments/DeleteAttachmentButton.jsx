@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 // MUI UI elements
-import MenuItem from '@mui/material/MenuItem';
+import Tooltip from '@mui/material/Tooltip';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // Custom
@@ -11,7 +12,7 @@ import { queryClient } from '../../util/http/http';
 import { deleteAttachment } from '../../util/http/attachment';
 import { resetTrackLog } from '../../util/http/logbook';
 
-export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
+export const DeleteAttachmentButton = ({ attachment }) => {
   const dialogs = useDialogs();
 
   // remove attachment mutation
@@ -57,11 +58,15 @@ export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
       await removeAttachment();
     }
 
-    handleClose();
-  }, [attachment.document_name, dialogs, handleClose, removeAttachment, resetTrack]);
+  }, [attachment.document_name, dialogs, removeAttachment, resetTrack]);
 
   return (
-    <MenuItem onClick={handleDelete} sx={{ p: 0, pr: 1 }}><DeleteOutlinedIcon sx={{ m: 1 }} color="action" />Delete</MenuItem>
+    <GridActionsCellItem
+      icon={<Tooltip title="Delete"><DeleteOutlinedIcon /></Tooltip>}
+      label="Delete"
+      onClick={handleDelete}
+      showInMenu
+    />
   );
 }
 
