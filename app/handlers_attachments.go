@@ -24,6 +24,17 @@ func (app *application) HandlerApiGetFlightRecordAttachments(w http.ResponseWrit
 	app.writeJSON(w, http.StatusOK, attachments)
 }
 
+// HandlerApiGetAttachments returns all attachments
+func (app *application) HandlerApiGetAttachments(w http.ResponseWriter, r *http.Request) {
+	attachments, err := app.db.GetAttachments()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, attachments)
+}
+
 // HandlerApiGetAttachment is a hadnler for attachment download
 func (app *application) HandlerApiGetAttachment(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")

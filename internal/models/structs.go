@@ -300,6 +300,10 @@ type Attachment struct {
 	RecordID     string `json:"record_id"`
 	DocumentName string `json:"document_name"`
 	Document     []byte `json:"document"`
+
+	DocumentSize int    `json:"document_size"`
+	FlightDate   string `json:"flight_date"`
+	FlightInfo   string `json:"flight_info"`
 }
 
 // Aircraft is a type for aircrafts

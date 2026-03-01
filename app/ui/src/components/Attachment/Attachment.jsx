@@ -26,7 +26,7 @@ export const Attachment = ({ attachment }) => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <IconButton onClick={handleClick} size="small"><AttachFileOutlinedIcon /></IconButton>
         <Typography variant="body2" onClick={handleOpenPreview} sx={{ cursor: 'pointer', textDecoration: 'underline' }}>
-          {attachment.document_name}
+          {attachment.document_name} ({attachment.document_size} KB)
         </Typography>
       </Box>
 

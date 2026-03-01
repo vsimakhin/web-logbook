@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "37"
+	schemaVersion = "38"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -649,5 +649,54 @@ var aircraftsView = NewView("aircrafts_view",
 				FROM aircrafts a
 				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
 				ORDER BY a.aircraft_model, a.reg_name`,
+	},
+)
+
+var attachmentsView = NewView("attachments_view",
+	SQLQuery{
+		SQLite: `SELECT 
+					a.uuid,
+					a.record_id,
+					a.document_name,
+					a.document,
+					ROUND(LENGTH(a.document)/1024, 0) AS document_size,
+					l.date AS flight_date,
+					CASE
+						WHEN l.departure_place IS NOT NULL AND l.departure_place <> ''
+						THEN CONCAT(
+							IFNULL(l.departure_place, ''),
+							' ',
+							IFNULL(l.departure_time, ''),
+							' - ',
+							IFNULL(l.arrival_place, ''),
+							' ',
+							IFNULL(l.arrival_time, '')
+						)
+						ELSE ''
+					END AS flight_info
+				FROM attachments a
+				INNER JOIN logbook l ON l.uuid = a.record_id`,
+		MySQL: `SELECT 
+					a.uuid,
+					a.record_id,
+					a.document_name,
+					a.document,
+					ROUND(LENGTH(a.document)/1024, 0) AS document_size,
+					l.date AS flight_date,
+					CASE
+						WHEN l.departure_place IS NOT NULL AND l.departure_place <> ''
+						THEN CONCAT(
+							IFNULL(l.departure_place, ''),
+							' ',
+							IFNULL(l.departure_time, ''),
+							' - ',
+							IFNULL(l.arrival_place, ''),
+							' ',
+							IFNULL(l.arrival_time, '')
+						)
+						ELSE ''
+					END AS flight_info
+				FROM attachments a
+				INNER JOIN logbook l ON l.uuid = a.record_id`,
 	},
 )

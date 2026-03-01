@@ -66,6 +66,7 @@ func (app *application) routes() *chi.Mux {
 
 		// attachments
 		r.Route("/attachment", func(r chi.Router) {
+			r.Get("/list", app.HandlerApiGetAttachments)
 			r.Get("/list/{uuid}", app.HandlerApiGetFlightRecordAttachments)
 			r.With(middleware.Compress(5)).Get("/{uuid}", app.HandlerApiGetAttachment)
 			r.Delete("/{uuid}", app.HandlerApiDeleteAttachment)
