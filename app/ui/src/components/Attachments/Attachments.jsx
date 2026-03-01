@@ -1,12 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 // MUI
 import Grid from '@mui/material/Grid';
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { useErrorNotification } from '../../hooks/useAppNotifications';
 import { fetchAttachments } from '../../util/http/attachment';
+import AttachmentsTable from './AttachmentsTable';
+import AttachmentPreview from './AttachmentPreview';
 
 export const Attachments = () => {
+  const [selectedAttachment, setSelectedAttachment] = useState({});
+
   const { data: attachments, isLoading, isError, error } = useQuery({
     queryKey: ['attachments'],
     queryFn: ({ signal }) => fetchAttachments({ signal }),
@@ -19,11 +24,11 @@ export const Attachments = () => {
     <Grid container spacing={1} >
       <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
         {isLoading && <LinearProgress />}
-        {JSON.stringify(attachments)}
+        <AttachmentsTable attachments={attachments} setSelectedAttachment={setSelectedAttachment} />
       </Grid>
 
       <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-        {"quick preview"}
+        <AttachmentPreview attachment={selectedAttachment} />
       </Grid>
     </Grid>
   );
