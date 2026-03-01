@@ -10,7 +10,7 @@ import { fetchFlightData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 import FlightMap from "../FlightMap/FlightMap";
-import Attachments from "../Attachment/Attachments";
+import Attachments from "../FlightRecordAttachment/Attachments";
 import CustomFields from "./CustomFields";
 import FlightRecordPersons from "../Persons/FlightRecordPersons";
 import useCustomFields from "../../hooks/useCustomFields";
