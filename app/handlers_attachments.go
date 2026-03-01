@@ -1,6 +1,9 @@
 package main
 
 import (
+	"archive/zip"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -111,4 +114,53 @@ func (app *application) HandlerApiUploadAttachment(w http.ResponseWriter, r *htt
 	}
 
 	app.writeOkResponse(w, "Attachment has been uploaded")
+}
+
+// HandlerApiZipDownload handles attachments zip download
+func (app *application) HandlerApiZipDownload(w http.ResponseWriter, r *http.Request) {
+	type DownloadZipRequest struct {
+		IDs []string `json:"ids"`
+	}
+	var req DownloadZipRequest
+
+	// Decode JSON body
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	if len(req.IDs) == 0 {
+		app.handleError(w, errors.New("No files selected"))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Disposition", `attachment; filename="attachments.zip"`)
+
+	zipWriter := zip.NewWriter(w)
+	defer zipWriter.Close()
+
+	for _, id := range req.IDs {
+
+		att, err := app.db.GetAttachmentByID(id)
+		if err != nil {
+			continue
+		}
+
+		// Sanitize filename
+		filename := strings.ReplaceAll(att.DocumentName, "/", "")
+		filename = strings.ReplaceAll(filename, "\\", "")
+
+		// Create file entry inside zip
+		f, err := zipWriter.Create(filename)
+		if err != nil {
+			continue
+		}
+
+		// Write file content
+		_, err = f.Write(att.Document)
+		if err != nil {
+			continue
+		}
+	}
 }

@@ -22,6 +22,16 @@ export const fetchAttachments = async ({ signal }) => {
   return await handleFetch(url, options, 'Cannot fetch attachments');
 }
 
+export const downloadAttachments = async ({ payload }) => {
+  const url = `${API_URL}/attachment/zip-download`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  };
+  return await handleFetch(url, options, 'Cannot download attachments', false);
+}
+
 export const fetchAttachment = async ({ id }) => {
   const url = `${API_URL}/attachment/${id}`;
   const options = {

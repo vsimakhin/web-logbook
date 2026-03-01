@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from 'react-router';
 import dayjs from "dayjs";
 import { GridActionsCell } from "@mui/x-data-grid";
@@ -12,9 +12,11 @@ import TableActionHeader from "../UIElements/TableActionHeader";
 import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import DownloadAttachmentButton from "./DownloadAttachmentButton";
 import DeleteAttachmentButton from "./DeleteAttachmentButton";
+import DownloadAllAttachmentsButton from "./DownloadAllAttachmentsButton";
 
 
 export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
+  const [filteredRows, setFilteredRows] = useState([]);
 
   const columns = useMemo(() => [
     {
@@ -67,7 +69,7 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
       headerAlign: "center",
       align: "center",
       width: 70,
-      renderCell: (params) => params.row.document_name.split('.').pop().toUpperCase()
+      valueGetter: (_, row) => row.document_name.split('.').pop().toUpperCase(),
     },
     {
       field: "document_size",
@@ -79,7 +81,7 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
     }
   ], []);
 
-  const customActions = useMemo(() => (<></>), []);
+  const customActions = useMemo(() => (<DownloadAllAttachmentsButton filteredRows={filteredRows} />), [filteredRows]);
 
   const onRowClick = useCallback((params) => { setSelectedAttachment(params.row) }, [setSelectedAttachment]);
 
@@ -95,6 +97,7 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
       disableColumnMenu
       customActions={customActions}
       onRowClick={onRowClick}
+      onFilteredRowsChange={setFilteredRows}
     />
   );
 }

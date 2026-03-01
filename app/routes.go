@@ -71,6 +71,7 @@ func (app *application) routes() *chi.Mux {
 			r.With(middleware.Compress(5)).Get("/{uuid}", app.HandlerApiGetAttachment)
 			r.Delete("/{uuid}", app.HandlerApiDeleteAttachment)
 			r.Post("/upload", app.HandlerApiUploadAttachment)
+			r.Post("/zip-download", app.HandlerApiZipDownload)
 		})
 
 		// aircrafts
