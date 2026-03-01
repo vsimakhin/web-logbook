@@ -19,6 +19,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [Unreleased]
 
 - New: Added custom import profiles. User can save custom import profiles and load them later. The custom profile is stored in the browser's local storage and is not shared between different browsers or devices.
+- New: Attachments entity, allows to go through the list of all attachments, preview and download them (filtered or all) as a zip file.
 
 ## [4.0.0-beta1] - 25.02.2026
 
