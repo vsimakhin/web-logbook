@@ -11,6 +11,7 @@ import { downloadAttachments } from '../../util/http/attachment';
 
 export const DownloadAllAttachmentsButton = ({ filteredRows }) => {
   const dialogs = useDialogs();
+  const disabled = !filteredRows || filteredRows.length === 0;
 
   const { mutateAsync: downloadAttachmentsMutation } = useMutation({
     mutationFn: ({ payload }) => downloadAttachments({ payload }),
@@ -48,9 +49,11 @@ export const DownloadAllAttachmentsButton = ({ filteredRows }) => {
 
   return (
     <Tooltip title="Download all/filtered attachments">
-      <ToolbarButton onClick={handleDownloadAll} color="default" label='Download all/filtered attachments'>
-        <CloudDownloadOutlinedIcon />
-      </ToolbarButton>
+      <div>
+        <ToolbarButton disabled={disabled} onClick={handleDownloadAll} color="default" label='Download all/filtered attachments'>
+          <CloudDownloadOutlinedIcon />
+        </ToolbarButton>
+      </div>
     </Tooltip>
   );
 };
