@@ -174,7 +174,10 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
         }
 
         if (operator === 'equals') {
-          return !!rowValue === !!value;
+          if (type === 'boolean') {
+            return !!rowValue === !!value;
+          }
+          return rowValue === value;
         }
 
         if (operator === '>=' || operator === '<=') {

@@ -14,6 +14,7 @@ import { TimePicker } from '@mui/x-date-pickers';
 // MUI components
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Drawer from '@mui/material/Drawer';
@@ -138,6 +139,44 @@ const TextFilterField = ({ label, values, onChange }) => (
   />
 );
 
+const AutocompleteFilterField = ({ column, label, values, onChange }) => {
+  const apiRef = useGridApiContext();
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    const field = column.field;
+    const valueSet = new Set();
+
+    apiRef.current.getAllRowIds().forEach((id) => {
+      const value = apiRef.current.getCellValue(id, field);
+      if (value !== null && value !== undefined && value !== '') {
+        valueSet.add(value);
+      }
+    });
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOptions(Array.from(valueSet).sort());
+  }, [apiRef, column.field]);
+
+  return (
+    <Autocomplete
+      options={options}
+      size="small"
+      value={values.equals ?? null}
+      onChange={(_, newValue) => onChange('equals', newValue ?? '')}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={label}
+          variant="standard"
+          fullWidth
+          sx={{ mb: 0.5 }}
+        />
+      )}
+    />
+  );
+};
+
 const BooleanFilterField = ({ label, values, onChange }) => {
   const value = values.equals; // true, false, or undefined
 
@@ -214,6 +253,7 @@ const FilterField = ({ column, filterModel, onChange }) => {
   if (type === 'date') return <DateFilterField label={label} values={values} onChange={handleChange} />;
   if (type === 'time') return <TimeFilterField label={label} values={values} onChange={handleChange} />;
   if (type === 'boolean') return <BooleanFilterField label={label} values={values} onChange={handleChange} />;
+  if (type === 'autocomplete') return <AutocompleteFilterField column={column} label={label} values={values} onChange={handleChange} />;
   return <TextFilterField label={label} values={values} onChange={handleChange} />;
 };
 

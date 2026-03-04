@@ -69,6 +69,7 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
       headerAlign: "center",
       align: "center",
       width: 70,
+      columnType: 'autocomplete',
       valueGetter: (_, row) => row.document_name.split('.').pop().toUpperCase(),
     },
     {
