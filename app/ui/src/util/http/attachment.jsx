@@ -2,14 +2,34 @@ import { handleFetch } from './http';
 import { API_URL } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
-export const fetchAttachments = async ({ signal, id }) => {
+export const fetchFlightRecordAttachments = async ({ signal, id }) => {
   const url = `${API_URL}/attachment/list/${id}`;
   const options = {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${getAuthToken()}` },
     signal: signal,
   };
+  return await handleFetch(url, options, 'Cannot fetch attachments for the flight record');
+}
+
+export const fetchAttachments = async ({ signal }) => {
+  const url = `${API_URL}/attachment/list`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
   return await handleFetch(url, options, 'Cannot fetch attachments');
+}
+
+export const downloadAttachments = async ({ payload }) => {
+  const url = `${API_URL}/attachment/zip-download`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  };
+  return await handleFetch(url, options, 'Cannot download attachments', false);
 }
 
 export const fetchAttachment = async ({ id }) => {

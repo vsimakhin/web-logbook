@@ -174,7 +174,10 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
         }
 
         if (operator === 'equals') {
-          return !!rowValue === !!value;
+          if (type === 'boolean') {
+            return !!rowValue === !!value;
+          }
+          return rowValue === value;
         }
 
         if (operator === '>=' || operator === '<=') {
@@ -204,6 +207,13 @@ const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
       });
     });
   }, [rows, deferredFilterModel, columnMap]);
+
+  useEffect(() => {
+    if (props.onFilteredRowsChange) {
+      props.onFilteredRowsChange(filteredRows);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredRows, props.onFilteredRowsChange]);
 
   const slots = useMemo(() => ({
     footer: XFooter,

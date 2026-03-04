@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 // Custom
 import CardHeader from "../UIElements/CardHeader";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchAttachments } from "../../util/http/attachment";
+import { fetchFlightRecordAttachments } from "../../util/http/attachment";
 import Attachment from "./Attachment";
 import AddAttachmentButton from "./AddAttachmentButton";
 import AddTrackButton from "./AddTrackButton";
@@ -21,7 +21,7 @@ const ActionButtons = ({ id }) => (
 export const Attachments = ({ id }) => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['attachments', id],
-    queryFn: ({ signal }) => fetchAttachments({ signal, id }),
+    queryFn: ({ signal }) => fetchFlightRecordAttachments({ signal, id }),
     enabled: !(id === "new"),
     staleTime: 3600000,
     gcTime: 3600000,

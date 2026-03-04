@@ -20,7 +20,7 @@ export const AddTrackButton = ({ id }) => {
   const { mutateAsync: upload, isPending, isError, error, isSuccess } = useMutation({
     mutationFn: async ({ data }) => await uploadAttachement({ payload: data }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['attachments', id] });
+      await queryClient.invalidateQueries({ queryKey: ['attachments'] });
     }
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to upload attachment' });

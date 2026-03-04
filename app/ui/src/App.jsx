@@ -21,6 +21,7 @@ import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 // MUI UI elements
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -46,6 +47,7 @@ const NAV_ITEMS = [
   { segment: 'aircrafts', title: 'Aircrafts', icon: <FlightOutlinedIcon /> },
   { segment: 'airports', title: 'Airports', icon: <FlightTakeoffOutlinedIcon /> },
   { segment: 'persons', title: 'Persons', icon: <PersonOutlinedIcon /> },
+  { segment: 'attachments', title: 'Attachments', icon: <AttachFileOutlinedIcon /> },
   { kind: 'divider' },
   {
     segment: 'stats', title: 'Stats', icon: <QueryStatsOutlinedIcon />, children: [

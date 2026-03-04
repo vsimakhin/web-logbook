@@ -30,6 +30,7 @@ import CurrencyPage from './pages/CurrencyPage.jsx';
 import PersonsPage from './pages/PersonsPage.jsx'
 import PersonViewPage from './pages/PersonViewPage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
+import AttachmentsPage from './pages/AttachmentsPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,7 @@ const router = createBrowserRouter([
               { path: ':uuid', element: <PersonViewPage /> }
             ]
           },
+          { path: 'attachments', element: <AttachmentsPage /> },
           { path: 'airports', element: <AirportsPage /> },
           {
             path: 'stats', children: [

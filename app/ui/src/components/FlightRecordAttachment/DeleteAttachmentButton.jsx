@@ -18,7 +18,7 @@ export const DeleteAttachmentButton = ({ attachment, handleClose }) => {
   const { mutateAsync: removeAttachment, isError: isDeleteError, error: deleteError, isSuccess: isDeleteSuccess } = useMutation({
     mutationFn: () => deleteAttachment({ id: attachment.uuid }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['attachments', attachment.record_id] });
+      await queryClient.invalidateQueries({ queryKey: ['attachments'] });
     }
   });
   useErrorNotification({ isError: isDeleteError, error: deleteError, fallbackMessage: 'Failed to delete attachment' });
