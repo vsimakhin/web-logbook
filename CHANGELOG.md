@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.0.0] - 04.03.2026
 
 - New: Added custom import profiles. User can save custom import profiles and load them later. The custom profile is stored in the browser's local storage and is not shared between different browsers or devices.
 - New: Attachments entity, allows to go through the list of all attachments, preview and download them (filtered or all) as a zip file.
