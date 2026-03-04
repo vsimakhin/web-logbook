@@ -48,7 +48,7 @@ const CustomAppTitle = () => {
     <Stack direction="row" alignItems="center" spacing={2}>
       <Typography variant="h6">Logbook</Typography>
       <Badge color="primary" badgeContent={"New"} invisible={!isNewReleaseAvailable}>
-        <Chip size="small" label={version} color="warning" variant="outlined"
+        <Chip size="small" label={version} color="success" variant="outlined"
           component="a" href="https://github.com/vsimakhin/web-logbook/releases"
           clickable target="_blank" rel="noopener noreferrer"
         />

@@ -40,6 +40,7 @@ func (m *DBModel) GetAttachments() (attachments []Attachment, err error) {
 				uuid, record_id, document_name, document_size,
 				flight_date, flight_info
 			FROM attachments_view
+			WHERE uuid <> 'custom_title_a4' AND uuid <> 'custom_title_a5'
 			ORDER by flight_date DESC`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
