@@ -3,7 +3,21 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/vsimakhin/web-logbook)](https://hub.docker.com/r/vsimakhin/web-logbook)
 [![Docker Image Size](https://img.shields.io/docker/image-size/vsimakhin/web-logbook)](https://hub.docker.com/r/vsimakhin/web-logbook)
 
-# 📖 Web-logbook
+# Web-logbook
+
+- [Changelog](#changelog)
+- [Old v3.x version](#old-v3x-version)
+- [Usage](#usage)
+- [CLI options](#cli-options)
+- [Supported Operating Systems and Requirements](#supported-operating-systems-and-requirements)
+- [Interface](#interface)
+- [Airports Databases](#airports-databases)
+- [Advanced Configuration](#advanced-configuration)
+- [API](#api)
+- [Contributing / New features / Issues](#contributing--new-features--issues)
+- [Contributors](#contributors)
+- [Tech stack](#tech-stack)
+- [License](#license)
 
 This is a simple, free and open-source EASA-style logbook application written in golang and react.
 
@@ -11,7 +25,7 @@ Once you start the app it automatically creates an SQLite local DB and starts li
 
 You also can easily export all flight records into EASA-style pdf format, print it, sign and use it as a usual paper logbook.
 
-## 🕒 Changelog
+# Changelog
 
 ## [4.0.1] - 08.03.2026
 
@@ -50,7 +64,7 @@ If you still would like to use v3.x version:
 * Latest v3 release https://github.com/vsimakhin/web-logbook/releases/tag/v3.23.0
 * Docker `docker pull vsimakhin/web-logbook:v3.23.0`
 
-## 🚀 Usage
+# Usage
 
 You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
 
@@ -66,7 +80,7 @@ You can clone the repo and compile the binaries yourself, or just download the l
 4. Open your browser, type http://localhost:4000 and the application is ready to use
 5. To close the application, use `Ctrl+C` in the terminal window or just close it
 
-### 🐳 Docker & Kubernetes
+## Docker & Kubernetes
 
 For a quick start using Docker:
 ```sh
@@ -74,7 +88,7 @@ docker run -p 4000:4000 vsimakhin/web-logbook:latest
 ```
 Check the [readme](./docker/README.md) for more details and Kubernetes deployment.
 
-## 🛠️ CLI options
+## CLI options
 ```sh
 $ ./web-logbook -h
   -cert string
@@ -99,14 +113,13 @@ $ ./web-logbook -h
       Prints current version
 ```
 
-## 💻 Supported Operating Systems and Requirements
+# Supported Operating Systems and Requirements
 
 Since it's written in Golang, it can run on any system after compiling the sources. Currently, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are binaries available for Linux, MacOS, and Windows.
 
 You can use any modern browser with JavaScript enabled to access the app.
 
-
-## ✨ Interface
+# Interface
 
 ## Logbook
 * Flight records table with filter for all fields and global search through all data
@@ -218,8 +231,7 @@ So in real life the logbook could look like
 
 ![Settings](./readme-assets/settings.png)
 
-
-## 🌍 Airports Databases
+# Airports Databases
 
 The app supports 3 sources:
 * https://github.com/mwgg/Airports/raw/master/airports.json - main JSON database of 28k+ airports.
@@ -228,9 +240,7 @@ The app supports 3 sources:
 
 If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
 
-## ⚙️ Advanced Configuration
-
-
+# Advanced Configuration
 
 ## HTTPS enable
 
@@ -252,7 +262,7 @@ For example,
 ./web-logbook -engine mysql -dsn "web-logbook-user:pwd@tcp(192.168.0.222)/web-logbook"
 ```
 
-### 🔌 API
+## API
 
 The backend exposes a REST (sort of) API for access to all logbook functionality. You can find the full list of the endpoints here https://github.com/vsimakhin/web-logbook/blob/main/app/routes.go#L26
 
@@ -311,11 +321,11 @@ curl -s -X POST http://localhost:4000/api/logbook/night \
   }' | jq -r '.data'
 ```
 
-## 🤝 Contributing / New features / Issues
+# Contributing / New features / Issues
 
 In case you'd like to add some other features to the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix it at a reasonable time but at least I can take a look.
 
-## 🏆 Contributors
+# Contributors
 
 Thanks for bug reports, testing, improvements, and feature suggestions:
 
@@ -346,7 +356,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/WildBlueUK" title="WildBlueUK"><img src="https://github.com/WildBlueUK.png" width="40" height="40" alt="WildBlueUK" /></a>
 </p>
 
-## 📚 Tech stack
+# Tech stack
 
 Backend:
 * go-pdf https://codeberg.org/go-pdf/fpdf
@@ -373,12 +383,10 @@ Frontend:
 * file-type https://github.com/sindresorhus/file-type
 * mapbox/togeojson https://github.com/mapbox/togeojson
 
-### ⭐ Star History
+# Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vsimakhin/web-logbook&type=Date)](https://www.star-history.com/#vsimakhin/web-logbook&Date)
 
----
-
-## 📄 License
+# License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

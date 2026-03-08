@@ -1,6 +1,21 @@
-# Docker
+# Docker & Kubernetes Support
 
-There are several options for how you can use the dockerized version of the web-logbook application.
+This guide provides instructions on how to run the **web-logbook** application using Docker and Kubernetes.
+
+## Table of Contents
+
+- [Images](#images)
+  - [Docker Hub](#docker-hub)
+  - [Build image from latest release](#build-image-from-latest-release)
+  - [Build image from source](#build-image-from-source)
+- [Running with Docker](#running-with-docker)
+  - [Docker Run Command](#docker-run-command)
+  - [Docker Compose](#docker-compose)
+- [Kubernetes & Cloudflare Deployment](#kubernetes--cloudflare-example)
+- [Health Checks](#health-checks)
+- [Persistence & Permissions](#persistence--permissions)
+
+---
 
 # Images
 
@@ -12,7 +27,7 @@ There is an official public repository at the Docker Hub [https://hub.docker.com
 docker pull vsimakhin/web-logbook:latest
 ```
 
-## Build mage from latest release
+## Build image from latest release
 
 To build a docker image from the latest published release you can use [release.Dockerfile](./release.Dockerfile)
 
@@ -22,9 +37,9 @@ docker build -t vsimakhin/web-logbook:latest -f $PWD/docker/release.Dockerfile .
 
 If you build locally you can use any container image name instead of `vsimakhin/web-logbook:latest`, for example `my-logbook:latest`.
 
-## Build image from build files
+## Build image from source
 
-To build a docker image from the compiled binaries you can use [build.Dockerfile](./build.Dockerfile)
+To build a Docker image from the compiled binaries, you can use [build.Dockerfile](./build.Dockerfile):
 
 ```bash
 # first build binaries
@@ -35,7 +50,7 @@ docker build -t vsimakhin/web-logbook:latest -f $PWD/docker/build.Dockerfile .
 
 # Run container
 
-By default the dockerized app will create an sqlite database in `/data/` directory. So the recommended way to run the container is to mount a volume with database
+By default, the dockerized app will create an SQLite database in the `/data/` directory. The recommended way to run the container is to mount a volume to persist your data:
 
 ```bash
 docker run --rm -it -p 4000:4000 -v /YOUR/FULL/PATH/WITH/DATABASE:/data vsimakhin/web-logbook:latest
@@ -48,13 +63,16 @@ ENTRYPOINT ["./web-logbook" ]
 CMD ["-dsn", "/data/web-logbook.sql"]
 ```
 
-You may override it and set additional options like cert for SSL and etc
+You may override it and set additional options like SSL certificates, etc.
 
 ```bash
 docker run --rm -it -p 4000:4000 -v /YOUR/FULL/PATH/WITH/DATABASE:/data -v /PATH/TO/CERTS:/certs vsimakhin/web-logbook:latest -dsn /data/web-logbook.sql -cert /certs/my-certificate.pem -env dev
 ```
 
-You may use docker-compose to run the container
+## Docker Compose
+
+Using `docker-compose` is the easiest way to manage the application lifecycle. Create a `docker-compose.yml` file:
+
 ```yaml
 services:
   web-logbook:
@@ -74,7 +92,7 @@ For a more advanced setup, you can run the app inside a `Kubernetes` cluster and
 ```bash
 curl -sfL https://get.k3s.io | sh -
 ```
-- Install Traefik (Ingress Controller). K3s comes with Traefik preinstalled by default. If you’re using a different Kubernetes distribution, you can install Traefik manually with Helm
+- Install Traefik (Ingress Controller). K3s comes with Traefik preinstalled by default. If you're using a different Kubernetes distribution, you can install Traefik manually with Helm:
 ```bash
 helm repo add traefik https://traefik.github.io/charts
 helm repo update
@@ -98,7 +116,7 @@ Keeping Proxy Status enabled (orange cloud) allows Cloudflare to:
 
 If you disable proxying (grey cloud), you will need to manage your own TLS certificates inside Kubernetes (e.g., using cert-manager).
 
-- After updating your configuration file as needed, deploy your app
+- After updating your configuration file as needed, deploy your app:
 ```bash
 kubectl apply -f logbook.yaml
 ```
