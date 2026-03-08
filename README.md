@@ -1,19 +1,35 @@
-![GitHub Release](https://img.shields.io/github/v/release/vsimakhin/web-logbook)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/vsimakhin/web-logbook/total?label=all%20downloads)
-![Docker Pulls](https://img.shields.io/docker/pulls/vsimakhin/web-logbook)
-![Docker Image Size](https://img.shields.io/docker/image-size/vsimakhin/web-logbook)
+# 📖 Web-logbook
 
-# Web-logbook
+This is a simple, free and open-source EASA-style logbook application written in golang and react.
 
-This is a simple, free and opensource EASA-style logbook application written in golang and react.
+[![GitHub Release](https://img.shields.io/github/v/release/vsimakhin/web-logbook)](https://github.com/vsimakhin/web-logbook/releases)
+[![GitHub Downloads](https://img.shields.io/github/downloads/vsimakhin/web-logbook/total?label=all%20downloads)](https://github.com/vsimakhin/web-logbook/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/vsimakhin/web-logbook)](https://hub.docker.com/r/vsimakhin/web-logbook)
+[![Docker Image Size](https://img.shields.io/docker/image-size/vsimakhin/web-logbook)](https://hub.docker.com/r/vsimakhin/web-logbook)
 
-You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
+---
+
+## 📑 Table of Contents
+
+- [Changelog](#changelog)
+- [Usage](#usage)
+- [Docker & Kubernetes](#docker--kubernetes)
+- [Supported Operating Systems and Requirements](#supported-operating-systems-and-requirements)
+- [Interface](#interface)
+- [Airports Databases](#airports-databases)
+- [Advanced Configuration](#advanced-configuration)
+- [API](#api)
+- [Contributing](#contributing--new-features--issues)
+- [Contributors](#contributors)
+- [License](#license)
+
+---
 
 Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web browser at http://localhost:4000
 
-You also can easily export all flight records into EASA style pdf format, print it, sign and use it as a usual paper logbook.
+You also can easily export all flight records into EASA-style pdf format, print it, sign and use it as a usual paper logbook.
 
-# Changelog
+## 🕒 Changelog
 
 ## [4.0.1] - 08.03.2026
 
@@ -33,7 +49,7 @@ All changes for v4 release:
 - Update: Added option to hide airport codes on the map and added new pin icon.
 - New: For advanced users, added SQL view `logbook_stats_view` for flight statistics. Dates are converted to ISO format, departure/arrival times include dates, and time fields are cast to minutes. Also added API endpoint `/api/logbook/stats-data`.
 - New: Added a new setting `Self PIC Label` to allow user to change the label used when PIC. By default it is `Self`, but can be changed to any other value (e.g. `SELF` according to [AMC1 FCL.050, section i, subsection 5](https://www.easa.europa.eu/en/document-library/easy-access-rules/online-publications/easy-access-rules-aircrew-regulation-eu-no?page=5#_Toc512863430)).
-- New: Added aircraft registration filter on the Flight Record page if the aircrat model/type is selected.
+- New: Added aircraft registration filter on the Flight Record page if the aircraft model/type is selected.
 - New: Added record number column to the Logbook table (hidden by default). Can be used in the filter panel in case you need to calculate totals for specific range of the records.
 - New: Added night landings recalculation on import. If night time recalculated option is selected and it is more than 0 minutes, then night landings are set to the same value as day landings (if day landings > 0).
 - New: Added a new setting `Logbook totals view` to allow user to change the way totals are displayed in the Logbook table. There are 2 options. `Standard` will show you the current page totals and grand totals through the whole logbook. `Paper Logbook` will show you the totals for each page, previous page and the totals will be a summary of these 2 values.
@@ -52,7 +68,10 @@ If you still would like to use v3.x version:
 * Latest v3 release https://github.com/vsimakhin/web-logbook/releases/tag/v3.23.0
 * Docker `docker pull vsimakhin/web-logbook:v3.23.0`
 
-# Usage
+## 🚀 Usage
+
+You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
+
 
 1. Download the latest release from https://github.com/vsimakhin/web-logbook/releases
 2. Extract the archive to some folder/directory
@@ -65,7 +84,15 @@ If you still would like to use v3.x version:
 4. Open your browser, type http://localhost:4000 and the application is ready to use
 5. To close the application, use `Ctrl+C` in the terminal window or just close it
 
-## CLI options
+### 🐳 Docker & Kubernetes
+
+For a quick start using Docker:
+```sh
+docker run -p 4000:4000 vsimakhin/web-logbook:latest
+```
+Check the [readme](./docker/README.md) for more details and Kubernetes deployment.
+
+## 🛠️ CLI options
 ```sh
 $ ./web-logbook -h
   -cert string
@@ -90,14 +117,14 @@ $ ./web-logbook -h
       Prints current version
 ```
 
-# Supported Operating Systems and Requirements
+## 💻 Supported Operating Systems and Requirements
 
 Since it's written in Golang, it can run on any system after compiling the sources. Currently, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are binaries available for Linux, MacOS, and Windows.
 
 You can use any modern browser with JavaScript enabled to access the app.
 
 
-# Interface
+## ✨ Interface
 
 ## Logbook
 * Flight records table with filter for all fields and global search through all data
@@ -138,15 +165,15 @@ You can use any modern browser with JavaScript enabled to access the app.
 * Date filters
 * Routes and airports filters
 * Aircraft filters
-* Simple overal stats
+* Simple overall stats
 
 ![Map of the flights](./readme-assets/map-example.png)
 
 ## Aircrafts
-* Aircraft list recorded in the logbook
+* Aircrafts list recorded in the logbook
 * Types & user defined categories
 
-![Aircrafts](./readme-assets/aircrafts.png)
+![Aircraft](./readme-assets/aircrafts.png)
 
 ## Airports
 * Standard airports database (3 sources)
@@ -169,7 +196,7 @@ You can use any modern browser with JavaScript enabled to access the app.
 ![Stats](./readme-assets/stats-by-category.png)
 
 ## Currency
-* Tracking currency and flight exprerience
+* Tracking currency and flight experience
 * Different time frames: days, calendar months, calendar years, since date and all time
 
 ![Currency](./readme-assets/currency.png)
@@ -210,7 +237,7 @@ So in real life the logbook could look like
 ![Settings](./readme-assets/settings.png)
 
 
-# Airports Databases
+## 🌍 Airports Databases
 
 The app supports 3 sources:
 * https://github.com/mwgg/Airports/raw/master/airports.json - main JSON database of 28k+ airports.
@@ -219,15 +246,13 @@ The app supports 3 sources:
 
 If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
 
-# Advanced Configuration
+## ⚙️ Advanced Configuration
 
-## Docker & Kubernetes
 
-Check [readme](./docker/README.md) for dockerized app for more details.
 
 ## HTTPS enable
 
-You can generate your own certificate and key and store it in the different directories in your operating system. For that use `--key` and `--cert` parameters to specify the exact location and wun app with `--enable-https` flag.
+You can generate your own certificate and key and store it in the different directories in your operating system. For that use `--key` and `--cert` parameters to specify the exact location and run the app with `--enable-https` flag.
 
 ## MySQL database
 
@@ -245,7 +270,7 @@ For example,
 ./web-logbook -engine mysql -dsn "web-logbook-user:pwd@tcp(192.168.0.222)/web-logbook"
 ```
 
-## API
+### 🔌 API
 
 The backend exposes a REST (sort of) API for access to all logbook functionality. You can find the full list of the endpoints here https://github.com/vsimakhin/web-logbook/blob/main/app/routes.go#L26
 
@@ -261,7 +286,7 @@ TOKEN=$(curl -s -X POST http://127.0.0.1:4000/api/login -H "Content-Type: applic
 curl http://127.0.0.1:4000/api/export/A4 -H "Authorization: Bearer $TOKEN" --output logbook.pdf
 ```
 
-Powershel for Windows (generated by ChatGPT)
+PowerShell for Windows (generated by ChatGPT)
 ```powershell
 $response = Invoke-RestMethod -Uri "http://127.0.0.1:4000/api/login" `
   -Method POST `
@@ -304,11 +329,11 @@ curl -s -X POST http://localhost:4000/api/logbook/night \
   }' | jq -r '.data'
 ```
 
-# New features/Issues
+## 🤝 Contributing / New features / Issues
 
 In case you'd like to add some other features to the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix it at a reasonable time but at least I can take a look.
 
-# Contributors
+## 🏆 Contributors
 
 Thanks for bug reports, testing, improvements, and feature suggestions:
 
@@ -339,7 +364,7 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/WildBlueUK" title="WildBlueUK"><img src="https://github.com/WildBlueUK.png" width="40" height="40" alt="WildBlueUK" /></a>
 </p>
 
-# Used libraries
+## 📚 Tech stack
 
 Backend:
 * go-pdf https://codeberg.org/go-pdf/fpdf
@@ -366,6 +391,12 @@ Frontend:
 * file-type https://github.com/sindresorhus/file-type
 * mapbox/togeojson https://github.com/mapbox/togeojson
 
-## Star History
+### ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vsimakhin/web-logbook&type=Date)](https://www.star-history.com/#vsimakhin/web-logbook&Date)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
