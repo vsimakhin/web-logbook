@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: proper json parse/stringify for custom fields.
+- Update: preformance optimizations for the `Flight Record` and `Map` pages.
+
 ## [4.0.0] - 04.03.2026
 
 - New: Added custom import profiles. User can save custom import profiles and load them later. The custom profile is stored in the browser's local storage and is not shared between different browsers or devices.
