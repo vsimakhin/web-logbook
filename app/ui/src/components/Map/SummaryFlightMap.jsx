@@ -12,7 +12,6 @@ import FlightMap from "../FlightMap/FlightMap";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
-import useCustomFields from "../../hooks/useCustomFields";
 import { fetchAirports } from "../../util/http/airport";
 import MapOptions from "./MapOptions";
 import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
@@ -54,7 +53,7 @@ export const SummaryFlightMap = () => {
     }
   }, [airports]);
 
-  const { getEnroute } = useCustomFields();
+
 
   const callbackFunction = useCallback((filteredData) => { setMapData(filteredData) }, [setMapData]);
 
@@ -79,7 +78,7 @@ export const SummaryFlightMap = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <FlightMap data={mapData} options={options} getEnroute={getEnroute} airportsMap={airportsMap} />
+          <FlightMap data={mapData} options={options} airportsMap={airportsMap} />
         </Grid>
       </Grid>
     </>

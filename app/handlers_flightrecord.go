@@ -112,12 +112,6 @@ func (app *application) HandlerApiFlightRecordUpdate(w http.ResponseWriter, r *h
 		return
 	}
 
-	// recalculate distance in case departure or arrival place has been changed
-	// but not if track log is present
-	if flightRecord.Track == nil {
-		flightRecord.Distance = app.db.Distance(flightRecord.Departure.Place, flightRecord.Arrival.Place)
-	}
-
 	err = app.db.UpdateFlightRecord(flightRecord)
 	if err != nil {
 		app.handleError(w, err)

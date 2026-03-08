@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
@@ -13,13 +13,13 @@ import FlightMap from "../FlightMap/FlightMap";
 import Attachments from "../FlightRecordAttachment/Attachments";
 import CustomFields from "./CustomFields";
 import FlightRecordPersons from "../Persons/FlightRecordPersons";
-import useCustomFields from "../../hooks/useCustomFields";
 
 const gridSize = { xs: 12, sm: 12, md: 6, lg: 6, xl: 6 };
 
 export const FlightRecord = () => {
   const { id } = useParams();
   const [flight, setFlight] = useState({ ...FLIGHT_INITIAL_STATE, uuid: id });
+  const location = useLocation();
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['flight', id],
@@ -31,13 +31,20 @@ export const FlightRecord = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
 
-  const { customFields, getEnroute } = useCustomFields();
-
   useEffect(() => {
+    if (id === "new") {
+      setFlight({
+        ...FLIGHT_INITIAL_STATE,
+        uuid: "new",
+        ...location.state
+      });
+      return;
+    }
+
     if (data) {
       setFlight({ ...data, redraw: Math.random() });
     }
-  }, [data]);
+  }, [data, id, location.state]);
 
   const mapData = useMemo(() => {
     if (flight) return [flight];
@@ -67,7 +74,11 @@ export const FlightRecord = () => {
     });
   }, []);
 
-  const options = flight?.track ? { routes: false, tracks: true, airport_ids: true, icon: 'ico' } : { routes: true, tracks: false, airport_ids: true, icon: 'ico' };
+  const options = useMemo(() =>
+    flight?.track
+      ? { routes: false, tracks: true, airport_ids: true, icon: 'ico' }
+      : { routes: true, tracks: false, airport_ids: true, icon: 'ico' }
+    , [flight.track]);
 
   return (
     <>
@@ -75,13 +86,13 @@ export const FlightRecord = () => {
       <Grid container spacing={1}>
         <Grid size={gridSize}>
           <FlightRecordDetails flight={flight} handleChange={handleChange} setFlight={setFlight} />
-          <CustomFields flight={flight} customFields={customFields} handleChange={handleChange} />
+          <CustomFields flight={flight} handleChange={handleChange} />
           <Attachments id={id} />
           <FlightRecordPersons id={id} />
         </Grid>
 
         <Grid size={gridSize}>
-          <FlightMap data={mapData} options={options} getEnroute={getEnroute} />
+          <FlightMap data={mapData} options={options} />
         </Grid>
       </Grid>
     </>

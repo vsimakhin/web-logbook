@@ -32,8 +32,8 @@ export const useCustomFields = () => {
   }, [enrouteField]);
 
   return {
-    data,
-    customFields: data,
+    data: data || [],
+    customFields: data || [],
     isCustomFieldsLoading: isLoading,
     isCustomFieldsError: isError,
     customFieldsError: error,
