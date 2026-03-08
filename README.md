@@ -18,7 +18,7 @@ You also can easily export all flight records into EASA style pdf format, print 
 ## [4.0.1] - 08.03.2026
 
 - Fix: proper json parse/stringify for custom fields.
-- Update: preformance optimizations for the `Flight Record` and `Map` pages.
+- Update: performance optimizations for the `Flight Record` and `Map` pages.
 
 ## [4.0.0] - 04.03.2026
 
