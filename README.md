@@ -1,13 +1,11 @@
-# 📖 Web-logbook
-
-This is a simple, free and open-source EASA-style logbook application written in golang and react.
-
 [![GitHub Release](https://img.shields.io/github/v/release/vsimakhin/web-logbook)](https://github.com/vsimakhin/web-logbook/releases)
 [![GitHub Downloads](https://img.shields.io/github/downloads/vsimakhin/web-logbook/total?label=all%20downloads)](https://github.com/vsimakhin/web-logbook/releases)
 [![Docker Pulls](https://img.shields.io/docker/pulls/vsimakhin/web-logbook)](https://hub.docker.com/r/vsimakhin/web-logbook)
 [![Docker Image Size](https://img.shields.io/docker/image-size/vsimakhin/web-logbook)](https://hub.docker.com/r/vsimakhin/web-logbook)
 
----
+# 📖 Web-logbook
+
+This is a simple, free and open-source EASA-style logbook application written in golang and react.
 
 Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web browser at http://localhost:4000
 
