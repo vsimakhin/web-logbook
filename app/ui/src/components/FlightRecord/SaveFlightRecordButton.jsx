@@ -10,23 +10,26 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { createFlightRecord, updateFlightRecord } from "../../util/http/logbook";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
+import useCustomFields from "../../hooks/useCustomFields";
 
 export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   const navigate = useNavigate();
-
-  const mutationFn = flight.uuid === "new"
-    ? () => createFlightRecord({ flight })
-    : () => updateFlightRecord({ flight });
+  const { customFields } = useCustomFields();
 
   const { mutateAsync: saveFlightRecord, isError, error, isSuccess, isPending } = useMutation({
-    mutationFn: () => mutationFn(),
-    onSuccess: async ({ data }) => {
+    mutationFn: ({ flight }) =>
+      flight.uuid === "new"
+        ? createFlightRecord({ flight })
+        : updateFlightRecord({ flight }),
+
+    onSuccess: async ({ data }, { flight }) => {
       if (flight.uuid === "new") {
         handleChange("uuid", data);
         navigate(`/logbook/${data}`);
       } else {
         await queryClient.invalidateQueries({ queryKey: ['flight', flight.uuid] });
       }
+
       await queryClient.invalidateQueries({ queryKey: ['logbook'] });
       await queryClient.invalidateQueries({ queryKey: ['currency'] });
       await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
@@ -37,8 +40,19 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
   const handleClick = useCallback(async () => {
-    await saveFlightRecord({ flight });
-  }, [saveFlightRecord, flight]);
+    const allowedUUIDs = new Set(customFields.map((cf) => cf.uuid));
+
+    const sanitisedCustomFields = Object.fromEntries(
+      Object.entries(flight.custom_fields ?? {}).filter(([key]) => allowedUUIDs.has(key))
+    );
+
+    await saveFlightRecord({
+      flight: {
+        ...flight,
+        custom_fields: sanitisedCustomFields
+      }
+    });
+  }, [saveFlightRecord, flight, customFields]);
 
   return (
     <Tooltip title="Save flight record">

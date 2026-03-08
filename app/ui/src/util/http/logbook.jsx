@@ -3,24 +3,27 @@ import { API_URL, tableJSONCodec } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
 const prepareFlightDataForAPI = (flight) => {
-  // Ensure custom_fields is properly marshalled as JSON string
-  // If it's already a string, parse it first to avoid double stringification
-  let customFieldsObj;
+  let customFieldsObj = {};
+
   if (typeof flight.custom_fields === 'string') {
     try {
-      customFieldsObj = JSON.parse(flight.custom_fields);
-    } catch {
-      customFieldsObj = {};
-    }
-  } else {
+      const parsed = JSON.parse(flight.custom_fields);
+      if (parsed && typeof parsed === 'object') {
+        customFieldsObj = parsed;
+      }
+    } catch { /* empty */ }
+  } else if (typeof flight.custom_fields === 'object') {
     customFieldsObj = flight.custom_fields || {};
   }
-  flight.custom_fields = JSON.stringify(customFieldsObj);
 
-  flight.landings.day = parseInt(flight.landings.day) || 0;
-  flight.landings.night = parseInt(flight.landings.night) || 0;
-
-  return flight;
+  return {
+    ...flight,
+    custom_fields: JSON.stringify(customFieldsObj),
+    landings: {
+      day: parseInt(flight.landings?.day, 10) || 0,
+      night: parseInt(flight.landings?.night, 10) || 0,
+    },
+  };
 }
 
 export const fetchLogbookData = async ({ signal }) => {
