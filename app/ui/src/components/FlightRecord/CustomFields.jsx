@@ -8,6 +8,7 @@ import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
 import { FLIGHT_TIME_SLOT_PROPS, TIME_SLOT_PROPS, PLACE_SLOT_PROPS } from "../../constants/constants";
 import useLogbook from "../../hooks/useLogbook";
+import useCustomFields from "../../hooks/useCustomFields";
 
 const getFieldProps = (fieldType) => {
   const props = { slotProps: undefined, type: undefined, placeholder: undefined };
@@ -32,8 +33,9 @@ const getFieldProps = (fieldType) => {
   return props;
 };
 
-export const CustomFields = ({ flight, customFields, handleChange }) => {
+export const CustomFields = ({ flight, handleChange }) => {
   const { calculateDistance } = useLogbook();
+  const { customFields } = useCustomFields();
 
   const customFieldsChange = useCallback((key, value) => {
     handleChange(`custom_fields.${key}`, value);

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
@@ -21,38 +21,34 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
       flight.uuid === "new"
         ? createFlightRecord({ flight })
         : updateFlightRecord({ flight }),
-
     onSuccess: async ({ data }, { flight }) => {
+      const uuid = flight.uuid === "new" ? data : flight.uuid;
+
       if (flight.uuid === "new") {
-        handleChange("uuid", data);
-        navigate(`/logbook/${data}`);
-      } else {
-        await queryClient.invalidateQueries({ queryKey: ['flight', flight.uuid] });
+        handleChange("uuid", uuid);
+        navigate(`/logbook/${uuid}`);
       }
 
-      await queryClient.invalidateQueries({ queryKey: ['logbook'] });
-      await queryClient.invalidateQueries({ queryKey: ['currency'] });
-      await queryClient.invalidateQueries({ queryKey: ['aircrafts'] });
-      await queryClient.invalidateQueries({ queryKey: ['models-categories'] });
-    }
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["flight", uuid] }),
+        queryClient.invalidateQueries({ queryKey: ["logbook"] }),
+        queryClient.invalidateQueries({ queryKey: ["currency"] }),
+        queryClient.invalidateQueries({ queryKey: ["aircrafts"] }),
+        queryClient.invalidateQueries({ queryKey: ["models-categories"] }),
+      ]);
+    },
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
-  const handleClick = useCallback(async () => {
-    const allowedUUIDs = new Set(customFields.map((cf) => cf.uuid));
-
+  const allowedUUIDs = useMemo(() => new Set(customFields.map((cf) => cf.uuid)), [customFields]);
+  const handleClick = useCallback(() => {
     const sanitisedCustomFields = Object.fromEntries(
       Object.entries(flight.custom_fields ?? {}).filter(([key]) => allowedUUIDs.has(key))
     );
 
-    await saveFlightRecord({
-      flight: {
-        ...flight,
-        custom_fields: sanitisedCustomFields
-      }
-    });
-  }, [saveFlightRecord, flight, customFields]);
+    saveFlightRecord({ flight: { ...flight, custom_fields: sanitisedCustomFields } });
+  }, [saveFlightRecord, flight, allowedUUIDs]);
 
   return (
     <Tooltip title="Save flight record">

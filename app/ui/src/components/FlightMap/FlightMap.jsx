@@ -28,6 +28,7 @@ import { fetchAirport } from '../../util/http/airport';
 
 import icon1 from "../../assets/favicon.ico";
 import icon2 from "../../assets/map-pin.png";
+import useCustomFields from '../../hooks/useCustomFields';
 
 const icons = {
   ico: { src: icon1, displacement: [0, 0] },
@@ -145,12 +146,13 @@ const drawTrackLog = (flightTrack, vectorSource) => {
   vectorSource.addFeature(feature);
 }
 
-export const FlightMap = ({ data, options = { routes: true, tracks: false, airport_ids: true, icon: 'ico' }, title = "Flight Map", getEnroute, sx, airportsMap }) => {
+export const FlightMap = ({ data, options = { routes: true, tracks: false, airport_ids: true, icon: 'ico' }, title = "Flight Map", sx, airportsMap }) => {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
   const closerRef = useRef(null);
   const contentRef = useRef(null);
 
+  const { getEnroute } = useCustomFields();
   const [distance, setDistance] = useState(0);
 
   const handleMapClick = useCallback((evt, map, overlay) => {

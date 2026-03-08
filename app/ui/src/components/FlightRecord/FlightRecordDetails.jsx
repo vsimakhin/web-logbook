@@ -92,7 +92,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
           <CardHeader title={title}
-            action={<FlightRecordMenuButtons flight={flight} handleChange={handleChange} setFlight={setFlight} />}
+            action={<FlightRecordMenuButtons flight={flight} handleChange={handleChange} />}
           />
           <Grid container spacing={1} >
             <DatePicker gsize={{ xs: 12, sm: 4, md: 4, lg: 3, xl: 3 }}

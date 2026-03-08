@@ -14,7 +14,7 @@ import ResetTrackButton from "./ResetTrackButton";
 import ShowHideFieldsButton from './ShowHideFieldsButton';
 import SignFlightRecordButton from './SignFlightRecordButton';
 
-export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => {
+export const FlightRecordMenuButtons = ({ flight, handleChange }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = useCallback((event) => setAnchorEl(event.currentTarget), []);
   const handleCloseMenu = useCallback(() => setAnchorEl(null), []);
@@ -34,15 +34,15 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, setFlight }) => 
           transformOrigin={{ vertical: "top", horizontal: "left" }}
         >
           {flight.uuid !== "new" && <SignFlightRecordButton uuid={flight.uuid} handleCloseMenu={handleCloseMenu} />}
-          {flight.uuid !== "new" && <NewFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
-          {flight.uuid !== "new" && <CopyFlightRecordButton setFlight={setFlight} handleCloseMenu={handleCloseMenu} />}
+          {flight.uuid !== "new" && <NewFlightRecordButton flight={flight} handleCloseMenu={handleCloseMenu} />}
+          {flight.uuid !== "new" && <CopyFlightRecordButton flight={flight} handleCloseMenu={handleCloseMenu} />}
           {flight.track && <ResetTrackButton uuid={flight.uuid} handleChange={handleChange} handleCloseMenu={handleCloseMenu} />}
           {flight.uuid !== "new" && <DeleteFlightRecordButton uuid={flight.uuid} handleCloseMenu={handleCloseMenu} />}
           <ShowHideFieldsButton handleCloseMenu={handleCloseMenu} />
         </Menu>
       </>
     )
-  }, [handleClick, anchorEl, handleCloseMenu, flight.uuid, flight.track, setFlight, handleChange]);
+  }, [handleClick, anchorEl, handleCloseMenu, handleChange, flight]);
 
   return (
     <>
