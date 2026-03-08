@@ -41,7 +41,7 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to save flight record' });
   useSuccessNotification({ isSuccess, message: 'Flight record saved' });
 
-  const allowedUUIDs = useMemo(() => new Set(customFields.map((cf) => cf.uuid)), [customFields]);
+  const allowedUUIDs = useMemo(() => new Set((customFields || []).map((cf) => cf.uuid)), [customFields]);
   const handleClick = useCallback(() => {
     const sanitisedCustomFields = Object.fromEntries(
       Object.entries(flight.custom_fields ?? {}).filter(([key]) => allowedUUIDs.has(key))
