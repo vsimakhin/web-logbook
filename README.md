@@ -9,22 +9,6 @@ This is a simple, free and open-source EASA-style logbook application written in
 
 ---
 
-## 📑 Table of Contents
-
-- [Changelog](#changelog)
-- [Usage](#usage)
-- [Docker & Kubernetes](#docker--kubernetes)
-- [Supported Operating Systems and Requirements](#supported-operating-systems-and-requirements)
-- [Interface](#interface)
-- [Airports Databases](#airports-databases)
-- [Advanced Configuration](#advanced-configuration)
-- [API](#api)
-- [Contributing](#contributing--new-features--issues)
-- [Contributors](#contributors)
-- [License](#license)
-
----
-
 Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web browser at http://localhost:4000
 
 You also can easily export all flight records into EASA-style pdf format, print it, sign and use it as a usual paper logbook.
