@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // css
 import 'ol/ol.css';
-import './map.css';
 // openlayers
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -41,25 +40,25 @@ const getAirportData = async (id, airportsMap) => {
     if (airport) {
       return airport;
     }
-  } else {
-    try {
-      // Check cache first
-      const cachedData = queryClient.getQueryData(["airports", id]);
-      if (cachedData) {
-        return cachedData;
-      }
+  }
 
-      const response = await queryClient.fetchQuery({
-        queryKey: ["airports", id],
-        queryFn: ({ signal }) => fetchAirport({ signal, id }),
-        staleTime: 86400000, // 24 hours
-        gcTime: 86400000, // 24 hours
-      });
-
-      return response;
-    } catch {
-      return null;
+  try {
+    // Check cache first
+    const cachedData = queryClient.getQueryData(["airports", id]);
+    if (cachedData) {
+      return cachedData;
     }
+
+    const response = await queryClient.fetchQuery({
+      queryKey: ["airports", id],
+      queryFn: ({ signal }) => fetchAirport({ signal, id }),
+      staleTime: 86400000, // 24 hours
+      gcTime: 86400000, // 24 hours
+    });
+
+    return response;
+  } catch {
+    return null;
   }
 }
 
@@ -131,7 +130,7 @@ const drawGreatCircleLine = (departure, arrival, vectorSource) => {
   }
 }
 
-const drawTrackLog = (flightTrack, vectorSource) => {
+const drawTrackLog = (flightTrack, vectorSource, flightId) => {
   const track = JSON.parse(atob(flightTrack));
 
   const coordinates = track.map((geometry) =>
@@ -141,169 +140,195 @@ const drawTrackLog = (flightTrack, vectorSource) => {
   const lineFeature = new LineString(coordinates);
   const feature = new Feature({
     geometry: lineFeature,
-    lineKey: Math.random(),
+    lineKey: `track-${flightId}`,
   });
   vectorSource.addFeature(feature);
 }
 
-export const FlightMap = ({ data, options = { routes: true, tracks: false, airport_ids: true, icon: 'ico' }, title = "Flight Map", sx, airportsMap }) => {
+const DEFAULT_OPTIONS = { routes: true, tracks: false, airport_ids: true, icon: 'ico' };
+
+export const FlightMap = ({
+  data,
+  options = DEFAULT_OPTIONS,
+  title = "Flight Map",
+  sx,
+  airportsMap
+}) => {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
-  const closerRef = useRef(null);
-  const contentRef = useRef(null);
 
-  const { getEnroute } = useCustomFields();
+  // Persistent OpenLayers instances
+  const mapInstance = useRef(null);
+  const vectorSource = useRef(new VectorSource());
+  const overlay = useRef(null);
+
+  const customFieldsHook = useCustomFields() || {};
   const [distance, setDistance] = useState(0);
+  const [selectedFeature, setSelectedFeature] = useState(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  const handleMapClick = useCallback((evt, map, overlay) => {
-    const coordinate = evt.coordinate;
-    const feature = map.forEachFeatureAtPixel(evt.pixel, (feature) => feature);
-
-    if (!feature || !feature.get("name")) {
-      closerRef.current.onclick();
-      return;
-    }
-
-    contentRef.current.innerHTML = `
-      <strong>Airport:</strong> ${feature.get('code')}<br>
-      <strong>Name:</strong> ${feature.get('name')}<br>
-      <strong>Country:</strong> ${feature.get('country')}<br>
-      <strong>City:</strong> ${feature.get('city')}<br>
-      <strong>Elevation:</strong> ${feature.get('elevation')}<br>
-      <strong>Lat/Lon:</strong> ${feature.get('coordinates')}<br>
-    `;
-    overlay.setPosition(coordinate);
-  }, []);
-
+  // Initialize map once on mount
   useEffect(() => {
-    let map;
+    if (!mapRef.current) return;
 
-    if (mapRef.current) {
-      const vectorSource = new VectorSource();
-      const vectorLayer = new VectorLayer({ source: vectorSource });
+    overlay.current = new Overlay({ element: containerRef.current });
+    const vectorLayer = new VectorLayer({ source: vectorSource.current });
 
-      const overlay = new Overlay({
-        element: containerRef.current,
-        autoPan: { animation: { duration: 250 } },
-      });
+    const map = new Map({
+      target: mapRef.current,
+      layers: [new TileLayer({ source: new OSM() }), vectorLayer],
+      view: new View({
+        center: transform([10, 45], 'EPSG:4326', 'EPSG:3857'),
+        zoom: 4,
+      }),
+      controls: [new FullScreen()],
+      overlays: [overlay.current],
+    });
 
-      closerRef.current.onclick = function () {
-        overlay.setPosition(undefined);
-        closerRef.current.blur();
-        return false;
-      };
-
-      map = new Map({
-        target: mapRef.current,
-        layers: [
-          new TileLayer({ source: new OSM() }),
-          vectorLayer,
-        ],
-        view: new View({
-          center: transform([10, 45], 'EPSG:4326', 'EPSG:3857'),
-          zoom: 4,
-        }),
-        controls: [new FullScreen()],
-        overlays: [overlay],
-      });
-
-      if (data) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setDistance(0);
-
-        (async () => {
-          const features = [];
-          const airportPromises = data.map(async (flight) => {
-            if (!flight.departure.place || !flight.arrival.place) return null;
-
-            const [departure, arrival] = await Promise.all([
-              getAirportData(flight.departure.place, airportsMap),
-              getAirportData(flight.arrival.place, airportsMap),
-            ]);
-
-            if (!departure || !arrival) return null;
-
-            addMarker(features, departure, options);
-            addMarker(features, arrival, options);
-
-            const fullRoute = [departure];
-            // get airport data for enroute
-            const enrouteCodes = getEnroute(flight.custom_fields);
-            if (enrouteCodes && Array.isArray(enrouteCodes)) {
-              for (const code of enrouteCodes) {
-                if (code !== flight.departure.place && code !== flight.arrival.place) {
-                  const airport = await getAirportData(code, airportsMap);
-                  if (airport) {
-                    fullRoute.push(airport);
-                    addMarker(features, airport, options);
-                  }
-                }
-              }
-            }
-            fullRoute.push(arrival);
-
-            if (options.routes) {
-              for (let i = 0; i < fullRoute.length - 1; i++) {
-                drawGreatCircleLine(fullRoute[i], fullRoute[i + 1], vectorSource);
-              }
-            }
-            if (options.tracks) {
-              if (flight.track) {
-                drawTrackLog(flight.track, vectorSource);
-              }
-            }
-            setDistance((prev) => prev + flight.distance);
-            return { departure, arrival };
-          });
-
-          const results = await Promise.all(airportPromises);
-          const validResults = results.filter(Boolean);
-          if (validResults.length === 0) return;
-
-          const lons = validResults.reduce((sum, { departure, arrival }) => sum + departure.lon + arrival.lon, 0) / (validResults.length * 2);
-          const lats = validResults.reduce((sum, { departure, arrival }) => sum + departure.lat + arrival.lat, 0) / (validResults.length * 2);
-
-          if (lats !== 0 || lons !== 0) {
-            map.getView().setCenter(transform([lons, lats], 'EPSG:4326', 'EPSG:3857'));
-          }
-
-          vectorSource.addFeatures(features);
-          map.getView().fit(vectorSource.getExtent(), { size: map.getSize(), maxZoom: 16, padding: [30, 30, 30, 30] });
-        })();
+    map.on('singleclick', (evt) => {
+      const feature = map.forEachFeatureAtPixel(evt.pixel, (f) => f);
+      if (feature && feature.get("name")) {
+        setSelectedFeature({
+          coordinate: evt.coordinate,
+          code: feature.get('code'),
+          name: feature.get('name'),
+          country: feature.get('country'),
+          city: feature.get('city'),
+          elevation: feature.get('elevation'),
+          coordinates: feature.get('coordinates'),
+        });
+        overlay.current.setPosition(evt.coordinate);
+      } else {
+        setSelectedFeature(null);
+        overlay.current.setPosition(undefined);
       }
+    });
 
-      map.on('singleclick', (evt) => handleMapClick(evt, map, overlay));
-    }
+    mapInstance.current = map;
+    Promise.resolve().then(() => setIsMapReady(true));
 
     return () => {
-      if (map) {
-        map.setTarget(null);
+      map.setTarget(null);
+      mapInstance.current = null;
+      setIsMapReady(false);
+    };
+  }, []);
+
+  // Sync data and options to the map
+  useEffect(() => {
+    if (!isMapReady || !mapInstance.current || !data) return;
+
+    let cancelled = false;
+
+    const updateMapData = async () => {
+      setDistance(0);
+      vectorSource.current.clear();
+      const features = [];
+
+      let totalDistance = 0;
+      const getEnroute = customFieldsHook.getEnroute || (() => []);
+
+      const airportPromises = data.map(async (flight) => {
+        if (!flight.departure.place || !flight.arrival.place) return null;
+
+        const [departure, arrival] = await Promise.all([
+          getAirportData(flight.departure.place, airportsMap),
+          getAirportData(flight.arrival.place, airportsMap),
+        ]);
+
+        if (!departure || !arrival) return null;
+
+        addMarker(features, departure, options);
+        addMarker(features, arrival, options);
+
+        const fullRoute = [departure];
+        const enrouteCodes = getEnroute(flight.custom_fields);
+
+        if (enrouteCodes && Array.isArray(enrouteCodes)) {
+          for (const code of enrouteCodes) {
+            if (code !== flight.departure.place && code !== flight.arrival.place) {
+              const airport = await getAirportData(code, airportsMap);
+              if (airport) {
+                fullRoute.push(airport);
+                addMarker(features, airport, options);
+              }
+            }
+          }
+        }
+
+        fullRoute.push(arrival);
+
+        if (options.routes) {
+          for (let i = 0; i < fullRoute.length - 1; i++) {
+            drawGreatCircleLine(fullRoute[i], fullRoute[i + 1], vectorSource.current);
+          }
+        }
+
+        if (options.tracks && flight.track) {
+          drawTrackLog(flight.track, vectorSource.current, flight.uuid || flight.id);
+        }
+
+        totalDistance += flight.distance;
+
+        return { departure, arrival };
+      });
+
+      await Promise.all(airportPromises);
+      if (cancelled) return;
+
+      setDistance(totalDistance);
+
+      if (features.length > 0) {
+        vectorSource.current.addFeatures(features);
+
+        mapInstance.current.updateSize();
+        mapInstance.current.getView().fit(vectorSource.current.getExtent(), {
+          maxZoom: 16,
+          padding: [30, 30, 30, 30],
+          duration: 100,
+        });
       }
     };
-  }, [data, handleMapClick, getEnroute, options, airportsMap]);
 
+    updateMapData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [data, options, airportsMap, customFieldsHook.getEnroute, isMapReady]);
+
+  const handleClosePopup = (e) => {
+    e?.preventDefault();
+    setSelectedFeature(null);
+    overlay.current?.setPosition(undefined);
+  };
 
   return (
     <>
       {data && (
         <>
-          <Card variant="outlined" sx={{
-            ...sx,
-            height: '85vh',
-            position: 'relative'
-          }}>
+          <Card variant="outlined" sx={{ ...sx, height: '85vh', position: 'relative' }}>
             <CardContent sx={{ height: '100%' }}>
               <CardHeader title={title} />
-              <div ref={mapRef} style={{ width: '100%', height: 'calc(100% - 35px)', borderRadius: '4px', overflow: 'hidden' }}></div>
+              <div ref={mapRef} style={{ width: '100%', height: 'calc(100% - 50px)', borderRadius: '4px', overflow: 'hidden' }}></div>
               {distance > 0 && (
-                <Typography>{`Distance: ${distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} nm / ${(distance * 1.852).toLocaleString(undefined, { maximumFractionDigits: 2 })} km`}</Typography>
+                <Typography sx={{ mt: 1 }}>{`Distance: ${distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} nm / ${(distance * 1.852).toLocaleString(undefined, { maximumFractionDigits: 2 })} km`}</Typography>
               )}
             </CardContent>
           </Card>
-          <Card ref={containerRef} className="ol-popup">
-            <CardContent>
-              <a ref={closerRef} href="#" id="popup-closer" className="ol-popup-closer"></a>
-              <div ref={contentRef} id="popup-content"></div>
+          <Card ref={containerRef} sx={{ display: selectedFeature ? 'block' : 'none' }}>
+            <CardContent sx={{ position: 'relative', pt: 4 }}>
+              <a href="#" id="popup-closer" onClick={handleClosePopup}></a>
+              {selectedFeature && (
+                <div id="popup-content">
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}><strong>Airport:</strong> {selectedFeature.code}</Typography>
+                  <Typography variant="body2"><strong>Name:</strong> {selectedFeature.name}</Typography>
+                  <Typography variant="body2"><strong>Country:</strong> {selectedFeature.country}</Typography>
+                  <Typography variant="body2"><strong>City:</strong> {selectedFeature.city}</Typography>
+                  <Typography variant="body2"><strong>Elevation:</strong> {selectedFeature.elevation}</Typography>
+                  <Typography variant="body2"><strong>Lat/Lon:</strong> {selectedFeature.coordinates}</Typography>
+                </div>
+              )}
             </CardContent>
           </Card>
         </>
