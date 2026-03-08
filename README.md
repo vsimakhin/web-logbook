@@ -58,7 +58,7 @@ If you still would like to use v3.x version:
 2. Extract the archive to some folder/directory
 3. Run:
   * Windows:
-    * Double-click on the `web-logbook.exe` file. It will show you some warning about how unsafe it can be (I don't digitally sing the binary), but just run it.
+    * Double-click on the `web-logbook.exe` file. It will show you some warnings about how unsafe it can be (I don't digitally sign the binary), but just run it.
   * Linux/MacOS:
     * Open a terminal and navigate to the directory
     * Run `./web-logbook`
