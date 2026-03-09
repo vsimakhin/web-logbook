@@ -5,6 +5,31 @@
 
 # Web-logbook
 
+Web-logbook is a simple, free and open-source EASA-style logbook application written in Go and React.
+
+It lets you record and manage flight records, track licenses and certifications, visualize flights on a map, attach documents, and export a fully formatted EASA-style PDF logbook you can print, sign, and use as a regular paper logbook.
+
+The application is a single binary and stores data locally using SQLite by default.
+
+![EASA Logbook](./readme-assets/logbook.png)
+
+Why this project? Most pilot logbooks are either commercial, cloud-based, or difficult to customize. Web-logbook was created to provide a simple, self-hosted logbook that follows EASA-style formatting while keeping full control of your data. Web-logbook runs locally and does not require a subscription or external services. Built by pilots for pilots.
+
+---
+
+## Quick Start
+
+- Download the latest release and run the binary
+- Then open your browser and type `http://localhost:4000`
+- Voilà! You have your logbook ready to use!
+
+The application will automatically create a local SQLite database on the first start.
+
+---
+
+# Table of Contents
+
+- [Features](#features)
 - [Changelog](#changelog)
 - [Usage](#usage)
   - [Docker & Kubernetes](#docker--kubernetes)
@@ -19,11 +44,22 @@
 - [Tech stack](#tech-stack)
 - [License](#license)
 
-This is a simple, free and open-source EASA-style logbook application written in golang and react.
+---
 
-Once you start the app it automatically creates an SQLite local DB and starts listening on port 4000 by default. So you can open it in your standard web browser at http://localhost:4000
+# Features
 
-You also can easily export all flight records into EASA-style pdf format, print it, sign and use it as a usual paper logbook.
+- EASA-style flight logbook
+- Export logbook to PDF (A4 and A5 formats)
+- Flight map with route visualization
+- Automatic night-time calculation
+- Aircraft, airports, and persons management
+- License and certification tracking
+- CSV import and export
+- Attachments for flight records
+- Custom user-defined fields
+- Dashboard statistics and currency tracking
+
+---
 
 # Changelog
 
@@ -64,21 +100,26 @@ If you still would like to use v3.x version:
 * Latest v3 release https://github.com/vsimakhin/web-logbook/releases/tag/v3.23.0
 * Docker `docker pull vsimakhin/web-logbook:v3.23.0`
 
+---
+
 # Usage
+
+## Local installation
 
 You can clone the repo and compile the binaries yourself, or just download the latest ones for your operating system from the [releases](https://github.com/vsimakhin/web-logbook/releases).
 
-
 1. Download the latest release from https://github.com/vsimakhin/web-logbook/releases
-2. Extract the archive to some folder/directory
-3. Run:
+2. Extract the archive to a directory of your choice
+3. Start the application
   * Windows:
-    * Double-click on the `web-logbook.exe` file. It will show you some warnings about how unsafe it can be (I don't digitally sign the binary), but just run it.
-  * Linux/MacOS:
+    * Double-click on the `web-logbook.exe`.
+  * Linux/macOS:
     * Open a terminal and navigate to the directory
-    * Run `./web-logbook`
+    * Run `./web-logbook` or double-click on the `web-logbook` file.
 4. Open your browser, type http://localhost:4000 and the application is ready to use
-5. To close the application, use `Ctrl+C` in the terminal window or just close it
+5. To close the application, press `Ctrl+C` in the terminal window or just close it
+
+**Note**: Windows and macOS may display a security warning because the binary is not digitally signed. You can safely allow it to run.
 
 ## Docker & Kubernetes
 
@@ -113,18 +154,24 @@ $ ./web-logbook -h
       Prints current version
 ```
 
-# Supported Operating Systems and Requirements
+---
 
-Since it's written in Golang, it can run on any system after compiling the sources. Currently, on the [Release](https://github.com/vsimakhin/web-logbook/releases/latest) page, there are binaries available for Linux, MacOS, and Windows.
+# Supported Operating Systems
 
-You can use any modern browser with JavaScript enabled to access the app.
+Since the application is written in Go, it can run on any operating system after compiling the source code.
+
+Prebuilt [binaries](https://github.com/vsimakhin/web-logbook/releases/latest) are available for Linux, macOS and Windows for x86_64 and ARM architectures.
+
+You can access the application using any modern browser with JavaScript enabled.
+
+---
 
 # Interface
 
 ## Logbook
 * Flight records table with filter for all fields and global search through all data
-* Customized set of columns
-* Quick export to CSV for all and filtered data
+* Customizable columns
+* Quick export to CSV
 * Export to PDF (A4, A5) formats
 * Automatic totals and subtotals calculation
 
@@ -137,70 +184,71 @@ You can use any modern browser with JavaScript enabled to access the app.
 
 
 ## Flight Records
-* Flight record data
-* Attachments for the flight records
-* Automatic night-time calculation
-* Custom/user defined fields
-* Flight map
-  * KML and GPX track attachments support for SkyDemon and FlightRadar24 (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
-* Persons tracking
+- Flight record details
+- Attachments
+- Automatic night-time calculation
+- Custom/user defined fields
+- Flight map
+- KML and GPX track attachments support for SkyDemon and FlightRadar24 (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
+- Persons tracking
 * Instructor/Examiner signature
 
 ![Flight record](./readme-assets/flight-record.png)
 
 ## Licensing & Certification
-* List of licenses, certificates and endorsements
-* Document attachments and preview
-* Expiration tracking
+- Licenses and certificates
+- Document attachments and preview
+- Expiration tracking
 
 ![Licensing & Certification](./readme-assets/licensing-record.png)
 
 ## Map
-* Flight map
-* Date filters
-* Routes and airports filters
-* Aircraft filters
-* Simple overall stats
+- Flight map
+- Date filters
+- Routes and airports filters
+- Aircraft filters
+- Basic statistics
 
 ![Map of the flights](./readme-assets/map-example.png)
 
 ## Aircrafts
-* Aircrafts list recorded in the logbook
-* Types & user defined categories
+- Aircraft list
+- Types
+- Custom categories
 
 ![Aircraft](./readme-assets/aircrafts.png)
 
 ## Airports
-* Standard airports database (3 sources)
-* Custom user defined airports and airfields
-* Filters
+- Airport database
+- Custom airports
+- Filters
 
 ![Airports](./readme-assets/airports.png)
 
 ## Persons
-* Persons list for the recorded flight records
-* Flight list for each person
-* Custom user defined roles (Captain, First officer, Crew etc)
+- Persons list for the recorded flight records
+- Flight list for each person
+- Custom user defined roles (Captain, First officer, Crew etc)
 
 ## Stats
-* Dashboard with custom filters
-* Stats by Year, Type and Category
-* User defined fields support
+- Dashboard statistics
+- Statistics by year, type, and category
+- Custom field support
 
 ![Dashboard](./readme-assets/dashboard.png)
 ![Stats](./readme-assets/stats-by-category.png)
 
 ## Currency
-* Tracking currency and flight experience
-* Different time frames: days, calendar months, calendar years, since date and all time
+- Tracking currency and flight experience
+- Different time frames: days, calendar months, calendar years, since date and all time
 
 ![Currency](./readme-assets/currency.png)
 
 ## Export
-* Export to EASA PDF format (A4 and A5)
-* PDF export formats with custom title pages (for example, include your CV automatically)
-* Adjustable settings for each export format
-* Instructor/Examiner signatures also included in the PDF export
+- Export to EASA PDF format (A4 and A5)
+- PDF export formats with custom title pages (for example, include your CV automatically)
+- Adjustable settings for each export format
+- Instructor/Examiner signatures also included in the PDF export
 
 ![Export](./readme-assets/export.png)
 
@@ -215,30 +263,34 @@ So in real life the logbook could look like
 ![Pilot logbook](./readme-assets/logbook_irl.jpg)
 
 ## Import
-* CSV support
-* Predefined formats
-  * WebLogbook
-  * Leon application (via export to CrewLounge link)
-* Custom formats
+- CSV support
+- Predefined formats
+  - WebLogbook
+  - Leon application (via export to CrewLounge link)
+- Custom formats
 
 ## Settings
-* Owner name, license and address, signature for the PDF exports
-* Signature pad to automatically include signatures to the PDF exports
-* Enable/Disable authentication (in case you need to expose the app to the public internet)
-* Some interface settings
-* Custom names for the standard flight record fields
-* Custom fields for the Flight record
+- Owner name, license and address, signature for the PDF exports
+- Signature pad to automatically include signatures to the PDF exports
+- Enable/Disable authentication (in case you need to expose the app to the public internet)
+- Some interface settings
+- Custom names for the standard flight record fields
+- Custom fields for the Flight record
 
 ![Settings](./readme-assets/settings.png)
+
+---
 
 # Airports Databases
 
 The app supports 3 sources:
-* https://github.com/mwgg/Airports/raw/master/airports.json - main JSON database of 28k+ airports.
-* (default) https://github.com/vsimakhin/Airports/raw/master/airports.json - my local fork of the main JSON database,  to ensure that the app remains functional even if there are any breaking changes in the upstream.
-* https://davidmegginson.github.io/ourairports-data/airports.csv - an alternate set of airports from https://ourairports.com/, which contains over 78k records, including small airfields and heliports. 
+- https://github.com/mwgg/Airports/raw/master/airports.json - main JSON database of 28k+ airports.
+- (default) https://github.com/vsimakhin/Airports/raw/master/airports.json - my local fork of the main JSON database,  to ensure that the app remains functional even if there are any breaking changes in the upstream.
+- https://davidmegginson.github.io/ourairports-data/airports.csv - an alternate set of airports from https://ourairports.com/, which contains over 78k records, including small airfields and heliports. 
 
 If you enable the `No ICAO codes filter` option, the app will ignore ICAO airport codes that contain numbers and dashes, which are not commonly used ICAO codes. By default, this option is unchecked, which makes the database slightly smaller and cleaner.
+
+---
 
 # Advanced Configuration
 
@@ -321,13 +373,17 @@ curl -s -X POST http://localhost:4000/api/logbook/night \
   }' | jq -r '.data'
 ```
 
+---
+
 # Contributing / New features / Issues
 
 In case you'd like to add some other features to the logbook or you found a bug, please open an "issue" here https://github.com/vsimakhin/web-logbook/issues with a description. I cannot promise I'll implement it or fix it at a reasonable time but at least I can take a look.
 
+---
+
 # Contributors
 
-Thanks for bug reports, testing, improvements, and feature suggestions:
+Thanks for bug reports, testing, improvements, and features suggestions:
 
 <p align="left">
   <a href="https://github.com/Jacopx" title="Jacopx"><img src="https://github.com/Jacopx.png" width="40" height="40" alt="Jacopx" /></a>
@@ -356,6 +412,8 @@ Thanks for bug reports, testing, improvements, and feature suggestions:
   <a href="https://github.com/WildBlueUK" title="WildBlueUK"><img src="https://github.com/WildBlueUK.png" width="40" height="40" alt="WildBlueUK" /></a>
 </p>
 
+--
+
 # Tech stack
 
 Backend:
@@ -383,9 +441,13 @@ Frontend:
 * file-type https://github.com/sindresorhus/file-type
 * mapbox/togeojson https://github.com/mapbox/togeojson
 
+---
+
 # Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vsimakhin/web-logbook&type=Date)](https://www.star-history.com/#vsimakhin/web-logbook&Date)
+
+---
 
 # License
 
