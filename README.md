@@ -6,9 +6,9 @@
 # Web-logbook
 
 - [Changelog](#changelog)
-- [Old v3.x version](#old-v3x-version)
 - [Usage](#usage)
-- [CLI options](#cli-options)
+  - [Docker & Kubernetes](#docker--kubernetes)
+  - [CLI options](#cli-options)
 - [Supported Operating Systems and Requirements](#supported-operating-systems-and-requirements)
 - [Interface](#interface)
 - [Airports Databases](#airports-databases)
