@@ -13,7 +13,7 @@ The application is a single binary and stores data locally using SQLite by defau
 
 ![EASA Logbook](./readme-assets/logbook.png)
 
-Why this project? Web-ligbook ok was created to provide a simple, self-hosted logbook that follows EASA-style formatting while keeping full control of your data. Web-logbook runs locally and does not require a subscription or external services. Built by pilots for pilots.
+Why this project? Web-logbook was created to provide a simple, self-hosted logbook that follows EASA-style formatting while keeping full control of your data. Web-logbook runs locally and does not require a subscription or external services. Built by pilots for pilots.
 
 ---
 
