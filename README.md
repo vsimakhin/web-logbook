@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang and npm packages/security patches.
+
 ## [4.0.1] - 08.03.2026
 
 - Fix: proper json parse/stringify for custom fields.
