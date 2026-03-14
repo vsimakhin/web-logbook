@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { GridActionsCell } from '@mui/x-data-grid';
+import { GridActionsCell, useGridApiRef } from '@mui/x-data-grid';
 // MUI Icons
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
 // Custom components and libraries
@@ -9,6 +9,7 @@ import CopyAirportButton from './CopyAirportButton';
 import TableActionHeader from '../UIElements/TableActionHeader';
 
 export const StandardAirportsTable = ({ data, isLoading }) => {
+  const apiRef = useGridApiRef();
 
   const columns = useMemo(() => [
     {
@@ -33,10 +34,11 @@ export const StandardAirportsTable = ({ data, isLoading }) => {
     { field: "lon", headerName: "Lon", headerAlign: "center", width: 70 },
   ], []);
 
-  const customActions = useMemo(() => (<CSVExportButton rows={data} type="airports" />), [data]);
+  const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="airports" />), [apiRef]);
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='standard-airports'
       title="Standard Airports"
       icon={<FlightTakeoffOutlinedIcon />}

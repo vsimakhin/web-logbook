@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useGridApiRef } from '@mui/x-data-grid';
 // MUI UI elements
 import LinearProgress from '@mui/material/LinearProgress';
 // MUI icons
@@ -11,6 +12,7 @@ import XDataGrid from '../../UIElements/XDataGrid/XDataGrid';
 import { createStatsColumns } from '../helpers';
 
 export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = [] }) => {
+  const apiRef = useGridApiRef();
   const { fieldName } = useSettings();
 
   const columns = useMemo(() => {
@@ -26,12 +28,13 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
     ]
   }, [type, fieldName, customFields]);
 
-  const customActions = useMemo(() => (<CSVExportButton rows={data} type="totals-by-aircraft" />), [data]);
+  const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="totals-by-aircraft" />), [apiRef]);
 
   if (isLoading) return <LinearProgress />;
 
   return (
     <XDataGrid sx={{ '& .dg-zero': { color: 'text.disabled' } }}
+      apiRef={apiRef}
       tableId={`totals-${type}`}
       title={`Stats by ${type}`}
       icon={type === "type" ? <FlightOutlinedIcon /> : <CategoryOutlinedIcon />}

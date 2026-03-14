@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GridActionsCell } from "@mui/x-data-grid";
+import { GridActionsCell, useGridApiRef } from "@mui/x-data-grid";
 // MUI Icons
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 // Custom
@@ -15,6 +15,8 @@ import TableActionHeader from "../UIElements/TableActionHeader";
 import CSVExportButton from "../UIElements/CSVExportButton";
 
 export const Persons = () => {
+  const apiRef = useGridApiRef();
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["persons"],
     queryFn: ({ signal }) => fetchPersons({ signal }),
@@ -50,12 +52,13 @@ export const Persons = () => {
   const customActions = useMemo(() => (
     <>
       <AddPersonButton />
-      <CSVExportButton rows={data} type="persons" />
+      <CSVExportButton apiRef={apiRef} type="persons" />
     </>
-  ), [data]);
+  ), [apiRef]);
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='persons'
       title="Persons"
       icon={<PersonOutlinedIcon />}

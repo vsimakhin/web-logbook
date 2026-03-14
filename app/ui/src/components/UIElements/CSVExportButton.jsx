@@ -17,7 +17,6 @@ const CsvIcon = (props) => {
   );
 }
 
-
 const defaultConfig = {
   fieldSeparator: ',',
   decimalSeparator: '.',
@@ -160,10 +159,22 @@ const handleExportRows = (rows, type) => {
   download(csvConfig)(csv);
 };
 
-export const CSVExportButton = ({ rows, type }) => {
+export const CSVExportButton = ({ type, apiRef }) => {
+
   const handleCSVExport = useCallback(() => {
-    handleExportRows(rows, type);
-  }, [rows, type]);
+    if (apiRef.current) {
+      // get all ids in table
+      const ids = apiRef.current.getSortedRowIds();
+      // get ids which are not visible
+      const filteredIdsSet = new Set(Object.keys(apiRef.current.state.filter.filteredRowsLookup));
+      // filter rows by invisible ids
+      const visibleRows = ids.filter((id) => !filteredIdsSet.has(id));
+      // get rows by visible ids
+      const rows = visibleRows.map((id) => apiRef.current.getRow(id));
+
+      handleExportRows(rows, type);
+    }
+  }, [type, apiRef]);
 
   return (
     <Tooltip title="Quick CSV Export">

@@ -66,6 +66,7 @@ The application will automatically create a local SQLite database on the first s
 ## [Unreleased]
 
 - Update: Golang and npm packages/security patches.
+- Update: If filters are applied to the table, the CSV export will only export the filtered rows.
 
 ## [4.0.1] - 08.03.2026
 
