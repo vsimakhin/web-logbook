@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useGridApiRef } from "@mui/x-data-grid";
 // MUI
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -15,6 +16,7 @@ import CSVExportButton from "../UIElements/CSVExportButton";
 import { sumTime } from "../Logbook/helpers";
 
 export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
+  const apiRef = useGridApiRef();
 
   const columns = useMemo(() => [
     {
@@ -91,14 +93,11 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
 
   ], []);
 
-  const customActions = useMemo(() => (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <CSVExportButton rows={data} type="person-flights" />
-    </Box>
-  ), [data]);
+  const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="person-flights" />), [apiRef]);
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='person-flights'
       title={title}
       icon={<AutoStoriesOutlinedIcon />}

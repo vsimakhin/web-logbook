@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
 import { Link } from "react-router";
+import { useGridApiRef } from "@mui/x-data-grid";
 // MUI components
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -14,6 +15,7 @@ import CSVExportButton from "../UIElements/CSVExportButton";
 import NewLicenseRecordButton from "./NewLicenseRecordButton";
 
 export const LicensingTable = ({ data, isLoading }) => {
+  const apiRef = useGridApiRef();
   const { settings, isSettingsLoading } = useSettings();
 
   const getExpireColor = useCallback((days) => {
@@ -125,12 +127,13 @@ export const LicensingTable = ({ data, isLoading }) => {
   const customActions = useMemo(() => (
     <>
       <NewLicenseRecordButton />
-      <CSVExportButton rows={data} type="licensing" />
+      <CSVExportButton apiRef={apiRef} type="licensing" />
     </>
-  ), [data]);
+  ), [apiRef]);
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='licensing'
       title="Licensing"
       icon={<ContactPageOutlinedIcon />}

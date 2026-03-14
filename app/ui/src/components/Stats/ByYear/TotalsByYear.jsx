@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { useGridApiRef } from "@mui/x-data-grid";
 // MUI UI elements
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -45,6 +46,7 @@ const useTotalsData = (data) => {
 };
 
 export const TotalsByYear = () => {
+  const apiRef = useGridApiRef();
   const [activeTab, setActiveTab] = useState(0);
   const { fieldName } = useSettings();
   const { customFields } = useCustomFields();
@@ -75,7 +77,7 @@ export const TotalsByYear = () => {
   }, [fieldName, customFields]);
 
   const activeYear = sortedYears[activeTab];
-  const customActions = useMemo(() => (<CSVExportButton rows={dataByYear[activeYear]} type="totals-by-year" />), [dataByYear, activeYear]);
+  const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="totals-by-year" />), [apiRef]);
 
   if (isLoading) return <LinearProgress />;
 
@@ -91,6 +93,7 @@ export const TotalsByYear = () => {
 
       <Box sx={{ p: (theme) => theme.spacing(1, 0) }}>
         <XDataGrid sx={{ '& .dg-zero': { color: 'text.disabled' } }}
+          apiRef={apiRef}
           key={activeYear}
           tableId="totals-year"
           title={`Stats by Year ${activeYear || ''}`}

@@ -4,9 +4,18 @@ import { ToolbarButton } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
 // MUI Icons
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import SvgIcon from '@mui/material/SvgIcon';
 // Custom
 import { convertMinutesToTime } from '../../util/helpers';
+
+// google material icon since there is no csv icon in material ui icons
+const CsvIcon = (props) => {
+  return (
+    <SvgIcon {...props} viewBox="0 -960 960 960">
+      <path d="M230-360h120v-60H250v-120h100v-60H230q-17 0-28.5 11.5T190-560v160q0 17 11.5 28.5T230-360Zm156 0h120q17 0 28.5-11.5T546-400v-60q0-17-11.5-31.5T506-506h-60v-34h100v-60H426q-17 0-28.5 11.5T386-560v60q0 17 11.5 30.5T426-456h60v36H386v60Zm264 0h60l70-240h-60l-40 138-40-138h-60l70 240ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z" />
+    </SvgIcon>
+  );
+}
 
 const defaultConfig = {
   fieldSeparator: ',',
@@ -150,15 +159,27 @@ const handleExportRows = (rows, type) => {
   download(csvConfig)(csv);
 };
 
-export const CSVExportButton = ({ rows, type }) => {
+export const CSVExportButton = ({ type, apiRef }) => {
+
   const handleCSVExport = useCallback(() => {
-    handleExportRows(rows, type);
-  }, [rows, type]);
+    if (apiRef.current) {
+      // get all ids in table
+      const ids = apiRef.current.getSortedRowIds();
+      // get ids which are not visible
+      const filteredIdsSet = new Set(Object.keys(apiRef.current.state.filter.filteredRowsLookup));
+      // filter rows by invisible ids
+      const visibleRows = ids.filter((id) => !filteredIdsSet.has(id));
+      // get rows by visible ids
+      const rows = visibleRows.map((id) => apiRef.current.getRow(id));
+
+      handleExportRows(rows, type);
+    }
+  }, [type, apiRef]);
 
   return (
     <Tooltip title="Quick CSV Export">
       <ToolbarButton onClick={handleCSVExport} color="default" label='Quick CSV Export'>
-        <FileDownloadOutlinedIcon />
+        <CsvIcon />
       </ToolbarButton>
     </Tooltip>
   )

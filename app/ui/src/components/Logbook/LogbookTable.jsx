@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
+import { useGridApiRef } from '@mui/x-data-grid';
+// MUI icons
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
+// Custom components
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid'
 import {
   createColumn, createDateColumn, createLandingColumn,
@@ -16,6 +19,7 @@ import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
 
 export const LogbookTable = ({ data, isLoading }) => {
+  const apiRef = useGridApiRef();
   const { settings, isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
@@ -210,13 +214,14 @@ export const LogbookTable = ({ data, isLoading }) => {
   const customActions = useMemo(() => (
     <>
       <NewFlightRecordButton />
-      <CSVExportButton rows={data} type="logbook" />
+      <CSVExportButton apiRef={apiRef} type="logbook" />
       <PDFExportButton />
     </>
-  ), [data]);
+  ), [apiRef]);
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='logbook'
       title='Logbook'
       icon={<AutoStoriesOutlinedIcon />}

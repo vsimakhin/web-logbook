@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { GridActionsCell, GridActionsCellItem } from '@mui/x-data-grid';
+import { GridActionsCell, GridActionsCellItem, useGridApiRef } from '@mui/x-data-grid';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
@@ -13,6 +13,7 @@ import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 import TableActionHeader from '../UIElements/TableActionHeader';
 
 export const CategoriesTable = ({ data, isLoading }) => {
+  const apiRef = useGridApiRef();
   const dialogs = useDialogs();
 
   const columns = useMemo(() => [
@@ -46,10 +47,11 @@ export const CategoriesTable = ({ data, isLoading }) => {
     },
   ], [dialogs]);
 
-  const customActions = useMemo(() => (<CSVExportButton rows={data} type="categories" />), [data]);
+  const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="categories" />), [apiRef]);
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='categories'
       title="Types & Categories"
       icon={<FlightOutlinedIcon />}
