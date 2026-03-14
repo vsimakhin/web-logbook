@@ -8,15 +8,17 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-mui-material': ['@mui/material'],
-          'vendor-mui-icons': ['@mui/icons-material'],
-          'vendor-mui-x-data-grid': ['@mui/x-data-grid'],
-          'vendor-mui-x-date-pickers': ['@mui/x-date-pickers'],
-          'vendor-maps': ['ol'],
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-tanstack': ['@tanstack/react-query'],
-          'vendor-toolpad': ['@toolpad/core'],
+        manualChunks(id) {
+          if (id.includes('@mui/material')) return 'vendor-mui-material'
+          if (id.includes('@mui/icons-material')) return 'vendor-mui-icons'
+          if (id.includes('@mui/x-data-grid')) return 'vendor-mui-x-data-grid'
+          if (id.includes('@mui/x-date-pickers')) return 'vendor-mui-x-date-pickers'
+          if (id.includes('@toolpad/core')) return 'vendor-toolpad'
+          if (id.includes('@tanstack/react-query')) return 'vendor-tanstack'
+          if (id.includes('react-router-dom')) return 'vendor-react'
+          if (id.includes('react-dom')) return 'vendor-react'
+          if (id.includes('react')) return 'vendor-react'
+          if (id.includes('/ol/')) return 'vendor-maps'
         }
       }
     }

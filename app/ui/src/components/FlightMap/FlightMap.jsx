@@ -15,7 +15,7 @@ import LineString from 'ol/geom/LineString';
 import { Style, Icon, Fill, Text } from 'ol/style';
 import Overlay from 'ol/Overlay';
 import { transform } from 'ol/proj';
-import { GreatCircle } from 'arc/arc';
+import { GreatCircle } from 'arc';
 // MUI UI elements
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
