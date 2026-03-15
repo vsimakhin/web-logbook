@@ -101,7 +101,7 @@ const addMarker = (features, airport, options) => {
   features.push(feature);
 }
 
-const createGeodesicLine = (start, end, segments = 64) => {
+const createGreatCircleLine = (start, end, segments = 64) => {
   const lon1 = start.lon * Math.PI / 180
   const lat1 = start.lat * Math.PI / 180
   const lon2 = end.lon * Math.PI / 180
@@ -128,7 +128,7 @@ const createGeodesicLine = (start, end, segments = 64) => {
 }
 
 const drawGreatCircleLine = (departure, arrival, vectorSource) => {
-  const geometry = createGeodesicLine(departure, arrival)
+  const geometry = createGreatCircleLine(departure, arrival)
   const routeFeature = new Feature({ geometry, type: 'route' })
   vectorSource.addFeature(routeFeature)
 }
