@@ -94,11 +94,6 @@ All changes for v4 release:
 - New: Added custom import profiles. User can save custom import profiles and load them later. The custom profile is stored in the browser's local storage and is not shared between different browsers or devices.
 - New: Attachments entity, allows to go through the list of all attachments, preview and download them (filtered or all) as a zip file.
 
-## [3.23.0] - 01.02.2026
-
-- Note: Likely the last release of v3 before version 4.
-- Update: Golang and npm packages updated; applied security patches.
-
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
 ## Old v3.x version
