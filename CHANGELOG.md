@@ -4,6 +4,7 @@
 
 - Update: Golang and npm packages/security patches.
 - Update: If filters are applied to the table, the CSV export will only export the filtered rows.
+- New: Added "Save Map as PNG" button for the flight maps.
 
 ## [4.0.1] - 08.03.2026
 

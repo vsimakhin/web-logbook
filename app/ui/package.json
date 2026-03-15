@@ -22,7 +22,6 @@
     "@mui/x-date-pickers": "^8.23.0",
     "@tanstack/react-query": "^5.62.7",
     "@toolpad/core": "^0.16.0",
-    "arc": "^0.2.0",
     "compare-versions": "^6.1.1",
     "dayjs": "^1.11.13",
     "export-to-csv": "^1.4.0",
