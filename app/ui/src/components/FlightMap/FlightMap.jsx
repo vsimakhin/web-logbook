@@ -15,7 +15,6 @@ import LineString from 'ol/geom/LineString';
 import { Style, Icon, Fill, Text } from 'ol/style';
 import Overlay from 'ol/Overlay';
 import { transform } from 'ol/proj';
-import { GreatCircle } from 'arc';
 // MUI UI elements
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -24,10 +23,11 @@ import Typography from '@mui/material/Typography';
 import { CardHeader } from '../UIElements/CardHeader';
 import { queryClient } from '../../util/http/http';
 import { fetchAirport } from '../../util/http/airport';
+import { DownloadMapButton } from './DownloadMapButton';
+import useCustomFields from '../../hooks/useCustomFields';
 
 import icon1 from "../../assets/favicon.ico";
 import icon2 from "../../assets/map-pin.png";
-import useCustomFields from '../../hooks/useCustomFields';
 
 const icons = {
   ico: { src: icon1, displacement: [0, 0] },
@@ -101,33 +101,36 @@ const addMarker = (features, airport, options) => {
   features.push(feature);
 }
 
-const drawGreatCircleLine = (departure, arrival, vectorSource) => {
-  // Create unique key for the line
-  const airports = [departure.icao, arrival.icao].sort();
-  const lineKey = `line-${airports[0]}-${airports[1]}`;
+const createGeodesicLine = (start, end, segments = 64) => {
+  const lon1 = start.lon * Math.PI / 180
+  const lat1 = start.lat * Math.PI / 180
+  const lon2 = end.lon * Math.PI / 180
+  const lat2 = end.lat * Math.PI / 180
 
-  // Check if line already exists
-  const exists = vectorSource.getFeatures().some(f => f.get('lineKey') === lineKey);
-  if (exists) return;
+  const coords = []
 
-  const arcGenerator = new GreatCircle(
-    { x: departure.lon, y: departure.lat },
-    { x: arrival.lon, y: arrival.lat }
-  );
+  const d = 2 * Math.asin(Math.sqrt(Math.sin((lat1 - lat2) / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin((lon1 - lon2) / 2) ** 2))
 
-  const arcLine = arcGenerator.Arc(100, { offset: 10 });
-  if (arcLine.geometries.length > 0) {
-    const coordinates = arcLine.geometries[0].coords.map((geometry) =>
-      transform([geometry[0], geometry[1]], 'EPSG:4326', 'EPSG:3857')
-    );
+  for (let i = 0; i <= segments; i++) {
+    const f = i / segments
+    const A = Math.sin((1 - f) * d) / Math.sin(d)
+    const B = Math.sin(f * d) / Math.sin(d)
+    const x = A * Math.cos(lat1) * Math.cos(lon1) + B * Math.cos(lat2) * Math.cos(lon2)
+    const y = A * Math.cos(lat1) * Math.sin(lon1) + B * Math.cos(lat2) * Math.sin(lon2)
+    const z = A * Math.sin(lat1) + B * Math.sin(lat2)
+    const lat = Math.atan2(z, Math.sqrt(x * x + y * y))
+    const lon = Math.atan2(y, x)
 
-    const lineFeature = new LineString(coordinates);
-    const feature = new Feature({
-      geometry: lineFeature,
-      lineKey: lineKey
-    });
-    vectorSource.addFeature(feature);
+    coords.push(transform([lon * 180 / Math.PI, lat * 180 / Math.PI], 'EPSG:4326', 'EPSG:3857'))
   }
+
+  return new LineString(coords)
+}
+
+const drawGreatCircleLine = (departure, arrival, vectorSource) => {
+  const geometry = createGeodesicLine(departure, arrival)
+  const routeFeature = new Feature({ geometry, type: 'route' })
+  vectorSource.addFeature(routeFeature)
 }
 
 const drawTrackLog = (flightTrack, vectorSource, flightId) => {
@@ -147,85 +150,81 @@ const drawTrackLog = (flightTrack, vectorSource, flightId) => {
 
 const DEFAULT_OPTIONS = { routes: true, tracks: false, airport_ids: true, icon: 'ico' };
 
-export const FlightMap = ({
-  data,
-  options = DEFAULT_OPTIONS,
-  title = "Flight Map",
-  sx,
-  airportsMap
-}) => {
+export const FlightMap = ({ data, options = DEFAULT_OPTIONS, title = "Flight Map", sx, airportsMap }) => {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Persistent OpenLayers instances
-  const mapInstance = useRef(null);
-  const vectorSource = useRef(new VectorSource());
-  const overlay = useRef(null);
+  // OpenLayers persistent objects
+  const mapRefInstance = useRef(null);
+  const vectorSourceRef = useRef(new VectorSource());
+  const overlayRef = useRef(null);
 
   const customFieldsHook = useCustomFields() || {};
+
+  const [map, setMap] = useState(null);
   const [distance, setDistance] = useState(0);
   const [selectedFeature, setSelectedFeature] = useState(null);
-  const [isMapReady, setIsMapReady] = useState(false);
 
-  // Initialize map once on mount
   useEffect(() => {
     if (!mapRef.current) return;
 
-    overlay.current = new Overlay({ element: containerRef.current });
-    const vectorLayer = new VectorLayer({ source: vectorSource.current });
+    overlayRef.current = new Overlay({ element: containerRef.current });
+    const vectorLayer = new VectorLayer({ source: vectorSourceRef.current });
 
-    const map = new Map({
+    const mapInstance = new Map({
       target: mapRef.current,
       layers: [new TileLayer({ source: new OSM() }), vectorLayer],
       view: new View({
-        center: transform([10, 45], 'EPSG:4326', 'EPSG:3857'),
+        center: transform([10, 45], "EPSG:4326", "EPSG:3857"),
         zoom: 4,
       }),
       controls: [new FullScreen()],
-      overlays: [overlay.current],
+      overlays: [overlayRef.current],
     });
 
-    map.on('singleclick', (evt) => {
-      const feature = map.forEachFeatureAtPixel(evt.pixel, (f) => f);
+    mapInstance.on("singleclick", (evt) => {
+      const feature = mapInstance.forEachFeatureAtPixel(evt.pixel, (f) => f);
+
       if (feature && feature.get("name")) {
         setSelectedFeature({
           coordinate: evt.coordinate,
-          code: feature.get('code'),
-          name: feature.get('name'),
-          country: feature.get('country'),
-          city: feature.get('city'),
-          elevation: feature.get('elevation'),
-          coordinates: feature.get('coordinates'),
+          code: feature.get("code"),
+          name: feature.get("name"),
+          country: feature.get("country"),
+          city: feature.get("city"),
+          elevation: feature.get("elevation"),
+          coordinates: feature.get("coordinates"),
         });
-        overlay.current.setPosition(evt.coordinate);
+
+        overlayRef.current.setPosition(evt.coordinate);
       } else {
         setSelectedFeature(null);
-        overlay.current.setPosition(undefined);
+        overlayRef.current.setPosition(undefined);
       }
     });
 
-    mapInstance.current = map;
-    Promise.resolve().then(() => setIsMapReady(true));
+    mapRefInstance.current = mapInstance;
+    setMap(mapInstance);
 
     return () => {
-      map.setTarget(null);
-      mapInstance.current = null;
-      setIsMapReady(false);
+      mapInstance.setTarget(null);
+      mapRefInstance.current = null;
+      setMap(null);
     };
   }, []);
 
-  // Sync data and options to the map
   useEffect(() => {
-    if (!isMapReady || !mapInstance.current || !data) return;
+    if (!map || !data) return;
 
     let cancelled = false;
 
     const updateMapData = async () => {
       setDistance(0);
-      vectorSource.current.clear();
-      const features = [];
+      vectorSourceRef.current.clear();
 
+      const features = [];
       let totalDistance = 0;
+
       const getEnroute = customFieldsHook.getEnroute || (() => []);
 
       const airportPromises = data.map(async (flight) => {
@@ -244,7 +243,7 @@ export const FlightMap = ({
         const fullRoute = [departure];
         const enrouteCodes = getEnroute(flight.custom_fields);
 
-        if (enrouteCodes && Array.isArray(enrouteCodes)) {
+        if (Array.isArray(enrouteCodes)) {
           for (const code of enrouteCodes) {
             if (code !== flight.departure.place && code !== flight.arrival.place) {
               const airport = await getAirportData(code, airportsMap);
@@ -260,12 +259,12 @@ export const FlightMap = ({
 
         if (options.routes) {
           for (let i = 0; i < fullRoute.length - 1; i++) {
-            drawGreatCircleLine(fullRoute[i], fullRoute[i + 1], vectorSource.current);
+            drawGreatCircleLine(fullRoute[i], fullRoute[i + 1], vectorSourceRef.current);
           }
         }
 
         if (options.tracks && flight.track) {
-          drawTrackLog(flight.track, vectorSource.current, flight.uuid || flight.id);
+          drawTrackLog(flight.track, vectorSourceRef.current, flight.uuid || flight.id);
         }
 
         totalDistance += flight.distance;
@@ -279,10 +278,9 @@ export const FlightMap = ({
       setDistance(totalDistance);
 
       if (features.length > 0) {
-        vectorSource.current.addFeatures(features);
-
-        mapInstance.current.updateSize();
-        mapInstance.current.getView().fit(vectorSource.current.getExtent(), {
+        vectorSourceRef.current.addFeatures(features);
+        map.updateSize();
+        map.getView().fit(vectorSourceRef.current.getExtent(), {
           maxZoom: 16,
           padding: [30, 30, 30, 30],
           duration: 100,
@@ -295,44 +293,45 @@ export const FlightMap = ({
     return () => {
       cancelled = true;
     };
-  }, [data, options, airportsMap, customFieldsHook.getEnroute, isMapReady]);
+  }, [map, data, options, airportsMap, customFieldsHook.getEnroute]);
 
   const handleClosePopup = (e) => {
     e?.preventDefault();
     setSelectedFeature(null);
-    overlay.current?.setPosition(undefined);
+    overlayRef.current?.setPosition(undefined);
   };
+
+  if (!data) return null;
 
   return (
     <>
-      {data && (
-        <>
-          <Card variant="outlined" sx={{ ...sx, height: '85vh', position: 'relative' }}>
-            <CardContent sx={{ height: '100%' }}>
-              <CardHeader title={title} />
-              <div ref={mapRef} style={{ width: '100%', height: 'calc(100% - 50px)', borderRadius: '4px', overflow: 'hidden' }}></div>
-              {distance > 0 && (
-                <Typography sx={{ mt: 1 }}>{`Distance: ${distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} nm / ${(distance * 1.852).toLocaleString(undefined, { maximumFractionDigits: 2 })} km`}</Typography>
-              )}
-            </CardContent>
-          </Card>
-          <Card ref={containerRef} sx={{ display: selectedFeature ? 'block' : 'none' }}>
-            <CardContent sx={{ position: 'relative', pt: 4 }}>
-              <a href="#" id="popup-closer" onClick={handleClosePopup}></a>
-              {selectedFeature && (
-                <div id="popup-content">
-                  <Typography variant="subtitle2" sx={{ mb: 1 }}><strong>Airport:</strong> {selectedFeature.code}</Typography>
-                  <Typography variant="body2"><strong>Name:</strong> {selectedFeature.name}</Typography>
-                  <Typography variant="body2"><strong>Country:</strong> {selectedFeature.country}</Typography>
-                  <Typography variant="body2"><strong>City:</strong> {selectedFeature.city}</Typography>
-                  <Typography variant="body2"><strong>Elevation:</strong> {selectedFeature.elevation}</Typography>
-                  <Typography variant="body2"><strong>Lat/Lon:</strong> {selectedFeature.coordinates}</Typography>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </>
-      )}
+      <Card variant="outlined" sx={{ ...sx, height: "85vh", position: "relative" }}>
+        <CardContent sx={{ height: "100%" }}>
+          <CardHeader title={title} action={map ? <DownloadMapButton map={map} /> : null} />
+          <div ref={mapRef} style={{ width: "100%", height: "calc(100% - 50px)", borderRadius: "4px", overflow: "hidden" }} />
+          {distance > 0 && (
+            <Typography sx={{ mt: 1 }}>
+              {`Distance: ${distance.toLocaleString(undefined, { maximumFractionDigits: 2, })} nm / ${(distance * 1.852).toLocaleString(undefined, { maximumFractionDigits: 2, })} km`}
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card ref={containerRef} sx={{ display: selectedFeature ? "block" : "none" }}>
+        <CardContent sx={{ position: "relative", pt: 4 }}>
+          <a href="#" id="popup-closer" onClick={handleClosePopup}></a>
+          {selectedFeature && (
+            <div id="popup-content">
+              <Typography variant="subtitle2" sx={{ mb: 1 }}><strong>Airport:</strong> {selectedFeature.code}</Typography>
+              <Typography variant="body2"><strong>Name:</strong> {selectedFeature.name}</Typography>
+              <Typography variant="body2"><strong>Country:</strong> {selectedFeature.country}</Typography>
+              <Typography variant="body2"><strong>City:</strong> {selectedFeature.city}</Typography>
+              <Typography variant="body2"><strong>Elevation:</strong> {selectedFeature.elevation}</Typography>
+              <Typography variant="body2"><strong>Lat/Lon:</strong> {selectedFeature.coordinates}</Typography>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </>
   );
 };

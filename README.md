@@ -67,6 +67,7 @@ The application will automatically create a local SQLite database on the first s
 
 - Update: Golang and npm packages/security patches.
 - Update: If filters are applied to the table, the CSV export will only export the filtered rows.
+- New: Added "Save Map as PNG" button for the flight maps.
 
 ## [4.0.1] - 08.03.2026
 
@@ -441,7 +442,6 @@ Frontend:
 * export-to-csv https://github.com/alexcaza/export-to-csv
 * Signature Pad https://github.com/szimek/signature_pad
 * PapaParse https://github.com/mholt/PapaParse
-* arc.js https://github.com/springmeyer/arc.js
 * compare-versions https://github.com/omichelsen/compare-versions
 * file-type https://github.com/sindresorhus/file-type
 * mapbox/togeojson https://github.com/mapbox/togeojson
