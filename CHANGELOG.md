@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: error on backend for MariaDB SQL server.
+
 ## [4.1.0] - 15.03.2026
 
 - Update: Golang and npm packages/security patches.

@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: error on backend for MariaDB SQL server.
+
 ## [4.1.0] - 15.03.2026
 
 - Update: Golang and npm packages/security patches.
@@ -170,15 +174,15 @@ You can access the application using any modern browser with JavaScript enabled.
 # Interface
 
 ## Logbook
-* Flight records table with filter for all fields and global search through all data
-* Customizable columns
-* Quick export to CSV
-* Export to PDF (A4, A5) formats
-* Automatic totals and subtotals calculation
+- Flight records table with filter for all fields and global search through all data
+- Customizable columns
+- Quick export to CSV
+- Export to PDF (A4, A5) formats
+- Automatic totals and subtotals calculation
 
 ![EASA Logbook](./readme-assets/logbook.png)
 
-* Dark mode and mobile friendly
+- Dark mode and mobile friendly
 
 ![EASA Logbook dark mode](./readme-assets/dark-mode.png)
 ![EASA Logbook mobile](./readme-assets/mobile-friendly.png)
@@ -192,7 +196,7 @@ You can access the application using any modern browser with JavaScript enabled.
 - Flight map
 - KML and GPX track attachments support for SkyDemon and FlightRadar24 (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
 - Persons tracking
-* Instructor/Examiner signature
+- Instructor/Examiner signature
 
 ![Flight record](./readme-assets/flight-record.png)
 
@@ -411,6 +415,7 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/pedroponte" title="pedroponte"><img src="https://github.com/pedroponte.png" width="40" height="40" alt="pedroponte" /></a>
   <a href="https://github.com/benbox69" title="benbox69"><img src="https://github.com/benbox69.png" width="40" height="40" alt="benbox69" /></a>
   <a href="https://github.com/WildBlueUK" title="WildBlueUK"><img src="https://github.com/WildBlueUK.png" width="40" height="40" alt="WildBlueUK" /></a>
+  <a href="https://github.com/Muchacho08" title="Muchacho08"><img src="https://github.com/Muchacho08.png" width="40" height="40" alt="Muchacho08" /></a>
 </p>
 
 --
