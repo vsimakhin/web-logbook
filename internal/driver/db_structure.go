@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "40"
+	schemaVersion = "41"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -174,8 +174,8 @@ var logbookView = NewView("logbook_view",
 					substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date,
 					departure_place, departure_time, arrival_place, arrival_time,
 					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
-					iif(day_landings='',0,day_landings) as day_landings,
-					iif(night_landings='',0,night_landings) as night_landings,
+					IFNULL(day_landings, 0) as day_landings,
+					IFNULL(night_landings, 0) as night_landings,
 					night_time, ifr_time, pic_time, co_pilot_time, dual_time,
 					instructor_time, sim_type, sim_time, pic_name, remarks,
 					IFNULL(distance, 0) distance,
@@ -204,8 +204,8 @@ var logbookView = NewView("logbook_view",
 					CONCAT(SUBSTRING(date,7,4), SUBSTRING(date,4,2), SUBSTRING(date,1,2)) as m_date,
 					departure_place, departure_time, arrival_place, arrival_time,
 					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
-					IF(day_landings='',0,day_landings) as day_landings,
-					IF(night_landings='',0,night_landings) as night_landings,
+					IFNULL(day_landings, 0) as day_landings,
+					IFNULL(night_landings, 0) as night_landings,
 					night_time, ifr_time, pic_time, co_pilot_time, dual_time,
 					instructor_time, sim_type, sim_time, pic_name, remarks,
 					IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
@@ -305,8 +305,8 @@ var logbookStatsView = NewView("logbook_stats_view",
 								+ CAST(substr(total_time,instr(total_time,':')+1) AS INTEGER)
 						END AS INTEGER
 					) AS total_time_m,
-					iif(day_landings='',0,day_landings) as day_landings, 
-					iif(night_landings='',0,night_landings) as night_landings,
+					IFNULL(day_landings, 0) as day_landings, 
+					IFNULL(night_landings, 0) as night_landings,
 					night_time,
 					CAST(
 						CASE
@@ -502,8 +502,8 @@ var logbookStatsView = NewView("logbook_stats_view",
 								+ CAST(SUBSTRING_INDEX(l.total_time, ':', -1) AS UNSIGNED)
 						END AS UNSIGNED
 					) AS total_time_m,
-					IF(l.day_landings = '', 0, l.day_landings) AS day_landings,
-					IF(l.night_landings = '', 0, l.night_landings) AS night_landings,
+					IFNULL(l.day_landings, 0) AS day_landings,
+					IFNULL(l.night_landings, 0) AS night_landings,
 					l.night_time,
 					CAST(
 						CASE
