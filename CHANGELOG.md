@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.1.1] - 16.03.2026
 
 - Fix: error on backend for MariaDB SQL server.
 
