@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Handling of empty and NULL values in SQLite (regression from previous release).
+
 ## [4.1.1] - 16.03.2026
 
 - Fix: error on backend for MariaDB SQL server.
