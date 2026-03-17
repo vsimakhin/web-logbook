@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "41"
+	schemaVersion = "42"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -174,8 +174,8 @@ var logbookView = NewView("logbook_view",
 					substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date,
 					departure_place, departure_time, arrival_place, arrival_time,
 					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
-					IFNULL(day_landings, 0) as day_landings,
-					IFNULL(night_landings, 0) as night_landings,
+					IFNULL(NULLIF(day_landings, ''), 0) as day_landings,
+					IFNULL(NULLIF(night_landings, ''), 0) as night_landings,
 					night_time, ifr_time, pic_time, co_pilot_time, dual_time,
 					instructor_time, sim_type, sim_time, pic_name, remarks,
 					IFNULL(distance, 0) distance,
@@ -305,8 +305,8 @@ var logbookStatsView = NewView("logbook_stats_view",
 								+ CAST(substr(total_time,instr(total_time,':')+1) AS INTEGER)
 						END AS INTEGER
 					) AS total_time_m,
-					IFNULL(day_landings, 0) as day_landings, 
-					IFNULL(night_landings, 0) as night_landings,
+					IFNULL(NULLIF(day_landings, ''), 0) as day_landings,
+					IFNULL(NULLIF(night_landings, ''), 0) as night_landings,
 					night_time,
 					CAST(
 						CASE
