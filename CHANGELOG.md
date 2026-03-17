@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.1.2] - 17.03.2026
 
 - Fix: Handling of empty and NULL values in SQLite (regression from previous release).
 

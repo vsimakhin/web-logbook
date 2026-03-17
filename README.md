@@ -63,7 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.1.2] - 17.03.2026
 
 - Fix: Handling of empty and NULL values in SQLite (regression from previous release).
 
@@ -76,31 +76,6 @@ The application will automatically create a local SQLite database on the first s
 - Update: Golang and npm packages/security patches.
 - Update: If filters are applied to the table, the CSV export will only export the filtered rows.
 - New: Added "Save Map as PNG" button for the flight maps.
-
-## [4.0.1] - 08.03.2026
-
-- Fix: proper json parse/stringify for custom fields.
-- Update: performance optimizations for the `Flight Record` and `Map` pages.
-
-## [4.0.0] - 04.03.2026
-
-All changes for v4 release:
-
-- New: Custom DataGrid component based on standard MUI X DataGrid to replace unsupported Material React Table. This introduces new views for tables, filters, and column selection, which work faster and require less code and resources. The only disadvantage: it lacks row grouping, so the Stats by Year page had to be refactored with a new view.
-- Update: Latest versions of MUI libs and components.
-- Update: The previous two bullet points enabled slight style updates across the app; dark mode is updated and mobile view is now slightly more user-friendly.
-- New: Added phone, email, and remarks fields for Persons.
-- Update: Golang updated to 1.25.x.
-- Update: Refactored Filter panel layout. Map Settings and Dashboard Settings are now separate components.
-- Update: Added option to hide airport codes on the map and added new pin icon.
-- New: For advanced users, added SQL view `logbook_stats_view` for flight statistics. Dates are converted to ISO format, departure/arrival times include dates, and time fields are cast to minutes. Also added API endpoint `/api/logbook/stats-data`.
-- New: Added a new setting `Self PIC Label` to allow user to change the label used when PIC. By default it is `Self`, but can be changed to any other value (e.g. `SELF` according to [AMC1 FCL.050, section i, subsection 5](https://www.easa.europa.eu/en/document-library/easy-access-rules/online-publications/easy-access-rules-aircrew-regulation-eu-no?page=5#_Toc512863430)).
-- New: Added aircraft registration filter on the Flight Record page if the aircraft model/type is selected.
-- New: Added record number column to the Logbook table (hidden by default). Can be used in the filter panel in case you need to calculate totals for specific range of the records.
-- New: Added night landings recalculation on import. If night time recalculated option is selected and it is more than 0 minutes, then night landings are set to the same value as day landings (if day landings > 0).
-- New: Added a new setting `Logbook totals view` to allow user to change the way totals are displayed in the Logbook table. There are 2 options. `Standard` will show you the current page totals and grand totals through the whole logbook. `Paper Logbook` will show you the totals for each page, previous page and the totals will be a summary of these 2 values.
-- New: Added custom import profiles. User can save custom import profiles and load them later. The custom profile is stored in the browser's local storage and is not shared between different browsers or devices.
-- New: Attachments entity, allows to go through the list of all attachments, preview and download them (filtered or all) as a zip file.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
