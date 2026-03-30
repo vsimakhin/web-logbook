@@ -12,7 +12,7 @@ require (
 	github.com/mstephenholl/go-solar v1.0.1
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/crypto v0.49.0
-	modernc.org/sqlite v1.46.1
+	modernc.org/sqlite v1.48.0
 )
 
 require (
