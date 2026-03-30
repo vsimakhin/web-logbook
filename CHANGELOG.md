@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.1.3] - 30.03.2026
+
+- Update: Golang and npm packages/security patches.
+
 ## [4.1.2] - 17.03.2026
 
 - Fix: Handling of empty and NULL values in SQLite (regression from previous release).

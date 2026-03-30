@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [4.1.3] - 30.03.2026
+
+- Update: Golang and npm packages/security patches.
+
 ## [4.1.2] - 17.03.2026
 
 - Fix: Handling of empty and NULL values in SQLite (regression from previous release).
@@ -70,12 +74,6 @@ The application will automatically create a local SQLite database on the first s
 ## [4.1.1] - 16.03.2026
 
 - Fix: error on backend for MariaDB SQL server.
-
-## [4.1.0] - 15.03.2026
-
-- Update: Golang and npm packages/security patches.
-- Update: If filters are applied to the table, the CSV export will only export the filtered rows.
-- New: Added "Save Map as PNG" button for the flight maps.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
