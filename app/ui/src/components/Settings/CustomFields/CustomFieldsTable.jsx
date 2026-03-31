@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { GridActionsCell } from '@mui/x-data-grid';
+import { GridActionsCell, useGridApiRef } from '@mui/x-data-grid';
 // MUI UI elements
 import Tooltip from '@mui/material/Tooltip';
 // MUI Icons
@@ -16,6 +16,7 @@ import XDataGrid from '../../UIElements/XDataGrid/XDataGrid';
 import HelpButton from './HelpButton';
 
 export const CustomFieldsTable = () => {
+  const apiRef = useGridApiRef();
   const { data, isCustomFieldsLoading } = useCustomFields();
 
   const columns = useMemo(() => [
@@ -52,6 +53,7 @@ export const CustomFieldsTable = () => {
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='custom-fields'
       title='Custom Fields'
       icon={<TuneOutlinedIcon />}

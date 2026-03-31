@@ -1,3 +1,4 @@
+import { useGridApiRef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 // MUI UI elements
 import LinearProgress from '@mui/material/LinearProgress';
@@ -14,6 +15,7 @@ import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 import { createColumn, createDateColumn, createLandingColumn, createTimeColumn, sumTime } from '../Logbook/helpers';
 
 export const ImportTable = () => {
+  const apiRef = useGridApiRef();
   const [data, setData] = useState([]);
   const [inProgress, setInProgress] = useState(false);
   const { isSettingsLoading, fieldName } = useSettings();
@@ -149,6 +151,7 @@ export const ImportTable = () => {
     <>
       {inProgress && <LinearProgress />}
       <XDataGrid
+        apiRef={apiRef}
         tableId='import-logbook'
         title="Import"
         icon={<FileUploadOutlinedIcon />}

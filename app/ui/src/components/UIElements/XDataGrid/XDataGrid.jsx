@@ -1,5 +1,5 @@
 import { useMemo, useDeferredValue, useEffect } from 'react';
-import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { useLocalStorageState } from '@toolpad/core';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -118,8 +118,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
 });
 
 
-const XDataGridContent = ({ tableId, rows, columns, ...props }) => {
-  const apiRef = useGridApiRef();
+const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
   const [paginationModel, setPaginationModel] = useLocalStorageState(`${tableId}-pagination`, { pageSize: defaultPageSize, page: 0 }, { codec: codec });
   const [columnsState, setColumnsState] = useLocalStorageState(`${tableId}-columns`, {}, { codec: codec });
 
