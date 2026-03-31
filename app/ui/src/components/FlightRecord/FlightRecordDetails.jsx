@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
 // MUI UI elements
 import Grid from "@mui/material/Grid";
 import Divider from '@mui/material/Divider';
@@ -19,7 +19,7 @@ import LandingFields from './LandingFields';
 import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
-import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
+import { FIELDS_VISIBILITY_KEY } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
@@ -30,7 +30,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     [flight.prev_uuid, flight.next_uuid]
   );
   const { fieldNameF, settings } = useSettings();
-  const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
+  const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
 
   const timeFields = useMemo(() => (
     [

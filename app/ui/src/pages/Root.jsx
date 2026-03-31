@@ -7,13 +7,13 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import DashboardToolbar from '../components/UIElements/Dashboard/DashboardToolbar';
 import DashboardNavbar from '../components/UIElements/Dashboard/DashboardNavbar';
 import DashboardPageContent from '../components/UIElements/Dashboard/DashboardPageContent';
-
+import { useLocalStorageState, CODE_BOOLEAN } from '../hooks/useLocalStorageState';
 
 export const Root = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useLocalStorageState("dashboard-expanded", true, { codec: CODE_BOOLEAN });
 
   const handleMenuToggle = useCallback(() => {
     if (isMobile) {
@@ -21,7 +21,7 @@ export const Root = () => {
     } else {
       setExpanded(e => !e);
     }
-  }, [isMobile]);
+  }, [isMobile, setExpanded]);
 
   const handleMobileClose = useCallback(() => setMobileOpen(false), []);
 

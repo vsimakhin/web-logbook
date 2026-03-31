@@ -14,13 +14,12 @@ import DashboardTiles from "./DashboardTiles";
 import CustomFieldsTiles from "./CustomFieldsTiles";
 import useCustomFields from "../../../hooks/useCustomFields";
 import { fetchAirports } from "../../../util/http/airport";
-import { useLocalStorageState } from "@toolpad/core/useLocalStorageState";
-import { tableJSONCodec } from "../../../constants/constants";
+import { useLocalStorageState, CODEC_JSON } from "../../../hooks/useLocalStorageState";
 import DashboardOptions from "./DashboardOptions";
 
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
-  const [dashboardOptions, setDashboardOptions] = useLocalStorageState("dashboard-options", {}, { codec: tableJSONCodec });
+  const [dashboardOptions, setDashboardOptions] = useLocalStorageState("dashboard-options", {}, { codec: CODEC_JSON });
   const [airportsMap, setAirportsMap] = useState(new Map());
 
   const { data, isLoading, isError, error } = useQuery({
