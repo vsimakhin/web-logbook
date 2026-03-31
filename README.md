@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: column state (visibility/width) is not saved for some tables.
+
 ## [4.1.3] - 30.03.2026
 
 - Update: Golang and npm packages/security patches.

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from 'react-router';
 import dayjs from "dayjs";
-import { GridActionsCell } from "@mui/x-data-grid";
+import { GridActionsCell, useGridApiRef } from "@mui/x-data-grid";
 // MUI
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -16,6 +16,7 @@ import DownloadAllAttachmentsButton from "./DownloadAllAttachmentsButton";
 
 
 export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
+  const apiRef = useGridApiRef();
   const [filteredRows, setFilteredRows] = useState([]);
 
   const columns = useMemo(() => [
@@ -88,6 +89,7 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId='attachments'
       title="Attachments"
       icon={<AttachFileOutlinedIcon />}

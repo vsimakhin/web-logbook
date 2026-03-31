@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { GridActionsCell } from '@mui/x-data-grid';
+import { GridActionsCell, useGridApiRef } from '@mui/x-data-grid';
 // MUI UI elements
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box'
@@ -20,6 +20,7 @@ import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 import TableActionHeader from '../UIElements/TableActionHeader';
 
 export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
+  const apiRef = useGridApiRef();
   const { fieldNameF } = useSettings();
 
   const metricOptions = useMemo(() => (
@@ -188,6 +189,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
 
   return (
     <XDataGrid
+      apiRef={apiRef}
       tableId="currency"
       title="Currency"
       icon={<SecurityUpdateGoodOutlinedIcon />}
