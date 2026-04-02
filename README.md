@@ -63,7 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.1.4] - 02.04.2026
 
 - Fix: column state (visibility/width) is not saved for some tables.
 
@@ -74,10 +74,6 @@ The application will automatically create a local SQLite database on the first s
 ## [4.1.2] - 17.03.2026
 
 - Fix: Handling of empty and NULL values in SQLite (regression from previous release).
-
-## [4.1.1] - 16.03.2026
-
-- Fix: error on backend for MariaDB SQL server.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
