@@ -99,17 +99,6 @@ export const FLIGHT_TIME_SLOT_PROPS = {
   },
 };
 
-export const tableJSONCodec = {
-  parse: (value) => {
-    try {
-      return JSON.parse(value)
-    } catch {
-      return {};
-    }
-  },
-  stringify: (value) => JSON.stringify(value),
-}
-
 export const defaultColumnFilterTextFieldProps = ({ column }) => {
   const headerText = typeof column.columnDef.header === 'object' ? column.columnDef.header.props.title : column.columnDef.header;
 
