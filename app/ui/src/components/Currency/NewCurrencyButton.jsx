@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
@@ -8,6 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import { CURRENCY_INITIAL_STATE } from '../../constants/constants';
 import CurrencyModal from './CurrencyModal';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const NewCurrencyButton = () => {
   const dialogs = useDialogs();

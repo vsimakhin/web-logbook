@@ -1,8 +1,11 @@
-import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import { useDialogs } from "@toolpad/core/useDialogs";
 import { useCallback } from "react";
+// MUI
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+// Icons
+import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
+// Custom components
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import AddEditFlightrecordPersonModal from "./AddEditFlightrecordPersonModal";
 
 export const AddFlightrecordPersonButton = ({ id }) => {

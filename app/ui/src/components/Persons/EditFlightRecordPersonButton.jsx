@@ -1,11 +1,11 @@
-import { useDialogs } from "@toolpad/core/useDialogs";
+import { useCallback } from "react";
 // MUI
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import MenuItem from '@mui/material/MenuItem';
 // Custom
-import { useCallback } from "react";
 import AddEditFlightrecordPersonModal from "./AddEditFlightrecordPersonModal";
 import { printPerson } from '../../util/helpers';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const EditFlightrecordPersonButton = ({ person, logUuid, handleClose }) => {
   const dialogs = useDialogs();

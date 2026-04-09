@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
@@ -7,6 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import AddEditCustomAirportModal from './AddEditCustomAirportModal';
 import { ToolbarButton } from '@mui/x-data-grid';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const AddCustomAirportButton = () => {
   const dialogs = useDialogs();

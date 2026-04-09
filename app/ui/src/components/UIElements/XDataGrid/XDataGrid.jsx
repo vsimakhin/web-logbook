@@ -1,6 +1,6 @@
 import { useMemo, useDeferredValue, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useLocalStorageState } from '@toolpad/core';
+import { useLocalStorageState, CODEC_JSON } from '../../../hooks/useLocalStorageState';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -18,16 +18,7 @@ dayjs.extend(isSameOrBefore);
 
 const defaultPageSizeOptions = [5, 10, 15, 20, 25, 50, 75, 100, { value: -1, label: 'All' }]
 const defaultPageSize = defaultPageSizeOptions[3]
-const codec = {
-  parse: (value) => {
-    try {
-      return JSON.parse(value)
-    } catch {
-      return {};
-    }
-  },
-  stringify: (value) => JSON.stringify(value),
-}
+
 const toMinutes = (val) => {
   if (!val || typeof val !== 'string') return null;
   const parts = val.split(':');
@@ -119,8 +110,8 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
 
 
 const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
-  const [paginationModel, setPaginationModel] = useLocalStorageState(`${tableId}-pagination`, { pageSize: defaultPageSize, page: 0 }, { codec: codec });
-  const [columnsState, setColumnsState] = useLocalStorageState(`${tableId}-columns`, {}, { codec: codec });
+  const [paginationModel, setPaginationModel] = useLocalStorageState(`${tableId}-pagination`, { pageSize: defaultPageSize, page: 0 }, { codec: CODEC_JSON });
+  const [columnsState, setColumnsState] = useLocalStorageState(`${tableId}-columns`, {}, { codec: CODEC_JSON });
 
   const { filterModel } = useFilter();
   const deferredFilterModel = useDeferredValue(filterModel);

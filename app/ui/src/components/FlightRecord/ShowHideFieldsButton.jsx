@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useDialogs } from '@toolpad/core/useDialogs';
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
 // MUI UI elements
 import MenuItem from '@mui/material/MenuItem';
 import Dialog from '@mui/material/Dialog';
@@ -16,8 +15,9 @@ import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 // Custom
 import CardHeader from "../UIElements/CardHeader";
-import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from '../../constants/constants';
+import { FIELDS_VISIBILITY_KEY } from '../../constants/constants';
 import useSettings from '../../hooks/useSettings';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 const CloseDialogButton = ({ onClose }) => {
   return (
@@ -28,7 +28,7 @@ const CloseDialogButton = ({ onClose }) => {
 };
 
 const ShowHideFieldsModal = ({ open, onClose }) => {
-  const [visibility, setVisibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
+  const [visibility, setVisibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
   const { fieldNameF } = useSettings();
 
   const handleChange = useCallback((key, value) => {

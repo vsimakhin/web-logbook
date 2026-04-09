@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
-export const DRAWER_WIDTH = 200;
+export const DRAWER_WIDTH = 180;
+export const MINI_DRAWER_WIDTH = 85;
 
 export const TOKEN_KEY = 'token';
 export const USERNAME_KEY = 'username';
@@ -97,17 +98,6 @@ export const FLIGHT_TIME_SLOT_PROPS = {
     inputMode: 'numeric'
   },
 };
-
-export const tableJSONCodec = {
-  parse: (value) => {
-    try {
-      return JSON.parse(value)
-    } catch {
-      return {};
-    }
-  },
-  stringify: (value) => JSON.stringify(value),
-}
 
 export const defaultColumnFilterTextFieldProps = ({ column }) => {
   const headerText = typeof column.columnDef.header === 'object' ? column.columnDef.header.props.title : column.columnDef.header;

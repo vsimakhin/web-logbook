@@ -17,20 +17,9 @@ import PetsIcon from '@mui/icons-material/Pets';
 import Select from '../UIElements/Select';
 import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
-import { useLocalStorageState } from "@toolpad/core";
+import { useLocalStorageState, CODEC_JSON } from "../../hooks/useLocalStorageState";
 import SaveCustomProfileButton from "./SaveCustomProfileButton";
 import LoadCustomProfileButton from "./LoadCustomProfileButton";
-
-const codec = {
-  parse: (value) => {
-    try {
-      return JSON.parse(value)
-    } catch {
-      return {};
-    }
-  },
-  stringify: (value) => JSON.stringify(value),
-}
 
 const getHeader = (key, headers) => (headers.includes(key) ? key : "");
 
@@ -84,7 +73,7 @@ const ProfileButton = ({ tooltip, icon: Icon, fieldKey, setProfile, headers }) =
 
 const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
   const [profile, setProfile] = useState({});
-  const [customProfile, setCustomProfile] = useLocalStorageState("custom-import-profile", {}, { codec: codec });
+  const [customProfile, setCustomProfile] = useLocalStorageState("custom-import-profile", {}, { codec: CODEC_JSON });
   const handleChange = useCallback((key, value) => { setProfile((prev) => ({ ...prev, [key]: value })) }, [setProfile]);
 
   const actionButtons = useMemo(() => (

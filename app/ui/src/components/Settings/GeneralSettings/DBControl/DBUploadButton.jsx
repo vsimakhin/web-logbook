@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { useDialogs } from "@toolpad/core/useDialogs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 // MUI UI
 import MenuItem from '@mui/material/MenuItem';
@@ -10,6 +9,7 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import { fetchDBFileName, uploadDBFile } from "../../../../util/http/db";
 import { useErrorNotification, useSuccessNotification } from "../../../../hooks/useAppNotifications";
 import { queryClient } from "../../../../util/http/http";
+import { useDialogs } from '../../../../hooks/useDialogs/useDialogs';
 
 export const DBUploadButton = ({ handleCloseMenu }) => {
   const dialogs = useDialogs();

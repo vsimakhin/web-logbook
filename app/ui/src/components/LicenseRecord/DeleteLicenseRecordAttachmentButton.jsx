@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 // MUI UI elements
@@ -10,6 +9,7 @@ import FolderDeleteOutlinedIcon from '@mui/icons-material/FolderDeleteOutlined';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { deleteLicenseRecordAttachment } from '../../util/http/licensing';
 import { queryClient } from '../../util/http/http';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeleteLicenseRecordAttachmentButton = ({ license }) => {
   const dialogs = useDialogs();
@@ -25,8 +25,10 @@ export const DeleteLicenseRecordAttachmentButton = ({ license }) => {
 
   const handleConfirmDelete = useCallback(async () => {
     const confirmed = await dialogs.confirm('Are you sure you want to remove license record attachment?', {
-      okText: 'Yes',
-      cancelText: 'No',
+      title: 'Delete license record attachment',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      severity: 'error',
     });
 
     if (confirmed) {

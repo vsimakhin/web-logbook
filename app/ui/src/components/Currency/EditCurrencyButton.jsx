@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -7,6 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 // Custom components and libraries
 import CurrencyModal from './CurrencyModal';
 import { GridActionsCellItem } from '@mui/x-data-grid';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const EditCurrencyButton = ({ params }) => {
   const dialogs = useDialogs();

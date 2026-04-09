@@ -1,75 +1,23 @@
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { useNavigate, Outlet } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactRouterAppProvider } from '@toolpad/core/react-router';
-import { NotificationsProvider } from '@toolpad/core/useNotifications';
-import { DialogsProvider } from '@toolpad/core/useDialogs';
-// MUI Icons
-import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
-import ContactPageOutlinedIcon from '@mui/icons-material/ContactPageOutlined';
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import QueryStatsOutlinedIcon from '@mui/icons-material/QueryStatsOutlined';
-import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
-import SettingsIcon from '@mui/icons-material/Settings';
-import FlightOutlinedIcon from '@mui/icons-material/FlightOutlined';
-import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
-import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
-import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
-import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
-import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
+import { NotificationsProvider } from './hooks/useNotifications/useNotifications';
 // MUI UI elements
-import { createTheme } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 // Custom components and libraries
 import { queryClient } from './util/http/http';
 import getMPTheme from './theme/getMPTheme';
-import LicensingNavTitle from './components/Licensing/LicensingNavTitle';
 import { setNavigate } from './util/navigation';
+import { ColorModeContext } from './context/ColorModeContext';
+import { DialogsProvider } from './hooks/useDialogs/useDialogs';
 
 dayjs.extend(updateLocale);
 dayjs.updateLocale("en", { weekStart: 1 });
-
-const BRANDING = {
-  title: 'WebLogbook',
-  logo: ''
-};
-
-const NAV_ITEMS = [
-  { segment: 'logbook', title: 'Logbook', icon: <AutoStoriesOutlinedIcon /> },
-  { segment: 'licensing', title: (<>Licensing <LicensingNavTitle /></>), icon: <ContactPageOutlinedIcon /> },
-  { segment: 'map', title: 'Map', icon: <MapOutlinedIcon /> },
-  { segment: 'aircrafts', title: 'Aircrafts', icon: <FlightOutlinedIcon /> },
-  { segment: 'airports', title: 'Airports', icon: <FlightTakeoffOutlinedIcon /> },
-  { segment: 'persons', title: 'Persons', icon: <PersonOutlinedIcon /> },
-  { segment: 'attachments', title: 'Attachments', icon: <AttachFileOutlinedIcon /> },
-  { kind: 'divider' },
-  {
-    segment: 'stats', title: 'Stats', icon: <QueryStatsOutlinedIcon />, children: [
-      { segment: 'dashboard', title: 'Dashboard', icon: <GridViewOutlinedIcon /> },
-      { segment: 'by-year', title: 'Year', icon: <CalendarMonthOutlinedIcon /> },
-      { segment: 'by-type', title: 'Type', icon: <FlightOutlinedIcon /> },
-      { segment: 'by-category', title: 'Category', icon: <CategoryOutlinedIcon /> },
-    ],
-  },
-  { segment: 'currency', title: 'Currency', icon: <SecurityUpdateGoodOutlinedIcon /> },
-  { kind: 'divider' },
-  {
-    segment: 'export', title: 'Export', icon: <SaveAltOutlinedIcon />, children: [
-      { segment: 'a4', title: 'PDF A4', icon: <PictureAsPdfOutlinedIcon /> },
-      { segment: 'a5', title: 'PDF A5', icon: <PictureAsPdfOutlinedIcon /> },
-    ]
-  },
-  { segment: 'import', title: 'Import', icon: <FileUploadOutlinedIcon /> },
-  { kind: 'divider' },
-  { segment: 'settings', title: 'Settings', icon: <SettingsIcon /> },
-  { kind: 'divider' },
-];
 
 function NavigationSetter() {
   const navigate = useNavigate();
@@ -78,26 +26,40 @@ function NavigationSetter() {
 }
 
 function App() {
-  // theme
-  const lightTheme = createTheme(getMPTheme('light'));
-  const darkTheme = createTheme(getMPTheme('dark'));
-  const theme = { light: lightTheme, dark: darkTheme };
+  const [mode, setMode] = useState(() => {
+    return localStorage.getItem('themeMode') || 'light';
+  });
+
+  const colorMode = useMemo(() => ({
+    mode,
+    toggleColorMode: () => {
+      setMode((prev) => {
+        const next = prev === 'light' ? 'dark' : 'light';
+        localStorage.setItem('themeMode', next);
+        return next;
+      });
+    },
+  }), [mode]);
+
+  const theme = useMemo(() => createTheme(getMPTheme(mode)), [mode]);
 
   return (
-    <ReactRouterAppProvider theme={theme} navigation={NAV_ITEMS} branding={BRANDING} >
-      <NavigationSetter />
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-
-        <QueryClientProvider client={queryClient}>
-          <DialogsProvider>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <NavigationSetter />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <QueryClientProvider client={queryClient}>
             <NotificationsProvider>
-              <Outlet />
+              <DialogsProvider>
+                <Outlet />
+              </DialogsProvider>
             </NotificationsProvider>
-          </DialogsProvider>
-        </QueryClientProvider>
-      </LocalizationProvider>
-    </ReactRouterAppProvider>
-  )
+          </QueryClientProvider>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
+  );
 }
 
-export default App
+export default App;

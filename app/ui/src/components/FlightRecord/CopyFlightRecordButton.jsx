@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { useNotifications } from '@toolpad/core/useNotifications';
+import { useNotifications } from '../../hooks/useNotifications/useNotifications';
 
 export const CopyFlightRecordButton = ({ flight, handleCloseMenu }) => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const CopyFlightRecordButton = ({ flight, handleCloseMenu }) => {
     handleCloseMenu();
     navigate("/logbook/new", { state: { ...flight, uuid: "new" } });
 
-    notifications.show(message, { severity: "success", key: "flightrecord-copy", autoHideDuration: 3000 });
+    notifications.show(message, { severity: "success", key: "flightrecord-copy", autoHideDuration: 5000 });
   }, [handleCloseMenu, navigate, notifications, flight]);
 
   return (

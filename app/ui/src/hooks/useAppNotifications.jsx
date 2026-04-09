@@ -1,4 +1,4 @@
-import { useNotifications } from "@toolpad/core/useNotifications";
+import { useNotifications } from "./useNotifications/useNotifications";
 import { useEffect } from "react";
 
 export function useErrorNotification({ isError, error, fallbackMessage }) {

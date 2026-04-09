@@ -1,6 +1,17 @@
 import { handleFetch } from './http';
-import { API_URL, tableJSONCodec } from '../../constants/constants';
+import { API_URL } from '../../constants/constants';
 import { getAuthToken } from '../auth';
+
+const jsonCodec = {
+  parse: (value) => {
+    try {
+      return JSON.parse(value)
+    } catch {
+      return {};
+    }
+  },
+  stringify: (value) => JSON.stringify(value),
+}
 
 const prepareFlightDataForAPI = (flight) => {
   let customFieldsObj = {};
@@ -37,7 +48,7 @@ export const fetchLogbookData = async ({ signal }) => {
 
   return response?.map(flight => ({
     ...flight,
-    custom_fields: tableJSONCodec.parse(flight.custom_fields)
+    custom_fields: jsonCodec.parse(flight.custom_fields)
   })) || response;
 }
 
@@ -52,7 +63,7 @@ export const fetchLogbookMapData = async ({ signal }) => {
 
   return response?.map(flight => ({
     ...flight,
-    custom_fields: tableJSONCodec.parse(flight.custom_fields)
+    custom_fields: jsonCodec.parse(flight.custom_fields)
   })) || response;
 }
 
@@ -69,7 +80,7 @@ export const fetchFlightData = async ({ signal, id }) => {
   if (response) {
     return {
       ...response,
-      custom_fields: tableJSONCodec.parse(response.custom_fields)
+      custom_fields: jsonCodec.parse(response.custom_fields)
     };
   }
 

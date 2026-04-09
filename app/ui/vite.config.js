@@ -13,7 +13,6 @@ export default defineConfig({
           if (id.includes('@mui/icons-material')) return 'vendor-mui-icons'
           if (id.includes('@mui/x-data-grid')) return 'vendor-mui-x-data-grid'
           if (id.includes('@mui/x-date-pickers')) return 'vendor-mui-x-date-pickers'
-          if (id.includes('@toolpad/core')) return 'vendor-toolpad'
           if (id.includes('@tanstack/react-query')) return 'vendor-tanstack'
           if (id.includes('react-router-dom')) return 'vendor-react'
           if (id.includes('react-dom')) return 'vendor-react'

@@ -1,14 +1,14 @@
 import { useMemo } from "react";
-import { useLocalStorageState } from '@toolpad/core/useLocalStorageState';
+import { useLocalStorageState, CODEC_JSON } from "../../hooks/useLocalStorageState";
 import TextField from "../UIElements/TextField";
-import { FIELDS_VISIBILITY_KEY, tableJSONCodec } from "../../constants/constants";
+import { FIELDS_VISIBILITY_KEY } from "../../constants/constants";
 
 const LANDING_SLOT_PROPS = { htmlInput: { inputMode: "numeric" } };
 
 const getLandingValue = (val) => (val === 0 ? "" : val ?? "");
 
 export const LandingFields = ({ day, night, handleChange, fieldNameF }) => {
-  const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: tableJSONCodec });
+  const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
 
   const labels = useMemo(() => (
     {

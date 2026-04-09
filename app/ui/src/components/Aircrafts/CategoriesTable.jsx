@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { GridActionsCell, GridActionsCellItem, useGridApiRef } from '@mui/x-data-grid';
 // MUI Icons
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -11,6 +10,7 @@ import EditCategoriesModal from './EditCategoriesModal';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 import TableActionHeader from '../UIElements/TableActionHeader';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const CategoriesTable = ({ data, isLoading }) => {
   const apiRef = useGridApiRef();

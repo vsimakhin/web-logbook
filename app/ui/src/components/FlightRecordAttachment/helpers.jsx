@@ -22,7 +22,7 @@ const parseTrackFileContent = (fileText, fileType) => {
 
         for (let i = 0; i < Math.min(whens.length, coords.length); i++) {
           const timestamp = new Date(whens[i].textContent).getTime();
-          const [lng, lat, alt] = coords[i].textContent.split(' ').map(Number);
+          const [lng, lat] = coords[i].textContent.split(' ').map(Number);
           extractedPoints.push({ timestamp, coords: [lat, lng] });
         }
       }

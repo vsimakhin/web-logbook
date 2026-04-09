@@ -17,6 +17,10 @@ vi.mock("../util/http/fields", () => ({
   fetchCustomFields: vi.fn(),
 }));
 
+vi.mock("./useAppNotifications", () => ({
+  useErrorNotification: vi.fn(),
+}));
+
 describe("useCustomFields", () => {
   const mockNavigate = vi.fn();
 

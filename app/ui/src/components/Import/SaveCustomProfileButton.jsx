@@ -1,11 +1,10 @@
 import { useCallback } from "react";
-import { useDialogs } from "@toolpad/core/useDialogs";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 // MUI Icons
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
-
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const SaveCustomProfileButton = ({ profile, setCustomProfile }) => {
   const dialogs = useDialogs();
