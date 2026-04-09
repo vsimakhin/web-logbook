@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Update: Replaced @toolpad/core (not maintained) module with own components.
+- Update: Golang and npm packages/security patches.
 
 ## [4.1.4] - 02.04.2026
 
