@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { useNotifications } from "@toolpad/core/useNotifications";
+import { useNotifications } from "../../hooks/useNotifications/useNotifications";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";

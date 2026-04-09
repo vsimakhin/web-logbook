@@ -1,10 +1,10 @@
 import { renderHook } from "@testing-library/react";
-import { useNotifications } from "@toolpad/core/useNotifications";
+import { useNotifications } from "./useNotifications/useNotifications";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useErrorNotification, useSuccessNotification } from "./useAppNotifications";
 
 // Mock useNotifications
-vi.mock("@toolpad/core/useNotifications", () => ({
+vi.mock("./useNotifications/useNotifications", () => ({
   useNotifications: vi.fn(),
 }));
 

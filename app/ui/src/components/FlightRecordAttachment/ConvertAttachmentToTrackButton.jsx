@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useNotifications } from '@toolpad/core/useNotifications';
+import { useNotifications } from '../../hooks/useNotifications/useNotifications';
 // MUI UI elements
 import MenuItem from '@mui/material/MenuItem';
 // MUI Icons

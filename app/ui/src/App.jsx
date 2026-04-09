@@ -3,7 +3,7 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import { useNavigate, Outlet } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { NotificationsProvider } from '@toolpad/core/useNotifications';
+import { NotificationsProvider } from './hooks/useNotifications/useNotifications';
 // MUI UI elements
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
