@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react';
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
 // MUI UI elements
 import MenuItem from '@mui/material/MenuItem';
@@ -18,6 +17,7 @@ import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefault
 import CardHeader from "../UIElements/CardHeader";
 import { FIELDS_VISIBILITY_KEY } from '../../constants/constants';
 import useSettings from '../../hooks/useSettings';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 const CloseDialogButton = ({ onClose }) => {
   return (

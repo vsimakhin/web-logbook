@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 import { ToolbarButton } from '@mui/x-data-grid';
 // MUI Icons
@@ -7,6 +6,7 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import AddEditPersonModal from './AddEditPersonModal';
 import { IconButton } from '@mui/material';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const AddPersonButton = ({ onSave, isToolbarButton = true }) => {
   const dialogs = useDialogs();

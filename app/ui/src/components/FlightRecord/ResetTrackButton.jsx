@@ -1,15 +1,14 @@
 import { useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { useDialogs } from '@toolpad/core/useDialogs';
 // MUI UI elements
 import MenuItem from '@mui/material/MenuItem';
-
 // MUI Icons
 import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 // Custom
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { resetTrackLog } from '../../util/http/logbook';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const ResetTrackButton = ({ uuid, handleChange, handleCloseMenu }) => {
   const dialogs = useDialogs();
@@ -27,8 +26,10 @@ export const ResetTrackButton = ({ uuid, handleChange, handleCloseMenu }) => {
 
   const handleReset = useCallback(async () => {
     const reset = await dialogs.confirm("Do you want to reset the track and distance?", {
-      okText: 'Yes',
-      cancelText: 'No',
+      title: 'Reset track log',
+      okText: 'Reset',
+      cancelText: 'Cancel',
+      severity: 'warning',
     });
     if (reset) {
       await resetTrack();

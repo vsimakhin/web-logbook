@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 // MUI Icons
@@ -10,6 +9,7 @@ import { deleteCurrency } from '../../util/http/currency';
 import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { GridActionsCellItem } from '@mui/x-data-grid';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeleteCurrencyButton = ({ params }) => {
   const dialogs = useDialogs();

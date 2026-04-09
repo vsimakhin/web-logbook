@@ -1,4 +1,3 @@
-import { useDialogs } from "@toolpad/core/useDialogs";
 import { ToolbarButton } from "@mui/x-data-grid";
 import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
@@ -10,6 +9,7 @@ import { runImport } from "../../util/http/import";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
 import ImportLogDialog from "./ImportLogDialog";
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const RunImportButton = ({ data, inProgress, setInProgress }) => {
   const dialogs = useDialogs();

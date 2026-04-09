@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
@@ -10,6 +9,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import { deleteLicenseRecord } from '../../util/http/licensing';
 import { queryClient } from '../../util/http/http';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeleteLicenseRecordButton = ({ license }) => {
   const dialogs = useDialogs();
@@ -29,8 +29,10 @@ export const DeleteLicenseRecordButton = ({ license }) => {
 
   const handleConfirmDelete = useCallback(async () => {
     const confirmed = await dialogs.confirm('Are you sure you want to remove this license record?', {
-      okText: 'Yes',
-      cancelText: 'No',
+      title: 'Delete license record',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      severity: 'error',
     });
 
     if (confirmed) {

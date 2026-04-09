@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 // MUI Icons
@@ -8,6 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 // Custom components and libraries
 import AddEditPersonModal from './AddEditPersonModal';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const EditPersonButton = ({ params, payload, showInMenu }) => {
   const dialogs = useDialogs();

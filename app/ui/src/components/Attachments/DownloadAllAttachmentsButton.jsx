@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
 import { ToolbarButton } from '@mui/x-data-grid';
 import { useMutation } from '@tanstack/react-query';
-import { useDialogs } from '@toolpad/core/useDialogs';
 // MUI
 import Tooltip from '@mui/material/Tooltip';
 // MUI Icon
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 import { downloadAttachments } from '../../util/http/attachment';
-
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DownloadAllAttachmentsButton = ({ filteredRows }) => {
   const dialogs = useDialogs();

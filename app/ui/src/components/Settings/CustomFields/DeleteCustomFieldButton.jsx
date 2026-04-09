@@ -1,6 +1,6 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // MUI UI elements
@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { queryClient } from '../../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { deleteCustomField } from '../../../util/http/fields';
-import { GridActionsCellItem } from '@mui/x-data-grid';
+import { useDialogs } from '../../../hooks/useDialogs/useDialogs';
 
 export const DeleteCustomFieldButton = ({ params }) => {
   const dialogs = useDialogs();

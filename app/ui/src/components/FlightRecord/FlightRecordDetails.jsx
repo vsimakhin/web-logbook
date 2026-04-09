@@ -85,6 +85,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
         setFlight(prev => ({ ...prev, time: { ...prev.time, ...timeUpdates } }));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flight.aircraft.model, flight.uuid, models, setFlight])
 
   return (

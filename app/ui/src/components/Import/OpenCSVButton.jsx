@@ -1,5 +1,4 @@
 import Papa from 'papaparse';
-import { useDialogs } from '@toolpad/core/useDialogs';
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 // MUI Icons
@@ -8,6 +7,7 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import MapFieldsDialog from "./MapFieldsDialog";
 import { autoTimeRecog, convertToDDMMYYYY, marshallItem } from './helpers';
 import { ToolbarButton } from '@mui/x-data-grid';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const OpenCSVButton = ({ setData }) => {
   const dialogs = useDialogs();

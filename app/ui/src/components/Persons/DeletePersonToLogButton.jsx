@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useDialogs } from '@toolpad/core/useDialogs';
+import { useCallback } from "react";
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // MUI UI elements
@@ -7,8 +7,8 @@ import MenuItem from '@mui/material/MenuItem';
 // Custom components and libraries
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from '../../util/http/http';
-import { useCallback } from "react";
 import { deletePersonToLog } from "../../util/http/person";
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeletePersonToLogButton = ({ person, logUuid, handleClose }) => {
   const dialogs = useDialogs();
@@ -24,7 +24,13 @@ export const DeletePersonToLogButton = ({ person, logUuid, handleClose }) => {
 
   const handleDelete = useCallback(async () => {
     handleClose();
-    if (await dialogs.confirm('Are you sure you want to remove this person from this flight?')) {
+    const confirmed = await dialogs.confirm('Are you sure you want to remove this person from this flight?', {
+      title: 'Delete person from flight',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      severity: 'error',
+    });
+    if (confirmed) {
       await deleteFunction();
     }
   }, [handleClose, dialogs, deleteFunction]);

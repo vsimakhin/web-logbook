@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useDialogs } from "@toolpad/core/useDialogs";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -10,6 +9,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { queryClient } from "../../util/http/http";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { deleteAttachment } from "../../util/http/attachment";
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeleteCustomTitleButton = ({ format }) => {
   const dialogs = useDialogs();
@@ -26,8 +26,10 @@ export const DeleteCustomTitleButton = ({ format }) => {
 
   const handleConfirmDelete = async () => {
     const confirmed = await dialogs.confirm('Are you sure you want to remove this custom title page?', {
-      okText: 'Yes',
-      cancelText: 'No',
+      title: 'Delete custom title page',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      severity: 'error',
     });
 
     if (confirmed) {

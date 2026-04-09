@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 // MUI UI elements
@@ -11,6 +10,7 @@ import { useErrorNotification, useSuccessNotification } from '../../hooks/useApp
 import { queryClient } from '../../util/http/http';
 import { deleteAttachment } from '../../util/http/attachment';
 import { resetTrackLog } from '../../util/http/logbook';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeleteAttachmentButton = ({ attachment }) => {
   const dialogs = useDialogs();
@@ -38,16 +38,20 @@ export const DeleteAttachmentButton = ({ attachment }) => {
 
   const handleDelete = useCallback(async () => {
     const confirmed = await dialogs.confirm(`Are you sure you want to remove ${attachment.document_name} attachment?`, {
-      okText: 'Yes',
-      cancelText: 'No',
+      title: 'Delete attachment',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      severity: 'error',
     });
 
     if (confirmed) {
       // check if attachment is a track log
       if (attachment.document_name.endsWith(".kml")) {
         const reset = await dialogs.confirm("Looks like it's a track log (*.kml file). Do you want to reset the track and distance?", {
-          okText: 'Yes',
+          title: 'Reset track log',
+          okText: 'Reset',
           cancelText: 'No',
+          severity: 'warning',
         });
         if (reset) {
           await resetTrack();

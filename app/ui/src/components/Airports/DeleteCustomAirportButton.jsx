@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { GridActionsCellItem } from "@mui/x-data-grid";
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -10,6 +9,7 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { deleteCustomAirport } from '../../util/http/airport';
 import { queryClient } from '../../util/http/http';
 import { useCallback } from "react";
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeleteCustomAirportButton = ({ params }) => {
   const dialogs = useDialogs();

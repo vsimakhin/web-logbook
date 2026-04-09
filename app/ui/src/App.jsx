@@ -4,7 +4,6 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { NotificationsProvider } from '@toolpad/core/useNotifications';
-import { DialogsProvider } from '@toolpad/core/useDialogs';
 // MUI UI elements
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,6 +14,7 @@ import { queryClient } from './util/http/http';
 import getMPTheme from './theme/getMPTheme';
 import { setNavigate } from './util/navigation';
 import { ColorModeContext } from './context/ColorModeContext';
+import { DialogsProvider } from './hooks/useDialogs/useDialogs';
 
 dayjs.extend(updateLocale);
 dayjs.updateLocale("en", { weekStart: 1 });
@@ -50,11 +50,11 @@ function App() {
         <NavigationSetter />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <QueryClientProvider client={queryClient}>
-            <DialogsProvider>
-              <NotificationsProvider>
+            <NotificationsProvider>
+              <DialogsProvider>
                 <Outlet />
-              </NotificationsProvider>
-            </DialogsProvider>
+              </DialogsProvider>
+            </NotificationsProvider>
           </QueryClientProvider>
         </LocalizationProvider>
       </ThemeProvider>

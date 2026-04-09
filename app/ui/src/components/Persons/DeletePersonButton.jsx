@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { useDialogs } from "@toolpad/core/useDialogs";
+import { GridActionsCellItem } from "@mui/x-data-grid";
+import { useCallback } from "react";
 // MUI Icons
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 // MUI UI elements
@@ -8,8 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
 import { deletePerson } from "../../util/http/person";
-import { useCallback } from "react";
-import { GridActionsCellItem } from "@mui/x-data-grid";
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const DeletePersonButton = ({ params }) => {
   const dialogs = useDialogs();

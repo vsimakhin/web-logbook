@@ -1,4 +1,3 @@
-import { useDialogs } from '@toolpad/core/useDialogs';
 import { useCallback } from 'react';
 // MUI Icons
 import DrawOutlinedIcon from '@mui/icons-material/DrawOutlined';
@@ -6,6 +5,7 @@ import DrawOutlinedIcon from '@mui/icons-material/DrawOutlined';
 import MenuItem from '@mui/material/MenuItem';
 // Custom components and libraries
 import SignModal from './SignModal';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
 export const SignFlightRecordButton = ({ uuid, handleCloseMenu }) => {
   const dialogs = useDialogs();
