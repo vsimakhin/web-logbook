@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Replaced @toolpad/core (not maintained) module with own components.
+
 ## [4.1.4] - 02.04.2026
 
 - Fix: column state (visibility/width) is not saved for some tables.
@@ -70,10 +74,6 @@ The application will automatically create a local SQLite database on the first s
 ## [4.1.3] - 30.03.2026
 
 - Update: Golang and npm packages/security patches.
-
-## [4.1.2] - 17.03.2026
-
-- Fix: Handling of empty and NULL values in SQLite (regression from previous release).
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
@@ -412,7 +412,6 @@ Frontend:
 * ViteJS https://vite.dev/
 * React https://react.dev/
 * Material UI https://mui.com/material-ui/
-* Material Toolpad core https://mui.com/toolpad/core/introduction/
 * Openlayers https://openlayers.org/
 * dayjs https://github.com/iamkun/dayjs
 * TanStack Query https://tanstack.com/query/

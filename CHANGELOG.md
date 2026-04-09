@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Replaced @toolpad/core (not maintained) module with own components.
+
 ## [4.1.4] - 02.04.2026
 
 - Fix: column state (visibility/width) is not saved for some tables.
