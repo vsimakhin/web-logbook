@@ -66,6 +66,7 @@ The application will automatically create a local SQLite database on the first s
 ## [Unreleased]
 
 - Update: Golang and npm packages/security patches.
+- Update: Improved import log message, added how many records were imported and how many were failed/skipped.
 
 ## [4.2.0] - 09.04.2026
 
