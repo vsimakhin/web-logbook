@@ -30,6 +30,9 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	failedRecords := 0
+	skippedRecords := 0
+
 	for _, fr := range importData.FlightRecords {
 		uuid, err := uuid.NewRandom()
 		if err != nil {
@@ -49,6 +52,7 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 		// let's double check if the record alredy exists
 		if app.db.IsFlightRecordExists(fr) {
 			importLog = append(importLog, fmt.Sprintf("%s already exists, skipping", infoMsg))
+			skippedRecords++
 		} else {
 			fr.UUID = uuid.String()
 			fr.Distance = app.db.Distance(fr.Departure.Place, fr.Arrival.Place)
@@ -82,24 +86,25 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 			err = app.db.InsertFlightRecord(fr)
 			if err != nil {
 				importLog = append(importLog, fmt.Sprintf("Cannot create a new record for %s - %s", infoMsg, err))
+				failedRecords++
 			}
 		}
 	}
 
-	lWrongRecords := len(importLog)
-	lFlightRecords := len(importData.FlightRecords)
+	flightRecords := len(importData.FlightRecords)
 
-	if lWrongRecords != 0 {
-		response.Message = fmt.Sprintf("Imported %d of %d records. %d records failed",
-			lFlightRecords-lWrongRecords, lFlightRecords, lWrongRecords)
+	if failedRecords != 0 || skippedRecords != 0 {
+		response.Message = fmt.Sprintf("Imported %d of %d records. %d records failed, %d skipped",
+			flightRecords-failedRecords-skippedRecords, flightRecords, failedRecords, skippedRecords)
 		response.OK = false
 		bData, err := json.Marshal(importLog)
 		if err != nil {
 			app.handleError(w, err)
+			return
 		}
 		response.Data = string(bData)
 	} else {
-		response.Message = fmt.Sprintf("Imported %d of %d records.", lFlightRecords, lFlightRecords)
+		response.Message = fmt.Sprintf("Imported %d of %d records.", flightRecords, flightRecords)
 		response.OK = true
 	}
 
