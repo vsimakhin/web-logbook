@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang and npm packages/security patches.
+
 ## [4.2.0] - 09.04.2026
 
 - Update: Replaced @toolpad/core (not maintained) module with own components.
