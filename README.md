@@ -67,6 +67,7 @@ The application will automatically create a local SQLite database on the first s
 
 - Update: Golang and npm packages/security patches.
 - Update: Improved import log message, added how many records were imported and how many were failed/skipped.
+- Update: Custom PDF logbook headers containing newlines (\n) are now split into multiple lines.
 
 ## [4.2.0] - 09.04.2026
 

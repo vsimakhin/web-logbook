@@ -175,6 +175,13 @@ func (p *PDFExporter) initHeaders() {
 			h.PIC, h.COP, h.Dual, h.Instr, h.SimType, h.SimTime, "",
 		},
 	}
+
+	for i := range p.headers.header2 {
+		p.headers.header2[i] = strings.ReplaceAll(p.headers.header2[i], "\\n", "\n")
+	}
+	for i := range p.headers.header3 {
+		p.headers.header3[i] = strings.ReplaceAll(p.headers.header3[i], "\\n", "\n")
+	}
 }
 
 // initColumns initializes columns for the logbook
