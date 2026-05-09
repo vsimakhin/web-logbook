@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: remarks were not displayed in the licensing table
+
 ## [4.3.0] - 03.05.2026
 
 - Update: Golang and npm packages/security patches.
