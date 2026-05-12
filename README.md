@@ -405,6 +405,7 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/benbox69" title="benbox69"><img src="https://github.com/benbox69.png" width="40" height="40" alt="benbox69" /></a>
   <a href="https://github.com/WildBlueUK" title="WildBlueUK"><img src="https://github.com/WildBlueUK.png" width="40" height="40" alt="WildBlueUK" /></a>
   <a href="https://github.com/Muchacho08" title="Muchacho08"><img src="https://github.com/Muchacho08.png" width="40" height="40" alt="Muchacho08" /></a>
+  <a href="https://github.com/mattswainston" title="mattswainston"><img src="https://github.com/mattswainston.png" width="40" height="40" alt="mattswainston" /></a>
 </p>
 
 --
