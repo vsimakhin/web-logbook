@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.4.0] - 12.05.2026
 
 - Fix: Remarks were not displayed in the licensing table.
 - New: Populate PIC Name field with names already used in logbook.

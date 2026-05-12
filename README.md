@@ -63,7 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.4.0] - 12.05.2026
 
 - Fix: Remarks were not displayed in the licensing table.
 - New: Populate PIC Name field with names already used in logbook.
@@ -78,14 +78,6 @@ The application will automatically create a local SQLite database on the first s
 ## [4.2.0] - 09.04.2026
 
 - Update: Replaced @toolpad/core (not maintained) module with own components.
-- Update: Golang and npm packages/security patches.
-
-## [4.1.4] - 02.04.2026
-
-- Fix: column state (visibility/width) is not saved for some tables.
-
-## [4.1.3] - 30.03.2026
-
 - Update: Golang and npm packages/security patches.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
