@@ -4,6 +4,7 @@
 
 - Fix: Remarks were not displayed in the licensing table.
 - New: Populate PIC Name field with names already used in logbook.
+- Update: Golang and npm packages/security patches.
 
 ## [4.3.0] - 03.05.2026
 
