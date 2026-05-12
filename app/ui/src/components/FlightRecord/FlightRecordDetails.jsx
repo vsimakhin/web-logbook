@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
 // MUI UI elements
@@ -23,6 +23,7 @@ import { FIELDS_VISIBILITY_KEY } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
+import { PICNameField } from './PICNameField';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() =>
@@ -55,10 +56,6 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     refetchOnWindowFocus: false,
     select: (data) => data || [], // Ensure options is always an array
   });
-
-  const handlePicNameDoubleClick = useCallback(() => {
-    setFlight((prev) => ({ ...prev, pic_name: settings.self_pic_label || "Self" }));
-  }, [setFlight, settings.self_pic_label]);
 
   // Auto fill pic time
   useEffect(() => {
@@ -120,12 +117,9 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               value={flight.aircraft.reg_name}
               aircraft_model={flight.aircraft.model}
             />
-            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
-              id="pic_name"
-              label={fieldNameF("pic_name")}
+            <PICNameField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               handleChange={handleChange}
               value={flight.pic_name ?? ""}
-              onDoubleClick={handlePicNameDoubleClick}
             />
           </Grid>
 

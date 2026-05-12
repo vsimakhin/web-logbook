@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Fix: remarks were not displayed in the licensing table
+- Fix: Remarks were not displayed in the licensing table.
+- New: Populate PIC Name field with names already used in logbook.
 
 ## [4.3.0] - 03.05.2026
 

@@ -220,3 +220,14 @@ func (app *application) HandlerApiFlightRecordSignatureUpdate(w http.ResponseWri
 
 	app.writeOkResponse(w, "Signature updated")
 }
+
+// HandlerApiFlightRecordPicNames returns all unique flight records pic_names
+func (app *application) HandlerApiFlightRecordPicNames(w http.ResponseWriter, r *http.Request) {
+	picNames, err := app.db.GetFlightRecordsPicNames()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, picNames)
+}

@@ -51,6 +51,7 @@ func (app *application) routes() *chi.Mux {
 			})
 
 			r.Get("/tags", app.HandlerApiFlightRecordTags)
+			r.Get("/pic-names", app.HandlerApiFlightRecordPicNames)
 		})
 
 		// licensing
