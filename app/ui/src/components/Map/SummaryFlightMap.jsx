@@ -17,7 +17,6 @@ import MapOptions from "./MapOptions";
 import { useLocalStorageState, CODEC_JSON } from "../../hooks/useLocalStorageState";
 
 export const SummaryFlightMap = () => {
-  // const [options, setOptions] = useState({ routes: true, tracks: false });
   const [options, setOptions] = useLocalStorageState("map-options", { routes: true, tracks: false, airport_ids: true, icon: 'ico' }, { codec: CODEC_JSON });
 
   const [mapData, setMapData] = useState([]);
