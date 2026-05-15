@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: New map options and map sources (satellite, terrain).
+
 ## [4.4.0] - 12.05.2026
 
 - Fix: Remarks were not displayed in the licensing table.
