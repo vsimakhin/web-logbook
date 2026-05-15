@@ -1,27 +1,38 @@
-// openlayers
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import OSM from 'ol/source/OSM';
-import FullScreen from 'ol/control/FullScreen';
 import Feature from 'ol/Feature';
+import Stroke from 'ol/style/Stroke';
 import Point from 'ol/geom/Point';
 import LineString from 'ol/geom/LineString';
-import { Style, Icon, Fill, Text } from 'ol/style';
-import Overlay from 'ol/Overlay';
+import { Style, Icon, Text } from 'ol/style';
 import { transform } from 'ol/proj';
 
 import icon1 from "../../assets/favicon.ico";
 import icon2 from "../../assets/map-pin.png";
 import icon3 from "../../assets/map-pin2.png";
 
-export const icons = [
-  { src: icon1, displacement: [0, 0] },
-  { src: icon2, displacement: [0, 14] },
-  { src: icon3, displacement: [0, 14] },
+export const MAP_OPTIONS_NAME = "map-advanced-options";
+export const MAP_ICONS = [
+  { src: icon1, displacement: [0, 0], textOffsetY: -12, textOffsetX: 0 },
+  { src: icon2, displacement: [0, 14], textOffsetY: -12, textOffsetX: 20 },
+  { src: icon3, displacement: [0, 14], textOffsetY: -36, textOffsetX: 0 },
 ];
+
+export const DEFAULT_MAP_OPTIONS = {
+  routes: {
+    enabled: true,
+    thickness: 1,
+    color: '#1a5fb4',
+  },
+  tracks: {
+    enabled: true,
+    thickness: 1,
+    color: '#1a5fb4',
+  },
+  airport: {
+    ids: true,
+    icon: 0,
+  },
+  map_base: 0,
+}
 
 const createGreatCircleLine = (start, end, segments = 64) => {
   const lon1 = start.lon * Math.PI / 180
@@ -49,23 +60,57 @@ const createGreatCircleLine = (start, end, segments = 64) => {
   return new LineString(coords)
 }
 
-export const drawGreatCircleLine = (departure, arrival, vectorSource) => {
+export const drawGreatCircleLine = (departure, arrival, vectorSource, color, width) => {
   const geometry = createGreatCircleLine(departure, arrival)
   const routeFeature = new Feature({ geometry, type: 'route' })
+  routeFeature.setStyle(new Style({ stroke: new Stroke({ color, width }) }));
   vectorSource.addFeature(routeFeature)
 }
 
-export const drawTrackLog = (flightTrack, vectorSource, flightId) => {
+export const drawTrackLog = (flightTrack, vectorSource, flightId, color, width) => {
   const track = JSON.parse(atob(flightTrack));
+  const coordinates = track.map((geometry) => transform([geometry[1], geometry[0]], 'EPSG:4326', 'EPSG:3857'));
+  const lineFeature = new LineString(coordinates);
+  const feature = new Feature({ geometry: lineFeature, lineKey: `track-${flightId}` });
+  feature.setStyle(new Style({ stroke: new Stroke({ color, width }) }));
+  vectorSource.addFeature(feature);
+}
 
-  const coordinates = track.map((geometry) =>
-    transform([geometry[1], geometry[0]], 'EPSG:4326', 'EPSG:3857')
+export const addMarker = (features, airport, options) => {
+  /**
+   * Code string for an airport based on its IATA and ICAO codes.
+   * If the airport has both IATA and ICAO codes and they are different, 
+   * the code will be in the format "ICAO/IATA". Otherwise, it will just be the ICAO code.
+   */
+  const code = airport.iata && airport.iata !== airport.icao ? `${airport.icao}/${airport.iata}` : airport.icao;
+
+  const icon = options.airport.icon || 0;
+
+  // Check if marker already exists
+  const exists = features.find(f => f.get('code') === code);
+  if (exists) return;
+
+  const feature = new Feature({
+    geometry: new Point([airport.lon, airport.lat]).transform('EPSG:4326', 'EPSG:3857'),
+    code: code,
+    name: airport.name,
+    country: airport.country,
+    city: airport.city,
+    elevation: airport.elevation,
+    coordinates: `${airport.lat}, ${airport.lon}`,
+  });
+
+  feature.setStyle(
+    new Style({
+      image: new Icon({ ...MAP_ICONS[icon] }),
+      text: options.airport.ids ? new Text({
+        text: code,
+        offsetY: MAP_ICONS[icon].textOffsetY,
+        offsetX: MAP_ICONS[icon].textOffsetX,
+        scale: 1.3,
+      }) : null,
+    }),
   );
 
-  const lineFeature = new LineString(coordinates);
-  const feature = new Feature({
-    geometry: lineFeature,
-    lineKey: `track-${flightId}`,
-  });
-  vectorSource.addFeature(feature);
+  features.push(feature);
 }

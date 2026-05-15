@@ -9,9 +9,6 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import OSM from 'ol/source/OSM';
 import FullScreen from 'ol/control/FullScreen';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import { Style, Icon, Fill, Text } from 'ol/style';
 import Overlay from 'ol/Overlay';
 import { transform } from 'ol/proj';
 // MUI UI elements
@@ -24,16 +21,9 @@ import { queryClient } from '../../util/http/http';
 import { fetchAirport } from '../../util/http/airport';
 import { DownloadMapButton } from './DownloadMapButton';
 import useCustomFields from '../../hooks/useCustomFields';
-import { drawGreatCircleLine, drawTrackLog } from './helpers';
-
-import icon1 from "../../assets/favicon.ico";
-import icon2 from "../../assets/map-pin.png";
+import { DEFAULT_MAP_OPTIONS, drawGreatCircleLine, drawTrackLog, addMarker, MAP_OPTIONS_NAME } from './helpers';
 import MapOptionsButton from './MapOptionsButton';
-
-const icons = {
-  ico: { src: icon1, displacement: [0, 0] },
-  pin: { src: icon2, displacement: [0, 14] }
-};
+import { CODEC_JSON, useLocalStorageState } from '../../hooks/useLocalStorageState';
 
 const getAirportData = async (id, airportsMap) => {
   if (airportsMap) {
@@ -63,48 +53,9 @@ const getAirportData = async (id, airportsMap) => {
   }
 }
 
-const addMarker = (features, airport, options) => {
-  /**
-   * Code string for an airport based on its IATA and ICAO codes.
-   * If the airport has both IATA and ICAO codes and they are different, 
-   * the code will be in the format "ICAO/IATA". Otherwise, it will just be the ICAO code.
-   */
-  const code = airport.iata && airport.iata !== airport.icao ? `${airport.icao}/${airport.iata}` : airport.icao;
+export const FlightMap = ({ data, title = "Flight Map", sx, airportsMap }) => {
+  const [options] = useLocalStorageState(MAP_OPTIONS_NAME, DEFAULT_MAP_OPTIONS, { codec: CODEC_JSON });
 
-  // Check if marker already exists
-  const exists = features.find(f => f.get('code') === code);
-  if (exists) return;
-
-  const feature = new Feature({
-    geometry: new Point([airport.lon, airport.lat]).transform('EPSG:4326', 'EPSG:3857'),
-    code: code,
-    name: airport.name,
-    country: airport.country,
-    city: airport.city,
-    elevation: airport.elevation,
-    coordinates: `${airport.lat}, ${airport.lon}`,
-  });
-
-  feature.setStyle(
-    new Style({
-      image: new Icon({ ...icons[options.icon] }),
-      text: options.airport_ids ? new Text({
-        text: code,
-        offsetY: -12,
-        scale: 1.3,
-        fill: new Fill({
-          color: '#333',
-        }),
-      }) : null,
-    }),
-  );
-
-  features.push(feature);
-}
-
-const DEFAULT_OPTIONS = { routes: true, tracks: false, airport_ids: true, icon: 'ico' };
-
-export const FlightMap = ({ data, options = DEFAULT_OPTIONS, title = "Flight Map", sx, airportsMap }) => {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -211,14 +162,14 @@ export const FlightMap = ({ data, options = DEFAULT_OPTIONS, title = "Flight Map
 
         fullRoute.push(arrival);
 
-        if (options.routes) {
+        if (options.routes.enabled) {
           for (let i = 0; i < fullRoute.length - 1; i++) {
-            drawGreatCircleLine(fullRoute[i], fullRoute[i + 1], vectorSourceRef.current);
+            drawGreatCircleLine(fullRoute[i], fullRoute[i + 1], vectorSourceRef.current, options.routes.color, options.routes.thickness);
           }
         }
 
-        if (options.tracks && flight.track) {
-          drawTrackLog(flight.track, vectorSourceRef.current, flight.uuid || flight.id);
+        if (options.tracks.enabled && flight.track) {
+          drawTrackLog(flight.track, vectorSourceRef.current, flight.uuid || flight.id, options.tracks.color, options.tracks.thickness);
         }
 
         totalDistance += flight.distance;

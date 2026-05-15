@@ -51,8 +51,6 @@ export const SummaryFlightMap = () => {
     }
   }, [airports]);
 
-
-
   const callbackFunction = useCallback((filteredData) => { setMapData(filteredData) }, [setMapData]);
 
   return (
