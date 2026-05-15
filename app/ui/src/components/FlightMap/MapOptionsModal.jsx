@@ -164,6 +164,7 @@ export const MapOptionsModal = ({ open, onClose }) => {
                   >
                     <ToggleButton value={0}>Standard</ToggleButton>
                     <ToggleButton value={1}>Satellite</ToggleButton>
+                    <ToggleButton value={2}>Terrain</ToggleButton>
                   </ToggleButtonGroup>
                 }
                 label="Map Base"

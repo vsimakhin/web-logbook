@@ -4,15 +4,18 @@ import Point from 'ol/geom/Point';
 import LineString from 'ol/geom/LineString';
 import { Style, Icon, Text } from 'ol/style';
 import { transform } from 'ol/proj';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
 
 import icon1 from "../../assets/favicon.ico";
 import icon2 from "../../assets/map-pin.png";
 import icon3 from "../../assets/map-pin2.png";
+import { XYZ } from 'ol/source';
 
 export const MAP_OPTIONS_NAME = "map-advanced-options";
 export const MAP_ICONS = [
   { src: icon1, displacement: [0, 0], textOffsetY: -12, textOffsetX: 0 },
-  { src: icon2, displacement: [0, 14], textOffsetY: -12, textOffsetX: 20 },
+  { src: icon2, displacement: [0, 14], textOffsetY: -32, textOffsetX: 0 },
   { src: icon3, displacement: [0, 14], textOffsetY: -36, textOffsetX: 0 },
 ];
 
@@ -113,4 +116,29 @@ export const addMarker = (features, airport, options) => {
   );
 
   features.push(feature);
+}
+
+export const getMapBase = (index) => {
+  switch (index) {
+    case 0:
+      return new TileLayer({ source: new OSM() });
+    case 1:
+      return new TileLayer({
+        source: new XYZ({
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          attributions: '© Esri',
+          maxZoom: 19,
+        }),
+      });
+    case 2:
+      return new TileLayer({
+        source: new XYZ({
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
+          attributions: '© Esri',
+          maxZoom: 19,
+        }),
+      });
+    default:
+      return new TileLayer({ source: new OSM() });
+  }
 }

@@ -428,6 +428,10 @@ Frontend:
 * file-type https://github.com/sindresorhus/file-type
 * mapbox/togeojson https://github.com/mapbox/togeojson
 
+Map Sources:
+* OpenStreetMap https://www.openstreetmap.org/
+* Esri/ArcGIS Online https://www.arcgis.com/
+
 ---
 
 # Star History

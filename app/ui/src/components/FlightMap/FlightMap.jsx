@@ -4,10 +4,8 @@ import 'ol/ol.css';
 // openlayers
 import Map from 'ol/Map';
 import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import OSM from 'ol/source/OSM';
 import FullScreen from 'ol/control/FullScreen';
 import Overlay from 'ol/Overlay';
 import { transform } from 'ol/proj';
@@ -21,7 +19,7 @@ import { queryClient } from '../../util/http/http';
 import { fetchAirport } from '../../util/http/airport';
 import { DownloadMapButton } from './DownloadMapButton';
 import useCustomFields from '../../hooks/useCustomFields';
-import { DEFAULT_MAP_OPTIONS, drawGreatCircleLine, drawTrackLog, addMarker, MAP_OPTIONS_NAME } from './helpers';
+import { DEFAULT_MAP_OPTIONS, drawGreatCircleLine, drawTrackLog, addMarker, MAP_OPTIONS_NAME, getMapBase } from './helpers';
 import MapOptionsButton from './MapOptionsButton';
 import { CODEC_JSON, useLocalStorageState } from '../../hooks/useLocalStorageState';
 
@@ -76,9 +74,11 @@ export const FlightMap = ({ data, title = "Flight Map", sx, airportsMap }) => {
     overlayRef.current = new Overlay({ element: containerRef.current });
     const vectorLayer = new VectorLayer({ source: vectorSourceRef.current });
 
+    const mapLayer = getMapBase(options.map_base);
+
     const mapInstance = new Map({
       target: mapRef.current,
-      layers: [new TileLayer({ source: new OSM() }), vectorLayer],
+      layers: [mapLayer, vectorLayer],
       view: new View({
         center: transform([10, 45], "EPSG:4326", "EPSG:3857"),
         zoom: 4,
@@ -116,7 +116,7 @@ export const FlightMap = ({ data, title = "Flight Map", sx, airportsMap }) => {
       mapRefInstance.current = null;
       setMap(null);
     };
-  }, []);
+  }, [options.map_base]);
 
   useEffect(() => {
     if (!map || !data) return;
