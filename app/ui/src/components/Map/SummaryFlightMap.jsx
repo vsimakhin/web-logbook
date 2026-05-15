@@ -13,12 +13,8 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
 import { fetchAirports } from "../../util/http/airport";
-import MapOptions from "./MapOptions";
-import { useLocalStorageState, CODEC_JSON } from "../../hooks/useLocalStorageState";
 
 export const SummaryFlightMap = () => {
-  const [options, setOptions] = useLocalStorageState("map-options", { routes: true, tracks: false, airport_ids: true, icon: 'ico' }, { codec: CODEC_JSON });
-
   const [mapData, setMapData] = useState([]);
   const [airportsMap, setAirportsMap] = useState(new Map());
 
@@ -64,7 +60,6 @@ export const SummaryFlightMap = () => {
               <Filters data={data} callbackFunction={callbackFunction} />
             </CardContent>
           </Card >
-          <MapOptions options={options} setOptions={setOptions} />
           <Card variant="outlined" sx={{ mb: 1 }}>
             <CardContent>
               <CardHeader title="Stats" />
@@ -74,7 +69,7 @@ export const SummaryFlightMap = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <FlightMap data={mapData} options={options} airportsMap={airportsMap} />
+          <FlightMap data={mapData} airportsMap={airportsMap} />
         </Grid>
       </Grid>
     </>
