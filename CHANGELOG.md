@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.5.0] - 20.05.2026
 
 - New: New map options and map sources (satellite, terrain).
 - Update: Golang and npm packages/security patches.

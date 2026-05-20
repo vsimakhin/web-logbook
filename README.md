@@ -63,7 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.5.0] - 20.05.2026
 
 - New: New map options and map sources (satellite, terrain).
 - Update: Golang and npm packages/security patches.
@@ -79,11 +79,6 @@ The application will automatically create a local SQLite database on the first s
 - Update: Golang and npm packages/security patches.
 - Update: Improved import log message, added how many records were imported and how many were failed/skipped.
 - Update: Custom PDF logbook headers containing newlines (\n) are now split into multiple lines.
-
-## [4.2.0] - 09.04.2026
-
-- Update: Replaced @toolpad/core (not maintained) module with own components.
-- Update: Golang and npm packages/security patches.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 
