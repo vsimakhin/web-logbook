@@ -3,7 +3,7 @@ module github.com/vsimakhin/web-logbook
 go 1.25.9
 
 require (
-	codeberg.org/go-pdf/fpdf v0.11.1
+	codeberg.org/go-pdf/fpdf v0.12.0
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/go-chi/cors v1.2.2
 	github.com/go-sql-driver/mysql v1.10.0

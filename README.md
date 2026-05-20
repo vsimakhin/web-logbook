@@ -66,6 +66,7 @@ The application will automatically create a local SQLite database on the first s
 ## [Unreleased]
 
 - New: New map options and map sources (satellite, terrain).
+- Update: Golang and npm packages/security patches.
 
 ## [4.4.0] - 12.05.2026
 
