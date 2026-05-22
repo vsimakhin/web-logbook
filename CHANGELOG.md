@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.5.1] - 22.05.2026
 
 - Fix: Download map functionality didn't work for satellite and terrain maps.
 - Update: Golang (1.25.10) modules/security patches.
