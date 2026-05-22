@@ -66,6 +66,7 @@ The application will automatically create a local SQLite database on the first s
 ## [Unreleased]
 
 - Fix: Download map functionality didn't work for satellite and terrain maps.
+- Update: Golang (1.25.10) modules/security patches.
 
 ## [4.5.0] - 20.05.2026
 
