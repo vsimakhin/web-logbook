@@ -128,6 +128,7 @@ export const getMapBase = (index) => {
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
           attributions: '© Esri',
           maxZoom: 19,
+          crossOrigin: 'anonymous',
         }),
       });
     case 2:
@@ -136,6 +137,7 @@ export const getMapBase = (index) => {
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
           attributions: '© Esri',
           maxZoom: 19,
+          crossOrigin: 'anonymous',
         }),
       });
     default:
