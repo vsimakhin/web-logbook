@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Download map functionality didn't work for satellite and terrain maps.
+
 ## [4.5.0] - 20.05.2026
 
 - New: New map options and map sources (satellite, terrain).
