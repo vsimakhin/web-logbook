@@ -278,6 +278,24 @@ type Settings struct {
 
 	AirportDBSource string `json:"airports_db_source"`
 	NoICAOFilter    bool   `json:"no_icao_filter"`
+
+	PreviousExperience struct {
+		Total         string `json:"total_time"`
+		SE            string `json:"se_time"`
+		ME            string `json:"me_time"`
+		MCC           string `json:"mcc_time"`
+		Night         string `json:"night_time"`
+		IFR           string `json:"ifr_time"`
+		PIC           string `json:"pic_time"`
+		CoPilot       string `json:"co_pilot_time"`
+		Dual          string `json:"dual_time"`
+		Instructor    string `json:"instructor_time"`
+		METotal       string `json:"me_total_time"`
+		CrossCountry  string `json:"cc_time"`
+		SimTime       string `json:"sim_time"`
+		LandingsDay   int    `json:"landings_day"`
+		LandingsNight int    `json:"landings_night"`
+	} `json:"previous_experience"`
 }
 
 // License is a type for licesing

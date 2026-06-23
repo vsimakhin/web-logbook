@@ -8,6 +8,7 @@ import LogbookSignature from "./Signature/LogbookSignature";
 import StandardFields from "./StandardFields/StandardFields";
 import useSettings from "../../hooks/useSettings";
 import CustomFieldsTable from "./CustomFields/CustomFieldsTable";
+import PreviousExperience from "./PreviousExperience/PreviousExperience";
 
 export const Settings = () => {
   const { data, isLoading } = useSettings();
@@ -52,6 +53,7 @@ export const Settings = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+          <PreviousExperience settings={settings} handleChange={handleChange} />
           <StandardFields settings={settings} handleChange={handleChange} />
           <CustomFieldsTable />
         </Grid>
