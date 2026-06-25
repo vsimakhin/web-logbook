@@ -121,6 +121,21 @@ func (app *application) HandlerApiExportLogbook(w http.ResponseWriter, r *http.R
 			exportSettings = settings.ExportA5
 		}
 
+		var previousExperience models.FlightRecord
+		previousExperience.Time.SE = settings.PreviousExperience.SE
+		previousExperience.Time.ME = settings.PreviousExperience.ME
+		previousExperience.Time.Total = settings.PreviousExperience.Total
+		previousExperience.Time.MCC = settings.PreviousExperience.MCC
+		previousExperience.Time.Night = settings.PreviousExperience.Night
+		previousExperience.Time.IFR = settings.PreviousExperience.IFR
+		previousExperience.Time.PIC = settings.PreviousExperience.PIC
+		previousExperience.Time.CoPilot = settings.PreviousExperience.CoPilot
+		previousExperience.Time.Dual = settings.PreviousExperience.Dual
+		previousExperience.Time.Instructor = settings.PreviousExperience.Instructor
+		previousExperience.Landings.Day = settings.PreviousExperience.LandingsDay
+		previousExperience.Landings.Night = settings.PreviousExperience.LandingsNight
+		previousExperience.SIM.Time = settings.PreviousExperience.SimTime
+
 		// custom title
 		id := fmt.Sprintf("custom_title_%s", strings.ToLower(format))
 		att, _ := app.db.GetAttachmentByID(id)
@@ -128,7 +143,8 @@ func (app *application) HandlerApiExportLogbook(w http.ResponseWriter, r *http.R
 
 		pdfExporter, err := pdfexport.NewPDFExporter(format,
 			settings.OwnerName, settings.LicenseNumber, settings.Address,
-			settings.SignatureText, settings.SignatureImage, exportSettings)
+			settings.SignatureText, settings.SignatureImage, exportSettings,
+			previousExperience)
 
 		if err != nil {
 			app.handleError(w, err)

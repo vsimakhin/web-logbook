@@ -9,7 +9,7 @@ import SaveSettingsButton from '../SaveSettingsButton';
 import useSettings from "../../../hooks/useSettings";
 import { getValue } from "../../../util/helpers";
 import TextField from "../../UIElements/TextField";
-// import HelpButton from './HelpButton';
+import HelpButton from './HelpButton';
 
 const gsize = { xs: 8, sm: 3, md: 3, lg: 3, xl: 3 }
 
@@ -19,15 +19,11 @@ const FLIGHT_TIME_SLOT_PROPS = {
     onInput: (e) => {
       let value = e.target.value;
 
-      // Remove invalid characters
       value = value.replace(/[^0-9]/g, '');
-
-      // Automatically add colon after 1 or 2 digits for hours
       if (value.length > 2) {
         value = `${value.slice(0, value.length - 2)}:${value.slice(-2)}`;
       }
 
-      // Allow clearing or partial input
       e.target.value = value;
     },
     inputMode: 'numeric'
@@ -36,7 +32,7 @@ const FLIGHT_TIME_SLOT_PROPS = {
 
 const ActionButtons = ({ settings }) => (
   <>
-    {/* <HelpButton /> */}
+    <HelpButton />
     <SaveSettingsButton settings={settings} />
   </>
 );
@@ -88,7 +84,7 @@ export const PreviousExperience = ({ settings, handleChange }) => {
               gsize={gsize}
               key={field.id} id={field.id} label={field.label}
               handleChange={handleChange}
-              value={getValue(settings, field.id) || 0} />
+              value={getValue(settings, field.id) || ""} />
           ))}
         </Grid>
 

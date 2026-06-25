@@ -117,7 +117,8 @@ type PDFExporter struct {
 
 // NewPDFExporter creates a new PDFExporter object
 func NewPDFExporter(format, ownerName, licenseNumber, address,
-	signature, signatureImage string, exportConfig models.ExportPDF) (*PDFExporter, error) {
+	signature, signatureImage string, exportConfig models.ExportPDF,
+	previousExperience models.FlightRecord) (*PDFExporter, error) {
 
 	pdfExporter := &PDFExporter{
 		Format: format,
@@ -129,6 +130,9 @@ func NewPDFExporter(format, ownerName, licenseNumber, address,
 		SignatureImage: signatureImage,
 
 		Export: exportConfig,
+
+		totalPrevious: models.CalculateTotals(EmptyTotals(), previousExperience),
+		totalTime:     models.CalculateTotals(EmptyTotals(), previousExperience),
 	}
 
 	err := pdfExporter.init()
