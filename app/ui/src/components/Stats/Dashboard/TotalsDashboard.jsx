@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid";
@@ -16,19 +16,63 @@ import useCustomFields from "../../../hooks/useCustomFields";
 import { fetchAirports } from "../../../util/http/airport";
 import { useLocalStorageState, CODEC_JSON } from "../../../hooks/useLocalStorageState";
 import DashboardOptions from "./DashboardOptions";
+import useSettings from "../../../hooks/useSettings";
 
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
   const [dashboardOptions, setDashboardOptions] = useLocalStorageState("dashboard-options", {}, { codec: CODEC_JSON });
   const [airportsMap, setAirportsMap] = useState(new Map());
+  const { settings } = useSettings();
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data: rawData, isLoading, isError, error } = useQuery({
     queryKey: ['logbook'],
     queryFn: ({ signal }) => fetchLogbookData({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
+    select: (data) => data || [],
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
+
+  const data = useMemo(() => {
+    if (!rawData) return rawData;
+    if (!settings || !settings.previous_experience) return rawData;
+
+    const prev = settings.previous_experience;
+
+    const artificialFlight = {
+      uuid: "previous-experience-artificial-uuid",
+      date: "17/12/1903",
+      departure: { place: "" },
+      arrival: { place: "" },
+      aircraft: { reg_name: "", model: "" },
+      time: {
+        se_time: prev.se_time || "",
+        me_time: prev.me_total_time || "",
+        mcc_time: prev.mcc_time || "",
+        total_time: prev.total_time || "",
+        night_time: prev.night_time || "",
+        ifr_time: prev.ifr_time || "",
+        pic_time: prev.pic_time || "",
+        co_pilot_time: prev.co_pilot_time || "",
+        dual_time: prev.dual_time || "",
+        instructor_time: prev.instructor_time || "",
+        cc_time: prev.cc_time || "",
+      },
+      landings: {
+        day: prev.landings_day || 0,
+        night: prev.landings_night || 0,
+      },
+      sim: {
+        type: "",
+        time: prev.sim_time || "",
+      },
+      distance: 0,
+      custom_fields: {},
+      tags: "",
+    };
+
+    return [artificialFlight, ...rawData];
+  }, [rawData, settings]);
 
   const { data: airports } = useQuery({
     queryKey: ['airports'],

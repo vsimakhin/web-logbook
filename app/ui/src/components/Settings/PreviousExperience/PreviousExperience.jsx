@@ -81,14 +81,14 @@ export const PreviousExperience = ({ settings, handleChange }) => {
               handleChange={handleChange}
               placeholder="HHHH:MM"
               slotProps={FLIGHT_TIME_SLOT_PROPS}
-              value={getValue(settings, field.id)} />
+              value={getValue(settings, field.id) || ""} />
           ))}
           {landingFields.map((field) => (
             <TextField
               gsize={gsize}
               key={field.id} id={field.id} label={field.label}
               handleChange={handleChange}
-              value={getValue(settings, field.id)} />
+              value={getValue(settings, field.id) || 0} />
           ))}
         </Grid>
 
