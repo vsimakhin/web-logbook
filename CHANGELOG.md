@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Update: Golang and npm packages/security patches.
+- New: Added support for tracking previous flight experience on the Settings page. Entered flight experience is automatically included in Logbook totals, Dashboard statistics, and PDF exports.
 
 ## [4.5.1] - 22.05.2026
 

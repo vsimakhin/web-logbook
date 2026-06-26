@@ -234,6 +234,7 @@ export const LogbookTable = ({ data, isLoading }) => {
       footerFieldIdTotalLabel='aircraft_reg'
       showAggregationFooter={true}
       showPreviousPagesTotal={settings.logbook_totals_view === 1}
+      initialValues={settings.previous_experience}
       disableColumnMenu
       customActions={customActions}
       customColumnVisibilityModel={{

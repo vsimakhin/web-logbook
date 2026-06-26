@@ -56,7 +56,7 @@ const AggregationRow = ({ label, values, columns, ...props }) => {
   );
 };
 
-const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPagesTotal = false, ...props }) => {
+const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPagesTotal = false, initialValues = {}, ...props }) => {
   const apiRef = useGridApiContext();
   const visibleColumns = useGridSelector(apiRef, gridVisibleColumnDefinitionsSelector);
   const allRowIds = useGridSelector(apiRef, gridFilteredSortedRowIdsSelector);
@@ -69,6 +69,8 @@ const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPage
   const [grandTotals, setGrandTotals] = useState({});
 
   const scrollRef = useRef(null);
+
+  const serializedInitialValues = JSON.stringify(initialValues);
 
   // Sync horizontal scroll
   useEffect(() => {
@@ -122,6 +124,9 @@ const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPage
           }
         });
 
+        const initialVal = initialValues ? initialValues[field] : undefined;
+        const hasInitialVal = initialVal !== undefined && initialVal !== null && initialVal !== '' && initialVal !== 0 && initialVal !== '00:00';
+
         // Collect Previous Pages Values
         if (showPreviousPagesTotal) {
           previousPagesRowIds.forEach((rowId) => {
@@ -132,6 +137,9 @@ const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPage
               }
             }
           });
+          if (hasInitialVal) {
+            ppValues.push(initialVal);
+          }
         }
 
         // Collect Grand Values
@@ -143,6 +151,9 @@ const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPage
             }
           }
         });
+        if (hasInitialVal) {
+          gValues.push(initialVal);
+        }
 
         if (hasAggregationFn) {
           pTotals[field] = column.aggregationFn(pValues);
@@ -203,7 +214,7 @@ const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPage
       setPageAndPreviousTotals(ppSumTotals);
     }
     setGrandTotals(gTotals);
-  }, [visibleColumns, allRowIds, paginationModel, apiRef, showPreviousPagesTotal, sortModel]);
+  }, [visibleColumns, allRowIds, paginationModel, apiRef, showPreviousPagesTotal, sortModel, serializedInitialValues]);
 
   // Total width for the internal content wrapper to allow overflow: hidden sync
   const totalWidth = visibleColumns.reduce((acc, col) => acc + col.computedWidth, 0);
