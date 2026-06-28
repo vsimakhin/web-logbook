@@ -9,8 +9,8 @@ const parseTrackFileContent = (fileText, fileType) => {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(fileText, "text/xml");
 
-  // For KML files, first try to handle gx:Track data directly
   if (fileType === 'kml') {
+    // For KML files, first try to handle gx:Track data directly
     const tracks = xmlDoc.getElementsByTagName('gx:Track');
     if (tracks.length > 0) {
       const extractedPoints = [];
@@ -48,6 +48,25 @@ const parseTrackFileContent = (fileText, fileType) => {
         // Sort points by timestamp to maintain proper sequence
         extractedPoints.sort((a, b) => a.timestamp - b.timestamp);
         return extractedPoints.map(point => point.coords);
+      }
+    }
+
+    // FlightRadar24 kml files have 2 folders: Route and Trail.
+    // They duplicate track data, so we remove one of them.
+    const folders = xmlDoc.getElementsByTagName("Folder");
+    if (folders.length === 2) {
+      const routeFolder = Array.from(folders).find(
+        f => f.getElementsByTagName("name")[0]?.textContent === "Route"
+      );
+
+      const trailFolder = Array.from(folders).find(
+        f => f.getElementsByTagName("name")[0]?.textContent === "Trail"
+      );
+
+      if (routeFolder && trailFolder) {
+        // Looks like a FlightRadar24 export.
+        // Remove Trail before sending to toGeoJSON.
+        trailFolder.parentNode.removeChild(trailFolder);
       }
     }
   }

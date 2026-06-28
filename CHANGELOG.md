@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: Distance calculation for FlightRadar24 kml files was incorrect (doubled the distance), [see issue #528](https://github.com/vsimakhin/web-logbook/issues/528).
+
 ## [4.6.0] - 26.06.2026
 
 - Update: Golang and npm packages/security patches.

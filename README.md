@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Distance calculation for FlightRadar24 kml files was incorrect (doubled the distance), [see issue #528](https://github.com/vsimakhin/web-logbook/issues/528).
+
 ## [4.6.0] - 26.06.2026
 
 - Update: Golang and npm packages/security patches.
@@ -397,6 +401,7 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/WildBlueUK" title="WildBlueUK"><img src="https://github.com/WildBlueUK.png" width="40" height="40" alt="WildBlueUK" /></a>
   <a href="https://github.com/Muchacho08" title="Muchacho08"><img src="https://github.com/Muchacho08.png" width="40" height="40" alt="Muchacho08" /></a>
   <a href="https://github.com/mattswainston" title="mattswainston"><img src="https://github.com/mattswainston.png" width="40" height="40" alt="mattswainston" /></a>
+  <a href="https://github.com/jnko266" title="jnko266"><img src="https://github.com/jnko266.png" width="40" height="40" alt="jnko266" /></a>
 </p>
 
 --
