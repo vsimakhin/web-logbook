@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: 1.25.11
 
@@ -62,14 +62,10 @@ jobs:
           asset_path: dist/web-logbook-windows-amd64.zip
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Extract Docker tag
-        id: extract_tag
-        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -78,13 +74,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/build.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            vsimakhin/web-logbook:${{ env.TAG }}
+            vsimakhin/web-logbook:${{ github.event.release.tag_name }}
             vsimakhin/web-logbook:4
             vsimakhin/web-logbook:latest
