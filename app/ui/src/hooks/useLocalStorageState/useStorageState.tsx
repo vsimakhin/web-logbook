@@ -36,14 +36,14 @@ function emitCurrentTabStorageChange(key: string) {
   }
 }
 
-if (typeof window !== 'undefined') {
-  const origSetItem = window.localStorage.setItem;
-  window.localStorage.setItem = function setItem(key, value) {
-    const result = origSetItem.call(this, key, value);
-    emitCurrentTabStorageChange(key);
-    return result;
-  };
-}
+// if (typeof window !== 'undefined') {
+//   const origSetItem = window.localStorage.setItem;
+//   window.localStorage.setItem = function setItem(key, value) {
+//     const result = origSetItem.call(this, key, value);
+//     emitCurrentTabStorageChange(key);
+//     return result;
+//   };
+// }
 
 function subscribe(area: Storage, key: string | null, callback: () => void): () => void {
   if (!key) {

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useGridApiRef } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
 // MUI icons
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 // Custom components
@@ -18,6 +19,26 @@ import TableHeader from '../UIElements/TableHeader';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
 
+const parseLogbookTime = (timeString) => {
+  if (!timeString || typeof timeString !== 'string') return null;
+  const normalized = timeString.replace(':', '').padStart(4, '0');
+  const hours = parseInt(normalized.slice(0, 2), 10);
+  const minutes = parseInt(normalized.slice(2, 4), 10);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+  return { hours, minutes };
+};
+
+const getLogbookDateWithDeparture = (row) => {
+  if (!row?.date) return null;
+  const date = dayjs(row.date, 'DD/MM/YYYY');
+  if (!date.isValid()) return null;
+  const time = parseLogbookTime(row.departure?.time);
+  if (time) {
+    return date.hour(time.hours).minute(time.minutes).second(0).millisecond(0).toDate();
+  }
+  return date.toDate();
+};
+
 export const LogbookTable = ({ data, isLoading }) => {
   const apiRef = useGridApiRef();
   const { settings, isSettingsLoading, fieldName, paginationOptions } = useSettings();
@@ -32,7 +53,12 @@ export const LogbookTable = ({ data, isLoading }) => {
       // record number
       createColumn({ field: "record_number", headerName: "#", width: 30, type: 'number', align: 'center', valueFormatter: (value) => value.toString() }),
       // date
-      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90 }),
+      createDateColumn({
+        field: "date",
+        headerName: fieldName("date"),
+        width: 90,
+        valueGetter: (_value, row) => getLogbookDateWithDeparture(row),
+      }),
       // departure
       createColumn({ field: "departure_place", headerName: fieldName("dep_place"), width: 60, valueGetter: (_value, row) => row.departure?.place }),
       createColumn({ field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.departure?.time }),

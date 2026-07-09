@@ -29,7 +29,7 @@ export const sumTime = (values) => {
   return `${hh}:${mm.toString().padStart(2, '0')}`;
 }
 
-export const createDateColumn = ({ field, headerName, width = 90 }) => ({
+export const createDateColumn = ({ field, headerName, width = 90, ...props }) => ({
   field: field,
   headerName: headerName,
   headerAlign: 'center',
@@ -46,6 +46,7 @@ export const createDateColumn = ({ field, headerName, width = 90 }) => ({
       </Typography>
     </Box>
   ),
+  ...props,
 })
 
 export const createColumn = ({ field, headerName, width, headerAlign = 'center', align = 'center', ...props }) => ({
