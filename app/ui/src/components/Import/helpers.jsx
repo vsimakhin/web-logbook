@@ -52,9 +52,17 @@ export const autoTimeRecog = (time) => {
 };
 
 export const marshallItem = (item) => {
+  const customFields = Object.entries(item)
+    .filter(([key]) => key.startsWith("custom_fields."))
+    .reduce((acc, [key, value]) => {
+      const uuid = key.replace("custom_fields.", "");
+      acc[uuid] = value;
+      return acc;
+    }, {});
+
   return {
     generated_id: item.generated_id,
-    uuid: "",
+    uuid: item.generated_id,
     date: item.date,
     departure: {
       place: item.departure_place,
@@ -90,5 +98,6 @@ export const marshallItem = (item) => {
     },
     pic_name: item.pic_name,
     remarks: item.remarks,
+    custom_fields: customFields,
   };
 }
