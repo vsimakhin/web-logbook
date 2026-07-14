@@ -107,25 +107,31 @@ const ImportProgressDialog = ({ open, onClose, payload }) => {
   };
 
   const handleProgressChunk = (chunk) => {
-    if (chunk.type === 'log') {
-      setProgress({ current: chunk.current, total: chunk.total });
-      if (chunk.message) {
-        setLogs((prev) => [...prev, chunk.message]);
-      }
-    } else if (chunk.type === 'result') {
-      setProgress({ current: chunk.current, total: chunk.total });
-      setStatus(chunk.ok ? 'success' : 'error');
-      setResultMessage(chunk.message);
-      if (chunk.data) {
-        try {
-          const finalLogs = JSON.parse(chunk.data);
-          if (Array.isArray(finalLogs)) {
-            setLogs(finalLogs);
-          }
-        } catch (e) {
-          console.error('Error parsing final data logs:', e);
+    switch (chunk.type) {
+      case "progress":
+        setProgress({
+          current: chunk.current,
+          total: chunk.total,
+        });
+        break;
+
+      case "log":
+        if (chunk.message) {
+          setLogs((prev) => [...prev, chunk.message]);
         }
-      }
+        break;
+
+      case "result":
+        setProgress({
+          current: chunk.current,
+          total: chunk.total,
+        });
+        setStatus(chunk.ok ? "success" : "error");
+        setResultMessage(chunk.message);
+        break;
+
+      default:
+        console.warn("Unknown progress chunk:", chunk);
     }
   };
 
