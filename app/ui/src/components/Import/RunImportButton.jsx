@@ -1,33 +1,18 @@
 import { ToolbarButton } from "@mui/x-data-grid";
-import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 // MUI Icons
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 // Custom components
-import { runImport } from "../../util/http/import";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
-import ImportLogDialog from "./ImportLogDialog";
+import ImportProgressDialog from "./ImportProgressDialog";
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import ImportOptionsDialog from "./ImportOptionsDialog";
 
-export const RunImportButton = ({ data, inProgress, setInProgress }) => {
+export const RunImportButton = ({ data, inProgress }) => {
   const dialogs = useDialogs();
 
-  const { mutateAsync: importFlightRecords, isError, error } = useMutation({
-    mutationFn: ({ payload }) => runImport({ payload }),
-    onSuccess: async (payload) => {
-      if (payload) {
-        await dialogs.open(ImportLogDialog, payload);
-      }
-      await queryClient.invalidateQueries({ queryKey: ['logbook'] })
-    }
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to import flight records' });
-
   const importData = async (options) => {
-    setInProgress(true);
 
     // need to marshal custom fields in the data to the string, since go struct field is string as well
     const marshalledData = data.map((item) => ({
@@ -39,14 +24,18 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
     }));
 
     const payload = {
+      recalculate_night_time: options.recalculate_night_time ?? false,
       options,
       data: marshalledData,
     };
 
     try {
-      await importFlightRecords({ payload });
-    } finally {
-      setInProgress(false);
+      const isSuccess = await dialogs.open(ImportProgressDialog, payload);
+      if (isSuccess) {
+        await queryClient.invalidateQueries({ queryKey: ['logbook'] });
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
