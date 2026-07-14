@@ -9,7 +9,7 @@ import ImportProgressDialog from "./ImportProgressDialog";
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import ImportOptionsDialog from "./ImportOptionsDialog";
 
-export const RunImportButton = ({ data, inProgress }) => {
+export const RunImportButton = ({ data }) => {
   const dialogs = useDialogs();
 
   const importData = async (options) => {
@@ -49,7 +49,7 @@ export const RunImportButton = ({ data, inProgress }) => {
   return (
     <Tooltip title="Run Import">
       <span>
-        <ToolbarButton disabled={inProgress || data.length === 0} onClick={handleImportClick} color="default" label="Run Import">
+        <ToolbarButton disabled={data.length === 0} onClick={handleImportClick} color="default" label="Run Import">
           <FileUploadOutlinedIcon />
         </ToolbarButton>
       </span>
