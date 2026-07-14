@@ -61,8 +61,8 @@ export const marshallItem = (item) => {
     }, {});
 
   return {
-    generated_id: item.generated_id,
-    uuid: item.generated_id,
+    generated_id: String(item.generated_id),
+    uuid: String(item.generated_id),
     date: item.date,
     departure: {
       place: item.departure_place,

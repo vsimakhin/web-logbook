@@ -9,10 +9,9 @@ const OptionSwitch = ({
   checked,
   disabled = false,
   handleChange,
-  key,
   ...switchProps
 }) => (
-  <Grid size={gsize} key={key}>
+  <Grid size={gsize}>
     <FormControlLabel
       id={id}
       disabled={disabled}

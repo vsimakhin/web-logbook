@@ -26,12 +26,21 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to import flight records' });
 
-  const importData = async (recalculate) => {
+  const importData = async (options) => {
     setInProgress(true);
 
+    // need to marshal custom fields in the data to the string, since go struct field is string as well
+    const marshalledData = data.map((item) => ({
+      ...item,
+      custom_fields:
+        typeof item.custom_fields === "string"
+          ? item.custom_fields
+          : JSON.stringify(item.custom_fields ?? {}),
+    }));
+
     const payload = {
-      recalculate_night_time: recalculate,
-      data: data,
+      options,
+      data: marshalledData,
     };
 
     try {
@@ -43,25 +52,9 @@ export const RunImportButton = ({ data, inProgress, setInProgress }) => {
 
   const handleImportClick = async () => {
     const options = await dialogs.open(ImportOptionsDialog);
-    if (options) {
-      console.log(options)
+    if (options && options.backup) {
+      await importData(options);
     }
-    // const confirmed = await dialogs.confirm('Have you created a backup before import data?', {
-    //   title: 'Backup data',
-    //   severity: 'error',
-    //   okText: 'Yes, continue',
-    //   cancelText: 'Arrr, no',
-    // });
-
-    // if (confirmed) {
-    //   const recalculate = await dialogs.confirm('Do you want to recalculate night time for the imported records?', {
-    //     title: 'Recalculate night time',
-    //     severity: 'error',
-    //     okText: 'Yes, recalculate',
-    //     cancelText: 'No, leave as is',
-    //   });
-    //   await importData(recalculate);
-    // }
   };
 
   return (
