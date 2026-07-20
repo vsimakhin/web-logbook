@@ -137,6 +137,31 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	// Load settings for Self PIC label
+	selfPICLabel := "Self"
+	if settings, err := app.db.GetSettings(); err == nil {
+		if settings.SelfPICLabel != "" {
+			selfPICLabel = settings.SelfPICLabel
+		}
+	}
+
+	// Load custom fields to map UUID -> Name for roles
+	customFieldsNames := make(map[string]string)
+	if cfs, err := app.db.GetCustomFields(); err == nil {
+		for _, cf := range cfs {
+			customFieldsNames[cf.UUID] = cf.Name
+		}
+	}
+
+	// Load existing persons to populate duplicate detection cache
+	personCache := make(map[string]string)
+	if existingPersons, err := app.db.GetPersons(); err == nil {
+		for _, p := range existingPersons {
+			key := strings.ToLower(p.FirstName + "|" + p.MiddleName + "|" + p.LastName)
+			personCache[key] = p.UUID
+		}
+	}
+
 	for i, fr := range importData.FlightRecords {
 		var rowLogs []string
 		logRow := func(msg string) {
@@ -152,12 +177,12 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 			logRow("--- already exists")
 			skippedRecords++
 		} else {
-			uuid, err := uuid.NewRandom()
+			flightUUID, err := uuid.NewRandom()
 			if err != nil {
 				app.errorLog.Println(err)
 			}
 
-			fr.UUID = uuid.String()
+			fr.UUID = flightUUID.String()
 			fr.Distance = app.db.Distance(fr.Departure.Place, fr.Arrival.Place)
 
 			// recalculate night time?
@@ -196,6 +221,102 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 				if key != "" {
 					duplicates[key] = true
 				}
+
+				if importData.Options.CreatePersons {
+					// Define a helper to process and save/link persons
+					processPerson := func(fullName string, role string) {
+						fullName = strings.TrimSpace(fullName)
+						if fullName == "" {
+							return
+						}
+
+						// Check if this is "Self"
+						if strings.EqualFold(fullName, "Self") || strings.EqualFold(fullName, selfPICLabel) {
+							return
+						}
+
+						// Parse name
+						firstName, middleName, lastName := parseName(fullName, importData.Options.CreatePersonFormat)
+
+						// Check if person already exists (in cache)
+						pKey := strings.ToLower(firstName + "|" + middleName + "|" + lastName)
+						personUUID, exists := personCache[pKey]
+						if !exists {
+							// Create new person
+							newUUID, err := uuid.NewRandom()
+							if err != nil {
+								logRow(fmt.Sprintf("--- cannot generate uuid for person: %s", err))
+								return
+							}
+							personUUID = newUUID.String()
+
+							newPerson := models.Person{
+								UUID:       personUUID,
+								FirstName:  firstName,
+								MiddleName: middleName,
+								LastName:   lastName,
+							}
+
+							err = app.db.AddPerson(newPerson)
+							if err != nil {
+								logRow(fmt.Sprintf("--- cannot create person %s: %s", fullName, err))
+								return
+							}
+
+							// Add to cache
+							personCache[pKey] = personUUID
+							logRow(fmt.Sprintf("--- created person %s", fullName))
+						}
+
+						// Link person to the flight record
+						ptlUUID, err := uuid.NewRandom()
+						if err != nil {
+							logRow(fmt.Sprintf("--- cannot generate uuid for person link: %s", err))
+							return
+						}
+
+						personToLog := models.PersonToLog{
+							UUID:       ptlUUID.String(),
+							PersonUUID: personUUID,
+							LogUUID:    fr.UUID,
+							Role:       role,
+						}
+
+						err = app.db.AddPersonToLog(personToLog)
+						if err != nil {
+							logRow(fmt.Sprintf("--- cannot link person %s to flight: %s", fullName, err))
+						} else {
+							logRow(fmt.Sprintf("--- linked person %s as %s", fullName, role))
+						}
+					}
+
+					// 1. Process standard fields
+					if importData.Options.CreatePersonFrom["pic"] {
+						processPerson(fr.PIC, "PIC")
+					}
+
+					// 2. Process custom fields
+					if fr.CustomFields != "" {
+						var customFields map[string]interface{}
+						if err := json.Unmarshal([]byte(fr.CustomFields), &customFields); err == nil {
+							for cfUuid, enabled := range importData.Options.CreatePersonFrom {
+								if cfUuid != "pic" && enabled {
+									if val, ok := customFields[cfUuid]; ok {
+										if strVal, ok := val.(string); ok && strVal != "" {
+											roleName, ok := customFieldsNames[cfUuid]
+											if !ok || roleName == "" {
+												roleName = "Crew"
+											}
+											processPerson(strVal, roleName)
+										}
+									}
+								}
+							}
+						} else {
+							logRow(fmt.Sprintf("--- cannot parse custom fields JSON: %s", err))
+						}
+					}
+				}
 			}
 		}
 
@@ -224,4 +345,65 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 	}
 
 	writeResult(finalMessage, finalOK)
+}
+
+// parseName splits a fullName into First, Middle, and Last name components based on the selected format
+func parseName(fullName string, format string) (firstName, middleName, lastName string) {
+	parts := strings.Fields(fullName)
+	n := len(parts)
+	if n == 0 {
+		return "", "", ""
+	}
+
+	switch format {
+	case "ln_fn_md":
+		// Last Name, First Name, Middle Name
+		// 3 parts → Last / First / Middle
+		// 2 parts → Last / First
+		// 1 part → Last
+		if n >= 3 {
+			lastName = parts[0]
+			firstName = parts[1]
+			middleName = strings.Join(parts[2:], " ")
+		} else if n == 2 {
+			lastName = parts[0]
+			firstName = parts[1]
+		} else {
+			lastName = parts[0]
+		}
+
+	case "fn_ln_md":
+		// First Name, Last Name, Middle Name
+		// 3 parts → First / Last / Middle
+		// 2 parts → First / Last
+		// 1 part → First
+		if n >= 3 {
+			firstName = parts[0]
+			lastName = parts[1]
+			middleName = strings.Join(parts[2:], " ")
+		} else if n == 2 {
+			firstName = parts[0]
+			lastName = parts[1]
+		} else {
+			firstName = parts[0]
+		}
+
+	default: // "fn_mn_ln" or empty default
+		// First Name, Middle Name, Last Name
+		// 3 parts → First / Middle / Last
+		// 2 parts → First / Last
+		// 1 part → Last
+		if n >= 3 {
+			firstName = parts[0]
+			middleName = strings.Join(parts[1:n-1], " ")
+			lastName = parts[n-1]
+		} else if n == 2 {
+			firstName = parts[0]
+			lastName = parts[1]
+		} else {
+			lastName = parts[0]
+		}
+	}
+
+	return firstName, middleName, lastName
 }

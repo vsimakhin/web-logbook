@@ -31,7 +31,7 @@ export const RunImportButton = ({ data }) => {
     try {
       const isSuccess = await dialogs.open(ImportProgressDialog, payload);
       if (isSuccess) {
-        await queryClient.invalidateQueries({ queryKey: ['logbook'] });
+        await queryClient.invalidateQueries();
       }
     } catch (e) {
       console.error(e);
