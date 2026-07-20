@@ -155,10 +155,14 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 
 	// Load existing persons to populate duplicate detection cache
 	personCache := make(map[string]string)
+	lastNameCache := make(map[string]string)
 	if existingPersons, err := app.db.GetPersons(); err == nil {
 		for _, p := range existingPersons {
 			key := strings.ToLower(p.FirstName + "|" + p.MiddleName + "|" + p.LastName)
 			personCache[key] = p.UUID
+			if p.LastName != "" {
+				lastNameCache[strings.ToLower(p.LastName)] = p.UUID
+			}
 		}
 	}
 
@@ -242,6 +246,16 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 						pKey := strings.ToLower(firstName + "|" + middleName + "|" + lastName)
 						personUUID, exists := personCache[pKey]
 						if !exists {
+							// Fallback: check if we only have a last name and this is PIC role
+							if role == "PIC" && lastName != "" {
+								if uuidFromLastName, found := lastNameCache[strings.ToLower(lastName)]; found {
+									personUUID = uuidFromLastName
+									exists = true
+								}
+							}
+						}
+
+						if !exists {
 							// Create new person
 							newUUID, err := uuid.NewRandom()
 							if err != nil {
@@ -265,6 +279,9 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 
 							// Add to cache
 							personCache[pKey] = personUUID
+							if lastName != "" {
+								lastNameCache[strings.ToLower(lastName)] = personUUID
+							}
 							logRow(fmt.Sprintf("--- created person %s", fullName))
 						}
 
