@@ -24,7 +24,6 @@ export const RunImportButton = ({ data }) => {
     }));
 
     const payload = {
-      recalculate_night_time: options.recalculate_night_time ?? false,
       options,
       data: marshalledData,
     };

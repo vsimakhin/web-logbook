@@ -62,9 +62,17 @@ func (app *application) GetFlightRecordDuplicates() (map[string]bool, error) {
 	return result, nil
 }
 
+type ImportOptions struct {
+	Backup               bool            `json:"backup"`
+	RecalculateNightTime bool            `json:"recalculate_night_time"`
+	CreatePersons        bool            `json:"create_persons"`
+	CreatePersonFormat   string          `json:"create_person_format"`
+	CreatePersonFrom     map[string]bool `json:"create_person_from"`
+}
+
 type ImportData struct {
-	RecalculateNightTime bool                  `json:"recalculate_night_time"`
-	FlightRecords        []models.FlightRecord `json:"data"`
+	Options       ImportOptions         `json:"options"`
+	FlightRecords []models.FlightRecord `json:"data"`
 }
 
 type ImportProgress struct {
@@ -153,7 +161,7 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 			fr.Distance = app.db.Distance(fr.Departure.Place, fr.Arrival.Place)
 
 			// recalculate night time?
-			if importData.RecalculateNightTime {
+			if importData.Options.RecalculateNightTime {
 				night, isNightLanding, err := app.calculateNightTime(fr)
 				if err != nil {
 					// nevermind, add error to the log
