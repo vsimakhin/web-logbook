@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.7.0] - 24.07.2026
 
 - New: Import custom fields.
 - New: Create Persons from imported records (experimental).
