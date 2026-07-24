@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Import custom fields
+- New: Create Persons from imported records (experimental)
+- Update: Refactored and optimized the importing process
+
 ## [4.6.1] - 28.06.2026
 
 - Fix: Distance calculation for FlightRadar24 kml files was incorrect (doubled the distance), [see issue #528](https://github.com/vsimakhin/web-logbook/issues/528).
