@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 // MUI Icons
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
@@ -130,6 +132,14 @@ const ImportOptionsDialog = ({ open, onClose }) => {
               handleChange={handleChange}
               label="Recalculate Night Time"
             />
+          </Grid>
+
+          <Divider sx={{ m: 1 }} />
+          <Typography variant="caption" color="warning">
+            * Creating Persons from imported records is still an experimental feature.
+          </Typography>
+
+          <Grid container spacing={1}>
             <OptionSwitch
               id="create_persons"
               checked={!!options.create_persons}
@@ -190,7 +200,6 @@ const ImportOptionsDialog = ({ open, onClose }) => {
                 </Grid>
               </Box>
             </Grid>
-
           </Grid>
         </CardContent>
       </Card>
