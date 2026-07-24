@@ -18,7 +18,7 @@ import TableHeader from '../UIElements/TableHeader';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
 
-export const LogbookTable = ({ data, isLoading }) => {
+export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
   const { settings, isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
@@ -243,6 +243,7 @@ export const LogbookTable = ({ data, isLoading }) => {
         has_attachment: false,
         tags: false,
       }}
+      {...props}
     />
   )
 }

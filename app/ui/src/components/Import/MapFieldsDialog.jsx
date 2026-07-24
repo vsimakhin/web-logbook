@@ -20,7 +20,9 @@ import TextField from "../UIElements/TextField";
 import { useLocalStorageState, CODEC_JSON } from "../../hooks/useLocalStorageState";
 import SaveCustomProfileButton from "./SaveCustomProfileButton";
 import LoadCustomProfileButton from "./LoadCustomProfileButton";
+import useCustomFields from "../../hooks/useCustomFields";
 
+const gsize = { xs: 12, sm: 4, md: 4, lg: 4, xl: 4 };
 const getHeader = (key, headers) => (headers.includes(key) ? key : "");
 
 const fields = [
@@ -74,6 +76,8 @@ const ProfileButton = ({ tooltip, icon: Icon, fieldKey, setProfile, headers }) =
 const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
   const [profile, setProfile] = useState({});
   const [customProfile, setCustomProfile] = useLocalStorageState("custom-import-profile", {}, { codec: CODEC_JSON });
+  const { customFields } = useCustomFields();
+
   const handleChange = useCallback((key, value) => { setProfile((prev) => ({ ...prev, [key]: value })) }, [setProfile]);
 
   const actionButtons = useMemo(() => (
@@ -108,13 +112,13 @@ const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
   ), [onClose, profile, setProfile, headers, customProfile, setCustomProfile]);
 
   return (
-    <Dialog fullWidth open={open} onClose={() => onClose(null)}>
+    <Dialog fullWidth maxWidth="md" open={open} onClose={() => onClose(null)}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
           <CardHeader title="Map Fields" action={actionButtons} />
           <Grid container spacing={1}>
             {fields.map((field) => (
-              <Select gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+              <Select gsize={gsize}
                 key={field.id}
                 id={field.id}
                 label={field.label}
@@ -124,13 +128,24 @@ const MapFieldsDialog = ({ open, onClose, payload: headers }) => {
                 disableClearable={false}
               />
             ))}
-            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+            <TextField gsize={gsize}
               id="pic_self_replace"
               label="Name to Detect as Self"
               tooltip="Used to detect your name in imported data and replace it with “Self”. Enter it exactly as it appears in the export"
               handleChange={handleChange}
               value={profile["pic_self_replace"] ?? ""}
             />
+            {customFields && customFields.map((field) => (
+              <Select gsize={gsize}
+                key={`custom_fields.${field.uuid}`}
+                id={`custom_fields.${field.uuid}`}
+                label={field.name}
+                handleChange={handleChange}
+                options={headers}
+                value={profile[`custom_fields.${field.uuid}`] ?? ""}
+                disableClearable={false}
+              />
+            ))}
           </Grid>
         </CardContent>
       </Card>

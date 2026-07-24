@@ -1,68 +1,54 @@
 import { ToolbarButton } from "@mui/x-data-grid";
-import { useMutation } from "@tanstack/react-query";
 // MUI UI elements
 import Tooltip from "@mui/material/Tooltip";
 // MUI Icons
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 // Custom components
-import { runImport } from "../../util/http/import";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
-import ImportLogDialog from "./ImportLogDialog";
+import ImportProgressDialog from "./ImportProgressDialog";
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+import ImportOptionsDialog from "./ImportOptionsDialog";
 
-export const RunImportButton = ({ data, inProgress, setInProgress }) => {
+export const RunImportButton = ({ data }) => {
   const dialogs = useDialogs();
 
-  const { mutateAsync: importFlightRecords, isError, error } = useMutation({
-    mutationFn: ({ payload }) => runImport({ payload }),
-    onSuccess: async (payload) => {
-      if (payload) {
-        await dialogs.open(ImportLogDialog, payload);
-      }
-      await queryClient.invalidateQueries({ queryKey: ['logbook'] })
-    }
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to import flight records' });
+  const importData = async (options) => {
 
-  const importData = async (recalculate) => {
-    setInProgress(true);
+    // need to marshal custom fields in the data to the string, since go struct field is string as well
+    const marshalledData = data.map((item) => ({
+      ...item,
+      custom_fields:
+        typeof item.custom_fields === "string"
+          ? item.custom_fields
+          : JSON.stringify(item.custom_fields ?? {}),
+    }));
 
     const payload = {
-      recalculate_night_time: recalculate,
-      data: data,
+      options,
+      data: marshalledData,
     };
 
     try {
-      await importFlightRecords({ payload });
-    } finally {
-      setInProgress(false);
+      const isSuccess = await dialogs.open(ImportProgressDialog, payload);
+      if (isSuccess) {
+        await queryClient.invalidateQueries();
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
   const handleImportClick = async () => {
-    const confirmed = await dialogs.confirm('Have you created a backup before import data?', {
-      title: 'Backup data',
-      severity: 'error',
-      okText: 'Yes, continue',
-      cancelText: 'Arrr, no',
-    });
-
-    if (confirmed) {
-      const recalculate = await dialogs.confirm('Do you want to recalculate night time for the imported records?', {
-        title: 'Recalculate night time',
-        severity: 'error',
-        okText: 'Yes, recalculate',
-        cancelText: 'No, leave as is',
-      });
-      await importData(recalculate);
+    const options = await dialogs.open(ImportOptionsDialog);
+    if (options && options.backup) {
+      await importData(options);
     }
   };
 
   return (
     <Tooltip title="Run Import">
       <span>
-        <ToolbarButton disabled={inProgress || data.length === 0} onClick={handleImportClick} color="default" label="Run Import">
+        <ToolbarButton disabled={data.length === 0} onClick={handleImportClick} color="default" label="Run Import">
           <FileUploadOutlinedIcon />
         </ToolbarButton>
       </span>

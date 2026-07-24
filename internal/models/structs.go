@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 const AllAircrafts = 0
@@ -76,6 +77,15 @@ type FlightRecord struct {
 	NextUUID         string `json:"next_uuid"`
 	HasTrack         int    `json:"has_track"`
 	AttachmentsCount int    `json:"attachments_count"`
+}
+
+func (fr FlightRecord) DisplayName() string {
+	if fr.Departure.Place != "" && fr.Arrival.Place != "" {
+		return fmt.Sprintf("Flight %s %s-%s %s %s",
+			fr.Date, fr.Departure.Place, fr.Arrival.Place, fr.Aircraft.Model, fr.Aircraft.Reg)
+	} else {
+		return fmt.Sprintf("Simulator record %s %s", fr.Date, fr.SIM.Type)
+	}
 }
 
 type FlightRecordStats struct {

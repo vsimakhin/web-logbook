@@ -1,7 +1,6 @@
 package models
 
 import (
-	"database/sql"
 	"fmt"
 	"sort"
 	"strings"
@@ -99,56 +98,6 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) 
 	m.processFlightrecord(&fr)
 
 	return fr, nil
-}
-
-// IsFlightRecordExists checks if the flight record already exists
-func (m *DBModel) IsFlightRecordExists(fr FlightRecord) bool {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	n := 0
-	query := ""
-	var row *sql.Row
-
-	if fr.Departure.Place != "" && fr.Arrival.Place != "" {
-		// normal flight
-		// only check duplicates if BOTH times are set
-		if fr.Departure.Time != "" && fr.Arrival.Time != "" {
-			query = `SELECT count(uuid)
-				FROM logbook_view
-				WHERE date = ?
-					AND departure_place = ?
-					AND departure_time = ?
-					AND arrival_place = ?
-					AND arrival_time = ?
-					AND aircraft_model = ?
-					AND reg_name = ?`
-			row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.Departure.Place, fr.Departure.Time,
-				fr.Arrival.Place, fr.Arrival.Time, fr.Aircraft.Model, fr.Aircraft.Reg)
-		} else {
-			// no times → don’t check duplicates, always allow insert
-			return false
-		}
-	} else if fr.SIM.Type != "" && fr.SIM.Time != "" {
-		// simulator record
-		query = `SELECT count(uuid)
-				FROM logbook_view
-				WHERE date = ?
-					AND sim_type = ?
-					AND sim_time = ?
-					AND remarks = ?`
-		row = m.DB.QueryRowContext(ctx, query, fr.Date, fr.SIM.Type, fr.SIM.Time, fr.Remarks)
-	} else {
-		return false
-	}
-
-	err := row.Scan(&n)
-
-	if err != nil || n == 0 {
-		return false
-	}
-
-	return true
 }
 
 // UpdateFlightRecord updates the flight records in the logbook table
