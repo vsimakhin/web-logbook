@@ -2,9 +2,10 @@
 
 ## [Unreleased]
 
-- New: Import custom fields
-- New: Create Persons from imported records (experimental)
-- Update: Refactored and optimized the importing process
+- New: Import custom fields.
+- New: Create Persons from imported records (experimental).
+- Update: Refactored and optimized the importing process.
+- Update: Golang and npm packages/security patches.
 
 ## [4.6.1] - 28.06.2026
 
