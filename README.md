@@ -63,30 +63,15 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang and npm packages/security patches.
+
 ## [4.7.0] - 24.07.2026
 
 - New: Import custom fields.
 - New: Create Persons from imported records (experimental).
 - Update: Refactored and optimized the importing process.
-- Update: Golang and npm packages/security patches.
-
-## [4.6.1] - 28.06.2026
-
-- Fix: Distance calculation for FlightRadar24 kml files was incorrect (doubled the distance), [see issue #528](https://github.com/vsimakhin/web-logbook/issues/528).
-
-## [4.6.0] - 26.06.2026
-
-- Update: Golang and npm packages/security patches.
-- New: Added support for tracking previous flight experience on the Settings page. Entered flight experience is automatically included in Logbook totals, Dashboard statistics, and PDF exports.
-
-## [4.5.1] - 22.05.2026
-
-- Fix: Download map functionality didn't work for satellite and terrain maps.
-- Update: Golang (1.25.10) modules/security patches.
-
-## [4.5.0] - 20.05.2026
-
-- New: New map options and map sources (satellite, terrain).
 - Update: Golang and npm packages/security patches.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
@@ -442,12 +427,6 @@ Frontend:
 Map Sources:
 * OpenStreetMap https://www.openstreetmap.org/
 * Esri/ArcGIS Online https://www.arcgis.com/
-
----
-
-# Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=vsimakhin/web-logbook&type=Date)](https://www.star-history.com/#vsimakhin/web-logbook&Date)
 
 ---
 
