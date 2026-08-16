@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang and npm packages/security patches.
+
 ## [4.7.0] - 24.07.2026
 
 - New: Import custom fields.
