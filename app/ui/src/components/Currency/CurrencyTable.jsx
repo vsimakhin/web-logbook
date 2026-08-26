@@ -8,7 +8,7 @@ import LinearProgress from '@mui/material/LinearProgress'
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
 // Custom components and libraries
-import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule } from './helpers';
+import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule, getStatusBarColor } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
 import dayjs from 'dayjs';
 import NewCurrencyButton from './NewCurrencyButton';
@@ -156,16 +156,14 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         renderCell: (params) => {
           const status = evaluateCurrency(logbookData, params.row, aircrafts)
           const value = formatCurrencyValue(status?.current, params.row.metric)
-          const percent = status.meetsRequirement
-            ? 100
-            : Math.min(100, (status.current / params.row.target_value) * 100)
-          const percentLabel = percent === 100 ? '' : `(${Math.round(percent)}%)`
-          const color = status.meetsRequirement ? 'success' : percent > 75 ? 'warning' : 'error'
+          const percent = params.row.target_value === 0 && status.current > 0 ? 100 : (status.current / params.row.target_value) * 100
+          const percentLabel = percent >= 500 ? '(500+%)' : `(${Math.round(percent)}%)`
+          const color = getStatusBarColor(status.meetsRequirement, percent, params.row.comparison);
           return (
             <Box sx={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center', height: '100%' }}>
               <LinearProgress sx={{ height: 20, borderRadius: 0, width: '100%' }}
                 variant="determinate"
-                value={percent}
+                value={Math.min(100, (status.current / params.row.target_value) * 100)}
                 color={color}
               />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

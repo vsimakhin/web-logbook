@@ -248,3 +248,26 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
   if (!expirySource) return null;
   return expirySource.d.add(windowDays, 'day');
 };
+
+export const getStatusBarColor = (meetsRequirement, percent, comparison) => {
+  if (comparison === '>=' || comparison === '>') {
+    if (meetsRequirement) {
+      return 'success';
+    }
+    if (percent >= 75) return 'warning';
+    return 'error';
+  }
+
+  if (comparison === '<=' || comparison === '<') {
+    if (percent >= 75) return 'warning';
+    if (percent < 75) return 'success';
+    return 'error';
+  }
+
+  if (meetsRequirement) {
+    return 'success';
+  }
+
+  // default to error if we can't determine the status
+  return 'error';
+};
