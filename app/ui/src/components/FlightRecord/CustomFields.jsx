@@ -1,10 +1,8 @@
 import { useCallback } from "react";
 // MUI UI elements
 import Grid from "@mui/material/Grid";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Divider from '@mui/material/Divider';
 // Custom
-import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
 import { FLIGHT_TIME_SLOT_PROPS, TIME_SLOT_PROPS, PLACE_SLOT_PROPS } from "../../constants/constants";
 import useLogbook from "../../hooks/useLogbook";
@@ -49,31 +47,29 @@ export const CustomFields = ({ flight, handleChange }) => {
 
   return (
     (customFields && Object.keys(customFields).length > 0) &&
-    <Card variant="outlined" sx={{ mb: 1 }}>
-      <CardContent>
-        <CardHeader title="Custom fields" />
-        <Grid container spacing={1} sx={{ mt: 1 }}>
-          {customFields.map((field) => {
-            const props = getFieldProps(field.type);
+    <>
+      <Divider sx={{ mt: 1 }} />
+      <Grid container spacing={1} sx={{ mt: 1 }}>
+        {customFields.map((field) => {
+          const props = getFieldProps(field.type);
 
-            return (
-              <TextField key={field.uuid} gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}
-                label={field.name}
-                id={field.uuid}
-                tooltip={field.description}
-                value={flight.custom_fields?.[field.uuid] || ''}
-                handleChange={customFieldsChange}
-                slotProps={props.slotProps}
-                placeholder={props.placeholder}
-                type={props.type}
-                // only for enroute fields we need to recalculate the map data and distance
-                onBlur={field.type === 'enroute' ? enrouteFieldChange : undefined}
-              />
-            );
-          })}
-        </Grid>
-      </CardContent>
-    </Card >
+          return (
+            <TextField key={field.uuid} gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}
+              label={field.name}
+              id={field.uuid}
+              tooltip={field.description}
+              value={flight.custom_fields?.[field.uuid] || ''}
+              handleChange={customFieldsChange}
+              slotProps={props.slotProps}
+              placeholder={props.placeholder}
+              type={props.type}
+              // only for enroute fields we need to recalculate the map data and distance
+              onBlur={field.type === 'enroute' ? enrouteFieldChange : undefined}
+            />
+          );
+        })}
+      </Grid>
+    </>
   );
 }
 

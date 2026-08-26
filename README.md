@@ -65,6 +65,8 @@ The application will automatically create a local SQLite database on the first s
 
 ## [Unreleased]
 
+- Update: The Remarks field automatically expands when it contains multiline text.
+- Update: Custom fields have been moved to the standard fields card to improve spacing.
 - Update: Golang and npm packages/security patches.
 
 ## [4.7.0] - 24.07.2026

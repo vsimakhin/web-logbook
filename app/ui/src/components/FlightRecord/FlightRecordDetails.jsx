@@ -24,6 +24,7 @@ import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 import { PICNameField } from './PICNameField';
+import CustomFields from './CustomFields';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() =>
@@ -136,11 +137,10 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
             ))}
           </Grid>
 
-          {(visibility?.["simulator"] ?? true) &&
-            <>
-              <Divider sx={{ mt: 1 }} />
-              <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
-                <TextField gsize={{ xs: 5, sm: 4, md: 4, lg: 4, xl: 4 }}
+          <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
+            {(visibility?.["simulator"] ?? true) &&
+              <>
+                <TextField gsize={{ xs: 5, sm: 2 }}
                   id="sim.type"
                   label={`${fieldNameF("fstd")} ${fieldNameF("sim_type")}`}
                   handleChange={handleChange}
@@ -150,25 +150,12 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                   id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`}
                   handleChange={handleChange}
                   total_time={flight.time.total_time}
-                  value={getValue(flight, "sim.time")} />
-              </Grid>
-            </>
-          }
-
-          {((visibility?.["remarks"] ?? true) || (visibility?.["tags"] ?? true)) &&
-            <Divider sx={{ mt: 1 }} />
-          }
-          <Grid container spacing={1} sx={{ mt: 1 }} >
-            {(visibility?.["remarks"] ?? true) &&
-              <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
-                id="remarks"
-                label={fieldNameF("remarks")}
-                handleChange={handleChange}
-                value={flight.remarks ?? ""}
-              />
+                  value={getValue(flight, "sim.time")}
+                />
+              </>
             }
-            {(visibility?.["tags"] ?? true) &&
-              <FlightTags gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+            {((visibility?.["tags"] ?? true)) &&
+              <FlightTags gsize={{ xs: 12, sm: 6 }}
                 id="tags"
                 label={fieldNameF("tags")}
                 tooltip="Flight tags. To add a tag, start typing and press Enter."
@@ -177,6 +164,20 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               />
             }
           </Grid>
+
+          {(visibility?.["remarks"] ?? true) &&
+            <Grid container spacing={1} sx={{ mt: 1 }} >
+              <TextField gsize={{ xs: 12 }}
+                id="remarks"
+                label={fieldNameF("remarks")}
+                handleChange={handleChange}
+                value={flight.remarks ?? ""}
+                multiline
+              />
+            </Grid>
+          }
+
+          <CustomFields flight={flight} handleChange={handleChange} />
         </CardContent>
       </Card >
     </>
