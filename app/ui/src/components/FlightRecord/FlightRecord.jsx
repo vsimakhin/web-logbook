@@ -11,7 +11,6 @@ import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 import FlightMap from "../FlightMap/FlightMap";
 import Attachments from "../FlightRecordAttachment/Attachments";
-import CustomFields from "./CustomFields";
 import FlightRecordPersons from "../Persons/FlightRecordPersons";
 
 const gridSize = { xs: 12, sm: 12, md: 6, lg: 6, xl: 6 };
@@ -86,7 +85,6 @@ export const FlightRecord = () => {
       <Grid container spacing={1}>
         <Grid size={gridSize}>
           <FlightRecordDetails flight={flight} handleChange={handleChange} setFlight={setFlight} />
-          <CustomFields flight={flight} handleChange={handleChange} />
           <Attachments id={id} />
           <FlightRecordPersons id={id} />
         </Grid>

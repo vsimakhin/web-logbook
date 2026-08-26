@@ -24,6 +24,7 @@ import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 import { PICNameField } from './PICNameField';
+import CustomFields from './CustomFields';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() =>
@@ -164,8 +165,8 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
             }
           </Grid>
 
-          <Grid container spacing={1} sx={{ mt: 1 }} >
-            {(visibility?.["remarks"] ?? true) &&
+          {(visibility?.["remarks"] ?? true) &&
+            <Grid container spacing={1} sx={{ mt: 1 }} >
               <TextField gsize={{ xs: 12 }}
                 id="remarks"
                 label={fieldNameF("remarks")}
@@ -173,8 +174,10 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                 value={flight.remarks ?? ""}
                 multiline
               />
-            }
-          </Grid>
+            </Grid>
+          }
+
+          <CustomFields flight={flight} handleChange={handleChange} />
         </CardContent>
       </Card >
     </>
