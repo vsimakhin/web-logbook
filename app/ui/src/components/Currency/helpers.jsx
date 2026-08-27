@@ -39,9 +39,6 @@ const getEndDate = (rule, lastEventDate) => {
       return lastEventDate.add(value, "month").startOf("month");
     case "calendar_years":
       return dayjs(`${lastEventDate.year() + value}-01-01`);
-    case "since":
-    case "all_time":
-      return lastEventDate.add(90, "day");
     case "days":
     default:
       return lastEventDate.add(value, "day");
@@ -156,6 +153,10 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
   });
 
   if (rule.metric.startsWith('landings')) {
+    if (rule.time_frame.unit === 'since' || rule.time_frame.unit === 'all_time') {
+      return null; // no expiry for all_time and since rules
+    }
+
     const selector = (() => {
       if (rule.metric === 'landings.day') return (f) => parseInt(f?.landings?.day) || 0;
       if (rule.metric === 'landings.night') return (f) => parseInt(f?.landings?.night) || 0;
