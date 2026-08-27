@@ -75,6 +75,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
       { value: "time.co_pilot_time", label: fieldNameF("cop") },
       { value: "time.dual_time", label: fieldNameF("dual") },
       { value: "time.instructor_time", label: fieldNameF("instr") },
+      { value: "time.cc_time", label: fieldNameF("cc") },
       { value: "landings.all", label: fieldNameF("landings") },
       { value: "landings.day", label: `${fieldNameF("land_day")} ${fieldNameF("landings")}` },
       { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
