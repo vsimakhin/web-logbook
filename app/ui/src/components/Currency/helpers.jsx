@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { convertHoursToTime } from "../../util/helpers";
+
+dayjs.extend(customParseFormat);
 
 export const comparisonOptions = [">=", ">", "=", "<", "<="];
 
@@ -87,38 +90,78 @@ const resolveAircraftsFromFilters = (filters, aircrafts = []) => {
   return regs;
 };
 
+export const parseSubMetrics = (subMetrics) => {
+  if (!subMetrics) return [];
+  if (Array.isArray(subMetrics)) return subMetrics;
+  try {
+    const parsed = JSON.parse(subMetrics);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+export const getFlightMetricValue = (flight, metric) => {
+  if (!flight || !metric) return 0;
+  if (metric === "landings.all") {
+    const day = parseMetricValue(flight.landings?.day);
+    const night = parseMetricValue(flight.landings?.night);
+    return day + night;
+  }
+  const value = metric.split('.').reduce((obj, k) => obj?.[k], flight);
+  return parseMetricValue(value);
+};
+
 export const evaluateCurrency = (flights, rule, aircrafts) => {
   if (!flights || flights.length === 0) return null;
 
-  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts)
+  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts);
   const filteredFlights = flights.filter(flight => {
-    return regs.size === 0 || regs.has(flight.aircraft.reg_name);
+    return regs.size === 0 || regs.has(flight.aircraft?.reg_name);
   });
 
   const since = getStartDate(rule);
 
-  const total = filteredFlights
-    .filter(flight => {
-      const flightDate = dayjs(flight.date, "DD/MM/YYYY");
-      if (!flightDate.isValid() || flightDate.isBefore(since)) return false;
-      return true;
-    })
-    .reduce((sum, flight) => {
-      let value;
-      if (rule.metric === "landings.all") {
-        const day = parseMetricValue(flight.landings?.day);
-        const night = parseMetricValue(flight.landings?.night);
-        value = day + night;
-      } else {
-        value = rule.metric.split('.').reduce((obj, k) => obj?.[k], flight);
-        value = parseMetricValue(value);
-      }
-      return sum + value;
-    }, 0);
+  const qualifyingFlights = filteredFlights.filter(flight => {
+    const flightDate = dayjs(flight.date, "DD/MM/YYYY");
+    if (!flightDate.isValid() || flightDate.isBefore(since)) return false;
+    return true;
+  });
+
+  const total = qualifyingFlights.reduce((sum, flight) => {
+    return sum + getFlightMetricValue(flight, rule.metric);
+  }, 0);
+
+  const mainMeets = compareValues(total, rule.comparison, rule.target_value);
+
+  const subMetrics = parseSubMetrics(rule.sub_metrics);
+  const subResults = subMetrics.map(sub => {
+    // Sub-metric is tied to main metric: only sum for flights where main metric > 0
+    const subTotal = qualifyingFlights
+      .filter(flight => getFlightMetricValue(flight, rule.metric) > 0)
+      .reduce((sum, flight) => sum + getFlightMetricValue(flight, sub.metric), 0);
+
+    const meetsRequirement = compareValues(subTotal, sub.comparison, sub.target_value);
+    const targetVal = Number(sub.target_value) || 0;
+    const percent = targetVal === 0 && subTotal > 0 ? 100 : (subTotal / (targetVal || 1)) * 100;
+
+    return {
+      ...sub,
+      current: subTotal,
+      target_value: targetVal,
+      meetsRequirement,
+      percent,
+    };
+  });
+
+  const allSubMeets = subResults.every(sub => sub.meetsRequirement);
+  const overallMeets = mainMeets && allSubMeets;
 
   const result = {
     current: total,
-    meetsRequirement: compareValues(total, rule.comparison, rule.target_value),
+    meetsRequirement: overallMeets,
+    mainMeets: mainMeets,
+    subResults: subResults,
     rule: rule,
   };
 
@@ -137,29 +180,17 @@ export const formatCurrencyValue = (value, metric) => {
   }
 };
 
-// Compute expiry date for landing-based rules.
-// Respects model/category filters via resolveModelsFromFilters.
-// Supported metrics:
-// - landings.all → day + night
-// - landings.day → day landings only
-// - landings.night → night landings only
-// Expiry rule: XX days after the YY most recent qualifying landing.
-export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
-  if (!flights || flights.length === 0 || !rule?.metric) return null;
+const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue, timeFrame) => {
+  if (!filteredFlights || filteredFlights.length === 0 || !metric) return null;
 
-  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts)
-  const filteredFlights = flights.filter(flight => {
-    return regs.size === 0 || regs.has(flight.aircraft.reg_name);
-  });
+  if (timeFrame?.unit === 'since' || timeFrame?.unit === 'all_time') {
+    return null; // no expiry for all_time and since rules
+  }
 
-  if (rule.metric.startsWith('landings')) {
-    if (rule.time_frame.unit === 'since' || rule.time_frame.unit === 'all_time') {
-      return null; // no expiry for all_time and since rules
-    }
-
+  if (metric.startsWith('landings')) {
     const selector = (() => {
-      if (rule.metric === 'landings.day') return (f) => parseInt(f?.landings?.day) || 0;
-      if (rule.metric === 'landings.night') return (f) => parseInt(f?.landings?.night) || 0;
+      if (metric === 'landings.day') return (f) => parseInt(f?.landings?.day) || 0;
+      if (metric === 'landings.night') return (f) => parseInt(f?.landings?.night) || 0;
       return (f) => (parseInt(f?.landings?.day) || 0) + (parseInt(f?.landings?.night) || 0);
     })();
 
@@ -171,36 +202,35 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
       for (let i = 0; i < cnt; i++) events.push(d);
     });
 
-    if (events.length < rule.target_value) return null;
+    const target = Number(targetValue) || 0;
+    if (events.length < target) return null;
     events.sort((a, b) => b.valueOf() - a.valueOf());
 
-    const event = events[rule.target_value !== 0 ? rule.target_value - 1 : 0];
-    return getEndDate(rule, event)
+    const event = events[target !== 0 ? target - 1 : 0];
+    return getEndDate({ time_frame: timeFrame }, event);
   }
 
   // Time-based (e.g., time.pic_time, time.total_time, sim.time):
   // Expiry is the date when the oldest needed flight exits the rolling window (days).
-  const unit = rule?.time_frame?.unit;
-  const windowDays = unit === 'days' ? Number(rule?.time_frame?.value) : null;
+  const unit = timeFrame?.unit;
+  const windowDays = unit === 'days' ? Number(timeFrame?.value) : null;
   if (!windowDays || isNaN(windowDays) || windowDays <= 0) return null;
 
   // Only meaningful for threshold comparisons (>= or >). Others return null.
-  const operator = rule?.comparison ?? '>=';
+  const operator = comparison ?? '>=';
   if (!['>=', '>'].includes(operator)) return null;
-  const target = Number(rule?.target_value);
+  const target = Number(targetValue);
   if (isNaN(target)) return null;
 
   const today = dayjs().startOf('day');
   const windowStart = today.subtract(windowDays, 'day').add(1, 'day'); // inclusive window [start..today]
 
   // Collect flights within the window with their metric values
-  const metricPath = rule.metric.split('.');
   const flightsInWindow = filteredFlights
     .map(f => ({ f, d: dayjs(f?.date, 'DD/MM/YYYY') }))
     .filter(({ d }) => d.isValid() && !d.isBefore(windowStart) && !d.isAfter(today))
     .map(({ f, d }) => {
-      let value = metricPath.reduce((obj, k) => obj?.[k], f);
-      const amount = parseMetricValue(value); // hours for time metrics
+      const amount = getFlightMetricValue(f, metric);
       return { d, amount };
     })
     .filter(({ amount }) => !isNaN(amount) && amount > 0)
@@ -211,9 +241,8 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
   const meets = operator === '>=' ? total >= target : total > target;
   if (!meets) {
     // Not current today. Compute the most recent expiry in the past (last time the rule was still valid).
-    // Two-pointer sliding window across all flights by date to find any date d where window sum >= target.
     const allFlights = filteredFlights
-      .map(f => ({ d: dayjs(f?.date, 'DD/MM/YYYY'), amount: parseMetricValue(metricPath.reduce((obj, k) => obj?.[k], f)) }))
+      .map(f => ({ d: dayjs(f?.date, 'DD/MM/YYYY'), amount: getFlightMetricValue(f, metric) }))
       .filter(x => x.d.isValid() && !isNaN(x.amount) && x.amount > 0)
       .sort((a, b) => a.d.valueOf() - b.d.valueOf());
 
@@ -248,6 +277,36 @@ export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
   }
   if (!expirySource) return null;
   return expirySource.d.add(windowDays, 'day');
+};
+
+export const getCurrencyExpiryForRule = (flights, rule, aircrafts) => {
+  if (!flights || flights.length === 0 || !rule?.metric) return null;
+
+  const regs = resolveAircraftsFromFilters(rule.filters, aircrafts);
+  const filteredFlights = flights.filter(flight => {
+    return regs.size === 0 || regs.has(flight.aircraft?.reg_name);
+  });
+
+  const mainExpiry = getSingleMetricExpiry(filteredFlights, rule.metric, rule.comparison, rule.target_value, rule.time_frame);
+
+  const subMetrics = parseSubMetrics(rule.sub_metrics);
+  if (subMetrics.length === 0) {
+    return mainExpiry;
+  }
+
+  const flightsTiedToMain = filteredFlights.filter(f => getFlightMetricValue(f, rule.metric) > 0);
+  const expiries = [mainExpiry];
+
+  for (const sub of subMetrics) {
+    const subExpiry = getSingleMetricExpiry(flightsTiedToMain, sub.metric, sub.comparison, sub.target_value, rule.time_frame);
+    expiries.push(subExpiry);
+  }
+
+  const validExpiries = expiries.filter(e => e && dayjs.isDayjs(e) && e.isValid());
+  if (validExpiries.length === 0) return null;
+
+  validExpiries.sort((a, b) => a.valueOf() - b.valueOf());
+  return validExpiries[0];
 };
 
 export const getStatusBarColor = (meetsRequirement, percent, comparison) => {

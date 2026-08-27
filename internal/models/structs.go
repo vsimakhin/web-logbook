@@ -371,6 +371,7 @@ type Currency struct {
 	} `json:"time_frame"`
 	Comparison string `json:"comparison"`
 	Filters    string `json:"filters"`
+	SubMetrics string `json:"sub_metrics"`
 }
 
 // CustomField is a type for custom fields
