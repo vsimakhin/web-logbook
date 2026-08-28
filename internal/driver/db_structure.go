@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "42"
+	schemaVersion = "43"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
