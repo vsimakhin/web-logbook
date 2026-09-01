@@ -94,13 +94,19 @@ const ExpireCell = ({ row, currencyResults }) => {
   );
 }
 
-const StatusCell = ({ row, metricOptions, currencyResults }) => {
-  const { status } = currencyResults.get(row.uuid) ?? {};
+const getPercent = (current, target) => {
+  if (target === 0) return current > 0 ? 100 : 0;
+  return (current / target) * 100;
+};
 
-  const value = formatCurrencyValue(status?.current, row.metric);
-  const percent = row.target_value === 0 && status.current > 0 ? 100 : (status.current / row.target_value) * 100;
+
+const StatusCell = ({ row, metricOptions, currencyResults }) => {
+  const { status } = currencyResults.get(row.uuid) ?? { status: { current: 0, meetsRequirement: false, subResults: [] } };
+
+  const value = formatCurrencyValue(status.current, row.metric);
+  const percent = getPercent(status.current, row.target_value);
   const percentLabel = percent >= 500 ? '(500+%)' : `(${Math.round(percent)}%)`;
-  const color = getStatusBarColor(status?.meetsRequirement, percent, row.comparison);
+  const color = getStatusBarColor(status.meetsRequirement, percent, row.comparison);
   const mainName = getLabel(row.metric, metricOptions);
 
   const tooltipContent = (
@@ -108,7 +114,7 @@ const StatusCell = ({ row, metricOptions, currencyResults }) => {
       <Typography variant="caption" display="block" fontWeight={500}>
         {mainName}: {value} / {formatCurrencyValue(row.target_value, row.metric)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
       </Typography>
-      {status?.subResults?.map((sub, i) => {
+      {status.subResults?.map((sub, i) => {
         const subName = getLabel(sub.metric, metricOptions);
         const subVal = formatCurrencyValue(sub.current, sub.metric);
         const subTarget = formatCurrencyValue(sub.target_value, sub.metric);
@@ -168,6 +174,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   ), [fieldNameF]);
 
   const currencyResults = useMemo(() => {
+    if (!currencyData || !logbookData) return new Map();
     return new Map(
       currencyData.map((row) => {
         const status = evaluateCurrency(logbookData, row, aircrafts);
