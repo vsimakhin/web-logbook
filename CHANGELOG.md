@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: Added submetrics for the currencies.
 - Update: The Remarks field automatically expands when it contains multiline text.
 - Update: Custom fields have been moved to the standard fields card to improve spacing.
 - Update: Golang and npm packages/security patches.

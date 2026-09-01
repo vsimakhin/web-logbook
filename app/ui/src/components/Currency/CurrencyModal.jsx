@@ -8,9 +8,13 @@ import CardContent from '@mui/material/CardContent';
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 // MUI Icons
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import ExposureOutlinedIcon from '@mui/icons-material/ExposureOutlined';
 // Custom
 import CardHeader from "../UIElements/CardHeader";
 import TextField from "../UIElements/TextField";
@@ -19,7 +23,7 @@ import { queryClient } from '../../util/http/http';
 import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
 import Select from '../UIElements/Select';
 import { createCurrency, updateCurrency } from '../../util/http/currency';
-import { comparisonOptions, timeframeUnitOptions } from './helpers';
+import { comparisonOptions, timeframeUnitOptions, parseSubMetrics } from './helpers';
 import DatePicker from '../UIElements/DatePicker';
 import useSettings from '../../hooks/useSettings';
 
@@ -58,6 +62,16 @@ const SaveButton = ({ currency, onClose }) => {
   );
 };
 
+const AddSubMetricButton = ({ onClick }) => {
+  return (
+    <Tooltip title="Add Sub-Metric">
+      <IconButton size="small" onClick={onClick}>
+        <ExposureOutlinedIcon />
+      </IconButton>
+    </Tooltip>
+  )
+}
+
 export const CurrencyModal = ({ open, onClose, payload }) => {
   const { fieldNameF } = useSettings();
   const [currency, setCurrency] = useState({ ...payload });
@@ -75,6 +89,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
       { value: "time.co_pilot_time", label: fieldNameF("cop") },
       { value: "time.dual_time", label: fieldNameF("dual") },
       { value: "time.instructor_time", label: fieldNameF("instr") },
+      { value: "time.cc_time", label: fieldNameF("cc") },
       { value: "landings.all", label: fieldNameF("landings") },
       { value: "landings.day", label: `${fieldNameF("land_day")} ${fieldNameF("landings")}` },
       { value: "landings.night", label: `${fieldNameF("land_night")} ${fieldNameF("landings")}` },
@@ -85,7 +100,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
   const handleChange = useCallback((key, value) => {
     setCurrency((currency) => {
       const keys = key.split('.'); // Split key by dots to handle nesting
-      let updatedCurrency = { ...currency }; // Create a shallow copy of the flight object
+      let updatedCurrency = { ...currency }; // Create a shallow copy of the object
       let current = updatedCurrency;
 
       // Traverse and create nested objects as needed
@@ -103,6 +118,36 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
       return updatedCurrency;
     });
   }, []);
+
+  const subMetrics = useMemo(() => parseSubMetrics(currency.sub_metrics), [currency.sub_metrics]);
+
+  const handleAddSubMetric = useCallback(() => {
+    const currentList = parseSubMetrics(currency.sub_metrics);
+    const newSub = {
+      id: String(Date.now()),
+      metric: "time.pic_time",
+      comparison: ">=",
+      target_value: 0,
+    };
+    handleChange('sub_metrics', JSON.stringify([...currentList, newSub]));
+  }, [currency.sub_metrics, handleChange]);
+
+  const handleUpdateSubMetric = useCallback((id, key, value) => {
+    const currentList = parseSubMetrics(currency.sub_metrics);
+    const updated = currentList.map(sub => {
+      if (sub.id === id) {
+        return { ...sub, [key]: value };
+      }
+      return sub;
+    });
+    handleChange('sub_metrics', JSON.stringify(updated));
+  }, [currency.sub_metrics, handleChange]);
+
+  const handleDeleteSubMetric = useCallback((id) => {
+    const currentList = parseSubMetrics(currency.sub_metrics);
+    const updated = currentList.filter(sub => sub.id !== id);
+    handleChange('sub_metrics', JSON.stringify(updated));
+  }, [currency.sub_metrics, handleChange]);
 
   const currencyTimeFrame = () => {
     if (currency.time_frame.unit !== 'all_time' && currency.time_frame.unit !== 'since') {
@@ -130,10 +175,11 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
 
   const actionButtons = useMemo(() => (
     <>
+      <AddSubMetricButton onClick={handleAddSubMetric} />
       <SaveButton currency={currency} onClose={onClose} />
       <CloseDialogButton onClose={onClose} />
     </>
-  ), [currency, onClose]);
+  ), [currency, onClose, handleAddSubMetric]);
 
   return (
     <Dialog fullWidth open={open} onClose={() => onClose()}>
@@ -187,6 +233,49 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
               value={currency.filters ? currency.filters.split(',').map(item => item.trim()) : []}
               options="all"
             />
+            {subMetrics.length > 0 &&
+              <Grid size={{ xs: 12 }}>
+                <Divider textAlign="left" sx={{ '&::before': { display: 'none' } }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Sub-Metrics
+                  </Typography>
+                </Divider>
+              </Grid>
+            }
+            {subMetrics.map((sub) => (
+              <Grid container spacing={1} size={{ xs: 12 }} key={sub.id} >
+                <Select
+                  gsize={{ xs: 12, sm: 5, md: 5, lg: 5, xl: 5 }}
+                  id={`sub_metric_${sub.id}`}
+                  label="Sub-Metric"
+                  handleChange={(id, value) => handleUpdateSubMetric(sub.id, 'metric', value.value)}
+                  value={metricOptions.find(option => option.value === sub.metric) || null}
+                  options={metricOptions}
+                  getOptionLabel={(option) => option.label || ""}
+                  isOptionEqualToValue={(option, value) => option.value === value.value}
+                />
+                <Select
+                  gsize={{ xs: 5, sm: 3, md: 3, lg: 3, xl: 3 }}
+                  id={`sub_comparison_${sub.id}`}
+                  label="Comparison"
+                  handleChange={(id, value) => handleUpdateSubMetric(sub.id, 'comparison', value)}
+                  value={sub.comparison}
+                  options={comparisonOptions}
+                />
+                <TextField
+                  gsize={{ xs: 5, sm: 3, md: 3, lg: 3, xl: 3 }}
+                  id={`sub_target_${sub.id}`}
+                  label="Target Value"
+                  handleChange={(id, value) => handleUpdateSubMetric(sub.id, 'target_value', value)}
+                  value={sub.target_value}
+                />
+                <Tooltip title="Delete Sub-Metric">
+                  <IconButton size="small" onClick={() => handleDeleteSubMetric(sub.id)}>
+                    <DeleteOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+            ))}
           </Grid>
         </CardContent>
       </Card >

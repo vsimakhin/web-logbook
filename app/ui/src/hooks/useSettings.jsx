@@ -32,6 +32,7 @@ const defaultFieldNames = {
     cop: "COP",
     dual: "Dual",
     instr: "Instr",
+    cc: "XC Time",
     fstd: "FSTD Session",
     sim_type: "Type",
     sim_time: "Time",
@@ -66,6 +67,7 @@ const defaultFieldNames = {
     cop: "Co Pilot",
     dual: "Dual",
     instr: "Instructor",
+    cc: "XC Time",
     fstd: "Simulator",
     sim_type: "Type",
     sim_time: "Time",
@@ -73,6 +75,9 @@ const defaultFieldNames = {
     tags: "Tags",
   }
 }
+
+const DEFAULT_PAGINATION_OPTIONS = [5, 10, 15, 20, 25, 30, 50, 100];
+
 export const useSettings = () => {
   // Load settings
   const { data = { standard_fields_headers: {} }, isLoading: isSettingsLoading, isError: isSettingsError, error: settingsError } = useQuery({
@@ -85,17 +90,13 @@ export const useSettings = () => {
   useErrorNotification({ isError: isSettingsError, error: settingsError, fallbackMessage: 'Failed to load settings' });
 
   const paginationOptions = useMemo(() => {
-    const defaultOptions = [5, 10, 15, 20, 25, 30, 50, 100];
-    if (data?.logbook_pagination) {
-      try {
-        const options = data.logbook_pagination.split(',').map(opt => parseInt(opt.trim()));
-        return options.length > 0 ? options : defaultOptions;
-      } catch {
-        return defaultOptions;
-      }
+    if (!data?.logbook_pagination) {
+      return DEFAULT_PAGINATION_OPTIONS;
     }
-    return defaultOptions;
-  }, [data?.logbook_pagination]);
+
+    const options = data.logbook_pagination.split(',').map(opt => parseInt(opt.trim())).filter(num => !Number.isNaN(num));;
+    return options.length > 0 ? options : DEFAULT_PAGINATION_OPTIONS;
+  }, [data.logbook_pagination]);
 
   /**
    * Get standard field name for a field or column

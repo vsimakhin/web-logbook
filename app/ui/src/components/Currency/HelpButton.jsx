@@ -33,8 +33,7 @@ const HELP_CONTENT = [
   {
     title: '',
     description: `- Landing-based: The expiry date is calculated as "time frame" days after 
-    the most recent qualifying landing that completes the "target value".  
-    If the time frame is set to "since" or "all time", the expiry is always 90 days`,
+    the most recent qualifying landing that completes the "target value".`
   },
   {
     title: '',

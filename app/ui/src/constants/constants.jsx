@@ -120,6 +120,7 @@ export const CURRENCY_INITIAL_STATE = {
     value: 90
   },
   filters: "",
+  sub_metrics: "",
 };
 
 export const CUSTOM_FIELD_INITIAL_STATE = {
