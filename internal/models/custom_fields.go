@@ -1,5 +1,7 @@
 package models
 
+import "github.com/google/uuid"
+
 func (m *DBModel) GetCustomFields() (fields []CustomField, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
@@ -76,12 +78,16 @@ func (m *DBModel) UpdateCustomField(f CustomField) error {
 	return err
 }
 
-func (m *DBModel) DeleteCustomField(uuid string) error {
+func (m *DBModel) DeleteCustomField(id string) error {
+	if _, err := uuid.Parse(id); err != nil {
+		return err
+	}
+
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
 	query := `DELETE FROM custom_fields WHERE uuid = ?`
-	_, err := m.DB.ExecContext(ctx, query, uuid)
+	_, err := m.DB.ExecContext(ctx, query, id)
 
 	return err
 }
