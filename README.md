@@ -63,18 +63,11 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.8.0] - 01.09.2026
 
 - New: Added submetrics for the currencies.
 - Update: The Remarks field automatically expands when it contains multiline text.
 - Update: Custom fields have been moved to the standard fields card to improve spacing.
-- Update: Golang and npm packages/security patches.
-
-## [4.7.0] - 24.07.2026
-
-- New: Import custom fields.
-- New: Create Persons from imported records (experimental).
-- Update: Refactored and optimized the importing process.
 - Update: Golang and npm packages/security patches.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)

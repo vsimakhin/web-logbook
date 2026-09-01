@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.8.0] - 01.09.2026
 
 - New: Added submetrics for the currencies.
 - Update: The Remarks field automatically expands when it contains multiline text.
