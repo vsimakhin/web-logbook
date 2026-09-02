@@ -277,7 +277,7 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
 };
 
 export const XDataGrid = (props) => (
-  <FilterProvider>
+  <FilterProvider storageKey={props.tableId}>
     <XDataGridContent {...props} />
   </FilterProvider>
 );

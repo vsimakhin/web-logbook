@@ -370,11 +370,11 @@ export const XToolbarFilterPanelTrigger = () => {
     <>
       <Tooltip title="Filters">
         <ToolbarButton color="default" onClick={toggleFilterDrawerOpen}>
-          <Badge badgeContent={filterModel.items.length}>
+          <Badge badgeContent={filterModel.items.length} color="primary">
             <FilterListIcon />
           </Badge>
         </ToolbarButton>
-      </Tooltip>
+      </Tooltip >
       <Drawer anchor="right" open={filterDrawerOpen} onClose={toggleFilterDrawerClose} sx={DRAWER_SX}>
         <Box sx={{ width: 350, p: 2 }}>
           <XToolbarFilterPanel />

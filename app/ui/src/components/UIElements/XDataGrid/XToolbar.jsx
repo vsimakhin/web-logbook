@@ -8,6 +8,7 @@ import Icon from '@mui/material/Icon';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Badge from '@mui/material/Badge';
 import { useMediaQuery, useTheme } from '@mui/material';
 // MUI Icons
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
@@ -16,6 +17,7 @@ import XToolbarQuickFilter from './XToolbarQuickFilter';
 import XToolbarResetColumns from './XToolbarResetColumns';
 import XToolbarColumnsPanelTrigger from './XToolbarColumnsPanel';
 import XToolbarFilterPanelTrigger from './XToolbarFilterPanel';
+import { useFilter } from './FilterContext';
 
 const EMPTY_COLUMNS = [];
 
@@ -55,6 +57,8 @@ export const XToolbar = ({
   const [isQuickFilterActive, setIsQuickFilterActive] = useState(false);
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
   const mobileMenuOpen = Boolean(mobileMenuAnchor);
+
+  const { filterModel } = useFilter();
 
   const handleMobileMenuOpen = useCallback((event) => { setMobileMenuAnchor(event.currentTarget) }, []);
   const handleMobileMenuClose = useCallback(() => { setMobileMenuAnchor(null) }, []);
@@ -118,7 +122,9 @@ export const XToolbar = ({
 
         {showQuickFilter && <XToolbarQuickFilter onActiveChange={setIsQuickFilterActive} />}
         <IconButton onClick={handleMobileMenuOpen}>
-          <MoreVertOutlinedIcon />
+          <Badge badgeContent={filterModel.items.length} color="primary">
+            <MoreVertOutlinedIcon />
+          </Badge>
         </IconButton>
 
         <Menu
