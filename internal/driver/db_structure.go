@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "43"
+	schemaVersion = "44"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -127,7 +127,7 @@ var currencyTable = NewTable("currency", "uuid", UUID,
 		{Name: "time_frame_since", Type: DateTime, Properties: "NOT NULL DEFAULT ''"},
 		{Name: "comparison", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "filters", Type: FullText},
-		{Name: "sub_metrics", Type: FullText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "sub_metrics", Type: FullText},
 	})
 
 var customFieldsTable = NewTable("custom_fields", "uuid", UUID,
