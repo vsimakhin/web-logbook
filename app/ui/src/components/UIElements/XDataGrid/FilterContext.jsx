@@ -5,6 +5,7 @@ const FilterContext = createContext();
 
 export const FilterProvider = ({ storageKey, children }) => {
   const [filterModel, setFilterModel] = useLocalStorageState(`${storageKey}-filter-model`, { items: [] }, { codec: CODEC_JSON });
+  const [quickFilterModel, setQuickFilterModel] = useLocalStorageState(`${storageKey}-quick-filter-model`, { items: [], quickFilterValues: [] }, { codec: CODEC_JSON });
 
   const updateFilter = useCallback((field, operator, value) => {
     setFilterModel((prev) => {
@@ -31,7 +32,7 @@ export const FilterProvider = ({ storageKey, children }) => {
   }, [setFilterModel]);
 
   return (
-    <FilterContext.Provider value={{ filterModel, updateFilter, clearFilters }}>
+    <FilterContext.Provider value={{ filterModel, updateFilter, clearFilters, quickFilterModel, setQuickFilterModel }}>
       {children}
     </FilterContext.Provider>
   );

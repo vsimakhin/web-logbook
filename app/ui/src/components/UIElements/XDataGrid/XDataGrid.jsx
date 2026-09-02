@@ -113,7 +113,7 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
   const [paginationModel, setPaginationModel] = useLocalStorageState(`${tableId}-pagination`, { pageSize: defaultPageSize, page: 0 }, { codec: CODEC_JSON });
   const [columnsState, setColumnsState] = useLocalStorageState(`${tableId}-columns`, {}, { codec: CODEC_JSON });
 
-  const { filterModel } = useFilter();
+  const { filterModel, quickFilterModel, setQuickFilterModel } = useFilter();
   const deferredFilterModel = useDeferredValue(filterModel);
 
   useEffect(() => {
@@ -244,6 +244,8 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
         apiRef={apiRef}
         rows={filteredRows}
         columns={columns}
+        filterModel={quickFilterModel} // only for quick filter
+        onFilterModelChange={setQuickFilterModel}
         rowHeight={38}
         density="compact"
         initialState={{ columns: mergedColumnsState, ...props.initialState }}
