@@ -65,6 +65,7 @@ The application will automatically create a local SQLite database on the first s
 
 ## [Unreleased]
 
+- Fix: Add missing tags field import/export.
 - New: Preserve table filter sets when switching to and from records.
 
 ## [4.8.1] - 02.09.2026

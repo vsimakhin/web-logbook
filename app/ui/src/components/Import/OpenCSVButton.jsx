@@ -55,6 +55,11 @@ export const OpenCSVButton = ({ setData }) => {
                   // replace pic name with self if needed
                   if (newRow["pic_name"]?.toLowerCase().trim() === picSelf) newRow["pic_name"] = "Self";
 
+                  // replace tags delimiters with commas
+                  if (newRow["tags"]) {
+                    newRow["tags"] = newRow["tags"].replace(/[;|]/g, ",");
+                  }
+
                   return newRow;
                 }).filter(row => row !== null);
 

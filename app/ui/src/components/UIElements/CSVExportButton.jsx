@@ -91,6 +91,7 @@ const exportMappers = {
     "SIM Time": row.sim.time,
     "PIC Name": row.pic_name,
     "Remarks": row.remarks,
+    "Tags": row.tags,
   })),
 
   "totals-by-year": (rows) => rows.map((row) => ({
