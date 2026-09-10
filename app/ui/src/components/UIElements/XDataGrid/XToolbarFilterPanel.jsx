@@ -22,8 +22,10 @@ import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
 // MUI icons
 import FilterListIcon from '@mui/icons-material/FilterList';
+import FilterListOffOutlinedIcon from '@mui/icons-material/FilterListOffOutlined';
 // Custom
 import { useFilter } from './FilterContext';
 
@@ -300,7 +302,7 @@ export const XToolbarFilterPanel = () => {
   const apiRef = useGridApiContext();
   const rootProps = useGridRootProps();
   const columns = useGridSelector(apiRef, gridVisibleColumnDefinitionsSelector);
-  const { filterModel, updateFilter } = useFilter();
+  const { filterModel, updateFilter, clearFilters } = useFilter();
 
   const columnMap = useMemo(() => new Map(columns.map((c) => [c.field, c])), [columns]);
 
@@ -336,27 +338,37 @@ export const XToolbarFilterPanel = () => {
   }, [columns, fieldToGroupMap, groupLeavesMap]);
 
   return (
-    <Box sx={{ p: 1, minWidth: 320 }}>
-      {items.map((item) =>
-        item.type === 'group' ? (
-          <FilterGroup
-            key={item.group.groupId}
-            group={item.group}
-            leaves={groupLeavesMap.get(item.group.groupId) || []}
-            columnMap={columnMap}
-            filterModel={filterModel}
-            onChange={updateFilter}
-          />
-        ) : (
-          <FilterField
-            key={item.column.field}
-            column={item.column}
-            filterModel={filterModel}
-            onChange={updateFilter}
-          />
+    <Box sx={{ p: 0.5, minWidth: 320 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography variant="overline">Filters</Typography>
+        <Tooltip title="Clear all filters">
+          <IconButton onClick={clearFilters}>
+            <FilterListOffOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      {
+        items.map((item) =>
+          item.type === 'group' ? (
+            <FilterGroup
+              key={item.group.groupId}
+              group={item.group}
+              leaves={groupLeavesMap.get(item.group.groupId) || []}
+              columnMap={columnMap}
+              filterModel={filterModel}
+              onChange={updateFilter}
+            />
+          ) : (
+            <FilterField
+              key={item.column.field}
+              column={item.column}
+              filterModel={filterModel}
+              onChange={updateFilter}
+            />
+          )
         )
-      )}
-    </Box>
+      }
+    </Box >
   );
 };
 
@@ -370,11 +382,11 @@ export const XToolbarFilterPanelTrigger = () => {
     <>
       <Tooltip title="Filters">
         <ToolbarButton color="default" onClick={toggleFilterDrawerOpen}>
-          <Badge badgeContent={filterModel.items.length}>
+          <Badge badgeContent={filterModel.items.length} color="primary">
             <FilterListIcon />
           </Badge>
         </ToolbarButton>
-      </Tooltip>
+      </Tooltip >
       <Drawer anchor="right" open={filterDrawerOpen} onClose={toggleFilterDrawerClose} sx={DRAWER_SX}>
         <Box sx={{ width: 350, p: 2 }}>
           <XToolbarFilterPanel />
