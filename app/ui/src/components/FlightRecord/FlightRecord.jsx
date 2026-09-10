@@ -32,6 +32,7 @@ export const FlightRecord = () => {
 
   useEffect(() => {
     if (id === "new") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFlight({
         ...FLIGHT_INITIAL_STATE,
         uuid: "new",

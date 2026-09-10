@@ -111,3 +111,12 @@ export const fetchRoles = async ({ signal }) => {
   return await handleFetch(url, options, 'Cannot fetch roles');
 }
 
+export const copyPersonsFlightRecord = async ({ fromUuid, toUuid }) => {
+  const url = `${API_URL}/person/copy-flight-record`;
+  const options = {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from_uuid: fromUuid, to_uuid: toUuid }),
+  };
+  return await handleFetch(url, options, 'Cannot copy persons');
+};

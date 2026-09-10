@@ -123,6 +123,7 @@ func (app *application) routes() *chi.Mux {
 			r.Put("/person-to-log", app.HandlerApiPersonToLogUpdate)
 			r.Delete("/person-to-log", app.HandlerApiPersonToLogDelete)
 			r.Get("/roles", app.HandlerApiPersonsRoles)
+			r.Post("/copy-flight-record", app.HandlerApiCopyPersonsFlightRecord)
 		})
 
 		// export

@@ -4,6 +4,7 @@ import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 import DrawOutlinedIcon from '@mui/icons-material/DrawOutlined';
+import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOutlined';
 // Custom
 import HelpButtonDrawer from "../UIElements/HelpButtonDrawer";
 
@@ -22,6 +23,12 @@ const HELP_CONTENT = [
     title: 'Copy flight record',
     icon: ContentCopyOutlinedIcon,
     description: 'Create a new flight record with the same values as the current flight',
+  },
+  {
+    title: 'Return flight record',
+    icon: AssignmentReturnOutlinedIcon,
+    description: `Create a new flight record based on the current flight: 
+      swap the Departure/Arrival Place, copy over the aircraft/reg, PIC and any persons`,
   },
   {
     title: 'PIC Name',

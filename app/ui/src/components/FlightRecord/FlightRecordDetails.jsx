@@ -84,7 +84,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flight.aircraft.model, flight.uuid, models, setFlight])
+  }, [flight.aircraft.model, flight.uuid, flight.time.total_time, models, setFlight])
 
   return (
     <>

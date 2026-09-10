@@ -183,3 +183,21 @@ func (app *application) HandlerApiPersonsRoles(w http.ResponseWriter, r *http.Re
 
 	app.writeJSON(w, http.StatusOK, roles)
 }
+
+func (app *application) HandlerApiCopyPersonsFlightRecord(w http.ResponseWriter, r *http.Request) {
+	var payload struct {
+		FromUUID string `json:"from_uuid"`
+		ToUUID   string `json:"to_uuid"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	if err := app.db.CopyPersonsForLog(payload.FromUUID, payload.ToUUID); err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, "Persons copied")
+}
