@@ -63,23 +63,12 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.9.0] - 10.09.2026
 
 - Update: Golang and npm packages/security patches.
 - New: New button "Return flight" for the flight record - creates a new flight, swap the Departure/Arrival Place, copy over the aircraft/reg, PIC and any persons.
 - Fix: Add missing tags field import/export.
 - New: Preserve table filter sets when switching to and from records.
-
-## [4.8.1] - 02.09.2026
-
-- Fix: MySQL compatibility fix for the new sub metrics field.
-
-## [4.8.0] - 01.09.2026
-
-- New: Added submetrics for the currencies.
-- Update: The Remarks field automatically expands when it contains multiline text.
-- Update: Custom fields have been moved to the standard fields card to improve spacing.
-- Update: Golang and npm packages/security patches.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

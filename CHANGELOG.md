@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.9.0] - 10.09.2026
 
 - Update: Golang and npm packages/security patches.
 - New: New button "Return flight" for the flight record - creates a new flight, swap the Departure/Arrival Place, copy over the aircraft/reg, PIC and any persons.
