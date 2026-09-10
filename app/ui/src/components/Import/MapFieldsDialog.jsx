@@ -49,6 +49,7 @@ const fields = [
   { id: 'sim_time', label: 'Sim Time', default: 'SIM Time' },
   { id: 'pic_name', label: 'PIC Name', default: 'PIC Name', leon: 'selectedCrewCommander' },
   { id: 'remarks', label: 'Remarks', default: 'Remarks' },
+  { id: 'tags', label: 'Tags', default: 'Tags' },
 ];
 
 const generateProfile = (headers, fieldKey = "default") => {
