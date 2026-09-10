@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- New: Preserve table filter sets when switching to and from records.
+
 ## [4.8.1] - 02.09.2026
 
 - Fix: MySQL compatibility fix for the new sub metrics field.
