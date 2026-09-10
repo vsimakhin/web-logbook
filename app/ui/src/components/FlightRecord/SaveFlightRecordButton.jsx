@@ -11,10 +11,15 @@ import { createFlightRecord, updateFlightRecord } from "../../util/http/logbook"
 import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
 import { queryClient } from "../../util/http/http";
 import useCustomFields from "../../hooks/useCustomFields";
+import { copyPersonsFlightRecord } from "../../util/http/person";
 
 export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   const navigate = useNavigate();
   const { customFields } = useCustomFields();
+
+  const { mutateAsync: copyPersons } = useMutation({
+    mutationFn: ({ fromUuid, toUuid }) => copyPersonsFlightRecord({ fromUuid, toUuid }),
+  });
 
   const { mutateAsync: saveFlightRecord, isError, error, isSuccess, isPending } = useMutation({
     mutationFn: ({ flight }) =>
@@ -23,6 +28,10 @@ export const SaveFlightRecordButton = ({ flight, handleChange }) => {
         : updateFlightRecord({ flight }),
     onSuccess: async ({ data }, { flight }) => {
       const uuid = flight.uuid === "new" ? data : flight.uuid;
+
+      if (flight.uuid === "new" && flight.copy_persons) {
+        await copyPersons({ fromUuid: flight.copy_persons, toUuid: uuid });
+      }
 
       if (flight.uuid === "new") {
         handleChange("uuid", uuid);

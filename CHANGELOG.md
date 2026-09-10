@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- New: New button "Return flight" for the flight record - creates a new flight, swap the Departure/Arrival Place, copy over the aircraft/reg, PIC and any persons.
 - Fix: Add missing tags field import/export.
 - New: Preserve table filter sets when switching to and from records.
 

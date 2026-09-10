@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
 // fetchPersons is a helper function to fetch persons based on a query and a scan function
@@ -215,4 +217,17 @@ func (m *DBModel) GetPersonsRoles() (roles []string, err error) {
 	}
 
 	return roles, nil
+}
+
+func (m *DBModel) CopyPersonsForLog(fromUUID, toUUID string) error {
+	persons, err := m.GetPersonsForLog(fromUUID)
+	if err != nil {
+		return err
+	}
+	for _, p := range persons {
+		id, _ := uuid.NewRandom()
+		ptl := PersonToLog{UUID: id.String(), PersonUUID: p.UUID, LogUUID: toUUID, Role: p.Role}
+		_ = m.AddPersonToLog(ptl) // silently skip duplicates
+	}
+	return nil
 }
