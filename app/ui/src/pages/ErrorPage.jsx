@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 export const ErrorPage = () => {
   const error = useRouteError();
@@ -13,7 +13,7 @@ export const ErrorPage = () => {
   return (
     <Container maxWidth="md" style={{ textAlign: 'center', marginTop: '20vh' }}>
       <Box display="flex" flexDirection="column" alignItems="center">
-        <ErrorOutlineIcon style={{ fontSize: 100 }} />
+        <ErrorOutlineOutlinedIcon style={{ fontSize: 100 }} />
         <Typography variant="h4" component="h1" gutterBottom>
           Arrr!
         </Typography>
