@@ -45,7 +45,7 @@ const AppTitle = () => {
       : false), [version, latestRelease]);
 
   return (
-    <Stack direction="row" alignItems="center" spacing={2}>
+    <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
       <Typography variant="h6">Logbook</Typography>
       <Badge color="primary" badgeContent="New" invisible={!isNewReleaseAvailable}>
         <Chip
@@ -73,7 +73,7 @@ const ToolbarActions = () => {
   const handleLogout = useCallback(() => navigate('/logout'), [navigate]);
 
   return (
-    <Stack direction="row" spacing={0} alignItems="center">
+    <Stack direction="row" spacing={0} sx={{ alignItems: "center" }}>
       {auth && (
         <Tooltip title="Logout">
           <IconButton onClick={handleLogout}>

@@ -98,7 +98,7 @@ const ImportOptionsDialog = ({ open, onClose }) => {
   }, []);
 
   const actionButtons = (
-    <Box display="flex" alignItems="center" gap={0}>
+    <Box display="flex" gap={0} sx={{ alignItems: "center" }}>
       <Tooltip title="Run Import">
         <span>
           <IconButton size="small" onClick={() => onClose(options)} disabled={options.backup === false} >

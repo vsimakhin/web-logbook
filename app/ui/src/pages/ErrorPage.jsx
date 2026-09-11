@@ -12,7 +12,7 @@ export const ErrorPage = () => {
 
   return (
     <Container maxWidth="md" style={{ textAlign: 'center', marginTop: '20vh' }}>
-      <Box display="flex" flexDirection="column" alignItems="center">
+      <Box sx={{ alignItems: "center", display: "flex", flexDirection: "column" }}>
         <ErrorOutlineOutlinedIcon style={{ fontSize: 100 }} />
         <Typography variant="h4" component="h1" gutterBottom>
           Arrr!
