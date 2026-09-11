@@ -7,7 +7,6 @@ import CardContent from '@mui/material/CardContent';
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
@@ -107,12 +106,15 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
               handleChange={handleChange} value={category.category ? category.category.split(',') : []}
             />
           </Grid>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
+            * To create a new category, type the name in the input field and press Enter
+          </Typography>
           <Box component="fieldset" sx={{
             border: '1px solid divider',
             borderRadius: '8px',
-            m: 0, width: '100%',
+            m: 0, width: '100%', mt: 1
           }}>
-            <Typography component="legend" variant="caption" color="textSecondary">
+            <Typography component="legend" variant="caption" sx={{ color: "text.secondary" }}>
               {copyTotalTimeCaption}
             </Typography>
             <Grid container spacing={1} sx={{ mt: 1 }}>
@@ -130,10 +132,6 @@ export const EditCategoriesModal = ({ open, onClose, payload }) => {
               ))}
             </Grid>
           </Box>
-          <Divider sx={{ m: 1 }} />
-          <Typography variant="caption" color="textSecondary">
-            * To create a new category, type the name in the input field and press Enter
-          </Typography>
         </CardContent>
       </Card >
     </Dialog>

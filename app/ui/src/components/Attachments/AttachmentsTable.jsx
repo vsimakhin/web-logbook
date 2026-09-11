@@ -50,7 +50,7 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
       width: 180,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-          <Typography variant="body2" color="primary">
+          <Typography variant="body2" sx={{ color: "primary.main" }}>
             <Link to={`/logbook/${params.row.record_id}`} style={{ textDecoration: 'none', color: "inherit" }}>
               {params.row.flight_info}
             </Link>

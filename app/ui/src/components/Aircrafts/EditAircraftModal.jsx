@@ -104,15 +104,15 @@ export const EditAircraftModal = ({ open, onClose, payload }) => {
             />
           </Grid>
           <Divider sx={{ m: 1 }} />
-          <Typography variant="caption" color="textSecondary" display="block">
+          <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
             * To create a new category, type the name in the input field and press `Enter`.
           </Typography>
           {(aircraft.model !== payload.model) && (
             <>
-              <Typography variant="caption" color="error" display="block">
+              <Typography variant="caption" sx={{ color: "error.main", display: "block" }}>
                 * Changing the aircraft type will update all logbook flights with this aircraft.
               </Typography>
-              <Typography variant="caption" color="warning" display="block">
+              <Typography variant="caption" sx={{ color: "warning.main", display: "block" }}>
                 * If it&apos;s a new type, you will need to set the categories in the `Types & Categories` table.
               </Typography>
             </>
