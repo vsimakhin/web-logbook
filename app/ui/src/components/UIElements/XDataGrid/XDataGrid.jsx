@@ -66,6 +66,11 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => {
       backgroundColor: `${theme.palette.background.paper} !important`,
     },
 
+    // Toolbar
+    '& .MuiDataGrid-toolbar': {
+      backgroundColor: theme.palette.background.paper,
+    },
+
     // Cells
     '& .MuiDataGrid-cell': {
       borderRight: `1px solid ${isLight ? '#e0e0e0' : '#303030'}`,
