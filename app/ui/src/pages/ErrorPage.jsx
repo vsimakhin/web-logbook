@@ -20,7 +20,7 @@ export const ErrorPage = () => {
         <Typography variant="body1" gutterBottom>
           Something unexpected has occurred.
         </Typography>
-        <Typography variant="body1" color="textSecondary" sx={{ mt: 2, mb: 4 }}>
+        <Typography variant="body1" sx={{ mt: 2, mb: 4, color: "text.secondary" }}>
           {error.status} - {error.statusText || error.message}
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -31,7 +31,7 @@ export const ErrorPage = () => {
           </Link>
           &nbsp; with an error message and steps to reproduce.
         </Typography>
-        <Typography variant="body2" color="textSecondary" sx={{ mt: 2, mb: 4 }}>
+        <Typography variant="body2" sx={{ mt: 2, mb: 4, color: "text.secondary" }}>
           <i>{JSON.stringify(error)}</i>
         </Typography>
         <Button variant="outlined" onClick={() => navigate('/')}>
