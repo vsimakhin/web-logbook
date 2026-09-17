@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 
 export const Label = ({ icon: Icon, text }) => {
   return (
-    <Box gap={0.5} display="flex" alignItems="center"><Icon />{text}</Box>
+    <Box sx={{ alignItems: "center", display: "flex", gap: 0.5 }}><Icon />{text}</Box>
   )
 }
 

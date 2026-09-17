@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Upgraded to the latest Material UI libraries (v9).
+
 ## [4.9.0] - 10.09.2026
 
 - Update: Golang and npm packages/security patches.

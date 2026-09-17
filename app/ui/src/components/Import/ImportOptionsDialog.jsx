@@ -98,7 +98,7 @@ const ImportOptionsDialog = ({ open, onClose }) => {
   }, []);
 
   const actionButtons = (
-    <Box display="flex" alignItems="center" gap={0}>
+    <Box sx={{ alignItems: "center", display: "flex", gap: 0 }}>
       <Tooltip title="Run Import">
         <span>
           <IconButton size="small" onClick={() => onClose(options)} disabled={options.backup === false} >
@@ -135,7 +135,7 @@ const ImportOptionsDialog = ({ open, onClose }) => {
           </Grid>
 
           <Divider sx={{ m: 1 }} />
-          <Typography variant="caption" color="warning">
+          <Typography variant="caption" sx={{ color: "warning.main" }}>
             * Creating Persons from imported records is still an experimental feature.
           </Typography>
 
@@ -148,7 +148,7 @@ const ImportOptionsDialog = ({ open, onClose }) => {
             />
 
             <Grid size={{ xs: 12 }}>
-              <Box borderLeft={1} ml={3} p={1} borderColor="grey.200" >
+              <Box sx={{ borderLeft: 1, ml: 3, p: 1, borderColor: "grey.200" }} >
                 <Grid container spacing={1}>
                   <OptionSwitch
                     gsize={{ xs: 12, sm: 6 }}

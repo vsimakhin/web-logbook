@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 export const ErrorPage = () => {
   const error = useRouteError();
@@ -12,15 +12,15 @@ export const ErrorPage = () => {
 
   return (
     <Container maxWidth="md" style={{ textAlign: 'center', marginTop: '20vh' }}>
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <ErrorOutlineIcon style={{ fontSize: 100 }} />
+      <Box sx={{ alignItems: "center", display: "flex", flexDirection: "column" }}>
+        <ErrorOutlineOutlinedIcon style={{ fontSize: 100 }} />
         <Typography variant="h4" component="h1" gutterBottom>
           Arrr!
         </Typography>
         <Typography variant="body1" gutterBottom>
           Something unexpected has occurred.
         </Typography>
-        <Typography variant="body1" color="textSecondary" sx={{ mt: 2, mb: 4 }}>
+        <Typography variant="body1" sx={{ mt: 2, mb: 4, color: "text.secondary" }}>
           {error.status} - {error.statusText || error.message}
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -31,7 +31,7 @@ export const ErrorPage = () => {
           </Link>
           &nbsp; with an error message and steps to reproduce.
         </Typography>
-        <Typography variant="body2" color="textSecondary" sx={{ mt: 2, mb: 4 }}>
+        <Typography variant="body2" sx={{ mt: 2, mb: 4, color: "text.secondary" }}>
           <i>{JSON.stringify(error)}</i>
         </Typography>
         <Button variant="outlined" onClick={() => navigate('/')}>

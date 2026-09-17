@@ -21,7 +21,7 @@ export const PersonForLog = ({ person, logUuid }) => {
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <IconButton onClick={handleClick} size="small"><PersonIcon /></IconButton>
-        <Typography variant="body2" color="primary">
+        <Typography variant="body2" sx={{ color: "primary.main" }}>
           <Link to={`/persons/${person.uuid}`} style={{ textDecoration: "none", color: "inherit" }}>
             {printPerson(person)} {person.role ? `(${person.role})` : null}
           </Link>

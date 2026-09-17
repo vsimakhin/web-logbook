@@ -29,7 +29,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-          <Typography variant="body2" color="primary">
+          <Typography variant="body2" sx={{ color: "primary.main" }}>
             <Link to={`/logbook/${params.row.log_uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
               {params.formattedValue}
             </Link>

@@ -39,7 +39,7 @@ export const LicensingTable = ({ data, isLoading }) => {
         width: 150,
         renderCell: (params) => (
           <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-            <Typography fontWeight="500">
+            <Typography sx={{ fontWeight: 500 }}>
               {params.formattedValue}
             </Typography>
           </Box>
@@ -52,7 +52,7 @@ export const LicensingTable = ({ data, isLoading }) => {
         width: 250,
         renderCell: (params) => (
           <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-            <Typography variant="body2" color="primary">
+            <Typography variant="body2" sx={{ color: "primary.main" }}>
               <Link to={`/licensing/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
                 {params.formattedValue}
               </Link>

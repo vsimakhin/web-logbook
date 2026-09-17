@@ -23,7 +23,7 @@ export const LicensesExpiration = ({ settings, handleChange }) => {
         value={settings?.licenses_expiration?.warning_period || 90}
         tooltip="Number of days before expiration to start showing warnings (Navigation Bar and Licensing Table)"
         type="number"
-        inputProps={{ min: 1 }}
+        slotProps={{ htmlInput: { min: 1 } }}
       />
       <Grid size={{ sm: 1, md: 1, lg: 1, xl: 1 }} sx={{ display: { xs: "none", sm: "flex" } }}><Box sx={{ width: '100%' }}></Box></Grid>
       <Grid size={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>

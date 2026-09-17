@@ -111,7 +111,7 @@ const StatusCell = ({ row, metricOptions, currencyResults }) => {
 
   const tooltipContent = (
     <>
-      <Typography variant="caption" display="block" fontWeight={500}>
+      <Typography variant="caption" display="block" sx={{ fontWeight: 500 }}>
         {mainName}: {value} / {formatCurrencyValue(row.target_value, row.metric)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
       </Typography>
       {status.subResults?.map((sub, i) => {
@@ -135,7 +135,7 @@ const StatusCell = ({ row, metricOptions, currencyResults }) => {
         color={color}
       />
       <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography variant="caption" fontWeight={500}>
+        <Typography variant="caption" sx={{ fontWeight: 500 }}>
           {value} {percentLabel}
         </Typography>
       </Box>

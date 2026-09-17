@@ -100,7 +100,7 @@ export const MapOptionsModal = ({ open, onClose }) => {
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
           <CardHeader title="Map Options" action={<CloseDialogButton onClose={onClose} />} />
-          <Grid container spacing={1} alignItems="center">
+          <Grid container spacing={1} sx={{ alignItems: "center" }}>
             <MapOptionItem
               label="Route Lines"
               values={options?.routes}

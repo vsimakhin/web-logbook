@@ -164,7 +164,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               id="size_xs"
               label="Size XS"
               tooltip="Size of the field in XS breakpoint (smartphones)"
-              type="number" inputProps={{ min: 1, max: 12 }}
+              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
               handleChange={handleChange}
               value={field.size_xs}
             />
@@ -172,7 +172,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               id="size_md"
               label="Size MD"
               tooltip="Size of the field in MD breakpoint (tablets)"
-              type="number" inputProps={{ min: 1, max: 12 }}
+              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
               handleChange={handleChange}
               value={field.size_md}
             />
@@ -180,7 +180,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               id="size_lg"
               label="Size LG"
               tooltip="Size of the field in LG breakpoint (desktops)"
-              type="number" inputProps={{ min: 1, max: 12 }}
+              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
               handleChange={handleChange}
               value={field.size_lg}
             />
@@ -188,7 +188,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               id="display_order"
               label="Display Order"
               tooltip="Order of the field in the UI"
-              type="number" inputProps={{ min: 1, max: 100 }}
+              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
               handleChange={handleChange}
               value={field.display_order}
             />
