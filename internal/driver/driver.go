@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	_ "embed"
@@ -38,11 +40,192 @@ func OpenDB(engine string, dsn string) (*sql.DB, error) {
 	return db, nil
 }
 
+func parseTimeToMinutes(timeStr string) int {
+	// If not, parse it as "H:MM"
+	parts := strings.Split(timeStr, ":")
+	if len(parts) != 2 {
+		return 0 // Invalid format
+	}
+
+	hours, err1 := strconv.Atoi(parts[0])
+	minutes, err2 := strconv.Atoi(parts[1])
+	if err1 != nil || err2 != nil {
+		return 0 // Invalid numbers or empty string
+	}
+
+	return hours*60 + minutes
+}
+
+func dataOverhaulMigration(db *sql.DB, engine string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
+	defer cancel()
+
+	type recordUpdate struct {
+		uuid         string
+		times        [11]int // converted minutes
+		customFields string
+	}
+	var updates []recordUpdate
+
+	// 1. db transaction
+	fmt.Println("Preparing data migration...")
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// 2. Fetch custom fields of type "duration"
+	fmt.Println("Fetching custom fields...")
+	durationFields := make(map[string]bool)
+	cfRows, err := tx.QueryContext(ctx, "SELECT uuid FROM custom_fields WHERE type = 'duration'")
+	if err != nil {
+		return err
+	}
+	defer cfRows.Close()
+	for cfRows.Next() {
+		var fieldUUID string
+		if err := cfRows.Scan(&fieldUUID); err != nil {
+			return err
+		}
+		durationFields[fieldUUID] = true
+	}
+	cfRows.Close()
+	if err := cfRows.Err(); err != nil {
+		return err
+	}
+
+	// 3. Fetch flight records
+	fmt.Println("Fetching flight records...")
+	rows, err := tx.QueryContext(ctx, `
+		SELECT uuid, 
+			se_time, me_time, mcc_time, total_time, night_time,
+			ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_time,
+			custom_fields
+		FROM logbook`)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	// 4. Process each flight record
+	fmt.Println("Processing flight records...")
+	for rows.Next() {
+		var rec recordUpdate
+		var rawTimes [11]sql.NullString
+		var rawCF sql.NullString
+
+		err := rows.Scan(
+			&rec.uuid,
+			&rawTimes[0], &rawTimes[1], &rawTimes[2], &rawTimes[3], &rawTimes[4],
+			&rawTimes[5], &rawTimes[6], &rawTimes[7], &rawTimes[8], &rawTimes[9], &rawTimes[10],
+			&rawCF,
+		)
+		if err != nil {
+			return err
+		}
+		for i := range 11 {
+			if rawTimes[i].Valid {
+				rec.times[i] = parseTimeToMinutes(rawTimes[i].String)
+			}
+		}
+
+		rec.customFields = rawCF.String
+		if len(durationFields) > 0 && rawCF.Valid && rawCF.String != "" && rawCF.String != "{}" {
+			var cfMap map[string]any
+			if err := json.Unmarshal([]byte(rawCF.String), &cfMap); err == nil {
+				updated := false
+				for fieldUUID := range durationFields {
+					if val, ok := cfMap[fieldUUID]; ok {
+						switch v := val.(type) {
+						case string:
+							if v != "" {
+								cfMap[fieldUUID] = parseTimeToMinutes(v)
+								updated = true
+							}
+						}
+					}
+				}
+				if updated {
+					if newBytes, err := json.Marshal(cfMap); err == nil {
+						rec.customFields = string(newBytes)
+					}
+				}
+			}
+		}
+		updates = append(updates, rec)
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	rows.Close()
+
+	// 5. Update flight records with converted times and custom fields
+	fmt.Println("Updating flight records...")
+	stmt, err := tx.PrepareContext(ctx, `
+		UPDATE logbook SET
+			se_time = ?, me_time = ?, mcc_time = ?, total_time = ?, night_time = ?,
+			ifr_time = ?, pic_time = ?, co_pilot_time = ?, dual_time = ?, instructor_time = ?, sim_time = ?,
+			custom_fields = ?
+		WHERE uuid = ?`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, u := range updates {
+		_, err = stmt.ExecContext(ctx,
+			u.times[0], u.times[1], u.times[2], u.times[3], u.times[4],
+			u.times[5], u.times[6], u.times[7], u.times[8], u.times[9], u.times[10],
+			u.customFields,
+			u.uuid,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	if engine == MySQL {
+		alterQuery := `
+			ALTER TABLE logbook
+			MODIFY se_time INT NOT NULL DEFAULT 0,
+			MODIFY me_time INT NOT NULL DEFAULT 0,
+			MODIFY mcc_time INT NOT NULL DEFAULT 0,
+			MODIFY total_time INT NOT NULL DEFAULT 0,
+			MODIFY night_time INT NOT NULL DEFAULT 0,
+			MODIFY ifr_time INT NOT NULL DEFAULT 0,
+			MODIFY pic_time INT NOT NULL DEFAULT 0,
+			MODIFY co_pilot_time INT NOT NULL DEFAULT 0,
+			MODIFY dual_time INT NOT NULL DEFAULT 0,
+			MODIFY instructor_time INT NOT NULL DEFAULT 0,
+			MODIFY sim_time INT NOT NULL DEFAULT 0`
+		if _, err := tx.ExecContext(ctx, alterQuery); err != nil {
+			return err
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // validateDB creates db structure in case it's a first run and the schema is empty
 func validateDB(db *sql.DB, engine string) error {
 	metadataTable.initTable(db, engine)
-	isNewSchema := newShema(db)
-	if isNewSchema {
+	version := getSchemaVersion(db)
+
+	if version != "unknown" {
+		versionInt, err := strconv.Atoi(version)
+		if err == nil && versionInt < 45 {
+			dataOverhaulMigration(db, engine)
+		}
+	}
+
+	if version == "unknown" || version != schemaVersion {
+		fmt.Printf("Initializing version %s...\n", schemaVersion)
+
 		// check tables
 		tables := []*Table{logbookTable, airportsTable, customAirportsTable,
 			settingsTable, licensingTable, attachmentsTable, tokensTable,
@@ -80,28 +263,27 @@ func validateDB(db *sql.DB, engine string) error {
 	return nil
 }
 
-func newShema(db *sql.DB) bool {
+func getSchemaVersion(db *sql.DB) (version string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	query := "SELECT version FROM metadata ORDER BY created_at DESC LIMIT 1"
-	var version string
 	err := db.QueryRowContext(ctx, query).Scan(&version)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Printf("No rows found in 'metadata'. Initializing version %s...\n", schemaVersion)
-			return true
+			fmt.Println("No rows found in 'metadata'")
+			return "unknown"
 		}
 		fmt.Println(err)
-		return true
+		return "unknown"
 	}
 
 	if version != schemaVersion {
-		fmt.Printf("Schema version (%s) mismatch. Initializing version %s...\n", version, schemaVersion)
-		return true
+		fmt.Printf("Schema version (%s) mismatch\n", version)
+		return version
 	}
 
-	return false
+	return version
 }
 
 func updateSchemaVersion(db *sql.DB) error {
