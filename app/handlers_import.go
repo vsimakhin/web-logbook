@@ -201,7 +201,7 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 						// convert night time duration to minutes
 						fr.Time.Night = int(night.Minutes())
 						if prev != fr.Time.Night {
-							logRow(fmt.Sprintf("--- night time changed from %s to %s", prev, fr.Time.Night))
+							logRow(fmt.Sprintf("--- night time changed from %s to %s", app.formatTimeField(prev), app.formatTimeField(fr.Time.Night)))
 						}
 
 						if isNightLanding && (fr.Landings.Day != 0 && fr.Landings.Night == 0) {
