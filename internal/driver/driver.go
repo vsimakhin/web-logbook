@@ -41,18 +41,23 @@ func OpenDB(engine string, dsn string) (*sql.DB, error) {
 }
 
 func parseTimeToMinutes(timeStr string) int {
-	// If not, parse it as "H:MM"
-	parts := strings.Split(timeStr, ":")
-	if len(parts) != 2 {
-		return 0 // Invalid format
+	if timeStr == "" {
+		return 0
 	}
 
+	if n, err := strconv.Atoi(timeStr); err == nil {
+		return n
+	}
+
+	parts := strings.Split(timeStr, ":")
+	if len(parts) != 2 {
+		return 0
+	}
 	hours, err1 := strconv.Atoi(parts[0])
 	minutes, err2 := strconv.Atoi(parts[1])
 	if err1 != nil || err2 != nil {
-		return 0 // Invalid numbers or empty string
+		return 0
 	}
-
 	return hours*60 + minutes
 }
 
@@ -201,6 +206,44 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 			MODIFY sim_time INT NOT NULL DEFAULT 0`
 		if _, err := tx.ExecContext(ctx, alterQuery); err != nil {
 			return err
+		}
+	}
+
+	// 6. Migrate settings2: convert previous_experience time strings to integer minutes
+	fmt.Println("Updating previous experience in settings...")
+	var rawSettings string
+	err = tx.QueryRowContext(ctx, "SELECT settings FROM settings2 WHERE id = 0").Scan(&rawSettings)
+	if err == nil && rawSettings != "" {
+		var settingsMap map[string]any
+		if err := json.Unmarshal([]byte(rawSettings), &settingsMap); err == nil {
+			if peRaw, ok := settingsMap["previous_experience"]; ok {
+				if peMap, ok := peRaw.(map[string]any); ok {
+					// The 13 time fields in previous_experience
+					timeFields := []string{
+						"total_time", "se_time", "me_time", "mcc_time",
+						"night_time", "ifr_time", "pic_time", "co_pilot_time",
+						"dual_time", "instructor_time", "me_total_time",
+						"cc_time", "sim_time",
+					}
+					for _, tf := range timeFields {
+						if val, exists := peMap[tf]; exists {
+							if strVal, isStr := val.(string); isStr {
+								peMap[tf] = parseTimeToMinutes(strVal)
+							}
+						} else {
+							peMap[tf] = 0
+						}
+					}
+					settingsMap["previous_experience"] = peMap
+					// Write the clean JSON back to settings2
+					if updatedJSON, err := json.Marshal(settingsMap); err == nil {
+						_, err = tx.ExecContext(ctx, "UPDATE settings2 SET settings = ? WHERE id = 0", string(updatedJSON))
+						if err != nil {
+							return fmt.Errorf("failed updating settings: %w", err)
+						}
+					}
+				}
+			}
 		}
 	}
 

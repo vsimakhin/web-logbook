@@ -493,37 +493,21 @@ func (p *PDFExporter) printSinglePilotTime(w float64, value string, fill bool) {
 }
 
 // formatTimeField formats time field in the logbook
-func (p *PDFExporter) formatTimeField(timeField string) string {
-	if p.Export.TimeFieldsAutoFormat == 0 || timeField == "" {
-		return timeField
+func (p *PDFExporter) formatTimeField(timeField int) string {
+	if timeField == 0 {
+		return ""
 	}
 
-	parts := strings.Split(timeField, ":")
-
-	if len(parts) != 2 { // probably some wrong value in the field
-		if timeField == "0" {
-			return ""
-		}
-
-		return timeField
-	}
-
-	hours := parts[0]
-	minutes := parts[1]
+	hours := timeField / 60
+	minutes := timeField % 60
 
 	if p.Export.TimeFieldsAutoFormat == 1 {
 		// add leading zero if missing
-		if len(hours) == 1 {
-			hours = fmt.Sprintf("0%s", hours)
-		}
+		return fmt.Sprintf("02%d:%02d", hours, minutes)
 	} else {
 		// Remove leading zero if present
-		if strings.HasPrefix(hours, "0") && len(hours) == 2 {
-			hours = hours[1:]
-		}
+		return fmt.Sprintf("%d:%02d", hours, minutes)
 	}
-
-	return hours + ":" + minutes
 }
 
 // printBodyRemarksCell prints remarks cell in the row of the logbook

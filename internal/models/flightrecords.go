@@ -46,22 +46,22 @@ func dtoa(value time.Duration) string {
 // calculateTotals calculates totals for page footer
 func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
 
-	totals.Time.SE = dtoa(atod(totals.Time.SE) + atod(record.Time.SE))
-	totals.Time.ME = dtoa(atod(totals.Time.ME) + atod(record.Time.ME))
-	totals.Time.MCC = dtoa(atod(totals.Time.MCC) + atod(record.Time.MCC))
-	totals.Time.Night = dtoa(atod(totals.Time.Night) + atod(record.Time.Night))
-	totals.Time.IFR = dtoa(atod(totals.Time.IFR) + atod(record.Time.IFR))
-	totals.Time.PIC = dtoa(atod(totals.Time.PIC) + atod(record.Time.PIC))
-	totals.Time.CoPilot = dtoa(atod(totals.Time.CoPilot) + atod(record.Time.CoPilot))
-	totals.Time.Dual = dtoa(atod(totals.Time.Dual) + atod(record.Time.Dual))
-	totals.Time.Instructor = dtoa(atod(totals.Time.Instructor) + atod(record.Time.Instructor))
-	totals.Time.Total = dtoa(atod(totals.Time.Total) + atod(record.Time.Total))
-	totals.SIM.Time = dtoa(atod(totals.SIM.Time) + atod(record.SIM.Time))
+	totals.Time.SE += record.Time.SE
+	totals.Time.ME += record.Time.ME
+	totals.Time.MCC += record.Time.MCC
+	totals.Time.Night += record.Time.Night
+	totals.Time.IFR += record.Time.IFR
+	totals.Time.PIC += record.Time.PIC
+	totals.Time.CoPilot += record.Time.CoPilot
+	totals.Time.Dual += record.Time.Dual
+	totals.Time.Instructor += record.Time.Instructor
+	totals.Time.Total += record.Time.Total
+	totals.SIM.Time += record.SIM.Time
 	totals.Landings.Day += record.Landings.Day
 	totals.Landings.Night += record.Landings.Night
 
 	totals.Distance += record.Distance
-	totals.Time.CrossCountry = dtoa(atod(totals.Time.CrossCountry) + atod(record.Time.CrossCountry))
+	totals.Time.CrossCountry += record.Time.CrossCountry
 
 	return totals
 }
@@ -413,7 +413,7 @@ func (m *DBModel) GetFlightRecordsStats() (flightRecords []FlightRecordStats, er
 			fr.Time.CrossCountry = fr.Time.Total
 			fr.TimeMinutes.CrossCountry = fr.TimeMinutes.Total
 		} else {
-			fr.Time.CrossCountry = "0:00"
+			fr.Time.CrossCountry = 0
 			fr.TimeMinutes.CrossCountry = 0
 		}
 
