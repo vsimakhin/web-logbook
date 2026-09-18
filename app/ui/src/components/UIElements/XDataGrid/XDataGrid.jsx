@@ -273,6 +273,7 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
             showPageTotal: props.showPageTotal,
             showPreviousPagesTotal: props.showPreviousPagesTotal,
             initialValues: props.initialValues,
+            timeFieldFormat: props.timeFieldFormat,
           },
           toolbar: { initialColumns: columns, customActions: props.customActions, title: props.title, icon: props.icon },
         }}

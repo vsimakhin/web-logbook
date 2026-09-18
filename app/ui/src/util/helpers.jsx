@@ -1,5 +1,22 @@
 import dayjs from "dayjs";
 
+// Convert minutes to time format
+export const timeFieldFormat = (minutes, autoFormat = 1, formatZero = false) => {
+  if (minutes < 0) return "";
+  if (minutes === 0 && !formatZero) return "";
+
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  if (autoFormat === 1) {
+    // Format as HH:MM
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  } else if (autoFormat === 2) {
+    // Format as H:MM
+    return `${hours}:${mins.toString().padStart(2, '0')}`;
+  }
+};
+
 // Convert minutes to HHHH:MM format
 export const convertMinutesToTime = (minutes) => {
   if (!minutes) return "00:00";
