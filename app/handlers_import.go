@@ -32,13 +32,13 @@ func flightDuplicateKey(fr models.FlightRecord) string {
 		}, "|")
 	}
 
-	if fr.SIM.Type != "" && fr.SIM.Time != "" {
+	if fr.SIM.Type != "" && fr.SIM.Time != 0 {
 		// Simulator
 		return strings.Join([]string{
 			"SIM",
 			fr.Date,
 			fr.SIM.Type,
-			fr.SIM.Time,
+			fmt.Sprintf("%d", fr.SIM.Time),
 			fr.Remarks,
 		}, "|")
 	}
@@ -198,10 +198,8 @@ func (app *application) HandlerApiImportRun(w http.ResponseWriter, r *http.Reque
 				} else {
 					if night != time.Duration(0) {
 						prev := fr.Time.Night
-						if prev == "" {
-							prev = "0:00"
-						}
-						fr.Time.Night = app.db.DtoA(night)
+						// convert night time duration to minutes
+						fr.Time.Night = int(night.Minutes())
 						if prev != fr.Time.Night {
 							logRow(fmt.Sprintf("--- night time changed from %s to %s", prev, fr.Time.Night))
 						}
