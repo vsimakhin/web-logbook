@@ -25,7 +25,7 @@ const AggregationRow = ({ label, values, columns, ...props }) => {
           displayText = label;
         } else if (isAggregated) {
           if (value === undefined || value === null || value === '' || (isTimeField && (value === 0 || value === '0.0'))) {
-            displayText = isTimeField ? '00:00' : '0';
+            displayText = isTimeField ? props.timeFieldFormat : '0';
           } else {
             displayText = typeof column.aggregationFormatter === 'function'
               ? column.aggregationFormatter(value)
@@ -173,9 +173,8 @@ const XFooter = ({ showPageTotal = true, showPagination = true, showPreviousPage
             const ps = sum(pValues);
             pTotals[field] = field.includes('_time') ? ps.toFixed(1) : ps;
 
-            let pps = 0;
             if (showPreviousPagesTotal) {
-              pps = sum(ppValues);
+              const pps = sum(ppValues);
               ppTotals[field] = field.includes('_time') ? pps.toFixed(1) : pps;
 
               const ppbSum = sum([...ppValues, ...pValues]);

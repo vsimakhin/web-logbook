@@ -100,8 +100,8 @@ func (p *PDFExporter) printA4LogbookHeader() {
 func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 	p.rowCounter += 1
 
-	if record.Time.MCC != "" {
-		record.Time.ME = ""
+	if record.Time.MCC != 0 {
+		record.Time.ME = 0
 	}
 
 	p.totalPage = models.CalculateTotals(p.totalPage, record)

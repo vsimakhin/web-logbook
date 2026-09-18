@@ -255,8 +255,8 @@ func (p *PDFExporter) printA5TotalB(totalName string, total models.FlightRecord)
 func (p *PDFExporter) logBookRowA(record models.FlightRecord) bool {
 	p.rowCounter += 1
 
-	if record.Time.MCC != "" {
-		record.Time.ME = ""
+	if record.Time.MCC != 0 {
+		record.Time.ME = 0
 	}
 
 	p.totalPage = models.CalculateTotals(p.totalPage, record)

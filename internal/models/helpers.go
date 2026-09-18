@@ -58,7 +58,7 @@ func (m *DBModel) processFlightrecord(fr *FlightRecord) {
 	if fr.Departure.Place != fr.Arrival.Place {
 		fr.Time.CrossCountry = fr.Time.Total
 	} else {
-		fr.Time.CrossCountry = "0:00"
+		fr.Time.CrossCountry = 0
 	}
 }
 

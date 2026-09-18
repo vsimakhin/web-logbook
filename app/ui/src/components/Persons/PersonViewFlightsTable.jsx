@@ -13,7 +13,6 @@ import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import dayjs from "dayjs";
 import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import CSVExportButton from "../UIElements/CSVExportButton";
-import { sumTime } from "../Logbook/helpers";
 
 export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
   const apiRef = useGridApiRef();
@@ -65,7 +64,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       headerAlign: 'center',
       align: 'center',
       type: 'time',
-      aggregationFn: sumTime,
+      aggregation: 'sum',
       width: 80,
     },
     {
