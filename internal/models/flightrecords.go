@@ -1,47 +1,9 @@
 package models
 
 import (
-	"fmt"
 	"sort"
 	"strings"
-	"time"
 )
-
-// atod converts formatted string to time.Duration
-func atod(value string) time.Duration {
-	if value == "" {
-		value = "0:0"
-	}
-
-	strTime := fmt.Sprintf("%sm", strings.ReplaceAll(value, ":", "h"))
-
-	duration, err := time.ParseDuration(strTime)
-	if err != nil {
-		fmt.Printf("Error parsing time %s\n", strTime)
-		return 0
-	}
-
-	return duration
-}
-
-// exported dtoa function
-func (m *DBModel) DtoA(value time.Duration) string {
-	return dtoa(value)
-}
-
-// dtoa converts time.Duration to formatted string
-func dtoa(value time.Duration) string {
-
-	d := value.Round(time.Minute)
-	h := d / time.Hour
-	d -= h * time.Hour
-	m := d / time.Minute
-
-	if h == 0 && m == 0 {
-		return "0:00"
-	}
-	return fmt.Sprintf("%01d:%02d", h, m)
-}
 
 // calculateTotals calculates totals for page footer
 func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
