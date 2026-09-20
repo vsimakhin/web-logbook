@@ -71,46 +71,6 @@ export const TIME_SLOT_PROPS = {
   htmlInput: { maxLength: 4, onInput: (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, '') }, inputMode: 'numeric' }
 }
 
-// TODO: check for delete
-export const FLIGHT_TIME_SLOT_PROPS = {
-  htmlInput: {
-    maxLength: 5, // HH:MM or H:MM format requires max length of 5
-    onInput: (e) => {
-      let value = e.target.value;
-
-      // Remove invalid characters
-      value = value.replace(/[^0-9]/g, '');
-
-      // Automatically add colon after 1 or 2 digits for hours
-      if (value.length > 2) {
-        value = `${value.slice(0, value.length - 2)}:${value.slice(-2)}`;
-      }
-
-      // Allow clearing or partial input
-      e.target.value = value;
-    },
-    inputMode: 'numeric'
-  },
-};
-
-// TODO: check for delete
-export const FLIGHT_TIME_SLOT_PROPS_FAA = {
-  htmlInput: {
-    maxLength: 6, // allows e.g. "123.4"
-    onInput: (e) => {
-      let val = e.target.value.replace(',', '.');
-      // Allow only numbers and at most one dot
-      val = val.replace(/[^0-9.]/g, '');
-      const parts = val.split('.');
-      if (parts.length > 2) {
-        val = `${parts[0]}.${parts.slice(1).join('')}`;
-      }
-      e.target.value = val;
-    },
-    inputMode: 'decimal',
-  }
-};
-
 export const defaultColumnFilterTextFieldProps = ({ column }) => {
   const headerText = typeof column.columnDef.header === 'object' ? column.columnDef.header.props.title : column.columnDef.header;
 
