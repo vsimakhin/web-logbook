@@ -3,32 +3,16 @@ import { useMemo } from "react";
 import Grid from "@mui/material/Grid";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from "../../UIElements/CardHeader";
 // Custom
+import CardHeader from "../../UIElements/CardHeader";
 import SaveSettingsButton from '../SaveSettingsButton';
 import useSettings from "../../../hooks/useSettings";
 import { getValue } from "../../../util/helpers";
 import TextField from "../../UIElements/TextField";
 import HelpButton from './HelpButton';
+import TimeField from "../../FlightRecord/TimeField";
 
-const gsize = { xs: 8, sm: 3, md: 3, lg: 3, xl: 3 }
-
-const FLIGHT_TIME_SLOT_PROPS = {
-  htmlInput: {
-    maxLength: 8, // HHHHH:MM format requires max length of 8
-    onInput: (e) => {
-      let value = e.target.value;
-
-      value = value.replace(/[^0-9]/g, '');
-      if (value.length > 2) {
-        value = `${value.slice(0, value.length - 2)}:${value.slice(-2)}`;
-      }
-
-      e.target.value = value;
-    },
-    inputMode: 'numeric'
-  },
-};
+const gsize = { xs: 8, sm: 3 }
 
 const ActionButtons = ({ settings }) => (
   <>
@@ -38,7 +22,8 @@ const ActionButtons = ({ settings }) => (
 );
 
 export const PreviousExperience = ({ settings, handleChange }) => {
-  const { fieldNameF } = useSettings();
+  const { fieldNameF, settings: userSettings } = useSettings();
+  const fieldFormat = userSettings.time_fields_auto_format;
 
   const timeFields = useMemo(() => (
     [
@@ -71,13 +56,13 @@ export const PreviousExperience = ({ settings, handleChange }) => {
         <CardHeader title="Previous Flight Experience" action={<ActionButtons settings={settings} />} />
         <Grid container spacing={1} sx={{ mt: 1 }} columns={24}>
           {timeFields.map((field) => (
-            <TextField
+            <TimeField
               gsize={gsize}
               key={field.id} id={field.id} label={field.label}
               handleChange={handleChange}
-              placeholder="HHHH:MM"
-              slotProps={FLIGHT_TIME_SLOT_PROPS}
-              value={getValue(settings, field.id) || ""} />
+              fieldFormat={fieldFormat}
+              maxLength={9}
+              value={getValue(settings, field.id) || 0} />
           ))}
           {landingFields.map((field) => (
             <TextField
