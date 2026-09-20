@@ -48,7 +48,7 @@ const useTotalsData = (data) => {
 export const TotalsByYear = () => {
   const apiRef = useGridApiRef();
   const [activeTab, setActiveTab] = useState(0);
-  const { fieldName } = useSettings();
+  const { fieldName, settings } = useSettings();
   const { customFields } = useCustomFields();
 
   const { data, isLoading, isError, error } = useQuery({
@@ -72,9 +72,9 @@ export const TotalsByYear = () => {
         width: 70,
         renderCell: ({ value }) => new Date(0, value - 1).toLocaleString('default', { month: 'short' })
       },
-      ...createStatsColumns({ fieldName, customFields })
+      ...createStatsColumns({ fieldName, customFields, fieldFormat: settings.time_fields_auto_format })
     ]
-  }, [fieldName, customFields]);
+  }, [fieldName, customFields, settings.time_fields_auto_format]);
 
   const activeYear = sortedYears[activeTab];
   const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="totals-by-year" />), [apiRef]);
