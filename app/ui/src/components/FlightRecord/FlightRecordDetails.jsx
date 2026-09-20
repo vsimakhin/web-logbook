@@ -34,6 +34,8 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const { fieldNameF, settings } = useSettings();
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
 
+  const fieldFormat = settings.time_fields_auto_format;
+
   const timeFields = useMemo(() => (
     [
       { id: "time.total_time", label: fieldNameF("total") },
@@ -133,6 +135,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                 key={field.id} id={field.id} label={field.label}
                 handleChange={handleChange}
                 total_time={flight.time.total_time}
+                fieldFormat={fieldFormat}
                 value={getValue(flight, field.id)} />
             ))}
           </Grid>

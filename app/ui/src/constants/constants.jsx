@@ -100,6 +100,23 @@ export const FLIGHT_TIME_SLOT_PROPS = {
   },
 };
 
+export const FLIGHT_TIME_SLOT_PROPS_FAA = {
+  htmlInput: {
+    maxLength: 6, // allows e.g. "123.4"
+    onInput: (e) => {
+      let val = e.target.value.replace(',', '.');
+      // Allow only numbers and at most one dot
+      val = val.replace(/[^0-9.]/g, '');
+      const parts = val.split('.');
+      if (parts.length > 2) {
+        val = `${parts[0]}.${parts.slice(1).join('')}`;
+      }
+      e.target.value = val;
+    },
+    inputMode: 'decimal',
+  }
+};
+
 export const defaultColumnFilterTextFieldProps = ({ column }) => {
   const headerText = typeof column.columnDef.header === 'object' ? column.columnDef.header.props.title : column.columnDef.header;
 
