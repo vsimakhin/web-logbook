@@ -25,7 +25,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
   const { settings, isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
-  const fieldFormat = useMemo(() => (settings.time_fields_auto_format), [settings.time_fields_auto_format]);
+  const fieldFormat = settings.time_fields_auto_format;
   const footerTimeFieldFormat = useMemo(() => timeFieldFormat(0, fieldFormat, true), [fieldFormat]);
 
   const columns = useMemo(() => {
@@ -52,7 +52,13 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       ...createCustomFieldColumns(customFields, fieldName("aircraft")),
       // single pilot time
       createTimeColumn({ field: "se_time", headerName: fieldName("se"), fieldFormat: fieldFormat }),
-      createTimeColumn({ field: "me_time", headerName: fieldName("me"), valueFormatter: (_value, row) => row.time.mcc_time !== 0 ? "" : timeFieldFormat(row.time.me_time, fieldFormat) }),
+      createTimeColumn({
+        field: "me_time", headerName: fieldName("me"),
+        valueFormatter: (_value, row) => row.time.mcc_time !== 0 ? "" : timeFieldFormat(row.time.me_time, fieldFormat),
+        valueGetter: (_value, row) => row.time.mcc_time !== 0 ? 0 : row.time.me_time,
+        aggregation: 'sum',
+        aggregationFormatter: (value) => value === 0 ? "" : timeFieldFormat(value, fieldFormat),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("spt")),
       // MCC time
       createTimeColumn({ field: "mcc_time", headerName: fieldName("mcc"), fieldFormat: fieldFormat }),

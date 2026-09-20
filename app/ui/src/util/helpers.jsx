@@ -5,19 +5,50 @@ export const timeFieldFormat = (minutes, autoFormat = 1, formatZero = false) => 
   if (minutes < 0) return "";
   if (minutes === 0 && !formatZero) return "";
 
+  if (autoFormat === 3) {
+    // FAA Decimal format (e.g. 90 min -> "1.5", 45 min -> "0.8")
+    return (minutes / 60).toFixed(1);
+  }
+
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
 
   if (autoFormat === 1) {
     // Format as HH:MM
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-  } else if (autoFormat === 2) {
-    // Format as H:MM
+  } else if (autoFormat === 2 || autoFormat === 0) {
+    // Format as H:MM, autoFormat 0 is old setting for doing nothing, but we have time stored as minutes now
     return `${hours}:${mins.toString().padStart(2, '0')}`;
   }
 };
 
+
+// Convert user input string back to integer minutes
+export const parseTimeToMinutes = (input, autoFormat = 1) => {
+  if (input === null || input === undefined) return 0;
+  if (typeof input === 'number') return Math.max(0, Math.round(input));
+  const str = input.toString().trim();
+  if (!str) return 0;
+  // If user typed with a colon (e.g. "1:30"), parse as H:MM regardless of setting
+  if (str.includes(':')) {
+    const parts = str.split(':');
+    const hours = parseInt(parts[0], 10) || 0;
+    const mins = parseInt(parts[1], 10) || 0;
+    return Math.max(0, hours * 60 + mins);
+  }
+  // If FAA decimal mode (3) or input has dot/comma (e.g. "1.5" or "1,5")
+  if (autoFormat === 3 || str.includes('.') || str.includes(',')) {
+    const hours = parseFloat(str.replace(',', '.'));
+    if (isNaN(hours)) return 0;
+    return Math.max(0, Math.round(hours * 60));
+  }
+  // Fallback: if user typed raw number
+  const num = parseInt(str, 10);
+  return isNaN(num) ? 0 : Math.max(0, num);
+};
+
 // Convert minutes to HHHH:MM format
+// TODO: Check for delete
 export const convertMinutesToTime = (minutes) => {
   if (!minutes) return "00:00";
 
@@ -27,6 +58,7 @@ export const convertMinutesToTime = (minutes) => {
 };
 
 // Convert hours to HHHH:MM format
+// TODO: Check for delete
 export const convertHoursToTime = (hours) => {
   if (!hours) return "00:00";
   const totalMinutes = Math.floor(hours * 60);
@@ -35,6 +67,7 @@ export const convertHoursToTime = (hours) => {
 };
 
 // Convert HHHH:MM format back to minutes if needed
+// TODO: Check for delete
 export const convertTimeToMinutes = (time) => {
   if (!time) return 0;
   const [hours, mins] = time.split(':').map(Number);
