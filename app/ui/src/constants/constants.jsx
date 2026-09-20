@@ -71,6 +71,7 @@ export const TIME_SLOT_PROPS = {
   htmlInput: { maxLength: 4, onInput: (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, '') }, inputMode: 'numeric' }
 }
 
+// TODO: check for delete
 export const FLIGHT_TIME_SLOT_PROPS = {
   htmlInput: {
     maxLength: 5, // HH:MM or H:MM format requires max length of 5
@@ -85,14 +86,6 @@ export const FLIGHT_TIME_SLOT_PROPS = {
         value = `${value.slice(0, value.length - 2)}:${value.slice(-2)}`;
       }
 
-      // Split hours and minutes for validation
-      const [hours, minutes] = value.split(':');
-
-      // Ensure hours are valid (no specific upper limit but can be capped if needed)
-      if (hours && parseInt(hours, 10) > 99) {
-        value = `${hours.slice(0, 2)}:${minutes || ''}`;
-      }
-
       // Allow clearing or partial input
       e.target.value = value;
     },
@@ -100,6 +93,7 @@ export const FLIGHT_TIME_SLOT_PROPS = {
   },
 };
 
+// TODO: check for delete
 export const FLIGHT_TIME_SLOT_PROPS_FAA = {
   htmlInput: {
     maxLength: 6, // allows e.g. "123.4"

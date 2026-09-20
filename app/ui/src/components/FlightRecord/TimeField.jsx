@@ -1,6 +1,5 @@
 import { useCallback, memo, useState, useEffect, useRef } from "react";
 import TextField from "../UIElements/TextField";
-import { FLIGHT_TIME_SLOT_PROPS, FLIGHT_TIME_SLOT_PROPS_FAA } from "../../constants/constants";
 import { timeFieldFormat, parseTimeToMinutes } from "../../util/helpers";
 
 export const TimeField = memo(({
@@ -11,8 +10,47 @@ export const TimeField = memo(({
   value,
   tooltip = label,
   fieldFormat = 1,
+  maxLength = 5,
   gsize = { xs: 5, sm: 2 }
 }) => {
+  const FLIGHT_TIME_SLOT_PROPS = {
+    htmlInput: {
+      maxLength: maxLength, // HH:MM or H:MM format requires max length of 5
+      onInput: (e) => {
+        let value = e.target.value;
+
+        // Remove invalid characters
+        value = value.replace(/[^0-9]/g, '');
+
+        // Automatically add colon after 1 or 2 digits for hours
+        if (value.length > 2) {
+          value = `${value.slice(0, value.length - 2)}:${value.slice(-2)}`;
+        }
+
+        // Allow clearing or partial input
+        e.target.value = value;
+      },
+      inputMode: 'numeric'
+    },
+  };
+
+  const FLIGHT_TIME_SLOT_PROPS_FAA = {
+    htmlInput: {
+      maxLength: maxLength, // allows e.g. "123.4"
+      onInput: (e) => {
+        let val = e.target.value.replace(',', '.');
+        // Allow only numbers and at most one dot
+        val = val.replace(/[^0-9.]/g, '');
+        const parts = val.split('.');
+        if (parts.length > 2) {
+          val = `${parts[0]}.${parts.slice(1).join('')}`;
+        }
+        e.target.value = val;
+      },
+      inputMode: 'decimal',
+    }
+  };
+
   // Local string representation for the text input
   const [text, setText] = useState(() => timeFieldFormat(value, fieldFormat));
   const isFocused = useRef(false);
