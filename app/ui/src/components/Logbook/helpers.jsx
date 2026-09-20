@@ -64,7 +64,7 @@ export const createLandingColumn = ({ field, headerName, width = 57, headerAlign
   ...props,
 })
 
-export const createCustomFieldColumns = (customFields, category) => {
+export const createCustomFieldColumns = (customFields, category, fieldFormat = 1) => {
   if (!customFields || !Array.isArray(customFields)) {
     return [];
   }
@@ -82,11 +82,13 @@ export const createCustomFieldColumns = (customFields, category) => {
 
       // Add time footer for duration fields
       if (field.type === 'duration') {
-        baseColumn.type = 'time'
-        baseColumn.aggregation = 'sum'
+        baseColumn.type = 'time';
+        baseColumn.aggregation = 'sum';
+        baseColumn.valueFormatter = (_value, row) => timeFieldFormat(row.custom_fields[field.uuid] || 0, fieldFormat);
+        baseColumn.aggregationFormatter = (value) => timeFieldFormat(value, fieldFormat);
       } else if (field.type === 'number') {
-        baseColumn.aggregation = 'sum'
-        baseColumn.type = 'number'
+        baseColumn.aggregation = 'sum';
+        baseColumn.type = 'number';
       }
 
       return baseColumn;
