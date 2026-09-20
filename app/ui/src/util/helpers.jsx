@@ -22,7 +22,6 @@ export const timeFieldFormat = (minutes, autoFormat = 1, formatZero = false) => 
   }
 };
 
-
 // Convert user input string back to integer minutes
 export const parseTimeToMinutes = (input, autoFormat = 1) => {
   if (input === null || input === undefined) return 0;
@@ -117,12 +116,12 @@ const updateTotals = (totals, flight) => {
   const { time, landings, sim, distance } = flight;
 
   TIME_FIELDS.forEach(field => {
-    totals.time[field] += convertTimeToMinutes(time[field]);
+    totals.time[field] += parseInt(time[field]) || 0;
   });
 
   totals.landings.day += parseInt(landings.day) || 0;
   totals.landings.night += parseInt(landings.night) || 0;
-  totals.sim.time += convertTimeToMinutes(sim.time);
+  totals.sim.time += parseInt(sim.time) || 0;
   totals.distance += parseFloat(distance) || 0;
 
   return totals;
@@ -139,7 +138,7 @@ const updateCustomFieldTotals = (totals, flight, customFields) => {
     if (value && value !== '') {
       let numValue = 0;
       if (field.type === 'duration') {
-        numValue = convertTimeToMinutes(value);
+        numValue = parseInt(value) || 0;
       } else if (field.type === 'number') {
         numValue = parseFloat(value);
       } else if (field.type === 'text' || field.type === 'time') {
@@ -154,37 +153,17 @@ const updateCustomFieldTotals = (totals, flight, customFields) => {
   });
 };
 
-// Helper function to calculate custom field final values based on stats function
-export const getCustomFieldValue = (fieldData, field) => {
-  if (!fieldData || !field) return 0;
-
-  switch (field.stats_function) {
-    case 'sum':
-      return field.type === 'duration' ? convertMinutesToTime(fieldData.sum) : fieldData.sum;
-    case 'average':
-      {
-        if (fieldData.count === 0) return 0;
-        const average = fieldData.sum / fieldData.count;
-        return field.type === 'duration' ? convertMinutesToTime(Math.round(average)) : Number(average.toFixed(2));
-      }
-    case 'count':
-      return fieldData.count;
-    default:
-      return 0;
-  }
-};
-
 // Helper function to format time totals
-const formatTimeTotals = (totals) => ({
+const formatTimeTotals = (totals, fieldFormat) => ({
   time: Object.fromEntries(
-    TIME_FIELDS.map(field => [field, convertMinutesToTime(totals.time[field])])
+    TIME_FIELDS.map(field => [field, timeFieldFormat(totals.time[field], fieldFormat)])
   ),
   landings: totals.landings,
-  sim: { time: convertMinutesToTime(totals.sim.time) },
+  sim: { time: timeFieldFormat(totals.sim.time, fieldFormat) },
   distance: totals.distance
 });
 
-export const getStats = (data, airportsMap) => {
+export const getStats = (data, airportsMap, fieldFormat) => {
   const sets = {
     airports: new Set(),
     routes: new Set(),
@@ -227,7 +206,7 @@ export const getStats = (data, airportsMap) => {
     ...Object.fromEntries(
       Object.entries(sets).map(([key, set]) => [key, set.size])
     ),
-    totals: formatTimeTotals(totals),
+    totals: formatTimeTotals(totals, fieldFormat),
   };
 };
 
