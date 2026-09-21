@@ -30,9 +30,9 @@ describe('Currency helpers', () => {
   describe('getFlightMetricValue', () => {
     const flight = {
       time: {
-        total_time: '2:30',
-        pic_time: '2:30',
-        cc_time: '2:30',
+        total_time: 180,
+        pic_time: 180,
+        cc_time: 180,
       },
       landings: {
         day: 2,
@@ -40,10 +40,10 @@ describe('Currency helpers', () => {
       },
     };
 
-    it('extracts time metrics in hours', () => {
-      expect(getFlightMetricValue(flight, 'time.total_time')).toBe(2.5);
-      expect(getFlightMetricValue(flight, 'time.pic_time')).toBe(2.5);
-      expect(getFlightMetricValue(flight, 'time.cc_time')).toBe(2.5);
+    it('extracts time metrics in minutes', () => {
+      expect(getFlightMetricValue(flight, 'time.total_time')).toBe(180);
+      expect(getFlightMetricValue(flight, 'time.pic_time')).toBe(180);
+      expect(getFlightMetricValue(flight, 'time.cc_time')).toBe(180);
     });
 
     it('extracts combined landings', () => {
@@ -62,30 +62,29 @@ describe('Currency helpers', () => {
     const flights = [
       {
         date: '10/05/2026',
-        aircraft: { reg_name: 'N12345' },
+        aircraft: { reg_name: 'OK-ABC' },
         time: {
-          total_time: '100:00',
-          pic_time: '60:00',
-          cc_time: '100:00',
+          total_time: 120,
+          pic_time: 120,
+          cc_time: 120,
         },
       },
       {
         date: '15/05/2026',
-        aircraft: { reg_name: 'N12345' },
+        aircraft: { reg_name: 'OK-ABC' },
         time: {
-          total_time: '100:00',
-          pic_time: '40:00',
-          cc_time: '100:00',
+          total_time: 60,
+          pic_time: 60,
+          cc_time: 60,
         },
       },
       {
-        // Local flight: XC is 0, but PIC is 50h
         date: '20/05/2026',
-        aircraft: { reg_name: 'N12345' },
+        aircraft: { reg_name: 'OK-ABC' },
         time: {
-          total_time: '50:00',
-          pic_time: '50:00',
-          cc_time: '0:00',
+          total_time: 180,
+          pic_time: 180,
+          cc_time: 0,
         },
       },
     ];
@@ -94,21 +93,21 @@ describe('Currency helpers', () => {
       const rule = {
         metric: 'time.cc_time',
         comparison: '>=',
-        target_value: 200,
+        target_value: 3,
         time_frame: { unit: 'all_time' },
         filters: '',
       };
       const result = evaluateCurrency(flights, rule, []);
-      expect(result.current).toBe(200);
+      expect(result.current).toBe(180);
       expect(result.meetsRequirement).toBe(true);
       expect(result.subResults).toEqual([]);
     });
 
-    it('evaluates sub-metric tied to main metric (excludes local flight PIC)', () => {
+    it('evaluates sub-metric tied to main metric ', () => {
       const rule = {
         metric: 'time.cc_time',
         comparison: '>=',
-        target_value: 200,
+        target_value: 3,
         time_frame: { unit: 'all_time' },
         filters: '',
         sub_metrics: JSON.stringify([
@@ -116,17 +115,16 @@ describe('Currency helpers', () => {
             id: 'sub_pic',
             metric: 'time.pic_time',
             comparison: '>=',
-            target_value: 100,
+            target_value: 3,
           },
         ]),
       };
 
       const result = evaluateCurrency(flights, rule, []);
-      expect(result.current).toBe(200); // 100 + 100
+      expect(result.current).toBe(180);
       expect(result.mainMeets).toBe(true);
       expect(result.subResults.length).toBe(1);
-      // Sub PIC should be 60 + 40 = 100 (excluding 50 from local flight where cc_time was 0)
-      expect(result.subResults[0].current).toBe(100);
+      expect(result.subResults[0].current).toBe(180);
       expect(result.subResults[0].meetsRequirement).toBe(true);
       expect(result.meetsRequirement).toBe(true);
     });
@@ -135,7 +133,7 @@ describe('Currency helpers', () => {
       const rule = {
         metric: 'time.cc_time',
         comparison: '>=',
-        target_value: 200,
+        target_value: 3,
         time_frame: { unit: 'all_time' },
         filters: '',
         sub_metrics: JSON.stringify([
@@ -143,15 +141,15 @@ describe('Currency helpers', () => {
             id: 'sub_pic',
             metric: 'time.pic_time',
             comparison: '>=',
-            target_value: 120, // Requires 120h XC PIC, but only 100h available
+            target_value: 4,
           },
         ]),
       };
 
       const result = evaluateCurrency(flights, rule, []);
-      expect(result.current).toBe(200);
+      expect(result.current).toBe(180);
       expect(result.mainMeets).toBe(true);
-      expect(result.subResults[0].current).toBe(100);
+      expect(result.subResults[0].current).toBe(180);
       expect(result.subResults[0].meetsRequirement).toBe(false);
       expect(result.meetsRequirement).toBe(false);
     });
@@ -171,8 +169,8 @@ describe('Currency helpers', () => {
 
   describe('formatCurrencyValue', () => {
     it('formats time values to HH:MM', () => {
-      expect(formatCurrencyValue(2.5, 'time.pic_time')).toBe('02:30');
-      expect(formatCurrencyValue(200, 'time.cc_time')).toBe('200:00');
+      expect(formatCurrencyValue(180, 'time.pic_time', 1)).toBe('03:00');
+      expect(formatCurrencyValue(60, 'time.cc_time', 1)).toBe('01:00');
     });
 
     it('formats landings as integer', () => {
