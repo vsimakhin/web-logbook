@@ -7,8 +7,8 @@ import TextField from "../UIElements/TextField";
 import { TIME_SLOT_PROPS, PLACE_SLOT_PROPS } from "../../constants/constants";
 import useLogbook from "../../hooks/useLogbook";
 import useCustomFields from "../../hooks/useCustomFields";
-import TimeField from "./TimeField";
 import useSettings from "../../hooks/useSettings";
+import TimeField from "../UIElements/TimeField";
 
 const getFieldProps = (fieldType) => {
   const props = { slotProps: undefined, type: undefined, placeholder: undefined };

@@ -13,7 +13,7 @@ import DatePicker from '../UIElements/DatePicker';
 import TextField from '../UIElements/TextField';
 import AircraftType from '../UIElements/AircraftType';
 import AircraftReg from '../UIElements/AircraftReg';
-import TimeField from './TimeField';
+import TimeField from '../UIElements/TimeField';
 import PlaceField from './PlaceField';
 import LandingFields from './LandingFields';
 import FlightTitle from "./FlightTitle";
