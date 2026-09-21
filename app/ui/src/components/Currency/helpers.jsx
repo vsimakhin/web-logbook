@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { convertHoursToTime } from "../../util/helpers";
+import { timeFieldFormat } from "../../util/helpers";
 
 dayjs.extend(customParseFormat);
+
+export const isTimeMetric = (metric, value) => metric.includes('time') ? value * 60 : value;
 
 export const comparisonOptions = [">=", ">", "=", "<", "<="];
 
@@ -48,24 +50,15 @@ const getEndDate = (rule, lastEventDate) => {
   }
 };
 
-const parseMetricValue = (value) => {
-  if (typeof value === "string" && value.includes(":")) {
-    const [hours, minutes] = value.split(":").map(Number);
-    if (isNaN(hours) || isNaN(minutes)) return 0;
-    return hours + minutes / 60;
-  }
-  return parseFloat(value) || 0;
-};
-
-const compareValues = (leftValue, operator, rightValue) => {
-  const rightNum = Number(rightValue);
+const compareValues = (leftValue, operator, rightValue, metric) => {
+  const rightVal = isTimeMetric(metric, rightValue);
 
   switch (operator) {
-    case '>=': return leftValue >= rightNum;
-    case '>': return leftValue > rightNum;
-    case '=': return leftValue === rightNum;
-    case '<': return leftValue < rightNum;
-    case '<=': return leftValue <= rightNum;
+    case '>=': return leftValue >= rightVal;
+    case '>': return leftValue > rightVal;
+    case '=': return leftValue === rightVal;
+    case '<': return leftValue < rightVal;
+    case '<=': return leftValue <= rightVal;
     default: return false;
   }
 };
@@ -104,12 +97,12 @@ export const parseSubMetrics = (subMetrics) => {
 export const getFlightMetricValue = (flight, metric) => {
   if (!flight || !metric) return 0;
   if (metric === "landings.all") {
-    const day = parseMetricValue(flight.landings?.day);
-    const night = parseMetricValue(flight.landings?.night);
+    const day = parseInt(flight.landings?.day) || 0;
+    const night = parseInt(flight.landings?.night) || 0;
     return day + night;
   }
   const value = metric.split('.').reduce((obj, k) => obj?.[k], flight);
-  return parseMetricValue(value);
+  return parseInt(value) || 0;
 };
 
 export const evaluateCurrency = (flights, rule, aircrafts) => {
@@ -131,8 +124,7 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
   const total = qualifyingFlights.reduce((sum, flight) => {
     return sum + getFlightMetricValue(flight, rule.metric);
   }, 0);
-
-  const mainMeets = compareValues(total, rule.comparison, rule.target_value);
+  const mainMeets = compareValues(total, rule.comparison, rule.target_value, rule.metric);
 
   const subMetrics = parseSubMetrics(rule.sub_metrics);
   const subResults = subMetrics.map(sub => {
@@ -141,8 +133,8 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
       .filter(flight => getFlightMetricValue(flight, rule.metric) > 0)
       .reduce((sum, flight) => sum + getFlightMetricValue(flight, sub.metric), 0);
 
-    const meetsRequirement = compareValues(subTotal, sub.comparison, sub.target_value);
-    const targetVal = Number(sub.target_value) || 0;
+    const meetsRequirement = compareValues(subTotal, sub.comparison, sub.target_value, sub.metric);
+    const targetVal = isTimeMetric(sub.metric, sub.target_value);
     const percent = targetVal === 0 && subTotal > 0 ? 100 : (subTotal / (targetVal || 1)) * 100;
 
     return {
@@ -168,13 +160,13 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
   return result;
 };
 
-export const formatCurrencyValue = (value, metric) => {
+export const formatCurrencyValue = (value, metric, fieldFormat = 1) => {
   if (!metric) return value;
 
   if (metric.includes('landings')) {
     return value;
   } else if (metric.includes('time')) {
-    return convertHoursToTime(value);
+    return timeFieldFormat(value, fieldFormat);
   } else {
     return value;
   }
@@ -219,7 +211,7 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
   // Only meaningful for threshold comparisons (>= or >). Others return null.
   const operator = comparison ?? '>=';
   if (!['>=', '>'].includes(operator)) return null;
-  const target = Number(targetValue);
+  const target = Number(targetValue) * 60; // convert rule target hours to minutes
   if (isNaN(target)) return null;
 
   const today = dayjs().startOf('day');
