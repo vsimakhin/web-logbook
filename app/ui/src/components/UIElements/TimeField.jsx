@@ -1,5 +1,5 @@
 import { useCallback, memo, useState, useEffect, useRef } from "react";
-import TextField from "../UIElements/TextField";
+import TextField from "./TextField";
 import { timeFieldFormat, parseTimeToMinutes } from "../../util/helpers";
 
 export const TimeField = memo(({

@@ -10,7 +10,7 @@ import useSettings from "../../../hooks/useSettings";
 import { getValue } from "../../../util/helpers";
 import TextField from "../../UIElements/TextField";
 import HelpButton from './HelpButton';
-import TimeField from "../../FlightRecord/TimeField";
+import TimeField from "../../UIElements/TimeField";
 
 const gsize = { xs: 8, sm: 3 }
 
