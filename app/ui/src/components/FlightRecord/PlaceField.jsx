@@ -37,7 +37,7 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
 
     // iterate over the flight.time fields and update them
     for (const key in flight.time) {
-      if (key !== "total_time" && key !== "night_time" && old_total_time !== "" && flight.time[key] === old_total_time) {
+      if (key !== "total_time" && key !== "night_time" && old_total_time !== 0 && flight.time[key] === old_total_time) {
         handleChange(`time.${key}`, total_time);
       }
     }

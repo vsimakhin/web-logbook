@@ -27,24 +27,24 @@ export const FLIGHT_INITIAL_STATE = {
     reg_name: ""
   },
   time: {
-    se_time: "",
-    me_time: "",
-    mcc_time: "",
-    total_time: "",
-    night_time: "",
-    ifr_time: "",
-    pic_time: "",
-    co_pilot_time: "",
-    dual_time: "",
-    instructor_time: ""
+    se_time: 0,
+    me_time: 0,
+    mcc_time: 0,
+    total_time: 0,
+    night_time: 0,
+    ifr_time: 0,
+    pic_time: 0,
+    co_pilot_time: 0,
+    dual_time: 0,
+    instructor_time: 0
   },
   landings: {
-    day: "",
-    night: ""
+    day: 0,
+    night: 0
   },
   sim: {
     type: "",
-    time: ""
+    time: 0
   },
   pic_name: "",
   remarks: "",
