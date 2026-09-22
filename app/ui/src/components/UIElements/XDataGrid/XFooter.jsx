@@ -25,7 +25,7 @@ const AggregationRow = ({ label, values, columns, ...props }) => {
           displayText = label;
         } else if (isAggregated) {
           if (value === undefined || value === null || value === '' || (isTimeField && (value === 0 || value === '0.0'))) {
-            displayText = isTimeField ? props.timeFieldFormat : '0';
+            displayText = isTimeField ? props.footerEmptyTimeFieldFormat : '0';
           } else {
             displayText = typeof column.aggregationFormatter === 'function'
               ? column.aggregationFormatter(value)

@@ -10,7 +10,6 @@ import {
 } from '@mui/x-data-grid';
 // MUI X Date Pickers
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers';
 // MUI components
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -28,6 +27,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import FilterListOffOutlinedIcon from '@mui/icons-material/FilterListOffOutlined';
 // Custom
 import { useFilter } from './FilterContext';
+import TimeField from '../TimeField';
 
 const DRAWER_SX = {
   '& .MuiDrawer-paper': {
@@ -108,23 +108,25 @@ const DateFilterField = ({ label, values, onChange }) => (
   </Stack>
 );
 
-const TimeFilterField = ({ label, values, onChange }) => (
+const TimeFilterField = ({ label, values, onChange, fieldFormat }) => (
   <Stack direction="row" spacing={1} sx={{ mb: 0.5 }}>
-    <TimePicker
+    <TimeField
+      id={`${label}-min`}
       label={`${label} Min`}
-      ampm={false}
-      format="HH:mm"
-      value={values['>='] ? dayjs(values['>='], 'HH:mm') : null}
-      slotProps={{ field: { clearable: true, variant: 'standard', size: 'small' } }}
-      onChange={(v) => onChange('>=', v ? v.format('HH:mm') : '')}
+      value={values['>='] ?? 0}
+      handleChange={(_, value) => value !== 0 ? onChange('>=', value) : onChange('>=', '')}
+      fieldFormat={fieldFormat}
+      gsize={{ xs: 6 }}
+      variant="standard"
     />
-    <TimePicker
+    <TimeField
+      id={`${label}-max`}
       label={`${label} Max`}
-      ampm={false}
-      format="HH:mm"
-      value={values['<='] ? dayjs(values['<='], 'HH:mm') : null}
-      slotProps={{ field: { clearable: true, variant: 'standard', size: 'small' } }}
-      onChange={(v) => onChange('<=', v ? v.format('HH:mm') : '')}
+      value={values['<='] ?? 0}
+      handleChange={(_, value) => value !== 0 ? onChange('<=', value) : onChange('<=', '')}
+      fieldFormat={fieldFormat}
+      gsize={{ xs: 6 }}
+      variant="standard"
     />
   </Stack>
 );
@@ -230,7 +232,7 @@ const BooleanFilterField = ({ label, values, onChange }) => {
   );
 };
 
-const FilterField = ({ column, filterModel, onChange }) => {
+const FilterField = ({ column, filterModel, onChange, timeFieldFormat = 1 }) => {
   const field = column.field;
   const label = column.headerName ?? field;
   const type = column.columnType || column.type || 'string';
@@ -256,13 +258,13 @@ const FilterField = ({ column, filterModel, onChange }) => {
 
   if (type === 'number') return <NumberFilterField label={label} values={values} onChange={handleChange} />;
   if (type === 'date') return <DateFilterField label={label} values={values} onChange={handleChange} />;
-  if (type === 'time') return <TimeFilterField label={label} values={values} onChange={handleChange} />;
+  if (type === 'time') return <TimeFilterField label={label} values={values} onChange={handleChange} fieldFormat={timeFieldFormat} />;
   if (type === 'boolean') return <BooleanFilterField label={label} values={values} onChange={handleChange} />;
   if (type === 'autocomplete') return <AutocompleteFilterField column={column} label={label} values={values} onChange={handleChange} />;
   return <TextFilterField label={label} values={values} onChange={handleChange} />;
 };
 
-const FilterGroup = ({ group, leaves, columnMap, filterModel, onChange, level = 0 }) => {
+const FilterGroup = ({ group, leaves, columnMap, filterModel, onChange, level = 0, timeFieldFormat = 1 }) => {
   const columns = leaves.map((f) => columnMap.get(f)).filter((c) => c && c.filterable !== false);
 
   if (!columns.length) return null;
@@ -282,6 +284,7 @@ const FilterGroup = ({ group, leaves, columnMap, filterModel, onChange, level = 
                 column={columnMap.get(child.field)}
                 filterModel={filterModel}
                 onChange={onChange}
+                timeFieldFormat={timeFieldFormat}
               />
             )
           ) : (
@@ -301,7 +304,7 @@ const FilterGroup = ({ group, leaves, columnMap, filterModel, onChange, level = 
   );
 };
 
-export const XToolbarFilterPanel = () => {
+export const XToolbarFilterPanel = ({ timeFieldFormat }) => {
   const apiRef = useGridApiContext();
   const rootProps = useGridRootProps();
   const columns = useGridSelector(apiRef, gridVisibleColumnDefinitionsSelector);
@@ -360,6 +363,7 @@ export const XToolbarFilterPanel = () => {
               columnMap={columnMap}
               filterModel={filterModel}
               onChange={updateFilter}
+              timeFieldFormat={timeFieldFormat}
             />
           ) : (
             <FilterField
@@ -367,6 +371,7 @@ export const XToolbarFilterPanel = () => {
               column={item.column}
               filterModel={filterModel}
               onChange={updateFilter}
+              timeFieldFormat={timeFieldFormat}
             />
           )
         )
@@ -375,7 +380,7 @@ export const XToolbarFilterPanel = () => {
   );
 };
 
-export const XToolbarFilterPanelTrigger = () => {
+export const XToolbarFilterPanelTrigger = ({ timeFieldFormat = 1 }) => {
   const { filterModel } = useFilter();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const toggleFilterDrawerClose = useCallback(() => setFilterDrawerOpen(false), []);
@@ -392,7 +397,7 @@ export const XToolbarFilterPanelTrigger = () => {
       </Tooltip >
       <Drawer anchor="right" open={filterDrawerOpen} onClose={toggleFilterDrawerClose} sx={DRAWER_SX}>
         <Box sx={{ width: 350, p: 2 }}>
-          <XToolbarFilterPanel />
+          <XToolbarFilterPanel timeFieldFormat={timeFieldFormat} />
         </Box>
       </Drawer>
     </>
