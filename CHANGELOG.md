@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Import failes if record number column is visible in the table.
 - Update: Upgraded to the latest Material UI libraries (v9).
 
 ## [4.9.0] - 10.09.2026
