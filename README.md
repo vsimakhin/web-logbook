@@ -63,7 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.9.1] - 22.09.2026
 
 - Fix: Import failes if record number column is visible in the table.
 - Update: Upgraded to the latest Material UI libraries (v9).
