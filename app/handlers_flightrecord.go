@@ -32,8 +32,7 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(&fr)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error calculating night time - %s", err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 

@@ -70,13 +70,9 @@ export const useLogbook = () => {
     const adjustedArrival = arrival.isBefore(departure) ? arrival.add(1, "day") : arrival;
 
     // Calculate the total time in minutes
-    const totalMinutes = adjustedArrival.diff(departure, "minute");
+    const totalTime = adjustedArrival.diff(departure, "minute");
 
-    // Format the total time as "HH:MM"
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    return `${hours}:${minutes.toString().padStart(2, "0")}`;
+    return totalTime;
   }, []);
 
   return { calculateDistance, calculateNightTime, calculateTotalTime };
