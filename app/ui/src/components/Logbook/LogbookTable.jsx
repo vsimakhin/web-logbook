@@ -25,8 +25,8 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
   const { settings, isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
-  const fieldFormat = settings.time_fields_auto_format;
-  const footerTimeFieldFormat = useMemo(() => timeFieldFormat(0, fieldFormat, true), [fieldFormat]);
+  const fieldFormat = useMemo(() => settings.time_fields_auto_format, [settings.time_fields_auto_format]);
+  const footerEmptyTimeFieldFormat = useMemo(() => timeFieldFormat(0, fieldFormat, true), [fieldFormat]);
 
   const columns = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -250,7 +250,8 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       pageSizeOptions={paginationOptions}
       getRowId={(row) => row.uuid}
       footerFieldIdTotalLabel='aircraft_reg'
-      timeFieldFormat={footerTimeFieldFormat}
+      footerEmptyTimeFieldFormat={footerEmptyTimeFieldFormat}
+      filterTimeFieldFormat={fieldFormat}
       showAggregationFooter={true}
       showPreviousPagesTotal={settings.logbook_totals_view === 1}
       initialValues={settings.previous_experience}

@@ -11,7 +11,8 @@ export const TimeField = memo(({
   tooltip = label,
   fieldFormat = 1,
   maxLength = 5,
-  gsize = { xs: 5, sm: 2 }
+  gsize = { xs: 5, sm: 2 },
+  ...props
 }) => {
   const FLIGHT_TIME_SLOT_PROPS = {
     htmlInput: {
@@ -101,6 +102,7 @@ export const TimeField = memo(({
       onDoubleClick={handleDoubleClick}
       onFocus={handleFocus}
       onBlur={handleBlur}
+      {...props}
     />
   );
 });
