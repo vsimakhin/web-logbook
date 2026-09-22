@@ -62,6 +62,7 @@ export const marshallItem = (item) => {
 
   return {
     generated_id: String(item.generated_id),
+    record_number: item.generated_id,
     uuid: String(item.generated_id),
     date: item.date,
     departure: {
