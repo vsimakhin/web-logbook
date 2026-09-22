@@ -493,20 +493,40 @@ func (p *PDFExporter) printSinglePilotTime(w float64, value string, fill bool) {
 }
 
 // formatTimeField formats time field in the logbook
-func (p *PDFExporter) formatTimeField(timeField int) string {
-	if timeField == 0 {
+func (p *PDFExporter) formatTimeField(minutes int) string {
+	return p.formatTimeFieldOptions(minutes, false)
+}
+func (p *PDFExporter) formatTimeFieldTotals(minutes int) string {
+	return p.formatTimeFieldOptions(minutes, true)
+}
+func (p *PDFExporter) formatTimeFieldOptions(minutes int, formatZero bool) string {
+	if minutes < 0 {
 		return ""
 	}
 
-	hours := timeField / 60
-	minutes := timeField % 60
+	if minutes == 0 && !formatZero {
+		return ""
+	}
 
-	if p.Export.TimeFieldsAutoFormat == 1 {
-		// add leading zero if missing
-		return fmt.Sprintf("02%d:%02d", hours, minutes)
-	} else {
-		// Remove leading zero if present
-		return fmt.Sprintf("%d:%02d", hours, minutes)
+	if p.Export.TimeFieldsAutoFormat == 3 {
+		// FAA format, decimals
+		return fmt.Sprintf("%.1f", float64(minutes)/60)
+	}
+
+	hours := minutes / 60
+	mins := minutes % 60
+
+	switch p.Export.TimeFieldsAutoFormat {
+	case 1:
+		// Format as HH:MM
+		return fmt.Sprintf("%02d:%02d", hours, mins)
+	case 2, 0:
+		// Format as H:MM
+		// autoFormat 0 is the old setting for doing nothing,
+		// but time is now stored as minutes.
+		return fmt.Sprintf("%d:%02d", hours, mins)
+	default:
+		return fmt.Sprintf("%d:%02d", hours, mins)
 	}
 }
 

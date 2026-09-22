@@ -112,20 +112,29 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duratio
 	return night, route.IsNightLanding(), nil
 }
 
-func (app *application) formatTimeField(timeField int) string {
-
-	if timeField == 0 {
+func (app *application) formatTimeField(minutes int) string {
+	if minutes < 0 {
 		return ""
 	}
 
-	hours := timeField / 60
-	minutes := timeField % 60
+	if app.timeFieldsAutoFormat == 3 {
+		// FAA format, decimals
+		return fmt.Sprintf("%.1f", float64(minutes)/60)
+	}
 
-	if app.timeFieldsAutoFormat == 1 {
-		// add leading zero if missing
-		return fmt.Sprintf("02%d:%02d", hours, minutes)
-	} else {
-		// Remove leading zero if present
-		return fmt.Sprintf("%d:%02d", hours, minutes)
+	hours := minutes / 60
+	mins := minutes % 60
+
+	switch app.timeFieldsAutoFormat {
+	case 1:
+		// Format as HH:MM
+		return fmt.Sprintf("%02d:%02d", hours, mins)
+	case 2, 0:
+		// Format as H:MM
+		// autoFormat 0 is the old setting for doing nothing,
+		// but time is now stored as minutes.
+		return fmt.Sprintf("%d:%02d", hours, mins)
+	default:
+		return fmt.Sprintf("%d:%02d", hours, mins)
 	}
 }
