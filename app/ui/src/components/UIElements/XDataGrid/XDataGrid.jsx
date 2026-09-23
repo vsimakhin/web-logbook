@@ -148,6 +148,7 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
   }, [columns]);
 
   const filteredRows = useMemo(() => {
+    if (!rows) return;
     if (!deferredFilterModel.items.length) {
       return rows;
     }
@@ -171,6 +172,23 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
         if (operator === 'equals') {
           if (type === 'boolean') {
             return !!rowValue === !!value;
+          }
+          if (type === 'autocomplete') {
+            const tags = rowValue
+              .split(',')
+              .map((item) => item.trim())
+              .filter(Boolean);
+
+            const selectedTags = Array.isArray(value)
+              ? value
+              : value
+                .split(',')
+                .map((item) => item.trim())
+                .filter(Boolean);
+
+            const hasMatch = selectedTags.every((tag) => tags.includes(tag));
+
+            return hasMatch;
           }
           return rowValue === value;
         }

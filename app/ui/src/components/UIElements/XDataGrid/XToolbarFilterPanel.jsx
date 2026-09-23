@@ -146,13 +146,17 @@ const AutocompleteFilterField = ({ column, label, values, onChange }) => {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    const field = column.field;
     const valueSet = new Set();
 
-    apiRef.current.getAllRowIds().forEach((id) => {
-      const value = apiRef.current.getCellValue(id, field);
+    apiRef.current.getRowModels().forEach((row) => {
+      const value = row[column.field];
+
       if (value !== null && value !== undefined && value !== '') {
-        valueSet.add(value);
+        value
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean)
+          .forEach((item) => valueSet.add(item));
       }
     });
 
@@ -160,12 +164,20 @@ const AutocompleteFilterField = ({ column, label, values, onChange }) => {
     setOptions(Array.from(valueSet).sort());
   }, [apiRef, column.field]);
 
+  const selectedValues = values.equals
+    ? values.equals
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+    : [];
+
   return (
     <Autocomplete
+      multiple
       options={options}
       size="small"
-      value={values.equals ?? null}
-      onChange={(_, newValue) => onChange('equals', newValue ?? '')}
+      value={selectedValues}
+      onChange={(_, newValue) => onChange('equals', newValue.join(', '))}
       renderInput={(params) => (
         <TextField
           {...params}
