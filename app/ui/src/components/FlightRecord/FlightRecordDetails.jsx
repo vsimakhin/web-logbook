@@ -13,7 +13,7 @@ import DatePicker from '../UIElements/DatePicker';
 import TextField from '../UIElements/TextField';
 import AircraftType from '../UIElements/AircraftType';
 import AircraftReg from '../UIElements/AircraftReg';
-import TimeField from './TimeField';
+import TimeField from '../UIElements/TimeField';
 import PlaceField from './PlaceField';
 import LandingFields from './LandingFields';
 import FlightTitle from "./FlightTitle";
@@ -33,6 +33,8 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   );
   const { fieldNameF, settings } = useSettings();
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
+
+  const fieldFormat = settings.time_fields_auto_format;
 
   const timeFields = useMemo(() => (
     [
@@ -133,6 +135,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                 key={field.id} id={field.id} label={field.label}
                 handleChange={handleChange}
                 total_time={flight.time.total_time}
+                fieldFormat={fieldFormat}
                 value={getValue(flight, field.id)} />
             ))}
           </Grid>

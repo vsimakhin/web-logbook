@@ -1,50 +1,51 @@
-import dayjs from "dayjs";
+// Convert minutes to time format
+export const timeFieldFormat = (minutes, autoFormat = 1, formatZero = false) => {
+  if (minutes < 0) return "";
+  if (minutes === 0 && !formatZero) return "";
 
-// Convert minutes to HHHH:MM format
-export const convertMinutesToTime = (minutes) => {
-  if (!minutes) return "00:00";
+  if (autoFormat === 3) {
+    // FAA Decimal format (e.g. 90 min -> "1.5", 45 min -> "0.8")
+    return (minutes / 60).toFixed(1);
+  }
 
-  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
-  const mins = String(minutes % 60).padStart(2, '0');
-  return `${hours}:${mins}`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  if (autoFormat === 1) {
+    // Format as HH:MM
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  } else if (autoFormat === 2 || autoFormat === 0) {
+    // Format as H:MM, autoFormat 0 is old setting for doing nothing, but we have time stored as minutes now
+    return `${hours}:${mins.toString().padStart(2, '0')}`;
+  }
 };
 
-// Convert hours to HHHH:MM format
-export const convertHoursToTime = (hours) => {
-  if (!hours) return "00:00";
-  const totalMinutes = Math.floor(hours * 60);
-  const formattedTime = convertMinutesToTime(totalMinutes);
-  return formattedTime;
-};
-
-// Convert HHHH:MM format back to minutes if needed
-export const convertTimeToMinutes = (time) => {
-  if (!time) return 0;
-  const [hours, mins] = time.split(':').map(Number);
-  return hours * 60 + mins;
+// Convert user input string back to integer minutes
+export const parseTimeToMinutes = (input, autoFormat = 1) => {
+  if (input === null || input === undefined) return 0;
+  if (typeof input === 'number') return Math.max(0, Math.round(input));
+  const str = input.toString().trim();
+  if (!str) return 0;
+  // If user typed with a colon (e.g. "1:30"), parse as H:MM regardless of setting
+  if (str.includes(':')) {
+    const parts = str.split(':');
+    const hours = parseInt(parts[0], 10) || 0;
+    const mins = parseInt(parts[1], 10) || 0;
+    return Math.max(0, hours * 60 + mins);
+  }
+  // If FAA decimal mode (3) or input has dot/comma (e.g. "1.5" or "1,5")
+  if (autoFormat === 3 || str.includes('.') || str.includes(',')) {
+    const hours = parseFloat(str.replace(',', '.'));
+    if (isNaN(hours)) return 0;
+    return Math.max(0, Math.round(hours * 60));
+  }
+  // Fallback: if user typed raw number
+  const num = parseInt(str, 10);
+  return isNaN(num) ? 0 : Math.max(0, num);
 };
 
 export const getValue = (obj, path) => {
   return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), obj);
-};
-
-// custom filter function for date range
-export const dateFilterFn = (row, columnId, filterValue) => {
-
-  const rowDate = dayjs(getValue(row.original, columnId), "DD/MM/YYYY");
-  const [startDate, endDate] = filterValue || [];
-
-  // If no filter is applied, return true
-  if (!startDate && !endDate) return true;
-
-  const start = startDate ? new Date(startDate).getTime() : null;
-  const end = endDate ? new Date(new Date(endDate).setHours(23, 59, 59, 999)).getTime() : null; // Include the end of the day
-
-  // Check if the row date is within the selected range
-  const isAfterStart = start !== null ? rowDate >= start : true;
-  const isBeforeEnd = end !== null ? rowDate <= end : true;
-
-  return isAfterStart && isBeforeEnd;
 };
 
 const TIME_FIELDS = [
@@ -67,12 +68,12 @@ const updateTotals = (totals, flight) => {
   const { time, landings, sim, distance } = flight;
 
   TIME_FIELDS.forEach(field => {
-    totals.time[field] += convertTimeToMinutes(time[field]);
+    totals.time[field] += parseInt(time[field]) || 0;
   });
 
   totals.landings.day += parseInt(landings.day) || 0;
   totals.landings.night += parseInt(landings.night) || 0;
-  totals.sim.time += convertTimeToMinutes(sim.time);
+  totals.sim.time += parseInt(sim.time) || 0;
   totals.distance += parseFloat(distance) || 0;
 
   return totals;
@@ -89,7 +90,7 @@ const updateCustomFieldTotals = (totals, flight, customFields) => {
     if (value && value !== '') {
       let numValue = 0;
       if (field.type === 'duration') {
-        numValue = convertTimeToMinutes(value);
+        numValue = parseInt(value) || 0;
       } else if (field.type === 'number') {
         numValue = parseFloat(value);
       } else if (field.type === 'text' || field.type === 'time') {
@@ -104,37 +105,17 @@ const updateCustomFieldTotals = (totals, flight, customFields) => {
   });
 };
 
-// Helper function to calculate custom field final values based on stats function
-export const getCustomFieldValue = (fieldData, field) => {
-  if (!fieldData || !field) return 0;
-
-  switch (field.stats_function) {
-    case 'sum':
-      return field.type === 'duration' ? convertMinutesToTime(fieldData.sum) : fieldData.sum;
-    case 'average':
-      {
-        if (fieldData.count === 0) return 0;
-        const average = fieldData.sum / fieldData.count;
-        return field.type === 'duration' ? convertMinutesToTime(Math.round(average)) : Number(average.toFixed(2));
-      }
-    case 'count':
-      return fieldData.count;
-    default:
-      return 0;
-  }
-};
-
 // Helper function to format time totals
-const formatTimeTotals = (totals) => ({
+const formatTimeTotals = (totals, fieldFormat) => ({
   time: Object.fromEntries(
-    TIME_FIELDS.map(field => [field, convertMinutesToTime(totals.time[field])])
+    TIME_FIELDS.map(field => [field, timeFieldFormat(totals.time[field], fieldFormat)])
   ),
   landings: totals.landings,
-  sim: { time: convertMinutesToTime(totals.sim.time) },
+  sim: { time: timeFieldFormat(totals.sim.time, fieldFormat) },
   distance: totals.distance
 });
 
-export const getStats = (data, airportsMap) => {
+export const getStats = (data, airportsMap, fieldFormat) => {
   const sets = {
     airports: new Set(),
     routes: new Set(),
@@ -177,7 +158,7 @@ export const getStats = (data, airportsMap) => {
     ...Object.fromEntries(
       Object.entries(sets).map(([key, set]) => [key, set.size])
     ),
-    totals: formatTimeTotals(totals),
+    totals: formatTimeTotals(totals, fieldFormat),
   };
 };
 

@@ -6,7 +6,8 @@ import CardContent from '@mui/material/CardContent';
 // Custom
 import CardHeader from "../../UIElements/CardHeader";
 import Tile from "../../UIElements/Tile";
-import { convertMinutesToTime, convertTimeToMinutes } from "../../../util/helpers";
+import { timeFieldFormat } from "../../../util/helpers";
+import useSettings from "../../../hooks/useSettings";
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
@@ -18,23 +19,23 @@ const calculateStats = {
     }, 0);
   },
 
-  sum: (data, uuid, fieldType) => {
+  sum: (data, uuid, fieldType, fieldFormat = 1) => {
     const sum = data.reduce((acc, item) => {
       const value = item.custom_fields?.[uuid];
       if (value) {
-        return fieldType === 'duration' ? acc + convertTimeToMinutes(value) : acc + parseFloat(value);
+        return fieldType === 'duration' ? acc + parseInt(value) : acc + parseFloat(value);
       }
       return acc;
     }, 0);
 
-    return fieldType === 'duration' ? convertMinutesToTime(sum) : sum;
+    return fieldType === 'duration' ? timeFieldFormat(sum, fieldFormat) : sum;
   },
 
-  average: (data, uuid, fieldType) => {
+  average: (data, uuid, fieldType, fieldFormat = 1) => {
     const { sum, count } = data.reduce((acc, item) => {
       const value = item.custom_fields?.[uuid];
       if (value) {
-        const numValue = fieldType === 'duration' ? convertTimeToMinutes(value) : parseFloat(value);
+        const numValue = fieldType === 'duration' ? parseInt(value) : parseFloat(value);
         return {
           sum: acc.sum + numValue,
           count: acc.count + 1
@@ -46,11 +47,14 @@ const calculateStats = {
     if (count === 0) return 0;
 
     const average = sum / count;
-    return fieldType === 'duration' ? convertMinutesToTime(Math.round(average)) : Number(average.toFixed(2));
+    return fieldType === 'duration' ? timeFieldFormat(Math.round(average), fieldFormat) : Number(average.toFixed(2));
   }
 };
 
 export const CustomFieldsTiles = ({ data, customFields }) => {
+  const { settings } = useSettings();
+  const fieldFormat = settings.time_fields_auto_format;
+
   const visibleFields = useMemo(() => {
     if (!data || data.length === 0 || !customFields?.length) {
       return [];
@@ -68,11 +72,11 @@ export const CustomFieldsTiles = ({ data, customFields }) => {
           return { ...field, stats: null };
         }
 
-        const stats = statsCalculator(data, field.uuid, field.type);
+        const stats = statsCalculator(data, field.uuid, field.type, fieldFormat);
         return { ...field, stats };
       })
       .filter(field => field !== null && field.stats !== null);
-  }, [data, customFields]);
+  }, [data, customFields, fieldFormat]);
 
   if (visibleFields.length === 0) {
     return null;

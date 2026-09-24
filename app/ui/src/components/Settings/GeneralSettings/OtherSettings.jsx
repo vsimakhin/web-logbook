@@ -48,13 +48,13 @@ export const OtherSettings = ({ settings, handleChange }) => {
             <ToggleButtonGroup
               size="small"
               sx={{ ml: 1 }}
-              value={parseInt(settings.time_fields_auto_format) || 0}
+              value={parseInt(settings.time_fields_auto_format) || 2}
               onChange={onFormatChange}
               exclusive
             >
-              <ToggleButton value={0}>None</ToggleButton>
-              <ToggleButton value={1}>HH:MM</ToggleButton>
               <ToggleButton value={2}>H:MM</ToggleButton>
+              <ToggleButton value={1}>HH:MM</ToggleButton>
+              <ToggleButton value={3}>FAA</ToggleButton>
             </ToggleButtonGroup>
           }
           label="Logbook table time fields autoformat"

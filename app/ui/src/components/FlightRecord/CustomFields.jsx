@@ -4,9 +4,11 @@ import Grid from "@mui/material/Grid";
 import Divider from '@mui/material/Divider';
 // Custom
 import TextField from "../UIElements/TextField";
-import { FLIGHT_TIME_SLOT_PROPS, TIME_SLOT_PROPS, PLACE_SLOT_PROPS } from "../../constants/constants";
+import { TIME_SLOT_PROPS, PLACE_SLOT_PROPS } from "../../constants/constants";
 import useLogbook from "../../hooks/useLogbook";
 import useCustomFields from "../../hooks/useCustomFields";
+import useSettings from "../../hooks/useSettings";
+import TimeField from "../UIElements/TimeField";
 
 const getFieldProps = (fieldType) => {
   const props = { slotProps: undefined, type: undefined, placeholder: undefined };
@@ -19,10 +21,6 @@ const getFieldProps = (fieldType) => {
     case 'number':
       props.type = 'number';
       break;
-    case 'duration':
-      props.slotProps = FLIGHT_TIME_SLOT_PROPS;
-      props.placeholder = 'HH:MM';
-      break;
     case 'enroute':
       props.slotProps = PLACE_SLOT_PROPS;
       break;
@@ -34,6 +32,7 @@ const getFieldProps = (fieldType) => {
 export const CustomFields = ({ flight, handleChange }) => {
   const { calculateDistance } = useLogbook();
   const { customFields } = useCustomFields();
+  const { settings } = useSettings();
 
   const customFieldsChange = useCallback((key, value) => {
     handleChange(`custom_fields.${key}`, value);
@@ -52,6 +51,21 @@ export const CustomFields = ({ flight, handleChange }) => {
       <Grid container spacing={1} sx={{ mt: 1 }}>
         {customFields.map((field) => {
           const props = getFieldProps(field.type);
+
+          if (field.type === 'duration') {
+            return (
+              <TimeField
+                key={field.uuid}
+                gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}
+                id={field.uuid}
+                label={field.name}
+                tooltip={field.description}
+                value={flight.custom_fields?.[field.uuid] || 0}
+                handleChange={customFieldsChange}
+                fieldFormat={settings.time_fields_auto_format}
+              />
+            );
+          }
 
           return (
             <TextField key={field.uuid} gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}

@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "45"
+	schemaVersion = "100"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -29,20 +29,20 @@ var logbookTable = NewTable("logbook", "uuid", UUID,
 		{Name: "arrival_time", Type: DateTime},
 		{Name: "aircraft_model", Type: SmallText},
 		{Name: "reg_name", Type: SmallText},
-		{Name: "se_time", Type: DateTime},
-		{Name: "me_time", Type: DateTime},
-		{Name: "mcc_time", Type: DateTime},
-		{Name: "total_time", Type: DateTime},
-		{Name: "day_landings", Type: SmallInt},
-		{Name: "night_landings", Type: SmallInt},
-		{Name: "night_time", Type: DateTime},
-		{Name: "ifr_time", Type: DateTime},
-		{Name: "pic_time", Type: DateTime},
-		{Name: "co_pilot_time", Type: DateTime},
-		{Name: "dual_time", Type: DateTime},
-		{Name: "instructor_time", Type: DateTime},
+		{Name: "se_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "me_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "mcc_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "total_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "day_landings", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "night_landings", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "night_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "ifr_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "pic_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "co_pilot_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "dual_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
+		{Name: "instructor_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
 		{Name: "sim_type", Type: SmallText},
-		{Name: "sim_time", Type: DateTime},
+		{Name: "sim_time", Type: SmallInt, Properties: "NOT NULL DEFAULT 0"},
 		{Name: "pic_name", Type: SmallText},
 		{Name: "remarks", Type: FullText},
 		{Name: "distance", Type: Real},

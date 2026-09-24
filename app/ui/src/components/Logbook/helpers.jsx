@@ -8,26 +8,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
-
-export const sumTime = (values) => {
-  let totalMinutes = 0;
-  values.forEach(v => {
-    if (typeof v === 'string' && v.includes(':')) {
-      const parts = v.split(':');
-      if (parts.length === 2) {
-        const hh = parseInt(parts[0], 10) || 0;
-        const mm = parseInt(parts[1], 10) || 0;
-        totalMinutes += (hh * 60) + mm;
-      }
-    } else if (typeof v === 'number') {
-      totalMinutes += Math.round(v * 60);
-    }
-  });
-
-  const hh = Math.floor(totalMinutes / 60);
-  const mm = totalMinutes % 60;
-  return `${hh}:${mm.toString().padStart(2, '0')}`;
-}
+import { timeFieldFormat } from '../../util/helpers';
 
 export const createDateColumn = ({ field, headerName, width = 90 }) => ({
   field: field,
@@ -57,7 +38,7 @@ export const createColumn = ({ field, headerName, width, headerAlign = 'center',
   ...props,
 })
 
-export const createTimeColumn = ({ field, headerName, width = 55, headerAlign = 'center', align = 'center', ...props }) => ({
+export const createTimeColumn = ({ field, headerName, fieldFormat = 1, width = 55, headerAlign = 'center', align = 'center', ...props }) => ({
   field: field,
   headerName: headerName,
   width: width,
@@ -65,7 +46,9 @@ export const createTimeColumn = ({ field, headerName, width = 55, headerAlign = 
   align: align,
   type: 'time',
   valueGetter: (_value, row) => row.time[field],
-  aggregationFn: sumTime,
+  valueFormatter: (_value, row) => timeFieldFormat(row.time[field], fieldFormat),
+  aggregation: 'sum',
+  aggregationFormatter: (value) => timeFieldFormat(value, fieldFormat),
   ...props,
 })
 
@@ -81,7 +64,7 @@ export const createLandingColumn = ({ field, headerName, width = 57, headerAlign
   ...props,
 })
 
-export const createCustomFieldColumns = (customFields, category) => {
+export const createCustomFieldColumns = (customFields, category, fieldFormat = 1) => {
   if (!customFields || !Array.isArray(customFields)) {
     return [];
   }
@@ -99,11 +82,13 @@ export const createCustomFieldColumns = (customFields, category) => {
 
       // Add time footer for duration fields
       if (field.type === 'duration') {
-        baseColumn.type = 'time'
-        baseColumn.aggregationFn = sumTime
+        baseColumn.type = 'time';
+        baseColumn.aggregation = 'sum';
+        baseColumn.valueFormatter = (_value, row) => timeFieldFormat(row.custom_fields[field.uuid] || 0, fieldFormat);
+        baseColumn.aggregationFormatter = (value) => timeFieldFormat(value, fieldFormat);
       } else if (field.type === 'number') {
-        baseColumn.aggregation = 'sum'
-        baseColumn.type = 'number'
+        baseColumn.aggregation = 'sum';
+        baseColumn.type = 'number';
       }
 
       return baseColumn;

@@ -13,8 +13,8 @@ import useSettings from '../../../hooks/useSettings';
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
 export const DashboardTiles = ({ data, dashboardOptions, airportsMap }) => {
-  const stats = useMemo(() => getStats(data, airportsMap), [data, airportsMap]);
-  const { fieldNameF } = useSettings();
+  const { fieldNameF, settings } = useSettings();
+  const stats = useMemo(() => getStats(data, airportsMap, settings.time_fields_auto_format), [data, airportsMap, settings.time_fields_auto_format]);
 
   const tiles = useMemo(() => [
     { key: "total_time", title: fieldNameF("total"), path: "totals.time.total_time" },

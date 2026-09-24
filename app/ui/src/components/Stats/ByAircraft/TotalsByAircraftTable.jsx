@@ -13,7 +13,7 @@ import { createStatsColumns } from '../helpers';
 
 export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = [] }) => {
   const apiRef = useGridApiRef();
-  const { fieldName } = useSettings();
+  const { fieldName, settings } = useSettings();
 
   const columns = useMemo(() => {
     return [
@@ -24,9 +24,9 @@ export const TotalsByAircraftTable = ({ data, isLoading, type, customFields = []
         align: 'center',
         width: 100,
       },
-      ...createStatsColumns({ fieldName, customFields })
+      ...createStatsColumns({ fieldName, customFields, fieldFormat: settings.time_fields_auto_format })
     ]
-  }, [type, fieldName, customFields]);
+  }, [type, fieldName, customFields, settings.time_fields_auto_format]);
 
   const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="totals-by-aircraft" />), [apiRef]);
 

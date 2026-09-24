@@ -6,7 +6,6 @@ import FlightLandIcon from '@mui/icons-material/FlightLand';
 import Label from "../UIElements/Label"
 import TextField from "../UIElements/TextField"
 import { PLACE_SLOT_PROPS, TIME_SLOT_PROPS } from '../../constants/constants';
-import { convertMinutesToTime } from '../../util/helpers';
 import useLogbook from '../../hooks/useLogbook';
 
 const capitalizeFirstLetter = (str) => str ? `${str[0].toUpperCase()}${str.slice(1)}` : "";
@@ -38,7 +37,7 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
 
     // iterate over the flight.time fields and update them
     for (const key in flight.time) {
-      if (key !== "total_time" && key !== "night_time" && old_total_time !== "" && flight.time[key] === old_total_time) {
+      if (key !== "total_time" && key !== "night_time" && old_total_time !== 0 && flight.time[key] === old_total_time) {
         handleChange(`time.${key}`, total_time);
       }
     }
@@ -47,11 +46,7 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
     if (flight.date && flight.departure.place && flight.arrival.place) {
       const nightTimeData = await calculateNightTime(flight);
       const nightTime = parseInt(nightTimeData.data) || 0;
-      if (nightTime > 0) {
-        handleChange("time.night_time", convertMinutesToTime(nightTime));
-      } else {
-        handleChange("time.night_time", "");
-      }
+      handleChange("time.night_time", nightTime);
     }
   }, [flight, handleChange, calculateNightTime, calculateTotalTime]);
 

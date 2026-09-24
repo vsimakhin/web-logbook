@@ -13,10 +13,13 @@ import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import dayjs from "dayjs";
 import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import CSVExportButton from "../UIElements/CSVExportButton";
-import { sumTime } from "../Logbook/helpers";
+import { timeFieldFormat } from "../../util/helpers";
+import useSettings from "../../hooks/useSettings";
 
 export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
   const apiRef = useGridApiRef();
+  const { settings } = useSettings();
+  const fieldFormat = settings.time_fields_auto_format;
 
   const columns = useMemo(() => [
     {
@@ -65,8 +68,10 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       headerAlign: 'center',
       align: 'center',
       type: 'time',
-      aggregationFn: sumTime,
+      aggregation: 'sum',
       width: 80,
+      valueFormatter: (value) => timeFieldFormat(value, fieldFormat),
+      aggregationFormatter: (value) => timeFieldFormat(value, fieldFormat),
     },
     {
       field: "aircraft.model",
@@ -90,8 +95,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       headerAlign: 'center',
       width: 80,
     },
-
-  ], []);
+  ], [fieldFormat]);
 
   const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="person-flights" />), [apiRef]);
 
@@ -109,6 +113,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       footerFieldIdTotalLabel='date'
       disableColumnMenu
       customActions={customActions}
+      timeFieldFormat={timeFieldFormat(0, fieldFormat, true)}
     />
   )
 }
