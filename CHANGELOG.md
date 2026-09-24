@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.10.0] - 24.09.2026
 
 - Fix: The Tags filter on the Map page wasn't working properly.
 - Update: Improved multiple-selection options and filtering logic in the Filter panel.

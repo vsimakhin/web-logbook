@@ -63,7 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [4.10.0] - 24.09.2026
 
 - Fix: The Tags filter on the Map page wasn't working properly.
 - Update: Improved multiple-selection options and filtering logic in the Filter panel.
@@ -83,11 +83,6 @@ The application will automatically create a local SQLite database on the first s
 - New: Preserve table filter sets when switching to and from records.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
-
-## Old v3.x version
-If you still would like to use v3.x version:
-* Latest v3 release https://github.com/vsimakhin/web-logbook/releases/tag/v3.23.0
-* Docker `docker pull vsimakhin/web-logbook:v3.23.0`
 
 ---
 
