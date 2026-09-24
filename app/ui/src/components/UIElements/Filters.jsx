@@ -64,8 +64,12 @@ const filterData = (data, filter, modelsData, aircrafts) => {
         filter.aircraft_category === flight.sim.type
       );
     })();
+
     // filter tags
-    const matchesTags = filter.tags ? flight.tags.includes(filter.tags) : true;
+    const tags = flight.tags.split(',').map((item) => item.trim()).filter(Boolean);
+    const selectedTags = filter.tags.split(',').map((item) => item.trim()).filter(Boolean);
+    const matchesTags = selectedTags.every((tag) => tags.includes(tag));
+
     // filter arrival and departure place
     const matchesArrival = filter.place ? flight.arrival.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
     const matchesDeparture = filter.place ? flight.departure.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
@@ -184,8 +188,7 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
         gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
         id="tags"
         handleChange={handleChange}
-        value={filter.tags}
-        multiple={false}
+        value={filter.tags ? filter.tags.split(',') : []}
         disableClearable={false}
       />
       <TextField
