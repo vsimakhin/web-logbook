@@ -174,21 +174,9 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
             return !!rowValue === !!value;
           }
           if (type === 'autocomplete') {
-            const tags = rowValue
-              .split(',')
-              .map((item) => item.trim())
-              .filter(Boolean);
-
-            const selectedTags = Array.isArray(value)
-              ? value
-              : value
-                .split(',')
-                .map((item) => item.trim())
-                .filter(Boolean);
-
-            const hasMatch = selectedTags.every((tag) => tags.includes(tag));
-
-            return hasMatch;
+            const tags = rowValue.split(',').map((item) => item.trim()).filter(Boolean);
+            const selectedTags = Array.isArray(value) ? value : value.split(',').map((item) => item.trim()).filter(Boolean);
+            return selectedTags.every((tag) => tags.includes(tag));
           }
           return rowValue === value;
         }

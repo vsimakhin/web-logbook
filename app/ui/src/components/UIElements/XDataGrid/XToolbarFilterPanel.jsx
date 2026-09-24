@@ -152,11 +152,7 @@ const AutocompleteFilterField = ({ column, label, values, onChange }) => {
       const value = row[column.field];
 
       if (value !== null && value !== undefined && value !== '') {
-        value
-          .split(',')
-          .map((item) => item.trim())
-          .filter(Boolean)
-          .forEach((item) => valueSet.add(item));
+        value.split(',').map((item) => item.trim()).filter(Boolean).forEach((item) => valueSet.add(item));
       }
     });
 
@@ -164,12 +160,7 @@ const AutocompleteFilterField = ({ column, label, values, onChange }) => {
     setOptions(Array.from(valueSet).sort());
   }, [apiRef, column.field]);
 
-  const selectedValues = values.equals
-    ? values.equals
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean)
-    : [];
+  const selectedValues = values.equals ? values.equals.split(',').map((item) => item.trim()).filter(Boolean) : [];
 
   return (
     <Autocomplete
