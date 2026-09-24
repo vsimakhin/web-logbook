@@ -67,6 +67,7 @@ The application will automatically create a local SQLite database on the first s
 
 - Fix: The Tags filter on the Map page wasn't working properly.
 - Update: Improved multiple-selection options and filtering logic in the Filter panel.
+- New: Split Code/Name field for the Custom Airports into two separate fields.
 
 ## [4.9.1] - 22.09.2026
 

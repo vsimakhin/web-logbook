@@ -135,7 +135,7 @@ func (m *DBModel) GetStandardAirports() (airports []Airport, err error) {
 
 // GetCustomAirports returns a list of Custom Airports
 func (m *DBModel) GetCustomAirports() (airports []Airport, err error) {
-	query := "SELECT name as icao, name as iata, name, city, country, elevation, lat, lon FROM airports_custom"
+	query := "SELECT name as icao, name as iata, full_name as name, city, country, elevation, lat, lon FROM airports_custom"
 	return m.fetchAirports(query)
 }
 
@@ -146,15 +146,15 @@ func (m *DBModel) AddCustomAirport(arpt Airport) error {
 
 	// check if custom airport already exists
 	query := "SELECT name FROM airports_custom WHERE name = ?"
-	row := m.DB.QueryRowContext(ctx, query, arpt.Name)
+	row := m.DB.QueryRowContext(ctx, query, arpt.ICAO)
 	if err := row.Scan(&arpt.Name); err == nil {
-		return fmt.Errorf("custom airport %s already exists", arpt.Name)
+		return fmt.Errorf("custom airport %s already exists", arpt.ICAO)
 	}
 
-	query = `INSERT INTO airports_custom (name, city, country, elevation, lat, lon)
-		VALUES (?, ?, ?, ?, ?, ?)`
+	query = `INSERT INTO airports_custom (name, full_name, city, country, elevation, lat, lon)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`
 	_, err := m.DB.ExecContext(ctx, query,
-		arpt.Name, arpt.City, arpt.Country, arpt.Elevation, arpt.Lat, arpt.Lon,
+		arpt.ICAO, arpt.Name, arpt.City, arpt.Country, arpt.Elevation, arpt.Lat, arpt.Lon,
 	)
 
 	if err != nil {
@@ -169,8 +169,8 @@ func (m *DBModel) UpdateCustomAirport(arpt Airport) error {
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := "UPDATE airports_custom SET city = ?, country = ?, elevation = ?, lat = ?, lon = ? WHERE name = ?"
-	_, err := m.DB.ExecContext(ctx, query, arpt.City, arpt.Country, arpt.Elevation, arpt.Lat, arpt.Lon, arpt.Name)
+	query := "UPDATE airports_custom SET full_name = ?, city = ?, country = ?, elevation = ?, lat = ?, lon = ? WHERE name = ?"
+	_, err := m.DB.ExecContext(ctx, query, arpt.Name, arpt.City, arpt.Country, arpt.Elevation, arpt.Lat, arpt.Lon, arpt.ICAO)
 	return err
 }
 
