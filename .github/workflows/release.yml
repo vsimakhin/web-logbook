@@ -82,5 +82,5 @@ jobs:
           push: true
           tags: |
             vsimakhin/web-logbook:${{ github.event.release.tag_name }}
-            vsimakhin/web-logbook:4
-            vsimakhin/web-logbook:latest
+#            vsimakhin/web-logbook:4
+#            vsimakhin/web-logbook:latest
