@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "44"
+	schemaVersion = "45"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -64,8 +64,9 @@ var airportsTable = NewTable("airports", "icao", SmallText,
 		{Name: "lon", Type: Real},
 	})
 
-var customAirportsTable = NewTable("airports_custom", "name", SmallText,
+var customAirportsTable = NewTable("airports_custom", "name", SmallText, // icao/iata code, keeping "name" for back compatibility
 	[]Column{
+		{Name: "full_name", Type: SmallText, Properties: "NOT NULL DEFAULT ''"},
 		{Name: "city", Type: SmallText},
 		{Name: "country", Type: SmallText},
 		{Name: "elevation", Type: SmallInt},
@@ -598,12 +599,12 @@ var airportsView = NewView("airports_view",
 		SQLite: `
 			SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports
 			UNION
-			SELECT UPPER(name) as icao, UPPER(name) as iata, name, city, country, elevation, lat, lon FROM airports_custom
+			SELECT UPPER(name) as icao, UPPER(name) as iata, full_name, city, country, elevation, lat, lon FROM airports_custom
 			`,
 		MySQL: `
 			SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports
 			UNION
-			SELECT UPPER(name) as icao, UPPER(name) as iata, name, city, country, elevation, lat, lon FROM airports_custom
+			SELECT UPPER(name) as icao, UPPER(name) as iata, full_name, city, country, elevation, lat, lon FROM airports_custom
 			`,
 	},
 )

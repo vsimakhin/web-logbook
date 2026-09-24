@@ -27,6 +27,7 @@ const CloseDialogButton = ({ onClose }) => {
 
 const SaveButton = ({ airport, isNew, onClose }) => {
   const payload = {
+    icao: airport.icao,
     name: airport.name,
     city: airport.city,
     country: airport.country,
@@ -69,7 +70,7 @@ export const AddEditCustomAirportModal = ({ open, onClose, payload }) => {
     <Dialog fullWidth open={open} onClose={() => onClose()}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
-          <CardHeader title={`Custom Airport ${airport?.name || ''}`}
+          <CardHeader title={`Custom Airport ${airport?.icao || ''}`}
             action={
               <>
                 <SaveButton airport={airport} onClose={onClose} isNew={isNew} />
@@ -78,13 +79,19 @@ export const AddEditCustomAirportModal = ({ open, onClose, payload }) => {
             }
           />
           <Grid container spacing={1}>
-            <TextField gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-              id="name"
-              label="Name/Code"
+            <TextField gsize={{ xs: 12, sm: 4 }}
+              id="icao"
+              label="Code"
               handleChange={handleChange}
-              value={airport.name}
+              value={airport.icao}
               required
               disabled={!isNew}
+            />
+            <TextField gsize={{ xs: 12, sm: 8 }}
+              id="name"
+              label="Name"
+              handleChange={handleChange}
+              value={airport.name}
             />
             <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
               id="city"

@@ -258,7 +258,7 @@ func (app *application) HandlerApiAirportCustomDelete(w http.ResponseWriter, r *
 		return
 	}
 
-	err = app.db.RemoveCustomAirport(airport.Name)
+	err = app.db.RemoveCustomAirport(airport.ICAO)
 	if err != nil {
 		app.handleError(w, err)
 		return

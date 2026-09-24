@@ -27,6 +27,7 @@ export const CustomAirportsTable = ({ data, isLoading }) => {
         </GridActionsCell>
       ),
     },
+    { field: "icao", headerName: "Code", headerAlign: "center", width: 120 },
     { field: "name", headerName: "Name", headerAlign: "center", flex: 1 },
     { field: "city", headerName: "City", headerAlign: "center", width: 120 },
     { field: "country", headerName: "Country", headerAlign: "center", width: 50, align: "center" },
@@ -45,7 +46,7 @@ export const CustomAirportsTable = ({ data, isLoading }) => {
   return (
     <XDataGrid
       apiRef={apiRef}
-      tableId='custom-airports'
+      tableId='custom-airports-2'
       title="Custom Airports"
       icon={<FlightTakeoffOutlinedIcon />}
       loading={isLoading}

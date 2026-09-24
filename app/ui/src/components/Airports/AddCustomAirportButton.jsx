@@ -12,7 +12,7 @@ export const AddCustomAirportButton = () => {
   const dialogs = useDialogs();
 
   const handleOnClick = useCallback(async () => {
-    const payload = { name: '', city: '', country: '', elevation: '', lat: '', lon: '', isNew: true };
+    const payload = { icao: '', name: '', city: '', country: '', elevation: '', lat: '', lon: '', isNew: true };
     await dialogs.open(AddEditCustomAirportModal, payload);
   }, [dialogs]);
 
