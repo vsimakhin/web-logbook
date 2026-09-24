@@ -83,7 +83,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // misc
       createHasTrackColumn({ field: "has_track" }),
       createHasAttachmentColumn({ field: "has_attachment" }),
-      createColumn({ field: "tags", headerName: fieldName("tags"), align: 'left' }),
+      createColumn({ field: "tags", type: "autocomplete", headerName: fieldName("tags"), align: 'left' }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 

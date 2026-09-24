@@ -5,15 +5,17 @@ import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid";
+import Checkbox from "@mui/material/Checkbox";
 // Custom
 import DatePicker from "./DatePicker";
 import AircraftReg from "./AircraftReg";
 import AircraftType from "./AircraftType";
 import AircraftCategories from "./AircraftCategories";
-import TextField from "./TextField";
 import Select from "./Select";
 import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
 import FlightTags from "./FlightTags";
+import DepartureArrival from "./DepartureArrival";
+import Tooltip from "@mui/material/Tooltip";
 
 const MAP_FILTER_INITIAL_STATE = {
   start_date: dayjs().startOf('year'),
@@ -22,8 +24,29 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_model: "",
   aircraft_category: "",
   tags: "",
-  place: "",
+  departure: "",
+  arrival: "",
+  tags_matches_all: false,
+  departures_matches_all: false,
+  arrival_matches_all: false,
 };
+
+const MultiSelectFilter = ({ children, matchAll, onMatchAllChange }) => (
+  <Grid container size={{ xs: 6, md: 12 }} spacing={1}>
+    {children}
+
+    <Grid size={{ xs: 1 }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Tooltip title="Match all" disableInteractive>
+        <Checkbox
+          size="small"
+          checked={matchAll}
+          onChange={(e) => onMatchAllChange(e.target.checked)}
+          color="primary"
+        />
+      </Tooltip>
+    </Grid>
+  </Grid>
+);
 
 const getModelsByCategory = (modelsData, category) => {
   if (!category || !modelsData) return [];
@@ -39,6 +62,24 @@ const getAircraftsByCategory = (aircrafts, category) => {
     .map(item => item.reg);
 }
 
+const matchesValues = (fieldValue, filterValue, matchAll = false) => {
+  if (!filterValue || (Array.isArray(filterValue) && !filterValue.length)) {
+    return true;
+  }
+
+  const values = Array.isArray(fieldValue)
+    ? fieldValue
+    : String(fieldValue).split(',').map((item) => item.trim()).filter(Boolean);
+
+  const selectedValues = Array.isArray(filterValue)
+    ? filterValue
+    : String(filterValue).split(',').map((item) => item.trim()).filter(Boolean);
+
+  return matchAll
+    ? selectedValues.every((value) => values.includes(value))
+    : selectedValues.some((value) => values.includes(value));
+};
+
 const filterData = (data, filter, modelsData, aircrafts) => {
   filter.start_date = dayjs(filter.start_date, 'DD/MM/YYYY')
   filter.end_date = dayjs(filter.end_date, 'DD/MM/YYYY');
@@ -48,29 +89,38 @@ const filterData = (data, filter, modelsData, aircrafts) => {
     // filter by date
     const flightDate = dayjs(flight.date, 'DD/MM/YYYY');
     const matchesDate = flightDate.isBetween(filter.start_date, filter.end_date, null, '[]');
-    // filter registration
-    const matchesReg = filter.aircraft_reg ? flight.aircraft.reg_name === filter.aircraft_reg : true;
-    // filter type
-    const matchesType = filter.aircraft_model ? flight.aircraft.model === filter.aircraft_model || flight.sim.type === filter.aircraft_model : true;
-    // filter category
-    const matchesCategory = (() => {
-      if (!filter.aircraft_category) return true;
-      const acs = getAircraftsByCategory(aircrafts, filter.aircraft_category)
-      const models = getModelsByCategory(modelsData, filter.aircraft_category);
-      return (
-        acs.includes(flight.aircraft.reg_name) ||
-        models.includes(flight.aircraft.model) ||
-        models.includes(flight.sim.type) ||
-        filter.aircraft_category === flight.sim.type
-      );
-    })();
-    // filter tags
-    const matchesTags = filter.tags ? flight.tags.includes(filter.tags) : true;
-    // filter arrival and departure place
-    const matchesArrival = filter.place ? flight.arrival.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
-    const matchesDeparture = filter.place ? flight.departure.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
 
-    return matchesDate & matchesReg && matchesType && matchesCategory && matchesTags && (matchesArrival || matchesDeparture);
+    // filter registration
+    const matchesReg = matchesValues(flight.aircraft.reg_name, filter.aircraft_reg);
+
+    // filter type
+    const matchesType =
+      matchesValues(flight.aircraft.model, filter.aircraft_model) ||
+      matchesValues(flight.sim.type, filter.aircraft_model);
+
+    // filter category
+    const matchesCategory = !filter.aircraft_category
+      ? true
+      : filter.aircraft_category.split(',').map((item) => item.trim()).filter(Boolean).some((category) => {
+        const acs = getAircraftsByCategory(aircrafts, category);
+        const models = getModelsByCategory(modelsData, category);
+
+        return (
+          matchesValues(flight.aircraft.reg_name, acs) ||
+          matchesValues(flight.aircraft.model, models) ||
+          matchesValues(flight.sim.type, models) ||
+          category === flight.sim.type
+        );
+      });
+
+    // filter tags
+    const matchesTags = matchesValues(flight.tags, filter.tags, filter.tags_matches_all);
+
+    // filter arrival and departure place
+    const matchesDeparture = matchesValues(flight.departure.place, filter.departure, filter.departures_matches_all);
+    const matchesArrival = matchesValues(flight.arrival.place, filter.arrival, filter.arrival_matches_all);
+
+    return matchesDate && matchesReg && matchesType && matchesCategory && matchesTags && matchesArrival && matchesDeparture;
   });
 
   return filteredData;
@@ -161,41 +211,75 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
         gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
         id="aircraft_reg"
         handleChange={handleChange}
-        value={filter?.aircraft_reg}
+        value={filter?.aircraft_reg ? filter?.aircraft_reg.split(',') : []}
         last={false} disableClearable={false}
+        multiple={true}
+        onBlur={null}
       />
       <AircraftType
         gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
         id="aircraft_model"
         handleChange={handleChange}
-        value={filter?.aircraft_model}
+        value={filter?.aircraft_model ? filter?.aircraft_model.split(',') : []}
         disableClearable={false}
+        multiple={true}
+        onBlur={null}
       />
+
       <AircraftCategories
-        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
+        gsize={{ xs: 6, md: 12 }}
         id="aircraft_category"
-        multiple={false}
+        multiple={true}
         handleChange={handleChange}
-        value={filter.aircraft_category}
+        value={filter?.aircraft_category ? filter?.aircraft_category.split(',') : []}
         disableClearable={false}
         options="all"
       />
-      <FlightTags
-        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
-        id="tags"
-        handleChange={handleChange}
-        value={filter.tags}
-        multiple={false}
-        disableClearable={false}
-      />
-      <TextField
-        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
-        id="place"
-        label="Departure/Arrival"
-        handleChange={handleChange}
-        tooltip="Departure/Arrival"
-        value={filter?.place}
-      />
+
+      <MultiSelectFilter
+        matchAll={filter.tags_matches_all}
+        onMatchAllChange={(value) => handleChange("tags_matches_all", value)}
+      >
+        <FlightTags
+          gsize={{ xs: 11 }}
+          id="tags"
+          handleChange={handleChange}
+          value={filter?.tags ? filter.tags.split(',') : []}
+          disableClearable={false}
+        />
+      </MultiSelectFilter>
+
+      <MultiSelectFilter
+        matchAll={filter.departures_matches_all}
+        onMatchAllChange={(value) => handleChange("departures_matches_all", value)}
+      >
+        <DepartureArrival
+          gsize={{ xs: 11 }}
+          type="departure"
+          handleChange={handleChange}
+          value={filter?.departure ? filter.departure.split(',') : []}
+          disableClearable={false}
+          multiple={true}
+          onBlur={null}
+          preloadedData={data}
+        />
+      </MultiSelectFilter>
+
+      <MultiSelectFilter
+        matchAll={filter.arrival_matches_all}
+        onMatchAllChange={(value) => handleChange("arrival_matches_all", value)}
+      >
+        <DepartureArrival
+          gsize={{ xs: 11 }}
+          type="arrival"
+          handleChange={handleChange}
+          value={filter?.arrival ? filter.arrival.split(',') : []}
+          disableClearable={false}
+          multiple={true}
+          onBlur={null}
+          preloadedData={data}
+        />
+      </MultiSelectFilter>
     </Grid >
   );
 }
