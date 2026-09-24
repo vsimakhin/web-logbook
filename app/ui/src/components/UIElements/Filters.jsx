@@ -10,10 +10,10 @@ import DatePicker from "./DatePicker";
 import AircraftReg from "./AircraftReg";
 import AircraftType from "./AircraftType";
 import AircraftCategories from "./AircraftCategories";
-import TextField from "./TextField";
 import Select from "./Select";
 import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
 import FlightTags from "./FlightTags";
+import DepartureArrival from "./DepartureArrival";
 
 const MAP_FILTER_INITIAL_STATE = {
   start_date: dayjs().startOf('year'),
@@ -22,7 +22,8 @@ const MAP_FILTER_INITIAL_STATE = {
   aircraft_model: "",
   aircraft_category: "",
   tags: "",
-  place: "",
+  departure: "",
+  arrival: "",
 };
 
 const getModelsByCategory = (modelsData, category) => {
@@ -94,10 +95,10 @@ const filterData = (data, filter, modelsData, aircrafts) => {
     const matchesTags = matchesValues(flight.tags, filter.tags);
 
     // filter arrival and departure place
-    const matchesArrival = filter.place ? flight.arrival.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
-    const matchesDeparture = filter.place ? flight.departure.place.toUpperCase().includes(filter.place.toUpperCase()) : true;
+    const matchesDeparture = matchesValues(flight.departure.place, filter.departure);
+    const matchesArrival = matchesValues(flight.arrival.place, filter.arrival);
 
-    return matchesDate && matchesReg && matchesType && matchesCategory && matchesTags && (matchesArrival || matchesDeparture);
+    return matchesDate && matchesReg && matchesType && matchesCategory && matchesTags && matchesArrival && matchesDeparture;
   });
 
   return filteredData;
@@ -218,13 +219,25 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
         value={filter?.tags ? filter.tags.split(',') : []}
         disableClearable={false}
       />
-      <TextField
-        gsize={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
-        id="place"
-        label="Departure/Arrival"
+      <DepartureArrival
+        gsize={{ xs: 6, md: 12 }}
+        type="departure"
         handleChange={handleChange}
-        tooltip="Departure/Arrival"
-        value={filter?.place}
+        value={filter?.departure ? filter.departure.split(',') : []}
+        disableClearable={false}
+        multiple={true}
+        onBlur={null}
+        preloadedData={data}
+      />
+      <DepartureArrival
+        gsize={{ xs: 6, md: 12 }}
+        type="arrival"
+        handleChange={handleChange}
+        value={filter?.arrival ? filter.arrival.split(',') : []}
+        disableClearable={false}
+        multiple={true}
+        onBlur={null}
+        preloadedData={data}
       />
     </Grid >
   );
