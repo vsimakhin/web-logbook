@@ -261,7 +261,7 @@ func validateDB(db *sql.DB, engine string) error {
 
 	if version != "unknown" {
 		versionInt, err := strconv.Atoi(version)
-		if err == nil && versionInt < 45 {
+		if err == nil && versionInt < 100 {
 			dataOverhaulMigration(db, engine)
 		}
 	}
