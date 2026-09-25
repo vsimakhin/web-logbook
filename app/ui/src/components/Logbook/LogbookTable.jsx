@@ -6,7 +6,7 @@ import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid'
 import {
   createColumn, createDateColumn, createLandingColumn,
-  createTimeColumn, sumTime, createCustomFieldColumns,
+  createTimeColumn, createCustomFieldColumns,
   getCustomFieldColumnsForGrouping,
   createHasTrackColumn,
   createHasAttachmentColumn
@@ -17,11 +17,16 @@ import useCustomFields from '../../hooks/useCustomFields';
 import TableHeader from '../UIElements/TableHeader';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
+import { timeFieldFormat } from '../../util/helpers';
+
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
   const { settings, isSettingsLoading, fieldName, paginationOptions } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
+
+  const fieldFormat = useMemo(() => settings.time_fields_auto_format, [settings.time_fields_auto_format]);
+  const footerEmptyTimeFieldFormat = useMemo(() => timeFieldFormat(0, fieldFormat, true), [fieldFormat]);
 
   const columns = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -36,56 +41,69 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // departure
       createColumn({ field: "departure_place", headerName: fieldName("dep_place"), width: 60, valueGetter: (_value, row) => row.departure?.place }),
       createColumn({ field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.departure?.time }),
-      ...createCustomFieldColumns(customFields, fieldName("departure")),
+      ...createCustomFieldColumns(customFields, fieldName("departure"), fieldFormat),
       // arrival
       createColumn({ field: "arrival_place", headerName: fieldName("arr_place"), width: 60, valueGetter: (_value, row) => row.arrival?.place }),
       createColumn({ field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.arrival?.time }),
-      ...createCustomFieldColumns(customFields, fieldName("arrival")),
+      ...createCustomFieldColumns(customFields, fieldName("arrival"), fieldFormat),
       // aircraft
       createColumn({ field: "aircraft_model", headerName: fieldName("model"), width: 70, valueGetter: (_value, row) => row.aircraft?.model }),
       createColumn({ field: "aircraft_reg", headerName: fieldName("reg"), width: 75, valueGetter: (_value, row) => row.aircraft?.reg_name }),
-      ...createCustomFieldColumns(customFields, fieldName("aircraft")),
+      ...createCustomFieldColumns(customFields, fieldName("aircraft"), fieldFormat),
       // single pilot time
-      createTimeColumn({ field: "se_time", headerName: fieldName("se") }),
-      createTimeColumn({ field: "me_time", headerName: fieldName("me"), valueGetter: (_value, row) => row.time.mcc_time !== "" ? "" : row.time.me_time }),
-      ...createCustomFieldColumns(customFields, fieldName("spt")),
+      createTimeColumn({ field: "se_time", headerName: fieldName("se"), fieldFormat: fieldFormat }),
+      createTimeColumn({
+        field: "me_time", headerName: fieldName("me"),
+        valueFormatter: (_value, row) => row.time.mcc_time !== 0 ? "" : timeFieldFormat(row.time.me_time, fieldFormat),
+        valueGetter: (_value, row) => row.time.mcc_time !== 0 ? 0 : row.time.me_time,
+        aggregation: 'sum',
+        aggregationFormatter: (value) => value === 0 ? "" : timeFieldFormat(value, fieldFormat),
+      }),
+      ...createCustomFieldColumns(customFields, fieldName("spt"), fieldFormat),
       // MCC time
-      createTimeColumn({ field: "mcc_time", headerName: fieldName("mcc") }),
-      ...createCustomFieldColumns(customFields, fieldName("mcc")),
+      createTimeColumn({ field: "mcc_time", headerName: fieldName("mcc"), fieldFormat: fieldFormat }),
+      ...createCustomFieldColumns(customFields, fieldName("mcc"), fieldFormat),
       // total
-      createTimeColumn({ field: "total_time", headerName: fieldName("total") }),
-      ...createCustomFieldColumns(customFields, fieldName("total")),
+      createTimeColumn({ field: "total_time", headerName: fieldName("total"), fieldFormat: fieldFormat }),
+      ...createCustomFieldColumns(customFields, fieldName("total"), fieldFormat),
       // pic name
       createColumn({ field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left' }),
       // landings
       createLandingColumn({ field: "landings_day", headerName: fieldName("land_day") }),
       createLandingColumn({ field: "landings_night", headerName: fieldName("land_night") }),
-      ...createCustomFieldColumns(customFields, fieldName("landings")),
+      ...createCustomFieldColumns(customFields, fieldName("landings"), fieldFormat),
       // operation condition time
-      createTimeColumn({ field: "night_time", headerName: fieldName("night"), width: 60 }),
-      createTimeColumn({ field: "ifr_time", headerName: fieldName("ifr"), width: 59 }),
-      ...createCustomFieldColumns(customFields, fieldName("oct")),
+      createTimeColumn({ field: "night_time", headerName: fieldName("night"), width: 60, fieldFormat: fieldFormat }),
+      createTimeColumn({ field: "ifr_time", headerName: fieldName("ifr"), width: 59, fieldFormat: fieldFormat }),
+      ...createCustomFieldColumns(customFields, fieldName("oct"), fieldFormat),
       // pilot function time
-      createTimeColumn({ field: "pic_time", headerName: fieldName("pic") }),
-      createTimeColumn({ field: "co_pilot_time", headerName: fieldName("cop") }),
-      createTimeColumn({ field: "dual_time", headerName: fieldName("dual") }),
-      createTimeColumn({ field: "instructor_time", headerName: fieldName("instr") }),
-      ...createCustomFieldColumns(customFields, fieldName("pft")),
+      createTimeColumn({ field: "pic_time", headerName: fieldName("pic"), fieldFormat: fieldFormat }),
+      createTimeColumn({ field: "co_pilot_time", headerName: fieldName("cop"), fieldFormat: fieldFormat }),
+      createTimeColumn({ field: "dual_time", headerName: fieldName("dual"), fieldFormat: fieldFormat }),
+      createTimeColumn({ field: "instructor_time", headerName: fieldName("instr"), fieldFormat: fieldFormat }),
+      ...createCustomFieldColumns(customFields, fieldName("pft"), fieldFormat),
       // sim
       createColumn({ field: "sim_type", headerName: fieldName("sim_type"), width: 60, valueGetter: (_value, row) => row.sim.type }),
-      createColumn({ field: "sim_time", headerName: fieldName("sim_time"), width: 55, headerAlign: 'center', align: 'center', type: 'time', valueGetter: (_value, row) => row.sim.time, aggregationFn: sumTime }),
-      ...createCustomFieldColumns(customFields, fieldName("fstd")),
+      createColumn({
+        field: "sim_time", headerName: fieldName("sim_time"),
+        width: 55, headerAlign: 'center', align: 'center', type: 'time',
+        valueGetter: (_value, row) => row.sim.time,
+        valueFormatter: (_value, row) => timeFieldFormat(row.sim.time, fieldFormat),
+        aggregation: 'sum',
+        aggregationFormatter: (value) => timeFieldFormat(value, fieldFormat),
+      }),
+      ...createCustomFieldColumns(customFields, fieldName("fstd"), fieldFormat),
       // custom
-      ...createCustomFieldColumns(customFields, "Custom"),
+      ...createCustomFieldColumns(customFields, "Custom", fieldFormat),
       // remarks
       createColumn({ field: "remarks", headerName: fieldName("remarks"), align: 'left', flex: 1, minWidth: 50 }),
-      ...createCustomFieldColumns(customFields, fieldName("remarks")),
+      ...createCustomFieldColumns(customFields, fieldName("remarks"), fieldFormat),
       // misc
       createHasTrackColumn({ field: "has_track" }),
       createHasAttachmentColumn({ field: "has_attachment" }),
       createColumn({ field: "tags", type: "autocomplete", headerName: fieldName("tags"), align: 'left' }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
-  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, fieldFormat]);
 
   const columnGroupingModel = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -232,6 +250,8 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       pageSizeOptions={paginationOptions}
       getRowId={(row) => row.uuid}
       footerFieldIdTotalLabel='aircraft_reg'
+      footerEmptyTimeFieldFormat={footerEmptyTimeFieldFormat}
+      filterTimeFieldFormat={fieldFormat}
       showAggregationFooter={true}
       showPreviousPagesTotal={settings.logbook_totals_view === 1}
       initialValues={settings.previous_experience}

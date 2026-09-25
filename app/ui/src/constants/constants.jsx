@@ -27,24 +27,24 @@ export const FLIGHT_INITIAL_STATE = {
     reg_name: ""
   },
   time: {
-    se_time: "",
-    me_time: "",
-    mcc_time: "",
-    total_time: "",
-    night_time: "",
-    ifr_time: "",
-    pic_time: "",
-    co_pilot_time: "",
-    dual_time: "",
-    instructor_time: ""
+    se_time: 0,
+    me_time: 0,
+    mcc_time: 0,
+    total_time: 0,
+    night_time: 0,
+    ifr_time: 0,
+    pic_time: 0,
+    co_pilot_time: 0,
+    dual_time: 0,
+    instructor_time: 0
   },
   landings: {
-    day: "",
-    night: ""
+    day: 0,
+    night: 0
   },
   sim: {
     type: "",
-    time: ""
+    time: 0
   },
   pic_name: "",
   remarks: "",
@@ -70,35 +70,6 @@ export const PLACE_SLOT_PROPS = {
 export const TIME_SLOT_PROPS = {
   htmlInput: { maxLength: 4, onInput: (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, '') }, inputMode: 'numeric' }
 }
-
-export const FLIGHT_TIME_SLOT_PROPS = {
-  htmlInput: {
-    maxLength: 5, // HH:MM or H:MM format requires max length of 5
-    onInput: (e) => {
-      let value = e.target.value;
-
-      // Remove invalid characters
-      value = value.replace(/[^0-9]/g, '');
-
-      // Automatically add colon after 1 or 2 digits for hours
-      if (value.length > 2) {
-        value = `${value.slice(0, value.length - 2)}:${value.slice(-2)}`;
-      }
-
-      // Split hours and minutes for validation
-      const [hours, minutes] = value.split(':');
-
-      // Ensure hours are valid (no specific upper limit but can be capped if needed)
-      if (hours && parseInt(hours, 10) > 99) {
-        value = `${hours.slice(0, 2)}:${minutes || ''}`;
-      }
-
-      // Allow clearing or partial input
-      e.target.value = value;
-    },
-    inputMode: 'numeric'
-  },
-};
 
 export const defaultColumnFilterTextFieldProps = ({ column }) => {
   const headerText = typeof column.columnDef.header === 'object' ? column.columnDef.header.props.title : column.columnDef.header;

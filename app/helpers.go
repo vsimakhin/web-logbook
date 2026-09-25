@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"path"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -113,35 +112,29 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duratio
 	return night, route.IsNightLanding(), nil
 }
 
-func (app *application) formatTimeField(timeField string) string {
-	if app.timeFieldsAutoFormat == 0 || timeField == "" {
-		return timeField
+func (app *application) formatTimeField(minutes int) string {
+	if minutes < 0 {
+		return ""
 	}
 
-	parts := strings.Split(timeField, ":")
-
-	if len(parts) != 2 { // probably some wrong value in the field
-		if timeField == "0" {
-			return ""
-		}
-
-		return timeField
+	if app.timeFieldsAutoFormat == 3 {
+		// FAA format, decimals
+		return fmt.Sprintf("%.1f", float64(minutes)/60)
 	}
 
-	hours := parts[0]
-	minutes := parts[1]
+	hours := minutes / 60
+	mins := minutes % 60
 
-	if app.timeFieldsAutoFormat == 1 {
-		// add leading zero if missing
-		if len(hours) == 1 {
-			hours = fmt.Sprintf("0%s", hours)
-		}
-	} else {
-		// Remove leading zero if present
-		if strings.HasPrefix(hours, "0") && len(hours) == 2 {
-			hours = hours[1:]
-		}
+	switch app.timeFieldsAutoFormat {
+	case 1:
+		// Format as HH:MM
+		return fmt.Sprintf("%02d:%02d", hours, mins)
+	case 2, 0:
+		// Format as H:MM
+		// autoFormat 0 is the old setting for doing nothing,
+		// but time is now stored as minutes.
+		return fmt.Sprintf("%d:%02d", hours, mins)
+	default:
+		return fmt.Sprintf("%d:%02d", hours, mins)
 	}
-
-	return hours + ":" + minutes
 }

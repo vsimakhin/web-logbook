@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
 // Custom components and libraries
-import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule, getStatusBarColor, parseSubMetrics } from './helpers';
+import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule, getStatusBarColor, parseSubMetrics, isTimeMetric } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
 import dayjs from 'dayjs';
 import NewCurrencyButton from './NewCurrencyButton';
@@ -100,31 +100,32 @@ const getPercent = (current, target) => {
 };
 
 
-const StatusCell = ({ row, metricOptions, currencyResults }) => {
+const StatusCell = ({ row, metricOptions, currencyResults, fieldFormat }) => {
   const { status } = currencyResults.get(row.uuid) ?? { status: { current: 0, meetsRequirement: false, subResults: [] } };
 
-  const value = formatCurrencyValue(status.current, row.metric);
-  const percent = getPercent(status.current, row.target_value);
+  const value = formatCurrencyValue(status.current, row.metric, fieldFormat);
+  const target = isTimeMetric(row.metric, row.target_value);
+  const percent = getPercent(status.current, target);
   const percentLabel = percent >= 500 ? '(500+%)' : `(${Math.round(percent)}%)`;
   const color = getStatusBarColor(status.meetsRequirement, percent, row.comparison);
   const mainName = getLabel(row.metric, metricOptions);
 
   const tooltipContent = (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Typography variant="caption" display="block" sx={{ fontWeight: 500 }}>
-        {mainName}: {value} / {formatCurrencyValue(row.target_value, row.metric)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
+        {mainName}: {value} / {formatCurrencyValue(target, row.metric, fieldFormat)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
       </Typography>
       {status.subResults?.map((sub, i) => {
         const subName = getLabel(sub.metric, metricOptions);
-        const subVal = formatCurrencyValue(sub.current, sub.metric);
-        const subTarget = formatCurrencyValue(sub.target_value, sub.metric);
+        const subVal = formatCurrencyValue(sub.current, sub.metric, fieldFormat);
+        const subTarget = isTimeMetric(sub.metric, sub.target_value);
         return (
           <Typography key={i} variant="caption" display="block">
-            ↳ {subName}: {subVal} / {subTarget} ({Math.round(sub.percent)}%) {sub.meetsRequirement ? '✓' : '✗'}
+            ↳ {subName}: {subVal} / {formatCurrencyValue(subTarget, sub.metric, fieldFormat)} ({Math.round(sub.percent)}%) {sub.meetsRequirement ? '✓' : '✗'}
           </Typography>
         );
       })}
-    </>
+    </Box>
   );
 
   const progressBar = (
@@ -151,7 +152,8 @@ const StatusCell = ({ row, metricOptions, currencyResults }) => {
 
 export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   const apiRef = useGridApiRef();
-  const { fieldNameF } = useSettings();
+  const { fieldNameF, settings } = useSettings();
+  const fieldFormat = settings.time_fields_auto_format;
 
   const metricOptions = useMemo(() => (
     [
@@ -247,10 +249,10 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         headerName: "Status",
         headerAlign: "center",
         width: 220,
-        renderCell: ({ row }) => <StatusCell row={row} metricOptions={metricOptions} currencyResults={currencyResults} />
+        renderCell: ({ row }) => <StatusCell row={row} metricOptions={metricOptions} currencyResults={currencyResults} fieldFormat={fieldFormat} />
       }
     ]
-  ), [metricOptions, currencyResults]);
+  ), [metricOptions, currencyResults, fieldFormat]);
 
   const customActions = useMemo(() => (
     <>

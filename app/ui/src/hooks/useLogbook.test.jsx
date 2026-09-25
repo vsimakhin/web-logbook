@@ -178,7 +178,7 @@ describe("useLogbook", () => {
       const { result } = renderHook(() => useLogbook());
       const totalTime = result.current.calculateTotalTime(flight);
 
-      expect(totalTime).toBe("1:30");
+      expect(totalTime).toBe(90);
     });
 
     it("should calculate duration for overnight flights", () => {
@@ -190,7 +190,7 @@ describe("useLogbook", () => {
       const { result } = renderHook(() => useLogbook());
       const totalTime = result.current.calculateTotalTime(flight);
 
-      expect(totalTime).toBe("2:00");
+      expect(totalTime).toBe(120);
     });
 
     it("should pad minutes with zero", () => {
@@ -202,7 +202,7 @@ describe("useLogbook", () => {
       const { result } = renderHook(() => useLogbook());
       const totalTime = result.current.calculateTotalTime(flight);
 
-      expect(totalTime).toBe("0:05");
+      expect(totalTime).toBe(5);
     });
   });
 });

@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useGridApiRef } from "@mui/x-data-grid";
 // MUI UI elements
@@ -10,13 +9,13 @@ import Tab from '@mui/material/Tab';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 // Custom
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
-import { fetchLogbookData } from "../../../util/http/logbook";
 import { getTotalsByMonthAndYear } from "../../../util/helpers";
 import useCustomFields from "../../../hooks/useCustomFields";
 import useSettings from '../../../hooks/useSettings';
 import XDataGrid from '../../UIElements/XDataGrid/XDataGrid';
 import { createStatsColumns } from '../helpers';
 import CSVExportButton from "../../UIElements/CSVExportButton";
+import { useLogbookQuery } from "../../../hooks/queries";
 
 const EMPTY = {};
 
@@ -48,15 +47,10 @@ const useTotalsData = (data) => {
 export const TotalsByYear = () => {
   const apiRef = useGridApiRef();
   const [activeTab, setActiveTab] = useState(0);
-  const { fieldName } = useSettings();
+  const { fieldName, settings } = useSettings();
   const { customFields } = useCustomFields();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data, isLoading, isError, error } = useLogbookQuery();
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
   const totals = useMemo(() => getTotalsByMonthAndYear(data ?? [], customFields ?? []), [data, customFields]);
@@ -72,9 +66,9 @@ export const TotalsByYear = () => {
         width: 70,
         renderCell: ({ value }) => new Date(0, value - 1).toLocaleString('default', { month: 'short' })
       },
-      ...createStatsColumns({ fieldName, customFields })
+      ...createStatsColumns({ fieldName, customFields, fieldFormat: settings.time_fields_auto_format })
     ]
-  }, [fieldName, customFields]);
+  }, [fieldName, customFields, settings.time_fields_auto_format]);
 
   const activeYear = sortedYears[activeTab];
   const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="totals-by-year" />), [apiRef]);

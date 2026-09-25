@@ -31,8 +31,8 @@ const prepareFlightDataForAPI = (flight) => {
     ...flight,
     custom_fields: JSON.stringify(customFieldsObj),
     landings: {
-      day: parseInt(flight.landings?.day, 10) || 0,
-      night: parseInt(flight.landings?.night, 10) || 0,
+      day: parseInt(flight.landings?.day) || 0,
+      night: parseInt(flight.landings?.night) || 0,
     },
   };
 }

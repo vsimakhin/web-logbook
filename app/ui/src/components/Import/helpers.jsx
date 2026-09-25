@@ -37,7 +37,7 @@ export const convertToDDMMYYYY = (date) => {
   return `${day}/${month}/${year}`;
 }
 
-export const autoTimeRecog = (time) => {
+export const autoDepArrTimeRecog = (time) => {
   if (!time) return "";
 
   // If input looks like a full datetime (has ':')
@@ -49,6 +49,41 @@ export const autoTimeRecog = (time) => {
 
   // Otherwise, just strip non-digits and pad
   return time.replace(/[^0-9]/g, "").padStart(4, "0");
+};
+
+export const autoTimeFieldRecog = (time) => {
+  if (time === null || time === undefined || time === "") {
+    return 0;
+  }
+
+  const value = String(time).trim();
+
+  // HH:MM or H:MM
+  if (value.includes(":")) {
+    const match = value.match(/^(\d+):(\d{2})$/);
+
+    if (!match) {
+      return 0;
+    }
+
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+
+    if (minutes >= 60) {
+      return 0; // some wrong format
+    }
+
+    return hours * 60 + minutes;
+  }
+
+  // FAA decimal hours
+  const decimal = Number(value);
+
+  if (!Number.isFinite(decimal) || decimal < 0) {
+    return 0;
+  }
+
+  return Math.round(decimal * 60);
 };
 
 export const marshallItem = (item) => {

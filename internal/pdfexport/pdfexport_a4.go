@@ -100,8 +100,8 @@ func (p *PDFExporter) printA4LogbookHeader() {
 func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 	p.rowCounter += 1
 
-	if record.Time.MCC != "" {
-		record.Time.ME = ""
+	if record.Time.MCC != 0 {
+		record.Time.ME = 0
 	}
 
 	p.totalPage = models.CalculateTotals(p.totalPage, record)
@@ -188,21 +188,21 @@ func (p *PDFExporter) printA4Total(totalName string, total models.FlightRecord) 
 
 	p.printFooterLeftBlock(totalName)
 	p.printFooterCell(p.columns.w4[1], totalName)
-	p.printFooterCell(p.columns.w4[2], p.formatTimeField(total.Time.SE))
-	p.printFooterCell(p.columns.w4[3], p.formatTimeField(total.Time.ME))
-	p.printFooterCell(p.columns.w4[4], p.formatTimeField(total.Time.MCC))
-	p.printFooterCell(p.columns.w4[5], p.formatTimeField(total.Time.Total))
+	p.printFooterCell(p.columns.w4[2], p.formatTimeFieldTotals(total.Time.SE))
+	p.printFooterCell(p.columns.w4[3], p.formatTimeFieldTotals(total.Time.ME))
+	p.printFooterCell(p.columns.w4[4], p.formatTimeFieldTotals(total.Time.MCC))
+	p.printFooterCell(p.columns.w4[5], p.formatTimeFieldTotals(total.Time.Total))
 	p.printFooterCell(p.columns.w4[6], "")
 	p.printFooterCell(p.columns.w4[7], fmt.Sprintf("%d", total.Landings.Day))
 	p.printFooterCell(p.columns.w4[8], fmt.Sprintf("%d", total.Landings.Night))
-	p.printFooterCell(p.columns.w4[9], p.formatTimeField(total.Time.Night))
-	p.printFooterCell(p.columns.w4[10], p.formatTimeField(total.Time.IFR))
-	p.printFooterCell(p.columns.w4[11], p.formatTimeField(total.Time.PIC))
-	p.printFooterCell(p.columns.w4[12], p.formatTimeField(total.Time.CoPilot))
-	p.printFooterCell(p.columns.w4[13], p.formatTimeField(total.Time.Dual))
-	p.printFooterCell(p.columns.w4[14], p.formatTimeField(total.Time.Instructor))
+	p.printFooterCell(p.columns.w4[9], p.formatTimeFieldTotals(total.Time.Night))
+	p.printFooterCell(p.columns.w4[10], p.formatTimeFieldTotals(total.Time.IFR))
+	p.printFooterCell(p.columns.w4[11], p.formatTimeFieldTotals(total.Time.PIC))
+	p.printFooterCell(p.columns.w4[12], p.formatTimeFieldTotals(total.Time.CoPilot))
+	p.printFooterCell(p.columns.w4[13], p.formatTimeFieldTotals(total.Time.Dual))
+	p.printFooterCell(p.columns.w4[14], p.formatTimeFieldTotals(total.Time.Instructor))
 	p.printFooterCell(p.columns.w4[15], "")
-	p.printFooterCell(p.columns.w4[16], p.formatTimeField(total.SIM.Time))
+	p.printFooterCell(p.columns.w4[16], p.formatTimeFieldTotals(total.SIM.Time))
 	p.printFooterSignatureBlock(totalName)
 
 	p.pdf.Ln(-1)

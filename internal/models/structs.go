@@ -39,19 +39,19 @@ type FlightRecord struct {
 		Reg   string `json:"reg_name"`
 	} `json:"aircraft"`
 	Time struct {
-		SE         string `json:"se_time"`
-		ME         string `json:"me_time"`
-		MCC        string `json:"mcc_time"`
-		Total      string `json:"total_time"`
-		Night      string `json:"night_time"`
-		IFR        string `json:"ifr_time"`
-		PIC        string `json:"pic_time"`
-		CoPilot    string `json:"co_pilot_time"`
-		Dual       string `json:"dual_time"`
-		Instructor string `json:"instructor_time"`
+		SE         int `json:"se_time"`
+		ME         int `json:"me_time"`
+		MCC        int `json:"mcc_time"`
+		Total      int `json:"total_time"`
+		Night      int `json:"night_time"`
+		IFR        int `json:"ifr_time"`
+		PIC        int `json:"pic_time"`
+		CoPilot    int `json:"co_pilot_time"`
+		Dual       int `json:"dual_time"`
+		Instructor int `json:"instructor_time"`
 
 		// calculated
-		CrossCountry string `json:"cc_time,omitempty"`
+		CrossCountry int `json:"cc_time,omitempty"`
 	} `json:"time"`
 	Landings struct {
 		Day   int `json:"day"`
@@ -59,7 +59,7 @@ type FlightRecord struct {
 	} `json:"landings"`
 	SIM struct {
 		Type string `json:"type"`
-		Time string `json:"time"`
+		Time int    `json:"time"`
 	} `json:"sim"`
 	PIC     string `json:"pic_name"`
 	Remarks string `json:"remarks"`
@@ -86,42 +86,6 @@ func (fr FlightRecord) DisplayName() string {
 	} else {
 		return fmt.Sprintf("Simulator record %s %s", fr.Date, fr.SIM.Type)
 	}
-}
-
-type FlightRecordStats struct {
-	FlightRecord
-
-	DateISO string `json:"date_iso"`
-
-	// Redefine nested structs to add new field
-	Departure struct {
-		Place    string `json:"place"`
-		Time     string `json:"time"`
-		Datetime string `json:"datetime"`
-	} `json:"departure"`
-
-	Arrival struct {
-		Place    string `json:"place"`
-		Time     string `json:"time"`
-		Datetime string `json:"datetime"`
-	} `json:"arrival"`
-
-	// New minutes fields for all time categories
-	TimeMinutes struct {
-		SE         int `json:"se_time_m"`
-		ME         int `json:"me_time_m"`
-		MCC        int `json:"mcc_time_m"`
-		Total      int `json:"total_time_m"`
-		Night      int `json:"night_time_m"`
-		IFR        int `json:"ifr_time_m"`
-		PIC        int `json:"pic_time_m"`
-		CoPilot    int `json:"co_pilot_time_m"`
-		Dual       int `json:"dual_time_m"`
-		Instructor int `json:"instructor_time_m"`
-		SIM        int `json:"sim_time_m"`
-
-		CrossCountry int `json:"cc_time_m"`
-	} `json:"time_m"`
 }
 
 // Airpot is a structure for airport record
@@ -290,21 +254,21 @@ type Settings struct {
 	NoICAOFilter    bool   `json:"no_icao_filter"`
 
 	PreviousExperience struct {
-		Total         string `json:"total_time"`
-		SE            string `json:"se_time"`
-		ME            string `json:"me_time"`
-		MCC           string `json:"mcc_time"`
-		Night         string `json:"night_time"`
-		IFR           string `json:"ifr_time"`
-		PIC           string `json:"pic_time"`
-		CoPilot       string `json:"co_pilot_time"`
-		Dual          string `json:"dual_time"`
-		Instructor    string `json:"instructor_time"`
-		METotal       string `json:"me_total_time"`
-		CrossCountry  string `json:"cc_time"`
-		SimTime       string `json:"sim_time"`
-		LandingsDay   int    `json:"landings_day"`
-		LandingsNight int    `json:"landings_night"`
+		Total         int `json:"total_time"`
+		SE            int `json:"se_time"`
+		ME            int `json:"me_time"`
+		MCC           int `json:"mcc_time"`
+		Night         int `json:"night_time"`
+		IFR           int `json:"ifr_time"`
+		PIC           int `json:"pic_time"`
+		CoPilot       int `json:"co_pilot_time"`
+		Dual          int `json:"dual_time"`
+		Instructor    int `json:"instructor_time"`
+		METotal       int `json:"me_total_time"`
+		CrossCountry  int `json:"cc_time"`
+		SimTime       int `json:"sim_time"`
+		LandingsDay   int `json:"landings_day"`
+		LandingsNight int `json:"landings_night"`
 	} `json:"previous_experience"`
 }
 

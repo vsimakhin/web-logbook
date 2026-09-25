@@ -261,7 +261,6 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
           disableClearable={false}
           multiple={true}
           onBlur={null}
-          preloadedData={data}
         />
       </MultiSelectFilter>
 
@@ -277,7 +276,6 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
           disableClearable={false}
           multiple={true}
           onBlur={null}
-          preloadedData={data}
         />
       </MultiSelectFilter>
     </Grid >

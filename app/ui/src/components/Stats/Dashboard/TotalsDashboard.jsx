@@ -9,7 +9,6 @@ import LinearProgress from "@mui/material/LinearProgress";
 import CardHeader from "../../UIElements/CardHeader";
 import Filters from "../../UIElements/Filters";
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
-import { fetchLogbookData } from "../../../util/http/logbook";
 import DashboardTiles from "./DashboardTiles";
 import CustomFieldsTiles from "./CustomFieldsTiles";
 import useCustomFields from "../../../hooks/useCustomFields";
@@ -17,6 +16,7 @@ import { fetchAirports } from "../../../util/http/airport";
 import { useLocalStorageState, CODEC_JSON } from "../../../hooks/useLocalStorageState";
 import DashboardOptions from "./DashboardOptions";
 import useSettings from "../../../hooks/useSettings";
+import { useLogbookQuery } from "../../../hooks/queries";
 
 export const TotalsDashboard = () => {
   const [dashboardData, setDashboardData] = useState([]);
@@ -24,13 +24,7 @@ export const TotalsDashboard = () => {
   const [airportsMap, setAirportsMap] = useState(new Map());
   const { settings } = useSettings();
 
-  const { data: rawData, isLoading, isError, error } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    select: (data) => data || [],
-  });
+  const { data: rawData, isLoading, isError, error } = useLogbookQuery();
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
   const data = useMemo(() => {
