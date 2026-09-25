@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useGridApiRef } from "@mui/x-data-grid";
 // MUI UI elements
@@ -10,13 +9,13 @@ import Tab from '@mui/material/Tab';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 // Custom
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
-import { fetchLogbookData } from "../../../util/http/logbook";
 import { getTotalsByMonthAndYear } from "../../../util/helpers";
 import useCustomFields from "../../../hooks/useCustomFields";
 import useSettings from '../../../hooks/useSettings';
 import XDataGrid from '../../UIElements/XDataGrid/XDataGrid';
 import { createStatsColumns } from '../helpers';
 import CSVExportButton from "../../UIElements/CSVExportButton";
+import { useLogbookQuery } from "../../../hooks/queries";
 
 const EMPTY = {};
 
@@ -51,12 +50,7 @@ export const TotalsByYear = () => {
   const { fieldName, settings } = useSettings();
   const { customFields } = useCustomFields();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data, isLoading, isError, error } = useLogbookQuery();
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
   const totals = useMemo(() => getTotalsByMonthAndYear(data ?? [], customFields ?? []), [data, customFields]);

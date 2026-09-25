@@ -8,6 +8,7 @@ export const logbookQueryOptions = queryOptions({
   gcTime: 3600000,
   refetchOnWindowFocus: false,
   refetchOnMount: false,
+  select: (data) => data || [],
 });
 
 export const useLogbookQuery = (options = {}) => {
