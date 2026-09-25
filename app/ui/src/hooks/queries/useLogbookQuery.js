@@ -7,7 +7,6 @@ export const logbookQueryOptions = queryOptions({
   staleTime: 3600000,
   gcTime: 3600000,
   refetchOnWindowFocus: false,
-  refetchOnMount: false,
   select: (data) => data || [],
 });
 

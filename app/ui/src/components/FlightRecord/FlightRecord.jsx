@@ -1,17 +1,16 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid";
 import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import FlightRecordDetails from "./FlightRecordDetails";
-import { fetchFlightData } from "../../util/http/logbook";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 import FlightMap from "../FlightMap/FlightMap";
 import Attachments from "../FlightRecordAttachment/Attachments";
 import FlightRecordPersons from "../Persons/FlightRecordPersons";
+import { useFlightQuery } from "../../hooks/queries/useFlightQuery";
 
 const gridSize = { xs: 12, sm: 12, md: 6, lg: 6, xl: 6 };
 
@@ -20,14 +19,7 @@ export const FlightRecord = () => {
   const [flight, setFlight] = useState({ ...FLIGHT_INITIAL_STATE, uuid: id });
   const location = useLocation();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['flight', id],
-    queryFn: ({ signal }) => fetchFlightData({ signal, id }),
-    enabled: id !== "new",
-    refetchOnWindowFocus: false,
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data, isLoading, isError, error } = useFlightQuery(id, { enabled: id !== "new" });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load flight record' });
 
   useEffect(() => {
