@@ -172,8 +172,7 @@ var logbookView = NewView("logbook_view",
 				SELECT
 					uuid,
 					date,
-					ROW_NUMBER() OVER (ORDER BY substr(date,7,4) || substr(date,4,2) || substr(date,0,3), departure_time) AS rn,
-					substr(date,7,4) || substr(date,4,2) || substr(date,0,3) as m_date,
+					ROW_NUMBER() OVER (ORDER BY date, departure_time) AS rn,
 					departure_place, departure_time, arrival_place, arrival_time,
 					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
 					IFNULL(NULLIF(day_landings, ''), 0) as day_landings,
@@ -193,8 +192,8 @@ var logbookView = NewView("logbook_view",
 			)
 			SELECT
 				*,
-				IFNULL(LAG(uuid) OVER (ORDER BY m_date, departure_time), '') AS prev_uuid,
-				IFNULL(LEAD(uuid) OVER (ORDER BY m_date, departure_time), '') AS next_uuid
+				IFNULL(LAG(uuid) OVER (ORDER BY date, departure_time), '') AS prev_uuid,
+				IFNULL(LEAD(uuid) OVER (ORDER BY date, departure_time), '') AS next_uuid
 			FROM base
 			`,
 		MySQL: `
@@ -202,8 +201,7 @@ var logbookView = NewView("logbook_view",
 				SELECT
 					uuid,
 					date,
-					ROW_NUMBER() OVER (ORDER BY CONCAT(SUBSTRING(date, 7, 4),SUBSTRING(date, 4, 2),SUBSTRING(date, 1, 2),departure_time)) AS rn,
-					CONCAT(SUBSTRING(date,7,4), SUBSTRING(date,4,2), SUBSTRING(date,1,2)) as m_date,
+					ROW_NUMBER() OVER (date, departure_time)) AS rn,
 					departure_place, departure_time, arrival_place, arrival_time,
 					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
 					IFNULL(day_landings, 0) as day_landings,
@@ -221,8 +219,8 @@ var logbookView = NewView("logbook_view",
 			)
 			SELECT
 				*,
-				IFNULL(LAG(uuid) OVER (ORDER BY m_date, departure_time), '') AS prev_uuid,
-				IFNULL(LEAD(uuid) OVER (ORDER BY m_date, departure_time), '') AS next_uuid
+				IFNULL(LAG(uuid) OVER (ORDER BY date, departure_time), '') AS prev_uuid,
+				IFNULL(LEAD(uuid) OVER (ORDER BY date, departure_time), '') AS next_uuid
 			FROM base
 		`,
 	},

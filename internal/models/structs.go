@@ -25,7 +25,6 @@ type JSONResponse struct {
 type FlightRecord struct {
 	UUID      string `json:"uuid"`
 	Date      string `json:"date"`
-	MDate     string `json:"m_date"`
 	Departure struct {
 		Place string `json:"place"`
 		Time  string `json:"time"`
@@ -127,7 +126,6 @@ type FlightRecordForPerson struct {
 	LogUUID   string `json:"log_uuid"`
 	Role      string `json:"role"`
 	Date      string `json:"date"`
-	MDate     string `json:"m_date"`
 	Departure string `json:"departure"`
 	Arrival   string `json:"arrival"`
 	TotalTime string `json:"total_time"`

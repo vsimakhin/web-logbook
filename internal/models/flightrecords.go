@@ -35,7 +35,7 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) 
 
 	query := `
 		SELECT 
-			uuid, rn, date, m_date, departure_place, departure_time,
+			uuid, rn, date, departure_place, departure_time,
 			arrival_place, arrival_time, aircraft_model, reg_name,
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
@@ -46,7 +46,7 @@ func (m *DBModel) GetFlightRecordByID(uuid string) (fr FlightRecord, err error) 
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 
 	err = row.Scan(
-		&fr.UUID, &fr.RecordNumber, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
+		&fr.UUID, &fr.RecordNumber, &fr.Date, &fr.Departure.Place, &fr.Departure.Time,
 		&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 		&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 		&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
@@ -136,14 +136,14 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 
 	rows, err := m.DB.QueryContext(ctx, `
 		SELECT
-			uuid, rn, date, m_date, departure_place, departure_time,
+			uuid, rn, date, departure_place, departure_time,
 			arrival_place, arrival_time, aircraft_model, reg_name,
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks, distance, custom_fields,
 			has_track, attachments_count, tags, prev_uuid, next_uuid
 		FROM logbook_view
-		ORDER BY m_date desc, departure_time desc`)
+		ORDER BY date desc, departure_time desc`)
 
 	if err != nil {
 		return flightRecords, err
@@ -152,7 +152,7 @@ func (m *DBModel) GetFlightRecords() (flightRecords []FlightRecord, err error) {
 
 	for rows.Next() {
 		var fr FlightRecord
-		err = rows.Scan(&fr.UUID, &fr.RecordNumber, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
+		err = rows.Scan(&fr.UUID, &fr.RecordNumber, &fr.Date, &fr.Departure.Place, &fr.Departure.Time,
 			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
@@ -176,13 +176,13 @@ func (m *DBModel) GetFlightRecordsForExport() (flightRecords []FlightRecord, err
 
 	rows, err := m.DB.QueryContext(ctx, `
 		SELECT
-			uuid, date, m_date, departure_place, departure_time,
+			uuid, date, departure_place, departure_time,
 			arrival_place, arrival_time, aircraft_model, reg_name,
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks, signature
 		FROM logbook_view
-		ORDER BY m_date desc, departure_time desc`)
+		ORDER BY date desc, departure_time desc`)
 
 	if err != nil {
 		return flightRecords, err
@@ -191,7 +191,7 @@ func (m *DBModel) GetFlightRecordsForExport() (flightRecords []FlightRecord, err
 
 	for rows.Next() {
 		var fr FlightRecord
-		err = rows.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
+		err = rows.Scan(&fr.UUID, &fr.Date, &fr.Departure.Place, &fr.Departure.Time,
 			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,
@@ -226,14 +226,14 @@ func (m *DBModel) GetFlightRecordsForMap() (flightRecords []FlightRecord, err er
 
 	rows, err := m.DB.QueryContext(ctx, `
 		SELECT
-			uuid, date, m_date, departure_place, departure_time,
+			uuid, date,  departure_place, departure_time,
 			arrival_place, arrival_time, aircraft_model, reg_name,
 			se_time, me_time, mcc_time, total_time, day_landings, night_landings,
 			night_time, ifr_time, pic_time, co_pilot_time, dual_time, instructor_time,
 			sim_type, sim_time, pic_name, remarks, distance, track, custom_fields,
 			tags
 		FROM logbook_view
-		ORDER BY m_date desc, departure_time desc`)
+		ORDER BY date desc, departure_time desc`)
 
 	if err != nil {
 		return flightRecords, err
@@ -242,7 +242,7 @@ func (m *DBModel) GetFlightRecordsForMap() (flightRecords []FlightRecord, err er
 
 	for rows.Next() {
 		var fr FlightRecord
-		err = rows.Scan(&fr.UUID, &fr.Date, &fr.MDate, &fr.Departure.Place, &fr.Departure.Time,
+		err = rows.Scan(&fr.UUID, &fr.Date, &fr.Departure.Place, &fr.Departure.Time,
 			&fr.Arrival.Place, &fr.Arrival.Time, &fr.Aircraft.Model, &fr.Aircraft.Reg,
 			&fr.Time.SE, &fr.Time.ME, &fr.Time.MCC, &fr.Time.Total, &fr.Landings.Day, &fr.Landings.Night,
 			&fr.Time.Night, &fr.Time.IFR, &fr.Time.PIC, &fr.Time.CoPilot, &fr.Time.Dual, &fr.Time.Instructor,

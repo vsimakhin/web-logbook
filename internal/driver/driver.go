@@ -67,10 +67,14 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 
 	type recordUpdate struct {
 		uuid         string
+		date         string
 		times        [11]int // converted minutes
 		customFields string
 	}
 	var updates []recordUpdate
+
+	const oldDateFormat = "02/01/2006"
+	const dateFormat = "2006-01-02"
 
 	// 1. db transaction
 	fmt.Println("Preparing data migration...")
@@ -103,7 +107,7 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 	// 3. Fetch flight records
 	fmt.Println("Fetching flight records...")
 	rows, err := tx.QueryContext(ctx, `
-		SELECT uuid, 
+		SELECT uuid, date,
 			se_time, me_time, mcc_time, total_time, night_time,
 			ifr_time, pic_time, co_pilot_time, dual_time, instructor_time, sim_time,
 			custom_fields
@@ -119,9 +123,10 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 		var rec recordUpdate
 		var rawTimes [11]sql.NullString
 		var rawCF sql.NullString
+		var date string
 
 		err := rows.Scan(
-			&rec.uuid,
+			&rec.uuid, &date,
 			&rawTimes[0], &rawTimes[1], &rawTimes[2], &rawTimes[3], &rawTimes[4],
 			&rawTimes[5], &rawTimes[6], &rawTimes[7], &rawTimes[8], &rawTimes[9], &rawTimes[10],
 			&rawCF,
@@ -129,11 +134,18 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 		if err != nil {
 			return err
 		}
+		// convert time fields
 		for i := range 11 {
 			if rawTimes[i].Valid {
 				rec.times[i] = parseTimeToMinutes(rawTimes[i].String)
 			}
 		}
+		// convert date field
+		t, err := time.Parse(oldDateFormat, date)
+		if err != nil {
+			return err
+		}
+		rec.date = t.Format(dateFormat)
 
 		rec.customFields = rawCF.String
 		if len(durationFields) > 0 && rawCF.Valid && rawCF.String != "" && rawCF.String != "{}" {
@@ -169,6 +181,7 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 	fmt.Println("Updating flight records...")
 	stmt, err := tx.PrepareContext(ctx, `
 		UPDATE logbook SET
+			date = ?,
 			se_time = ?, me_time = ?, mcc_time = ?, total_time = ?, night_time = ?,
 			ifr_time = ?, pic_time = ?, co_pilot_time = ?, dual_time = ?, instructor_time = ?, sim_time = ?,
 			custom_fields = ?
@@ -180,6 +193,7 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 
 	for _, u := range updates {
 		_, err = stmt.ExecContext(ctx,
+			u.date,
 			u.times[0], u.times[1], u.times[2], u.times[3], u.times[4],
 			u.times[5], u.times[6], u.times[7], u.times[8], u.times[9], u.times[10],
 			u.customFields,

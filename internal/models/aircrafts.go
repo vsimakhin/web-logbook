@@ -16,7 +16,7 @@ func (m *DBModel) GetAircraftsInLogbook(condition int) (aircrafts map[string]str
 	if condition == LastAircrafts {
 		query = "SELECT DISTINCT aircraft_model, reg_name FROM " +
 			"(SELECT aircraft_model, reg_name FROM logbook_view " +
-			"WHERE aircraft_model <> '' ORDER BY m_date DESC LIMIT 100) AS T1 " +
+			"WHERE aircraft_model <> '' ORDER BY date DESC LIMIT 100) AS T1 " +
 			"ORDER BY aircraft_model "
 	} else {
 		query = "SELECT aircraft_model, reg_name FROM logbook_view WHERE aircraft_model <> '' " +
@@ -81,7 +81,7 @@ func (m *DBModel) GetAircraftRegs(records int) (regs []string, err error) {
 				SELECT reg_name
 				FROM logbook_view
 				WHERE reg_name <> ""
-				ORDER BY m_date DESC
+				ORDER BY date DESC
 				LIMIT ` + fmt.Sprintf("%d", records) +
 			`) subquery
 			ORDER BY reg_name;`
