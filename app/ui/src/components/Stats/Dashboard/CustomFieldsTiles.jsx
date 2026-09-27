@@ -19,7 +19,7 @@ const calculateStats = {
     }, 0);
   },
 
-  sum: (data, uuid, fieldType, fieldFormat = 1) => {
+  sum: (data, uuid, fieldType, timeFieldsFormat) => {
     const sum = data.reduce((acc, item) => {
       const value = item.custom_fields?.[uuid];
       if (value) {
@@ -28,10 +28,10 @@ const calculateStats = {
       return acc;
     }, 0);
 
-    return fieldType === 'duration' ? formatTimeField(sum, fieldFormat) : sum;
+    return fieldType === 'duration' ? formatTimeField(sum, timeFieldsFormat) : sum;
   },
 
-  average: (data, uuid, fieldType, fieldFormat = 1) => {
+  average: (data, uuid, fieldType, timeFieldsFormat) => {
     const { sum, count } = data.reduce((acc, item) => {
       const value = item.custom_fields?.[uuid];
       if (value) {
@@ -47,13 +47,12 @@ const calculateStats = {
     if (count === 0) return 0;
 
     const average = sum / count;
-    return fieldType === 'duration' ? formatTimeField(Math.round(average), fieldFormat) : Number(average.toFixed(2));
+    return fieldType === 'duration' ? formatTimeField(Math.round(average), timeFieldsFormat) : Number(average.toFixed(2));
   }
 };
 
 export const CustomFieldsTiles = ({ data, customFields }) => {
-  const { settings } = useSettings();
-  const fieldFormat = settings.time_fields_auto_format;
+  const { timeFieldsFormat } = useSettings();
 
   const visibleFields = useMemo(() => {
     if (!data || data.length === 0 || !customFields?.length) {
@@ -72,11 +71,11 @@ export const CustomFieldsTiles = ({ data, customFields }) => {
           return { ...field, stats: null };
         }
 
-        const stats = statsCalculator(data, field.uuid, field.type, fieldFormat);
+        const stats = statsCalculator(data, field.uuid, field.type, timeFieldsFormat);
         return { ...field, stats };
       })
       .filter(field => field !== null && field.stats !== null);
-  }, [data, customFields, fieldFormat]);
+  }, [data, customFields, timeFieldsFormat]);
 
   if (visibleFields.length === 0) {
     return null;

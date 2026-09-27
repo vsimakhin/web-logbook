@@ -18,8 +18,7 @@ import useSettings from "../../hooks/useSettings";
 
 export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
   const apiRef = useGridApiRef();
-  const { settings } = useSettings();
-  const fieldFormat = settings.time_fields_auto_format;
+  const { timeFieldsFormat } = useSettings();
 
   const columns = useMemo(() => [
     {
@@ -70,8 +69,8 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       type: 'time',
       aggregation: 'sum',
       width: 80,
-      valueFormatter: (value) => formatTimeField(value, fieldFormat),
-      aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
+      valueFormatter: (value) => formatTimeField(value, timeFieldsFormat),
+      aggregationFormatter: (value) => formatTimeField(value, timeFieldsFormat),
     },
     {
       field: "aircraft.model",
@@ -95,7 +94,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       headerAlign: 'center',
       width: 80,
     },
-  ], [fieldFormat]);
+  ], [timeFieldsFormat]);
 
   const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="person-flights" />), [apiRef]);
 
@@ -113,7 +112,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       footerFieldIdTotalLabel='date'
       disableColumnMenu
       customActions={customActions}
-      timeFieldFormat={formatTimeField(0, fieldFormat, true)}
+      timeFieldFormat={formatTimeField(0, timeFieldsFormat, true)}
     />
   )
 }

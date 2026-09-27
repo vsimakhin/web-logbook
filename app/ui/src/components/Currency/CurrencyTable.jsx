@@ -100,10 +100,10 @@ const getPercent = (current, target) => {
 };
 
 
-const StatusCell = ({ row, metricOptions, currencyResults, fieldFormat }) => {
+const StatusCell = ({ row, metricOptions, currencyResults, timeFieldsFormat }) => {
   const { status } = currencyResults.get(row.uuid) ?? { status: { current: 0, meetsRequirement: false, subResults: [] } };
 
-  const value = formatCurrencyValue(status.current, row.metric, fieldFormat);
+  const value = formatCurrencyValue(status.current, row.metric, timeFieldsFormat);
   const target = isTimeMetric(row.metric, row.target_value);
   const percent = getPercent(status.current, target);
   const percentLabel = percent >= 500 ? '(500+%)' : `(${Math.round(percent)}%)`;
@@ -113,15 +113,15 @@ const StatusCell = ({ row, metricOptions, currencyResults, fieldFormat }) => {
   const tooltipContent = (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Typography variant="caption" display="block" sx={{ fontWeight: 500 }}>
-        {mainName}: {value} / {formatCurrencyValue(target, row.metric, fieldFormat)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
+        {mainName}: {value} / {formatCurrencyValue(target, row.metric, timeFieldsFormat)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
       </Typography>
       {status.subResults?.map((sub, i) => {
         const subName = getLabel(sub.metric, metricOptions);
-        const subVal = formatCurrencyValue(sub.current, sub.metric, fieldFormat);
+        const subVal = formatCurrencyValue(sub.current, sub.metric, timeFieldsFormat);
         const subTarget = isTimeMetric(sub.metric, sub.target_value);
         return (
           <Typography key={i} variant="caption" display="block">
-            ↳ {subName}: {subVal} / {formatCurrencyValue(subTarget, sub.metric, fieldFormat)} ({Math.round(sub.percent)}%) {sub.meetsRequirement ? '✓' : '✗'}
+            ↳ {subName}: {subVal} / {formatCurrencyValue(subTarget, sub.metric, timeFieldsFormat)} ({Math.round(sub.percent)}%) {sub.meetsRequirement ? '✓' : '✗'}
           </Typography>
         );
       })}
@@ -152,8 +152,7 @@ const StatusCell = ({ row, metricOptions, currencyResults, fieldFormat }) => {
 
 export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   const apiRef = useGridApiRef();
-  const { fieldNameF, settings } = useSettings();
-  const fieldFormat = settings.time_fields_auto_format;
+  const { fieldNameF, timeFieldsFormat } = useSettings();
 
   const metricOptions = useMemo(() => (
     [
@@ -249,10 +248,10 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         headerName: "Status",
         headerAlign: "center",
         width: 220,
-        renderCell: ({ row }) => <StatusCell row={row} metricOptions={metricOptions} currencyResults={currencyResults} fieldFormat={fieldFormat} />
+        renderCell: ({ row }) => <StatusCell row={row} metricOptions={metricOptions} currencyResults={currencyResults} timeFieldsFormat={timeFieldsFormat} />
       }
     ]
-  ), [metricOptions, currencyResults, fieldFormat]);
+  ), [metricOptions, currencyResults, timeFieldsFormat]);
 
   const customActions = useMemo(() => (
     <>

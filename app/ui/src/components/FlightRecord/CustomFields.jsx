@@ -32,7 +32,7 @@ const getFieldProps = (fieldType) => {
 export const CustomFields = ({ flight, handleChange }) => {
   const { calculateDistance } = useLogbook();
   const { customFields } = useCustomFields();
-  const { settings } = useSettings();
+  const { timeFieldsFormat } = useSettings();
 
   const customFieldsChange = useCallback((key, value) => {
     handleChange(`custom_fields.${key}`, value);
@@ -62,7 +62,7 @@ export const CustomFields = ({ flight, handleChange }) => {
                 tooltip={field.description}
                 value={flight.custom_fields?.[field.uuid] || 0}
                 handleChange={customFieldsChange}
-                fieldFormat={settings.time_fields_auto_format}
+                fieldFormat={timeFieldsFormat}
               />
             );
           }

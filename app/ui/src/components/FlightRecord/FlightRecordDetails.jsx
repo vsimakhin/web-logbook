@@ -31,10 +31,8 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
     [flight.prev_uuid, flight.next_uuid]
   );
-  const { fieldNameF, settings } = useSettings();
+  const { fieldNameF, settings, timeFieldsFormat } = useSettings();
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
-
-  const fieldFormat = settings.time_fields_auto_format;
 
   const timeFields = useMemo(() => (
     [
@@ -135,7 +133,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                 key={field.id} id={field.id} label={field.label}
                 handleChange={handleChange}
                 total_time={flight.time.total_time}
-                fieldFormat={fieldFormat}
+                fieldFormat={timeFieldsFormat}
                 value={getValue(flight, field.id)} />
             ))}
           </Grid>

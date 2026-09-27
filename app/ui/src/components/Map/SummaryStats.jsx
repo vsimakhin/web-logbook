@@ -7,10 +7,8 @@ import useSettings from "../../hooks/useSettings";
 const size = { xs: 6, sm: 4, md: 12, lg: 6, xl: 6 };
 
 export const SummaryStats = ({ data, airportsMap }) => {
-  const { settings } = useSettings();
-  const fieldFormat = settings.time_fields_auto_format;
-
-  const stats = getStats(data, airportsMap, fieldFormat);
+  const { timeFieldsFormat } = useSettings();
+  const stats = getStats(data, airportsMap, timeFieldsFormat);
 
   return (
     <Grid container spacing={1}>

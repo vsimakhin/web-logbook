@@ -22,8 +22,7 @@ const ActionButtons = ({ settings }) => (
 );
 
 export const PreviousExperience = ({ settings, handleChange }) => {
-  const { fieldNameF, settings: userSettings } = useSettings();
-  const fieldFormat = userSettings.time_fields_auto_format;
+  const { fieldNameF, timeFieldsFormat } = useSettings();
 
   const timeFields = useMemo(() => (
     [
@@ -60,7 +59,7 @@ export const PreviousExperience = ({ settings, handleChange }) => {
               gsize={gsize}
               key={field.id} id={field.id} label={field.label}
               handleChange={handleChange}
-              fieldFormat={fieldFormat}
+              fieldFormat={timeFieldsFormat}
               maxLength={9}
               value={getValue(settings, field.id) || 0} />
           ))}
