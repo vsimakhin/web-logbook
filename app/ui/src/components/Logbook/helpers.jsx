@@ -16,7 +16,7 @@ export const createDateColumn = ({ field, headerName, width = 90 }) => ({
   headerAlign: 'center',
   width: width,
   type: 'date',
-  valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
+  valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
   valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
   renderCell: (params) => (
     <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>

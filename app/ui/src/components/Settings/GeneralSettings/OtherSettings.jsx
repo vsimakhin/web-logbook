@@ -19,6 +19,10 @@ export const OtherSettings = ({ settings, handleChange }) => {
     handleChange('time_fields_auto_format', parseInt(value));
   }, [handleChange]);
 
+  const onDateFormatChange = useCallback((_, value) => {
+    handleChange('date_fields_format', value);
+  }, [handleChange]);
+
   const onTotalsViewChange = useCallback((_, value) => {
     handleChange('logbook_totals_view', parseInt(value));
   }, [handleChange]);
@@ -57,7 +61,27 @@ export const OtherSettings = ({ settings, handleChange }) => {
               <ToggleButton value={3}>FAA</ToggleButton>
             </ToggleButtonGroup>
           }
-          label="Logbook table time fields autoformat"
+          label="Time fields format"
+          labelPlacement="start"
+        />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+        <FormControlLabel
+          sx={{ m: 0, width: '100%', display: 'flex', justifyContent: 'space-between' }}
+          control={
+            <ToggleButtonGroup
+              size="small"
+              sx={{ ml: 1 }}
+              value={settings.date_fields_format || "DD/MM/YYYY"}
+              onChange={onDateFormatChange}
+              exclusive
+            >
+              <ToggleButton value={"DD/MM/YYYY"}>DD/MM/YYYY</ToggleButton>
+              <ToggleButton value={"YYYY-MM-DD"}>YYYY-MM-DD</ToggleButton>
+              <ToggleButton value={"MM/DD/YYYY"}>MM/DD/YYYY</ToggleButton>
+            </ToggleButtonGroup>
+          }
+          label="Date fields format"
           labelPlacement="start"
         />
       </Grid>
