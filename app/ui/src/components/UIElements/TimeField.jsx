@@ -1,6 +1,6 @@
 import { useCallback, memo, useState, useEffect, useRef } from "react";
 import TextField from "./TextField";
-import { timeFieldFormat, parseTimeToMinutes } from "../../util/helpers";
+import { formatTimeField, parseTimeToMinutes } from "../../util/helpers";
 
 export const TimeField = memo(({
   id,
@@ -53,19 +53,19 @@ export const TimeField = memo(({
   };
 
   // Local string representation for the text input
-  const [text, setText] = useState(() => timeFieldFormat(value, fieldFormat));
+  const [text, setText] = useState(() => formatTimeField(value, fieldFormat));
   const isFocused = useRef(false);
 
   // Sync from props when value changes externally (e.g., initial load, record navigation)
   useEffect(() => {
     if (!isFocused.current) {
-      setText(timeFieldFormat(value, fieldFormat));
+      setText(formatTimeField(value, fieldFormat));
     }
   }, [value, fieldFormat]);
 
   // Double click: copy total_time (which is in minutes)
   const handleDoubleClick = useCallback(() => {
-    setText(timeFieldFormat(total_time, fieldFormat));
+    setText(formatTimeField(total_time, fieldFormat));
     handleChange(id, total_time || 0);
   }, [total_time, fieldFormat, handleChange, id]);
 
@@ -80,7 +80,7 @@ export const TimeField = memo(({
   const handleBlur = useCallback(() => {
     isFocused.current = false;
     const minutes = parseTimeToMinutes(text, fieldFormat);
-    setText(timeFieldFormat(minutes, fieldFormat));
+    setText(formatTimeField(minutes, fieldFormat));
     handleChange(id, minutes);
   }, [text, fieldFormat, id, handleChange]);
 

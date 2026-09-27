@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { timeFieldFormat } from "../../util/helpers";
+import { formatTimeField } from "../../util/helpers";
 
 dayjs.extend(customParseFormat);
 
@@ -160,13 +160,13 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
   return result;
 };
 
-export const formatCurrencyValue = (value, metric, fieldFormat = 1) => {
+export const formatCurrencyValue = (value, metric, format = 1) => {
   if (!metric) return value;
 
   if (metric.includes('landings')) {
     return value;
   } else if (metric.includes('time')) {
-    return timeFieldFormat(value, fieldFormat);
+    return formatTimeField(value, format);
   } else {
     return value;
   }

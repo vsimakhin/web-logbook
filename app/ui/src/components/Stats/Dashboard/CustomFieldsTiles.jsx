@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 // Custom
 import CardHeader from "../../UIElements/CardHeader";
 import Tile from "../../UIElements/Tile";
-import { timeFieldFormat } from "../../../util/helpers";
+import { formatTimeField } from "../../../util/helpers";
 import useSettings from "../../../hooks/useSettings";
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
@@ -28,7 +28,7 @@ const calculateStats = {
       return acc;
     }, 0);
 
-    return fieldType === 'duration' ? timeFieldFormat(sum, fieldFormat) : sum;
+    return fieldType === 'duration' ? formatTimeField(sum, fieldFormat) : sum;
   },
 
   average: (data, uuid, fieldType, fieldFormat = 1) => {
@@ -47,7 +47,7 @@ const calculateStats = {
     if (count === 0) return 0;
 
     const average = sum / count;
-    return fieldType === 'duration' ? timeFieldFormat(Math.round(average), fieldFormat) : Number(average.toFixed(2));
+    return fieldType === 'duration' ? formatTimeField(Math.round(average), fieldFormat) : Number(average.toFixed(2));
   }
 };
 

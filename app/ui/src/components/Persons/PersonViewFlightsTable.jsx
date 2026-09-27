@@ -13,7 +13,7 @@ import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import dayjs from "dayjs";
 import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import CSVExportButton from "../UIElements/CSVExportButton";
-import { timeFieldFormat } from "../../util/helpers";
+import { formatTimeField } from "../../util/helpers";
 import useSettings from "../../hooks/useSettings";
 
 export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
@@ -70,8 +70,8 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       type: 'time',
       aggregation: 'sum',
       width: 80,
-      valueFormatter: (value) => timeFieldFormat(value, fieldFormat),
-      aggregationFormatter: (value) => timeFieldFormat(value, fieldFormat),
+      valueFormatter: (value) => formatTimeField(value, fieldFormat),
+      aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
     },
     {
       field: "aircraft.model",
@@ -113,7 +113,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       footerFieldIdTotalLabel='date'
       disableColumnMenu
       customActions={customActions}
-      timeFieldFormat={timeFieldFormat(0, fieldFormat, true)}
+      timeFieldFormat={formatTimeField(0, fieldFormat, true)}
     />
   )
 }

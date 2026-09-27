@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
-import { timeFieldFormat } from '../../util/helpers';
+import { formatTimeField } from '../../util/helpers';
 
 export const createDateColumn = ({ field, headerName, width = 90 }) => ({
   field: field,
@@ -46,9 +46,9 @@ export const createTimeColumn = ({ field, headerName, fieldFormat = 1, width = 5
   align: align,
   type: 'time',
   valueGetter: (_value, row) => row.time[field],
-  valueFormatter: (_value, row) => timeFieldFormat(row.time[field], fieldFormat),
+  valueFormatter: (_value, row) => formatTimeField(row.time[field], fieldFormat),
   aggregation: 'sum',
-  aggregationFormatter: (value) => timeFieldFormat(value, fieldFormat),
+  aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
   ...props,
 })
 
@@ -84,8 +84,8 @@ export const createCustomFieldColumns = (customFields, category, fieldFormat = 1
       if (field.type === 'duration') {
         baseColumn.type = 'time';
         baseColumn.aggregation = 'sum';
-        baseColumn.valueFormatter = (_value, row) => timeFieldFormat(row.custom_fields[field.uuid] || 0, fieldFormat);
-        baseColumn.aggregationFormatter = (value) => timeFieldFormat(value, fieldFormat);
+        baseColumn.valueFormatter = (_value, row) => formatTimeField(row.custom_fields[field.uuid] || 0, fieldFormat);
+        baseColumn.aggregationFormatter = (value) => formatTimeField(value, fieldFormat);
       } else if (field.type === 'number') {
         baseColumn.aggregation = 'sum';
         baseColumn.type = 'number';

@@ -17,7 +17,7 @@ import useCustomFields from '../../hooks/useCustomFields';
 import TableHeader from '../UIElements/TableHeader';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
-import { timeFieldFormat } from '../../util/helpers';
+import { formatTimeField } from '../../util/helpers';
 
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
@@ -26,7 +26,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
   const fieldFormat = useMemo(() => settings.time_fields_auto_format, [settings.time_fields_auto_format]);
-  const footerEmptyTimeFieldFormat = useMemo(() => timeFieldFormat(0, fieldFormat, true), [fieldFormat]);
+  const footerEmptyTimeFieldFormat = useMemo(() => formatTimeField(0, fieldFormat, true), [fieldFormat]);
 
   const columns = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -54,10 +54,10 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createTimeColumn({ field: "se_time", headerName: fieldName("se"), fieldFormat: fieldFormat }),
       createTimeColumn({
         field: "me_time", headerName: fieldName("me"),
-        valueFormatter: (_value, row) => row.time.mcc_time !== 0 ? "" : timeFieldFormat(row.time.me_time, fieldFormat),
+        valueFormatter: (_value, row) => row.time.mcc_time !== 0 ? "" : formatTimeField(row.time.me_time, fieldFormat),
         valueGetter: (_value, row) => row.time.mcc_time !== 0 ? 0 : row.time.me_time,
         aggregation: 'sum',
-        aggregationFormatter: (value) => value === 0 ? "" : timeFieldFormat(value, fieldFormat),
+        aggregationFormatter: (value) => value === 0 ? "" : formatTimeField(value, fieldFormat),
       }),
       ...createCustomFieldColumns(customFields, fieldName("spt"), fieldFormat),
       // MCC time
@@ -88,9 +88,9 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
         field: "sim_time", headerName: fieldName("sim_time"),
         width: 55, headerAlign: 'center', align: 'center', type: 'time',
         valueGetter: (_value, row) => row.sim.time,
-        valueFormatter: (_value, row) => timeFieldFormat(row.sim.time, fieldFormat),
+        valueFormatter: (_value, row) => formatTimeField(row.sim.time, fieldFormat),
         aggregation: 'sum',
-        aggregationFormatter: (value) => timeFieldFormat(value, fieldFormat),
+        aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
       }),
       ...createCustomFieldColumns(customFields, fieldName("fstd"), fieldFormat),
       // custom

@@ -1,4 +1,4 @@
-import { timeFieldFormat, getValue } from "../../util/helpers";
+import { formatTimeField, getValue } from "../../util/helpers";
 
 export const zeroValueCellClass = ({ value }) => {
   if (value == null) return '';
@@ -13,9 +13,9 @@ export const timeColumn = (field, name, fieldFormat = 1) => ({
   align: 'center',
   aggregation: 'sum',
   type: 'number',
-  aggregationFormatter: (value) => timeFieldFormat(value, fieldFormat),
+  aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
   valueGetter: (_, row) => getValue(row, field),
-  valueFormatter: (value) => timeFieldFormat(value, fieldFormat),
+  valueFormatter: (value) => formatTimeField(value, fieldFormat),
   cellClassName: zeroValueCellClass,
 });
 
@@ -36,7 +36,7 @@ export const buildCustomFieldColumns = (customFields, fieldFormat = 1) => {
         align: 'center',
         type: (isDuration && isSum) ? 'time' : 'number',
         aggregation: isAvg ? 'avg' : field.stats_function,
-        aggregationFormatter: isDuration ? (value) => timeFieldFormat(value, fieldFormat) : undefined,
+        aggregationFormatter: isDuration ? (value) => formatTimeField(value, fieldFormat) : undefined,
         valueGetter: (_, row) => {
           const fieldData = getValue(row, `custom_fields.${field.uuid}`);
           if (!fieldData) return 0;
@@ -50,7 +50,7 @@ export const buildCustomFieldColumns = (customFields, fieldFormat = 1) => {
           return 0;
         },
         valueFormatter: (value) => {
-          if (isDuration) return timeFieldFormat(value, fieldFormat);
+          if (isDuration) return formatTimeField(value, fieldFormat);
           if (isAvg) return Number(value.toFixed(2));
           return value;
         },

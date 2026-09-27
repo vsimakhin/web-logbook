@@ -1,9 +1,9 @@
 // Convert minutes to time format
-export const timeFieldFormat = (minutes, autoFormat = 1, formatZero = false) => {
+export const formatTimeField = (minutes, format = 1, formatZero = false) => {
   if (minutes < 0) return "";
   if (minutes === 0 && !formatZero) return "";
 
-  if (autoFormat === 3) {
+  if (format === 3) {
     // FAA Decimal format (e.g. 90 min -> "1.5", 45 min -> "0.8")
     return (minutes / 60).toFixed(1);
   }
@@ -11,10 +11,10 @@ export const timeFieldFormat = (minutes, autoFormat = 1, formatZero = false) => 
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
 
-  if (autoFormat === 1) {
+  if (format === 1) {
     // Format as HH:MM
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-  } else if (autoFormat === 2 || autoFormat === 0) {
+  } else if (format === 2 || format === 0) {
     // Format as H:MM, autoFormat 0 is old setting for doing nothing, but we have time stored as minutes now
     return `${hours}:${mins.toString().padStart(2, '0')}`;
   }
@@ -108,10 +108,10 @@ const updateCustomFieldTotals = (totals, flight, customFields) => {
 // Helper function to format time totals
 const formatTimeTotals = (totals, fieldFormat) => ({
   time: Object.fromEntries(
-    TIME_FIELDS.map(field => [field, timeFieldFormat(totals.time[field], fieldFormat)])
+    TIME_FIELDS.map(field => [field, formatTimeField(totals.time[field], fieldFormat)])
   ),
   landings: totals.landings,
-  sim: { time: timeFieldFormat(totals.sim.time, fieldFormat) },
+  sim: { time: formatTimeField(totals.sim.time, fieldFormat) },
   distance: totals.distance
 });
 
