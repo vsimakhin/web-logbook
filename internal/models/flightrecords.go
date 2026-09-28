@@ -283,28 +283,3 @@ func (m *DBModel) UpdateFlightRecordSignature(uuid string, signature string) err
 
 	return nil
 }
-
-// GetFlightRecordsPicNames returns all unique flight records pic_names
-func (m *DBModel) GetFlightRecordsPicNames() ([]string, error) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	rows, err := m.DB.QueryContext(ctx, `
-		SELECT DISTINCT pic_name FROM logbook WHERE pic_name != '' ORDER BY pic_name
-	`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var picNames []string
-	for rows.Next() {
-		var picName string
-		if err := rows.Scan(&picName); err != nil {
-			return nil, err
-		}
-		picNames = append(picNames, picName)
-	}
-
-	return picNames, nil
-}

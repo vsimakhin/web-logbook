@@ -1,20 +1,22 @@
-import { useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useCallback, useMemo } from "react";
 // Custom
 import useSettings from "../../hooks/useSettings";
-import { fetchPicNames } from "../../util/http/logbook";
 import Select from "../UIElements/Select";
+import { useLogbookQuery } from "../../hooks/queries";
+
+const getUniquePicNames = (flights = []) => [
+  ...new Set(
+    flights
+      .map((flight) => flight.pic_name?.trim())
+      .filter(Boolean)
+  ),
+].sort();
 
 export const PICNameField = ({ handleChange, value, gsize, ...props }) => {
   const id = "pic_name";
   const { fieldNameF, settings } = useSettings();
-
-  const { data: options = [] } = useQuery({
-    queryFn: ({ signal }) => fetchPicNames({ signal }),
-    queryKey: ['logbook', 'pic-names'],
-    staleTime: 3600000,
-    gcTime: 3600000,
-  })
+  const { data } = useLogbookQuery();
+  const options = useMemo(() => getUniquePicNames(data), [data]);
 
   const handlePicNameDoubleClick = useCallback(() => {
     handleChange(id, settings.self_pic_label || "Self");

@@ -182,13 +182,3 @@ export const updateFlightRecordSignature = async ({ id, signature }) => {
   };
   return await handleFetch(url, options, 'Cannot update flight record signature');
 }
-
-export const fetchPicNames = async ({ signal }) => {
-  const url = `${API_URL}/logbook/pic-names`;
-  const options = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-    signal: signal,
-  };
-  return await handleFetch(url, options, 'Cannot fetch pic names');
-}

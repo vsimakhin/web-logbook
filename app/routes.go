@@ -48,8 +48,6 @@ func (app *application) routes() *chi.Mux {
 				r.Post("/{uuid}", app.HandlerApiTrackLogNew)
 				r.Delete("/{uuid}", app.HandlerApiTrackLogReset)
 			})
-
-			r.Get("/pic-names", app.HandlerApiFlightRecordPicNames)
 		})
 
 		// licensing
