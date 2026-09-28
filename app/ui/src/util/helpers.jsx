@@ -108,10 +108,10 @@ const updateCustomFieldTotals = (totals, flight, customFields) => {
 // Helper function to format time totals
 const formatTimeTotals = (totals, timeFieldsFormat) => ({
   time: Object.fromEntries(
-    TIME_FIELDS.map(field => [field, formatTimeField(totals.time[field], timeFieldsFormat)])
+    TIME_FIELDS.map(field => [field, formatTimeField(totals.time[field], timeFieldsFormat, true)])
   ),
   landings: totals.landings,
-  sim: { time: formatTimeField(totals.sim.time, timeFieldsFormat) },
+  sim: { time: formatTimeField(totals.sim.time, timeFieldsFormat, true) },
   distance: totals.distance
 });
 
