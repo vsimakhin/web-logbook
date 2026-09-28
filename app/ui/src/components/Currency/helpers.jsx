@@ -218,7 +218,6 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
   const windowStart = today.subtract(windowDays, 'day').add(1, 'day'); // inclusive window [start..today]
 
   // Collect flights within the window with their metric values
-  console.log(filteredFlights)
   const flightsInWindow = filteredFlights
     .map(f => ({ f, d: dayjs(f?.date, 'YYYY-MM-DD') }))
     .filter(({ d }) => d.isValid() && !d.isBefore(windowStart) && !d.isAfter(today))

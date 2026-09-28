@@ -61,7 +61,7 @@ describe('Currency helpers', () => {
   describe('evaluateCurrency with sub-metrics', () => {
     const flights = [
       {
-        date: '10/05/2026',
+        date: '2026-05-10',
         aircraft: { reg_name: 'OK-ABC' },
         time: {
           total_time: 120,
@@ -70,7 +70,7 @@ describe('Currency helpers', () => {
         },
       },
       {
-        date: '15/05/2026',
+        date: '2026-05-15',
         aircraft: { reg_name: 'OK-ABC' },
         time: {
           total_time: 60,
@@ -79,7 +79,7 @@ describe('Currency helpers', () => {
         },
       },
       {
-        date: '20/05/2026',
+        date: '2026-05-20',
         aircraft: { reg_name: 'OK-ABC' },
         time: {
           total_time: 180,
