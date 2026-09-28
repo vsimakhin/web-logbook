@@ -93,14 +93,12 @@ const DateFilterField = ({ label, values, onChange }) => (
   <Stack direction="row" spacing={0.5} sx={{ mb: 0.5 }}>
     <DatePicker
       label={`${label} Min`}
-      format="DD/MM/YYYY"
       value={values['>='] ? dayjs(values['>=']) : null}
       slotProps={{ field: { clearable: true, variant: 'standard', size: 'small' } }}
       onChange={(v) => onChange('>=', v ? dayjs(v) : '')}
     />
     <DatePicker
       label={`${label} Max`}
-      format="DD/MM/YYYY"
       value={values['<='] ? dayjs(values['<=']) : null}
       slotProps={{ field: { clearable: true, variant: 'standard', size: 'small' } }}
       onChange={(v) => onChange('<=', v ? dayjs(v) : '')}

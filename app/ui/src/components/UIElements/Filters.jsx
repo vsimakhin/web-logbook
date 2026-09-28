@@ -81,13 +81,13 @@ const matchesValues = (fieldValue, filterValue, matchAll = false) => {
 };
 
 const filterData = (data, filter, modelsData, aircrafts) => {
-  filter.start_date = dayjs(filter.start_date, 'DD/MM/YYYY')
-  filter.end_date = dayjs(filter.end_date, 'DD/MM/YYYY');
+  filter.start_date = dayjs(filter.start_date, 'YYYY-MM-DD')
+  filter.end_date = dayjs(filter.end_date, 'YYYY-MM-DD');
 
   // Filter data
   const filteredData = data.filter((flight) => {
     // filter by date
-    const flightDate = dayjs(flight.date, 'DD/MM/YYYY');
+    const flightDate = dayjs(flight.date, 'YYYY-MM-DD');
     const matchesDate = flightDate.isBetween(filter.start_date, filter.end_date, null, '[]');
 
     // filter registration
@@ -136,7 +136,7 @@ const dateRanges = [
   { label: `This Year - ${dayjs().year()}`, fn: () => ({ start: dayjs().startOf('year'), end: dayjs().endOf('year') }) },
   { label: `Last Year - ${dayjs().subtract(1, 'year').year()}`, fn: () => ({ start: dayjs().subtract(1, 'year').startOf('year'), end: dayjs().subtract(1, 'year').endOf('year') }) },
   { label: `Year - ${dayjs().subtract(2, 'year').year()}`, fn: () => ({ start: dayjs().subtract(2, 'year').startOf('year'), end: dayjs().subtract(2, 'year').endOf('year') }) },
-  { label: 'All Time', fn: () => ({ start: dayjs('17/12/1903', 'DD/MM/YYYY'), end: dayjs() }) }
+  { label: 'All Time', fn: () => ({ start: dayjs('1903-12-17', 'YYYY-MM-DD'), end: dayjs() }) }
 ];
 
 const defaultQuickSelect = "This Year";
@@ -196,7 +196,7 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
         id="start_date"
         label="Start Date"
         handleChange={handleChange}
-        value={filter?.start_date ? dayjs(filter?.start_date, "DD/MM/YYYY") : null}
+        value={filter?.start_date ? dayjs(filter?.start_date, "YYYY-MM-DD") : null}
         tooltip="Start Date"
       />
       <DatePicker
@@ -204,7 +204,7 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
         id="end_date"
         label="End Date"
         handleChange={handleChange}
-        value={filter?.end_date ? dayjs(filter?.end_date, "DD/MM/YYYY") : null}
+        value={filter?.end_date ? dayjs(filter?.end_date, "YYYY-MM-DD") : null}
         tooltip="End Date"
       />
       <AircraftReg

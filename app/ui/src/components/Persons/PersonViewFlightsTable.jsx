@@ -18,7 +18,7 @@ import useSettings from "../../hooks/useSettings";
 
 export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
   const apiRef = useGridApiRef();
-  const { timeFieldsFormat } = useSettings();
+  const { timeFieldsFormat, dateFieldsFormat } = useSettings();
 
   const columns = useMemo(() => [
     {
@@ -27,8 +27,8 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       headerAlign: 'center',
       width: 100,
       type: 'date',
-      valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-      valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+      valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
+      valueFormatter: (value) => (value ? dayjs(value).format(dateFieldsFormat) : ''),
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
           <Typography variant="body2" sx={{ color: "primary.main" }}>
@@ -94,7 +94,7 @@ export const PersonsViewFlightsTable = ({ title, data, isLoading }) => {
       headerAlign: 'center',
       width: 80,
     },
-  ], [timeFieldsFormat]);
+  ], [timeFieldsFormat, dateFieldsFormat]);
 
   const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="person-flights" />), [apiRef]);
 
