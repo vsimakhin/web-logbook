@@ -98,7 +98,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               id="date"
               handleChange={handleChange}
               label={fieldNameF("date")}
-              value={dayjs(flight?.date ?? dayjs().format('DD/MM/YYYY'), "DD/MM/YYYY")}
+              value={flight?.date ? dayjs(flight.date) : dayjs()}
             />
           </Grid>
 

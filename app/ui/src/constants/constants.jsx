@@ -13,7 +13,7 @@ if (import.meta.env.MODE === 'development') {
 
 export const FLIGHT_INITIAL_STATE = {
   uuid: "",
-  date: dayjs().format('DD/MM/YYYY'),
+  date: dayjs().format('YYYY-MM-DD'),
   departure: {
     place: "",
     time: ""
@@ -56,9 +56,9 @@ export const LICENSE_INITIAL_STATE = {
   category: "",
   name: "",
   number: "",
-  issued: dayjs().format('DD/MM/YYYY'),
-  valid_from: dayjs().format('DD/MM/YYYY'),
-  valid_until: dayjs().format('DD/MM/YYYY'),
+  issued: dayjs().format('YYYY-MM-DD'),
+  valid_from: dayjs().format('YYYY-MM-DD'),
+  valid_until: dayjs().format('YYYY-MM-DD'),
   document_name: "",
   document: "",
   remarks: ""

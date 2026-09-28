@@ -18,7 +18,7 @@ export const ReturnFlightRecordButton = ({ flight, handleCloseMenu }) => {
     const isNextDay = departureTime && arrivalTime && arrivalTime < departureTime;
 
     const state = {
-      date: dayjs(flight.date, "DD/MM/YYYY").add(isNextDay ? 1 : 0, "day").format("DD/MM/YYYY"),
+      date: dayjs(flight.date, "YYYY-MM-DD").add(isNextDay ? 1 : 0, "day"),
       departure: {
         place: flight.arrival.place,
         time: ""

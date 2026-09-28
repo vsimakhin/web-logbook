@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // Custom components
 import MapFieldsDialog from "./MapFieldsDialog";
-import { autoDepArrTimeRecog, autoTimeFieldRecog, convertToDDMMYYYY, marshallItem } from './helpers';
+import { autoDepArrTimeRecog, autoTimeFieldRecog, convertToDate, marshallItem } from './helpers';
 import { ToolbarButton } from '@mui/x-data-grid';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 
@@ -40,7 +40,7 @@ export const OpenCSVButton = ({ setData }) => {
                   }
 
                   // some formatting
-                  newRow.date = convertToDDMMYYYY(newRow.date);
+                  newRow.date = convertToDate(newRow.date);
                   newRow.departure_time = autoDepArrTimeRecog(newRow.departure_time);
                   newRow.arrival_time = autoDepArrTimeRecog(newRow.arrival_time);
 

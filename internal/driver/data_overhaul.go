@@ -27,6 +27,13 @@ type currencyUpdate struct {
 	date string
 }
 
+type licensingUpdate struct {
+	uuid        string
+	issued      string
+	valid_from  string
+	valid_until string
+}
+
 func convertDate(value string) (string, error) {
 	t, err := time.Parse(oldDateFormat, value)
 	if err != nil {
@@ -343,6 +350,60 @@ func migrateCurrencyDates(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
+func migrateLicensingDates(ctx context.Context, tx *sql.Tx) error {
+	fmt.Println("Updating licensing dates...")
+
+	rows, err := tx.QueryContext(ctx, `SELECT uuid, issued, valid_from, valid_until FROM licensing`)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var updates []licensingUpdate
+
+	for rows.Next() {
+		var update licensingUpdate
+
+		if err := rows.Scan(&update.uuid, &update.issued, &update.valid_from, &update.valid_until); err != nil {
+			return err
+		}
+
+		if update.issued != "" {
+			if update.issued, err = convertDate(update.issued); err != nil {
+				return fmt.Errorf("invalid licensing issued date %q for %s: %w", update.issued, update.uuid, err)
+			}
+		}
+		if update.valid_from != "" {
+			if update.valid_from, err = convertDate(update.valid_from); err != nil {
+				return fmt.Errorf("invalid licensing valid_from date %q for %s: %w", update.valid_from, update.uuid, err)
+			}
+		}
+		if update.valid_until != "" {
+			if update.valid_until, err = convertDate(update.valid_until); err != nil {
+				return fmt.Errorf("invalid licensing valid_until date %q for %s: %w", update.valid_until, update.uuid, err)
+			}
+		}
+
+		updates = append(updates, update)
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	for _, update := range updates {
+		_, err := tx.ExecContext(ctx, `UPDATE licensing 
+			SET issued = ?, valid_from = ?, valid_until = ? WHERE uuid = ?`,
+			update.issued, update.valid_from, update.valid_until, update.uuid)
+
+		if err != nil {
+			return fmt.Errorf("updating licesing %s: %w", update.uuid, err)
+		}
+	}
+
+	return nil
+}
+
 func migrateLogbookTimeColumns(ctx context.Context, tx *sql.Tx) error {
 	fmt.Println("Updating MySQL time column types...")
 
@@ -390,6 +451,10 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 	}
 
 	if err := migrateCurrencyDates(ctx, tx); err != nil {
+		return err
+	}
+
+	if err := migrateLicensingDates(ctx, tx); err != nil {
 		return err
 	}
 
