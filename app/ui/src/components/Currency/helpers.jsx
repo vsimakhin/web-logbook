@@ -26,9 +26,9 @@ const getStartDate = (rule) => {
     case "calendar_years":
       return dayjs(`${now.year() - (value - 1)}-01-01`);
     case "since":
-      return dayjs(since, "DD/MM/YYYY");
+      return dayjs(since, "YYYY-MM-DD");
     case "all_time":
-      return dayjs('17/12/1903', 'DD/MM/YYYY');
+      return dayjs('17/12/1903', 'YYYY-MM-DD');
     case "days":
     default:
       return now.subtract(value, "day");
@@ -116,7 +116,7 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
   const since = getStartDate(rule);
 
   const qualifyingFlights = filteredFlights.filter(flight => {
-    const flightDate = dayjs(flight.date, "DD/MM/YYYY");
+    const flightDate = dayjs(flight.date, "YYYY-MM-DD");
     if (!flightDate.isValid() || flightDate.isBefore(since)) return false;
     return true;
   });
@@ -188,7 +188,7 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
 
     const events = [];
     filteredFlights.forEach(f => {
-      const d = dayjs(f?.date, 'DD/MM/YYYY');
+      const d = dayjs(f?.date, 'YYYY-MM-DD');
       if (!d.isValid()) return;
       const cnt = Math.max(0, selector(f));
       for (let i = 0; i < cnt; i++) events.push(d);
@@ -218,8 +218,9 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
   const windowStart = today.subtract(windowDays, 'day').add(1, 'day'); // inclusive window [start..today]
 
   // Collect flights within the window with their metric values
+  console.log(filteredFlights)
   const flightsInWindow = filteredFlights
-    .map(f => ({ f, d: dayjs(f?.date, 'DD/MM/YYYY') }))
+    .map(f => ({ f, d: dayjs(f?.date, 'YYYY-MM-DD') }))
     .filter(({ d }) => d.isValid() && !d.isBefore(windowStart) && !d.isAfter(today))
     .map(({ f, d }) => {
       const amount = getFlightMetricValue(f, metric);
@@ -234,7 +235,7 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
   if (!meets) {
     // Not current today. Compute the most recent expiry in the past (last time the rule was still valid).
     const allFlights = filteredFlights
-      .map(f => ({ d: dayjs(f?.date, 'DD/MM/YYYY'), amount: getFlightMetricValue(f, metric) }))
+      .map(f => ({ d: dayjs(f?.date, 'YYYY-MM-DD'), amount: getFlightMetricValue(f, metric) }))
       .filter(x => x.d.isValid() && !isNaN(x.amount) && x.amount > 0)
       .sort((a, b) => a.d.valueOf() - b.d.valueOf());
 

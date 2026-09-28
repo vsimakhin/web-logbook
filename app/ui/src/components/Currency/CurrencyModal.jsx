@@ -73,7 +73,7 @@ const AddSubMetricButton = ({ onClick }) => {
 }
 
 export const CurrencyModal = ({ open, onClose, payload }) => {
-  const { fieldNameF, dateFieldsFormat } = useSettings();
+  const { fieldNameF } = useSettings();
   const [currency, setCurrency] = useState({ ...payload });
   const title = useMemo(() => currency?.uuid === "new" ? "New Currency" : "Edit Currency", [currency?.uuid]);
 
@@ -152,7 +152,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
   const currencyTimeFrame = () => {
     if (currency.time_frame.unit !== 'all_time' && currency.time_frame.unit !== 'since') {
       return (
-        <TextField gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+        <TextField gsize={{ xs: 6 }}
           id="time_frame.value"
           label="Timeframe Value"
           handleChange={handleChange}
@@ -161,11 +161,11 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
       );
     } else if (currency.time_frame.unit === 'since') {
       return (
-        <DatePicker gsize={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}
+        <DatePicker gsize={{ xs: 6 }}
           id="time_frame.since"
           handleChange={handleChange}
           label={"Since Date"}
-          value={dayjs(currency?.time_frame?.since ?? dayjs().format(dateFieldsFormat), dateFieldsFormat)}
+          value={currency?.time_frame?.since ? dayjs(currency.time_frame.since) : dayjs()}
         />
       )
     } else {

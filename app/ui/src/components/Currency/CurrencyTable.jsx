@@ -25,7 +25,7 @@ const getLabel = (metricValue, metricOptions) => {
   return option ? option.label : metricValue;
 }
 
-const formatTimeFrame = (timeFrame) => {
+const formatTimeFrame = (timeFrame, dateFieldsFormat) => {
   if (!timeFrame) return '—';
 
   const { unit, value, since } = timeFrame;
@@ -34,7 +34,7 @@ const formatTimeFrame = (timeFrame) => {
   )?.label;
 
   if (unit === 'all_time') return label;
-  if (unit === 'since') return since ? `Since ${since}` : '—';
+  if (unit === 'since') return since ? `Since ${dayjs(since, "YYYY-MM-DD").format(dateFieldsFormat)}` : '—';
 
   return value ? `${value} ${label}` : '—';
 };
@@ -78,8 +78,7 @@ const ExpireCell = ({ row, currencyResults }) => {
     return '—';
   }
 
-  const expiryStr = dayjs(expiry).format('DD/MM/YYYY');
-  const exp = calculateExpiry(expiryStr);
+  const exp = calculateExpiry(expiry);
   if (!exp) return '—';
 
   const text = exp.diffDays < 0
@@ -152,7 +151,7 @@ const StatusCell = ({ row, metricOptions, currencyResults, timeFieldsFormat }) =
 
 export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   const apiRef = useGridApiRef();
-  const { fieldNameF, timeFieldsFormat } = useSettings();
+  const { fieldNameF, timeFieldsFormat, dateFieldsFormat } = useSettings();
 
   const metricOptions = useMemo(() => (
     [
@@ -223,7 +222,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         headerName: "Time Frame",
         headerAlign: 'center',
         width: 170,
-        renderCell: ({ row }) => formatTimeFrame(row.time_frame)
+        renderCell: ({ row }) => formatTimeFrame(row.time_frame, dateFieldsFormat)
       },
       { field: "filters", headerName: "Filters", headerAlign: 'center', width: 150 },
       {
@@ -233,7 +232,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         width: 150,
         renderCell: ({ row }) => {
           const { expiry } = currencyResults.get(row.uuid) ?? {};
-          return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
+          return expiry ? dayjs(expiry).format(dateFieldsFormat) : '—'
         }
       },
       {
@@ -251,7 +250,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         renderCell: ({ row }) => <StatusCell row={row} metricOptions={metricOptions} currencyResults={currencyResults} timeFieldsFormat={timeFieldsFormat} />
       }
     ]
-  ), [metricOptions, currencyResults, timeFieldsFormat]);
+  ), [metricOptions, currencyResults, timeFieldsFormat, dateFieldsFormat]);
 
   const customActions = useMemo(() => (
     <>
