@@ -10,7 +10,7 @@ import { FLIGHT_INITIAL_STATE } from "../../constants/constants";
 import FlightMap from "../FlightMap/FlightMap";
 import Attachments from "../FlightRecordAttachment/Attachments";
 import FlightRecordPersons from "../Persons/FlightRecordPersons";
-import { useFlightQuery } from "../../hooks/queries/useFlightQuery";
+import { useFlightQuery } from "../../hooks/queries";
 
 const gridSize = { xs: 12, sm: 12, md: 6, lg: 6, xl: 6 };
 

@@ -5,7 +5,6 @@ import Divider from '@mui/material/Divider';
 // Custom
 import TextField from "../UIElements/TextField";
 import { TIME_SLOT_PROPS, PLACE_SLOT_PROPS } from "../../constants/constants";
-import useLogbook from "../../hooks/useLogbook";
 import useCustomFields from "../../hooks/useCustomFields";
 import useSettings from "../../hooks/useSettings";
 import TimeField from "../UIElements/TimeField";
@@ -30,8 +29,7 @@ const getFieldProps = (fieldType) => {
 };
 
 export const CustomFields = ({ flight, handleChange }) => {
-  const { calculateDistance } = useLogbook();
-  const { customFields } = useCustomFields();
+  const { customFields, calculateDistance } = useCustomFields();
   const { timeFieldsFormat } = useSettings();
 
   const customFieldsChange = useCallback((key, value) => {
