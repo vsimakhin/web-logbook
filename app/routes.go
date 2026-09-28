@@ -53,7 +53,6 @@ func (app *application) routes() *chi.Mux {
 		// licensing
 		r.Route("/licensing", func(r chi.Router) {
 			r.Get("/list", app.HandlerApiGetLicensingRecords)
-			r.Get("/categories", app.HandlerApiGetLicensingCategories)
 			r.With(middleware.Compress(5)).Get("/{uuid}", app.HandlerApiGetLicensingRecord)
 			r.Post("/new", app.HandlerApiNewLicensingRecord)
 			r.Put("/{uuid}", app.HandlerApiUpdateLicensingRecord)
