@@ -10,14 +10,14 @@ import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
 import { formatTimeField } from '../../util/helpers';
 
-export const createDateColumn = ({ field, headerName, width = 90 }) => ({
+export const createDateColumn = ({ field, headerName, width = 90, fieldFormat = "DD/MM/YYYY" }) => ({
   field: field,
   headerName: headerName,
   headerAlign: 'center',
   width: width,
   type: 'date',
   valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
-  valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+  valueFormatter: (value) => (value ? dayjs(value).format(fieldFormat) : ''),
   renderCell: (params) => (
     <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
       <Typography variant="body2" sx={{ color: "primary.main" }}>

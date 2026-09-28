@@ -22,7 +22,7 @@ import { formatTimeField } from '../../util/helpers';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
-  const { settings, isSettingsLoading, fieldName, paginationOptions, timeFieldsFormat } = useSettings();
+  const { settings, isSettingsLoading, fieldName, paginationOptions, timeFieldsFormat, dateFieldsFormat } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
   const footerEmptyTimeFieldFormat = useMemo(() => formatTimeField(0, timeFieldsFormat, true), [timeFieldsFormat]);
 
@@ -35,7 +35,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // record number
       createColumn({ field: "record_number", headerName: "#", width: 30, type: 'number', align: 'center', valueFormatter: (value) => value.toString() }),
       // date
-      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90 }),
+      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat }),
       // departure
       createColumn({ field: "departure_place", headerName: fieldName("dep_place"), width: 60, valueGetter: (_value, row) => row.departure?.place }),
       createColumn({ field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.departure?.time }),
@@ -101,7 +101,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createHasAttachmentColumn({ field: "has_attachment" }),
       createColumn({ field: "tags", type: "autocomplete", headerName: fieldName("tags"), align: 'left' }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
-  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, timeFieldsFormat]);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, timeFieldsFormat, dateFieldsFormat]);
 
   const columnGroupingModel = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {

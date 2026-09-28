@@ -73,7 +73,7 @@ const AddSubMetricButton = ({ onClick }) => {
 }
 
 export const CurrencyModal = ({ open, onClose, payload }) => {
-  const { fieldNameF } = useSettings();
+  const { fieldNameF, dateFieldsFormat } = useSettings();
   const [currency, setCurrency] = useState({ ...payload });
   const title = useMemo(() => currency?.uuid === "new" ? "New Currency" : "Edit Currency", [currency?.uuid]);
 
@@ -165,7 +165,7 @@ export const CurrencyModal = ({ open, onClose, payload }) => {
           id="time_frame.since"
           handleChange={handleChange}
           label={"Since Date"}
-          value={dayjs(currency?.time_frame?.since ?? dayjs().format('DD/MM/YYYY'), "DD/MM/YYYY")}
+          value={dayjs(currency?.time_frame?.since ?? dayjs().format(dateFieldsFormat), dateFieldsFormat)}
         />
       )
     } else {
