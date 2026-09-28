@@ -75,7 +75,7 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duratio
 		return night, false, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Departure.Place, err)
 	}
 
-	departure_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
+	departure_time, err := time.Parse("2006-01-02 1504", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time))
 	if err != nil {
 		return night, false, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Departure.Time), err)
 	}
@@ -85,7 +85,7 @@ func (app *application) calculateNightTime(fr models.FlightRecord) (time.Duratio
 		return night, false, fmt.Errorf("error calculating night time, cannot find %s - %s", fr.Arrival.Place, err)
 	}
 
-	arrival_time, err := time.Parse("02/01/2006 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
+	arrival_time, err := time.Parse("2006-01-02 1504", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time))
 	if err != nil {
 		return night, false, fmt.Errorf("error calculating night time, wrong date format %s - %s", fmt.Sprintf("%s %s", fr.Date, fr.Arrival.Time), err)
 	}
