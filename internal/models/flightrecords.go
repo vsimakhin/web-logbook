@@ -1,10 +1,5 @@
 package models
 
-import (
-	"sort"
-	"strings"
-)
-
 // calculateTotals calculates totals for page footer
 func CalculateTotals(totals FlightRecord, record FlightRecord) FlightRecord {
 
@@ -257,47 +252,6 @@ func (m *DBModel) GetFlightRecordsForMap() (flightRecords []FlightRecord, err er
 	}
 
 	return flightRecords, nil
-}
-
-// GetFlightRecordsTags returns all flight records tags
-func (m *DBModel) GetFlightRecordsTags() (tags []string, err error) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	rows, err := m.DB.QueryContext(ctx, "SELECT tags FROM logbook_view")
-	if err != nil {
-		return tags, err
-	}
-	defer rows.Close()
-
-	uniqueTags := make(map[string]struct{})
-	for rows.Next() {
-		var tag string
-		err = rows.Scan(&tag)
-		if err != nil {
-			return tags, err
-		}
-
-		if tag == "" {
-			continue
-		}
-
-		// split tags by comma and check for unique tags
-		for t := range strings.SplitSeq(tag, ",") {
-			t = strings.TrimSpace(t)
-			if t != "" {
-				uniqueTags[t] = struct{}{}
-			}
-		}
-	}
-
-	for t := range uniqueTags {
-		tags = append(tags, t)
-	}
-
-	sort.Strings(tags)
-
-	return tags, nil
 }
 
 // GetFlightRecordSignature returns flight record signature

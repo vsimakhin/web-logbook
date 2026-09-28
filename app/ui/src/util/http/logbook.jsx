@@ -163,16 +163,6 @@ export const fetchDistance = async ({ signal, departure, arrival }) => {
   return await handleFetch(url, options, 'Cannot fetch distance');
 }
 
-export const fetchTags = async ({ signal }) => {
-  const url = `${API_URL}/logbook/tags`;
-  const options = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-    signal: signal,
-  };
-  return await handleFetch(url, options, 'Cannot fetch tags');
-}
-
 export const fetchFlightRecordSignature = async ({ signal, id }) => {
   const url = `${API_URL}/logbook/${id}/signature`;
   const options = {

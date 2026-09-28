@@ -1,17 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-// Custom components
 import Select from "./Select";
-import { fetchTags } from "../../util/http/logbook";
+import { useLogbookQuery } from "../../hooks/queries";
+import { useMemo } from "react";
+
+const getUniqueTags = (flights = []) => {
+  return [
+    ...new Set(
+      flights
+        .flatMap((flight) => flight.tags.split(','))
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+    ),
+  ];
+};
 
 export const FlightTags = ({ gsize, id = "tags", label = "Tags", value, handleChange, ...props }) => {
-
-  const { data: options = [] } = useQuery({
-    queryKey: ['logbook', 'tags'],
-    queryFn: ({ signal }) => fetchTags({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    select: (data) => data || [], // Ensure options is always an array
-  });
+  const { data } = useLogbookQuery()
+  const options = useMemo(() => getUniqueTags(data), [data]);
 
   return (
     <Select gsize={gsize}

@@ -49,7 +49,6 @@ func (app *application) routes() *chi.Mux {
 				r.Delete("/{uuid}", app.HandlerApiTrackLogReset)
 			})
 
-			r.Get("/tags", app.HandlerApiFlightRecordTags)
 			r.Get("/pic-names", app.HandlerApiFlightRecordPicNames)
 		})
 
