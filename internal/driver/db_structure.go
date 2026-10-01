@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "100"
+	schemaVersion = "101"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -259,9 +259,12 @@ var aircraftsView = NewView("aircrafts_view",
 						END
 					) AS categories,
 					IFNULL(ac.categories,'') AS model_categories,
-					a.custom_categories
+					a.custom_categories,
+					SUM(l.total_time) AS total_time
 				FROM aircrafts a
 				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
+				LEFT JOIN logbook l on a.reg_name = l.reg_name
+				GROUP BY a.reg_name, a.aircraft_model, ac.categories, a.custom_categories
 				ORDER BY a.aircraft_model, a.reg_name`,
 		MySQL: `SELECT 
 					a.reg_name,
@@ -279,9 +282,12 @@ var aircraftsView = NewView("aircrafts_view",
 						)
 					) AS categories,
 					IFNULL(ac.categories,'') AS model_categories,
-					a.custom_categories
+					a.custom_categories,
+					SUM(l.total_time) AS total_time
 				FROM aircrafts a
 				LEFT JOIN aircraft_categories ac ON a.aircraft_model = ac.model
+				LEFT JOIN logbook l on a.reg_name = l.reg_name
+				GROUP BY a.reg_name, a.aircraft_model, ac.categories, a.custom_categories
 				ORDER BY a.aircraft_model, a.reg_name`,
 	},
 )

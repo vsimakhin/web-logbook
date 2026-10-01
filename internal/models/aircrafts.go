@@ -88,9 +88,13 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 	ctx, cancel := m.ContextWithDefaultTimeout()
 	defer cancel()
 
-	query := `SELECT model, categories, IFNULL(time_fields_auto_fill, '') AS time_fields_auto_fill
+	query := `
+		SELECT
+			model, categories, IFNULL(time_fields_auto_fill, '') AS time_fields_auto_fill,
+			SUM(total_time) AS total_time
 		FROM aircraft_categories
-		WHERE model IN (SELECT DISTINCT lv.aircraft_model FROM logbook_view lv)
+		INNER JOIN logbook_view lv ON aircraft_categories.model = lv.aircraft_model
+		GROUP BY model, categories, time_fields_auto_fill
 		ORDER BY model`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
@@ -101,7 +105,7 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 	for rows.Next() {
 		var cat Category
 		var autoFill string
-		if err = rows.Scan(&cat.Model, &cat.Category, &autoFill); err != nil {
+		if err = rows.Scan(&cat.Model, &cat.Category, &autoFill, &cat.TotalTime); err != nil {
 			return categories, err
 		}
 		if autoFill != "" {
@@ -110,6 +114,9 @@ func (m *DBModel) GetAircraftModelsCategories() (categories []Category, err erro
 			}
 		}
 		categories = append(categories, cat)
+	}
+	if err = rows.Err(); err != nil {
+		return categories, err
 	}
 
 	return categories, nil
@@ -120,7 +127,8 @@ func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
 	defer cancel()
 
 	query := `SELECT 
-				reg_name, aircraft_model, categories, model_categories, custom_categories
+				reg_name, aircraft_model, categories, model_categories, custom_categories,
+				total_time
 			FROM aircrafts_view av`
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
@@ -130,10 +138,13 @@ func (m *DBModel) GetAircrafts() (aircrafts []Aircraft, err error) {
 
 	for rows.Next() {
 		var ac Aircraft
-		if err = rows.Scan(&ac.Reg, &ac.Model, &ac.Category, &ac.ModelCategory, &ac.CustomCategory); err != nil {
+		if err = rows.Scan(&ac.Reg, &ac.Model, &ac.Category, &ac.ModelCategory, &ac.CustomCategory, &ac.TotalTime); err != nil {
 			return aircrafts, err
 		}
 		aircrafts = append(aircrafts, ac)
+	}
+	if err = rows.Err(); err != nil {
+		return aircrafts, err
 	}
 
 	return aircrafts, nil

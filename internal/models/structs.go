@@ -304,6 +304,7 @@ type Aircraft struct {
 	Category       string `json:"category"`
 	ModelCategory  string `json:"model_category"`
 	CustomCategory string `json:"custom_category"`
+	TotalTime      int    `json:"total_time"`
 }
 
 type Category struct {
@@ -319,6 +320,7 @@ type Category struct {
 		Dual       bool `json:"dual_time"`
 		Instructor bool `json:"instructor_time"`
 	} `json:"time_fields_auto_fill"`
+	TotalTime int `json:"total_time"`
 }
 
 // Currency is a type for tracking pilot currencies
