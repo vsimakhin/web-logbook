@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 // Convert minutes to time format
 export const formatTimeField = (minutes, format = 1, formatZero = false) => {
   if (minutes < 0) return "";
@@ -164,8 +166,10 @@ export const getStats = (data, airportsMap, timeFieldsFormat) => {
 
 export const getTotalsByMonthAndYear = (flights, customFields = []) => {
   const totals = flights.reduce((acc, flight) => {
-    const [, month, year] = flight.date.split('/');
-    const key = `${year}-${month}`;
+    const date = dayjs(flight.date);
+    const month = date.month() + 1;
+    const year = date.year();
+    const key = date.format('YYYY-MM');
 
     if (!acc[key]) {
       acc[key] = createInitialTotals({ year, month });
