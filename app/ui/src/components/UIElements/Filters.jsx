@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(isBetween);
 import { useCallback, useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 // MUI UI elements
 import Grid from "@mui/material/Grid";
 import Checkbox from "@mui/material/Checkbox";
@@ -12,11 +11,10 @@ import AircraftReg from "./AircraftReg";
 import AircraftType from "./AircraftType";
 import AircraftCategories from "./AircraftCategories";
 import Select from "./Select";
-import { fetchAircraftModelsCategories } from "../../util/http/aircraft";
 import FlightTags from "./FlightTags";
 import DepartureArrival from "./DepartureArrival";
 import Tooltip from "@mui/material/Tooltip";
-import { useAircraftsQuery } from "../../hooks/queries";
+import { useAircraftsQuery, useModelsCategoriesQuery } from "../../hooks/queries";
 
 const MAP_FILTER_INITIAL_STATE = {
   start_date: dayjs().startOf('year'),
@@ -144,15 +142,7 @@ const defaultQuickSelect = "This Year";
 
 export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSelect }) => {
   const [filter, setFilter] = useState({ ...MAP_FILTER_INITIAL_STATE });
-
-  const { data: modelsData } = useQuery({
-    queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    refetchOnWindowFocus: false,
-  });
-
+  const { data: modelsData } = useModelsCategoriesQuery();
   const { data: aircrafts } = useAircraftsQuery();
 
   const handleChange = useCallback((key, value) => {

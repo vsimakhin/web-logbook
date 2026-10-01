@@ -1,24 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // Custom
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { getTotalsByAircraft } from "../../../util/helpers";
 import TotalsByAircraftTable from "./TotalsByAircraftTable";
-import { fetchAircraftModelsCategories } from "../../../util/http/aircraft";
 import useCustomFields from "../../../hooks/useCustomFields";
-import { useAircraftsQuery, useLogbookQuery } from "../../../hooks/queries";
+import { useAircraftsQuery, useLogbookQuery, useModelsCategoriesQuery } from "../../../hooks/queries";
 
 export const TotalsByAircraft = ({ type }) => {
   const { data: flights = [], isLoading, isError, error } = useLogbookQuery();
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
-  const { data: models = [] } = useQuery({
-    queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-
+  const { data: models = [] } = useModelsCategoriesQuery();
   const { data: aircrafts } = useAircraftsQuery();
   const { customFields } = useCustomFields();
 

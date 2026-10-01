@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
 // MUI UI elements
 import Grid from "@mui/material/Grid";
@@ -22,9 +21,9 @@ import FlightRecordMenuButtons from './FlightRecordMenuButtons';
 import { FIELDS_VISIBILITY_KEY } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
-import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 import { PICNameField } from './PICNameField';
 import CustomFields from './CustomFields';
+import { useModelsCategoriesQuery } from '../../hooks/queries';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() =>
@@ -49,14 +48,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     ]
   ), [fieldNameF]);
 
-  const { data: models = [] } = useQuery({
-    queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    refetchOnWindowFocus: false,
-    select: (data) => data || [], // Ensure options is always an array
-  });
+  const { data: models } = useModelsCategoriesQuery();
 
   // Auto fill pic time
   useEffect(() => {

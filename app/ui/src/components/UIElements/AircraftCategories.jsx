@@ -1,9 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // Custom
 import Select from "./Select";
-import { fetchAircraftModelsCategories } from "../../util/http/aircraft";
-import { useAircraftsQuery } from "../../hooks/queries";
+import { useAircraftsQuery, useModelsCategoriesQuery } from "../../hooks/queries";
 
 const getUniqueCategoriesFromKey = (items, key) => {
   const set = new Set();
@@ -27,11 +25,7 @@ export const AircraftCategories = ({
   ...props
 }) => {
 
-  const { data: modelCategoriesOptions = [] } = useQuery({
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
-    queryKey: ['models-categories'],
-    staleTime: 3600000,
-    gcTime: 3600000,
+  const { data: modelCategoriesOptions } = useModelsCategoriesQuery({
     select: data => getUniqueCategoriesFromKey(data, "category"),
   })
 
