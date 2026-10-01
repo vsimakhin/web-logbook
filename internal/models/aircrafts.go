@@ -40,32 +40,6 @@ func (m *DBModel) GetAircraftsInLogbook(condition int) (aircrafts map[string]str
 	return aircrafts, nil
 }
 
-// GetAircraftModels returns the list of the recorded aircraft models/types
-func (m *DBModel) GetAircraftModels() (models []string, err error) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	query := `SELECT DISTINCT aircraft_model 
-		FROM logbook_view 
-		WHERE aircraft_model <> '' 
-		ORDER BY aircraft_model`
-	rows, err := m.DB.QueryContext(ctx, query)
-	if err != nil {
-		return models, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var model string
-		if err = rows.Scan(&model); err != nil {
-			return models, err
-		}
-		models = append(models, model)
-	}
-
-	return models, nil
-}
-
 // GetAircraftRegs returns the list of the recorded aircraft registrations
 func (m *DBModel) GetAircraftRegs(records int) (regs []string, err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()
