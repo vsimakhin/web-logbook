@@ -2,16 +2,6 @@ import { handleFetch } from './http';
 import { API_URL } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
-export const fetchAircraftRegs = async ({ signal, last = true }) => {
-  const url = `${API_URL}/aircraft/logbook${last ? '/last' : ''}`;
-  const options = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-    signal: signal,
-  };
-  return await handleFetch(url, options, 'Cannot fetch aircraft regs');
-}
-
 export const fetchAircrafts = async ({ signal }) => {
   const url = `${API_URL}/aircraft/list`;
   const options = {
