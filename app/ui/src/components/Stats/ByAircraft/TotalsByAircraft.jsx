@@ -4,9 +4,9 @@ import { useMemo } from "react";
 import { useErrorNotification } from "../../../hooks/useAppNotifications";
 import { getTotalsByAircraft } from "../../../util/helpers";
 import TotalsByAircraftTable from "./TotalsByAircraftTable";
-import { fetchAircraftModelsCategories, fetchAircrafts } from "../../../util/http/aircraft";
+import { fetchAircraftModelsCategories } from "../../../util/http/aircraft";
 import useCustomFields from "../../../hooks/useCustomFields";
-import { useLogbookQuery } from "../../../hooks/queries";
+import { useAircraftsQuery, useLogbookQuery } from "../../../hooks/queries";
 
 export const TotalsByAircraft = ({ type }) => {
   const { data: flights = [], isLoading, isError, error } = useLogbookQuery();
@@ -19,13 +19,7 @@ export const TotalsByAircraft = ({ type }) => {
     gcTime: 3600000,
   });
 
-  const { data: aircrafts = [] } = useQuery({
-    queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  })
-
+  const { data: aircrafts } = useAircraftsQuery();
   const { customFields } = useCustomFields();
 
   const totalsData = useMemo(() =>

@@ -38,23 +38,6 @@ func (app *application) HandlerApiAircraftModels(w http.ResponseWriter, r *http.
 	app.writeJSON(w, http.StatusOK, models)
 }
 
-// HandlerApiAircraftList is a handler to build the aircrafts list and return it
-func (app *application) HandlerApiAircraftBuildList(w http.ResponseWriter, r *http.Request) {
-	err := app.db.GenerateAircraftTable()
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
-	aircrafts, err := app.db.GetAircrafts()
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
-	app.writeJSON(w, http.StatusOK, aircrafts)
-}
-
 // HandlerApiAircraftList is a handler for getting the list of aircrafts
 func (app *application) HandlerApiAircraftList(w http.ResponseWriter, r *http.Request) {
 	aircrafts, err := app.db.GetAircrafts()

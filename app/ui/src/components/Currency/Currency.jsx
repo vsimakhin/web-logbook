@@ -5,9 +5,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import CurrencyTable from "./CurrencyTable";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchAircrafts } from "../../util/http/aircraft";
 import { fetchCurrency } from "../../util/http/currency";
-import { useLogbookQuery } from "../../hooks/queries";
+import { useAircraftsQuery, useLogbookQuery } from "../../hooks/queries";
 
 export const Currency = () => {
   // load all data
@@ -22,12 +21,7 @@ export const Currency = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load currencies' });
 
-  const { data: aircrafts = [], isLoading: isAircraftsLoading } = useQuery({
-    queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  })
+  const { data: aircrafts, isLoading: isAircraftsLoading } = useAircraftsQuery();
 
   if (isLogbookDataLoading || isCurrencyDataLoading || isAircraftsLoading) return <LinearProgress />;
 

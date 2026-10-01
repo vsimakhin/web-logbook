@@ -12,10 +12,11 @@ import AircraftReg from "./AircraftReg";
 import AircraftType from "./AircraftType";
 import AircraftCategories from "./AircraftCategories";
 import Select from "./Select";
-import { fetchAircraftModelsCategories, fetchAircrafts } from "../../util/http/aircraft";
+import { fetchAircraftModelsCategories } from "../../util/http/aircraft";
 import FlightTags from "./FlightTags";
 import DepartureArrival from "./DepartureArrival";
 import Tooltip from "@mui/material/Tooltip";
+import { useAircraftsQuery } from "../../hooks/queries";
 
 const MAP_FILTER_INITIAL_STATE = {
   start_date: dayjs().startOf('year'),
@@ -152,12 +153,7 @@ export const Filters = ({ data, callbackFunction, quickSelect = defaultQuickSele
     refetchOnWindowFocus: false,
   });
 
-  const { data: aircrafts } = useQuery({
-    queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  })
+  const { data: aircrafts } = useAircraftsQuery();
 
   const handleChange = useCallback((key, value) => {
     setFilter(prev => ({ ...prev, [key]: value }))

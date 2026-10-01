@@ -5,15 +5,11 @@ import Grid from "@mui/material/Grid";
 import AircraftsTable from "./AircraftsTable";
 import CategoriesTable from "./CategoriesTable";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchAircraftModelsCategories, fetchAircraftsBuildList } from "../../util/http/aircraft";
+import { fetchAircraftModelsCategories } from "../../util/http/aircraft";
+import { useAircraftsQuery } from "../../hooks/queries";
 
 export const Aircrafts = () => {
-  const { data: aircrafts, isLoading: isLoadingAircrafts, isError: isErrorAircrafts, error: errorAircrafts, isSuccess: isSuccessAircrafts } = useQuery({
-    queryKey: ['aircrafts', 'build-list'],
-    queryFn: ({ signal }) => fetchAircraftsBuildList({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data: aircrafts, isLoading: isLoadingAircrafts, isError: isErrorAircrafts, error: errorAircrafts, isSuccess: isSuccessAircrafts } = useAircraftsQuery();
   useErrorNotification({ isError: isErrorAircrafts, error: errorAircrafts, fallbackMessage: 'Failed to load aircrafts' });
 
   const { data: categories, isLoading: isLoadingCategories, isError: isErrorCategories, error: errorCategories } = useQuery({
