@@ -19,13 +19,6 @@ dayjs.extend(isSameOrBefore);
 const defaultPageSizeOptions = [5, 10, 15, 20, 25, 50, 75, 100, { value: -1, label: 'All' }]
 const defaultPageSize = defaultPageSizeOptions[3]
 
-const toMinutes = (val) => {
-  if (!val || typeof val !== 'string') return null;
-  const parts = val.split(':');
-  if (parts.length !== 2) return null;
-  return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
-};
-
 const StyledDataGrid = styled(DataGrid)(({ theme }) => {
   const isLight = theme.palette.mode === 'light';
 
@@ -156,7 +149,6 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
     return rows.filter((row) => {
       return deferredFilterModel.items.every((filter) => {
         const { field, operator, value } = filter;
-        // const column = columns.find((col) => col.field === field);
         const column = columnMap.get(field);
         if (!column) return true;
 
@@ -197,9 +189,8 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
           }
 
           if (type === 'time') {
-            const v = toMinutes(value);
-            const rv = toMinutes(rowValue);
-            if (v === null || rv === null) return true;
+            const v = Number(value);
+            const rv = Number(rowValue);
             return operator === '>=' ? rv >= v : rv <= v;
           }
         }
@@ -279,8 +270,15 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
             showPageTotal: props.showPageTotal,
             showPreviousPagesTotal: props.showPreviousPagesTotal,
             initialValues: props.initialValues,
+            footerEmptyTimeFieldFormat: props.footerEmptyTimeFieldFormat,
           },
-          toolbar: { initialColumns: columns, customActions: props.customActions, title: props.title, icon: props.icon },
+          toolbar: {
+            initialColumns: columns,
+            customActions: props.customActions,
+            title: props.title,
+            icon: props.icon,
+            filterTimeFieldFormat: props.filterTimeFieldFormat
+          },
         }}
         showToolbar
         {...props}

@@ -1,18 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 // MUI
 import LinearProgress from "@mui/material/LinearProgress";
 // Custom
-import { fetchLicenses } from "../../util/http/licensing";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import LicensingTable from "./LicensingTable";
+import { useLicensingQuery } from "../../hooks/queries";
 
 export const Licensing = () => {
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['licensing'],
-    queryFn: ({ signal }) => fetchLicenses({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data, isLoading, isError, error } = useLicensingQuery();
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load licenses' });
 
   return (

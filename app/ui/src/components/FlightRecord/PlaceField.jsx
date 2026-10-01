@@ -1,4 +1,6 @@
 import { useMemo, useCallback } from 'react';
+import dayjs from 'dayjs';
+
 // MUI Icons
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
@@ -6,15 +8,30 @@ import FlightLandIcon from '@mui/icons-material/FlightLand';
 import Label from "../UIElements/Label"
 import TextField from "../UIElements/TextField"
 import { PLACE_SLOT_PROPS, TIME_SLOT_PROPS } from '../../constants/constants';
-import { convertMinutesToTime } from '../../util/helpers';
-import useLogbook from '../../hooks/useLogbook';
+import { useNightTime } from '../../hooks/queries';
+import useCustomFields from '../../hooks/useCustomFields';
 
 const capitalizeFirstLetter = (str) => str ? `${str[0].toUpperCase()}${str.slice(1)}` : "";
+
+const calculateTotalTime = (flight) => {
+  if (!flight) {
+    return 0
+  }
+
+  const departure = dayjs(flight.departure.time, "HHmm");
+  const arrival = dayjs(flight.arrival.time, "HHmm");
+
+  // If arrival time is earlier than departure time, assume it's on the next day
+  const adjustedArrival = arrival.isBefore(departure) ? arrival.add(1, "day") : arrival;
+
+  return adjustedArrival.diff(departure, "minute");
+}
 
 export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
   const icon = useMemo(() => (type === "departure" ? FlightTakeoffIcon : FlightLandIcon), [type]);
 
-  const { calculateDistance, calculateNightTime, calculateTotalTime } = useLogbook();
+  const { calculateDistance } = useCustomFields();
+  const calculateNightTime = useNightTime();
 
   const handlePlaceChange = useCallback(async () => {
     // quickly recalculate the distance to show on map
@@ -38,7 +55,7 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
 
     // iterate over the flight.time fields and update them
     for (const key in flight.time) {
-      if (key !== "total_time" && key !== "night_time" && old_total_time !== "" && flight.time[key] === old_total_time) {
+      if (key !== "total_time" && key !== "night_time" && old_total_time !== 0 && flight.time[key] === old_total_time) {
         handleChange(`time.${key}`, total_time);
       }
     }
@@ -47,13 +64,9 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
     if (flight.date && flight.departure.place && flight.arrival.place) {
       const nightTimeData = await calculateNightTime(flight);
       const nightTime = parseInt(nightTimeData.data) || 0;
-      if (nightTime > 0) {
-        handleChange("time.night_time", convertMinutesToTime(nightTime));
-      } else {
-        handleChange("time.night_time", "");
-      }
+      handleChange("time.night_time", nightTime);
     }
-  }, [flight, handleChange, calculateNightTime, calculateTotalTime]);
+  }, [flight, handleChange, calculateNightTime]);
 
   return (
     <>

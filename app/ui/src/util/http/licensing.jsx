@@ -42,16 +42,6 @@ export const updateLicenseRecord = async ({ uuid, payload }) => {
   return await handleFetch(url, options, 'Cannot update license record', false);
 }
 
-export const fetchLicenseCategory = async ({ signal }) => {
-  const url = `${API_URL}/licensing/categories`;
-  const options = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-    signal: signal,
-  };
-  return await handleFetch(url, options, 'Cannot fetch categories');
-}
-
 export const deleteLicenseRecord = async ({ signal, id }) => {
   const url = `${API_URL}/licensing/${id}`;
   const options = {

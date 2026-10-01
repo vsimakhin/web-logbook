@@ -1,11 +1,11 @@
-import { convertMinutesToTime, getValue } from "../../util/helpers";
+import { formatTimeField, getValue } from "../../util/helpers";
 
 export const zeroValueCellClass = ({ value }) => {
   if (value == null) return '';
   return Number(value) === 0 ? 'dg-zero' : '';
 };
 
-export const timeColumn = (field, name) => ({
+export const timeColumn = (field, name, format) => ({
   field: field,
   headerName: name,
   width: 80,
@@ -13,13 +13,13 @@ export const timeColumn = (field, name) => ({
   align: 'center',
   aggregation: 'sum',
   type: 'number',
-  aggregationFormatter: (value) => convertMinutesToTime(value),
+  aggregationFormatter: (value) => formatTimeField(value, format),
   valueGetter: (_, row) => getValue(row, field),
-  valueFormatter: (value) => convertMinutesToTime(value),
+  valueFormatter: (value) => formatTimeField(value, format),
   cellClassName: zeroValueCellClass,
 });
 
-export const buildCustomFieldColumns = (customFields) => {
+export const buildCustomFieldColumns = (customFields, timeFieldsFormat = 1) => {
   if (!customFields || customFields.length === 0) return [];
   return customFields
     .filter(field => field.stats_function !== 'none')
@@ -36,7 +36,7 @@ export const buildCustomFieldColumns = (customFields) => {
         align: 'center',
         type: (isDuration && isSum) ? 'time' : 'number',
         aggregation: isAvg ? 'avg' : field.stats_function,
-        aggregationFormatter: isDuration ? (value) => convertMinutesToTime(value) : undefined,
+        aggregationFormatter: isDuration ? (value) => formatTimeField(value, timeFieldsFormat) : undefined,
         valueGetter: (_, row) => {
           const fieldData = getValue(row, `custom_fields.${field.uuid}`);
           if (!fieldData) return 0;
@@ -50,7 +50,7 @@ export const buildCustomFieldColumns = (customFields) => {
           return 0;
         },
         valueFormatter: (value) => {
-          if (isDuration) return convertMinutesToTime(value);
+          if (isDuration) return formatTimeField(value, timeFieldsFormat);
           if (isAvg) return Number(value.toFixed(2));
           return value;
         },
@@ -59,19 +59,19 @@ export const buildCustomFieldColumns = (customFields) => {
     });
 };
 
-export const createStatsColumns = ({ fieldName, customFields }) => {
+export const createStatsColumns = ({ fieldName, customFields, timeFieldsFormat }) => {
   const baseColumns = [
-    timeColumn("time.se_time", fieldName("se")),
-    timeColumn("time.me_time", fieldName("me")),
-    timeColumn("time.mcc_time", fieldName("mcc")),
-    timeColumn("time.night_time", fieldName("night")),
-    timeColumn("time.ifr_time", fieldName("ifr")),
-    timeColumn("time.pic_time", fieldName("pic")),
-    timeColumn("time.co_pilot_time", fieldName("cop")),
-    timeColumn("time.dual_time", fieldName("dual")),
-    timeColumn("time.instructor_time", fieldName("instr")),
-    timeColumn("time.cc_time", "CC"),
-    timeColumn("sim.time", `${fieldName("fstd")} ${fieldName("sim_time")}`),
+    timeColumn("time.se_time", fieldName("se"), timeFieldsFormat),
+    timeColumn("time.me_time", fieldName("me"), timeFieldsFormat),
+    timeColumn("time.mcc_time", fieldName("mcc"), timeFieldsFormat),
+    timeColumn("time.night_time", fieldName("night"), timeFieldsFormat),
+    timeColumn("time.ifr_time", fieldName("ifr"), timeFieldsFormat),
+    timeColumn("time.pic_time", fieldName("pic"), timeFieldsFormat),
+    timeColumn("time.co_pilot_time", fieldName("cop"), timeFieldsFormat),
+    timeColumn("time.dual_time", fieldName("dual"), timeFieldsFormat),
+    timeColumn("time.instructor_time", fieldName("instr"), timeFieldsFormat),
+    timeColumn("time.cc_time", "CC", timeFieldsFormat),
+    timeColumn("sim.time", `${fieldName("fstd")} ${fieldName("sim_time")}`, timeFieldsFormat),
     {
       field: "land_day",
       headerName: `${fieldName("land_day")} ${fieldName("landings")}`,
@@ -108,11 +108,11 @@ export const createStatsColumns = ({ fieldName, customFields }) => {
     },
   ];
 
-  const customFieldColumns = buildCustomFieldColumns(customFields);
+  const customFieldColumns = buildCustomFieldColumns(customFields, timeFieldsFormat);
 
   return [
     ...baseColumns,
     ...customFieldColumns,
-    timeColumn("time.total_time", fieldName("total")),
+    timeColumn("time.total_time", fieldName("total"), timeFieldsFormat),
   ];
 }

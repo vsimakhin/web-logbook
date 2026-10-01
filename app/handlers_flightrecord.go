@@ -32,8 +32,7 @@ func (app *application) HandlerNightTime(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(&fr)
 	if err != nil {
-		app.errorLog.Println(fmt.Errorf("error calculating night time - %s", err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.handleError(w, err)
 		return
 	}
 
@@ -177,17 +176,6 @@ func (app *application) HandlerApiTrackLogReset(w http.ResponseWriter, r *http.R
 	app.writeOkResponse(w, "Track Log reset")
 }
 
-// HandlerApiFlightRecordTags returns all unique flight records tags
-func (app *application) HandlerApiFlightRecordTags(w http.ResponseWriter, r *http.Request) {
-	tags, err := app.db.GetFlightRecordsTags()
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
-	app.writeJSON(w, http.StatusOK, tags)
-}
-
 // HandlerApiFlightRecordSignature returns flight record signature
 func (app *application) HandlerApiFlightRecordSignature(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
@@ -219,15 +207,4 @@ func (app *application) HandlerApiFlightRecordSignatureUpdate(w http.ResponseWri
 	}
 
 	app.writeOkResponse(w, "Signature updated")
-}
-
-// HandlerApiFlightRecordPicNames returns all unique flight records pic_names
-func (app *application) HandlerApiFlightRecordPicNames(w http.ResponseWriter, r *http.Request) {
-	picNames, err := app.db.GetFlightRecordsPicNames()
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
-	app.writeJSON(w, http.StatusOK, picNames)
 }

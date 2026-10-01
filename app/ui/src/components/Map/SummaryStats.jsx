@@ -2,11 +2,13 @@ import Grid from "@mui/material/Grid";
 // Custom
 import Tile from "../UIElements/Tile";
 import { getStats } from "../../util/helpers";
+import useSettings from "../../hooks/useSettings";
 
 const size = { xs: 6, sm: 4, md: 12, lg: 6, xl: 6 };
 
 export const SummaryStats = ({ data, airportsMap }) => {
-  const stats = getStats(data, airportsMap);
+  const { timeFieldsFormat } = useSettings();
+  const stats = getStats(data, airportsMap, timeFieldsFormat);
 
   return (
     <Grid container spacing={1}>

@@ -1,22 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // MUI
 import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
 // Custom
 import useSettings from "../../hooks/useSettings";
-import { fetchLicenses } from "../../util/http/licensing";
 import { calculateExpiry } from "./helpers";
+import { useLicensingQuery } from "../../hooks/queries";
 
 export const LicensingNavTitle = () => {
   const { settings } = useSettings();
-
-  const { data: licenses = [] } = useQuery({
-    queryKey: ["licensing"],
-    queryFn: ({ signal }) => fetchLicenses({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data: licenses = [] } = useLicensingQuery();
 
   const { warning, expired } = useMemo(() => {
     const cfg = settings?.licenses_expiration;

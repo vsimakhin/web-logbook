@@ -3,12 +3,14 @@ import { DatePicker as MUIDatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
 import dayjs from 'dayjs';
+import useSettings from '../../hooks/useSettings';
 
 export const DatePicker = ({ gsize, id, name = id, label, handleChange, tooltip = label, ...props }) => {
-
   const onDateChange = useCallback((value) => {
-    handleChange(id, value ? dayjs(value).format("DD/MM/YYYY") : "")
+    handleChange(id, value ? dayjs(value).format("YYYY-MM-DD") : "")
   }, [handleChange, id])
+
+  const { dateFieldsFormat } = useSettings();
 
   return (
     <Grid size={gsize}>
@@ -18,10 +20,10 @@ export const DatePicker = ({ gsize, id, name = id, label, handleChange, tooltip 
             id={id}
             name={name}
             label={label}
-            format="DD/MM/YYYY"
+            format={dateFieldsFormat}
             onChange={onDateChange}
             slotProps={{ field: { size: "small", fullWidth: true, clearable: props.clearable } }}
-            minDate={dayjs('17/12/1903', 'DD/MM/YYYY')} // pilots looking down at people since 17/12/1903
+            minDate={dayjs('1903-12-17', 'YYYY-MM-DD')} // pilots looking down at people since 1903-12-17
             {...props}
           />
         </div>

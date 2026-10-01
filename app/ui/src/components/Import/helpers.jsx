@@ -1,43 +1,24 @@
-export const convertToDDMMYYYY = (date) => {
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
+
+export const convertToDate = (date) => {
   if (!date) return "";
 
-  // Normalize separators
-  const normalized = date.replace(/[-.]/g, "/");
-  const parts = normalized.split("/");
+  const parsed = dayjs(date.trim(), [
+    "YYYY-MM-DD",
+    "YYYY/MM/DD",
+    "DD/MM/YYYY",
+    "DD-MM-YYYY",
+    "DD/MM/YY",
+    "DD-MM-YY",
+  ], true);
 
-  if (parts.length !== 3) return date; // invalid format, return as is
+  return parsed.isValid() ? parsed.format("YYYY-MM-DD") : date;
+};
 
-  let day, month, year;
-
-  // Case: YYYY/MM/DD
-  if (parts[0].length === 4) {
-    year = parts[0];
-    month = parts[1].padStart(2, "0");
-    day = parts[2].padStart(2, "0");
-  }
-  // Case: DD/MM/YYYY
-  else if (parts[2].length === 4) {
-    day = parts[0].padStart(2, "0");
-    month = parts[1].padStart(2, "0");
-    year = parts[2];
-  }
-  // Case: DD/MM/YY
-  else if (parts[2].length === 2) {
-    day = parts[0].padStart(2, "0");
-    month = parts[1].padStart(2, "0");
-
-    const yy = parseInt(parts[2], 10);
-    year = yy < 50 ? `20${parts[2]}` : `19${parts[2]}`;
-  }
-  else {
-    // Unknown format, just return original
-    return date;
-  }
-
-  return `${day}/${month}/${year}`;
-}
-
-export const autoTimeRecog = (time) => {
+export const autoDepArrTimeRecog = (time) => {
   if (!time) return "";
 
   // If input looks like a full datetime (has ':')
@@ -49,6 +30,41 @@ export const autoTimeRecog = (time) => {
 
   // Otherwise, just strip non-digits and pad
   return time.replace(/[^0-9]/g, "").padStart(4, "0");
+};
+
+export const autoTimeFieldRecog = (time) => {
+  if (time === null || time === undefined || time === "") {
+    return 0;
+  }
+
+  const value = String(time).trim();
+
+  // HH:MM or H:MM
+  if (value.includes(":")) {
+    const match = value.match(/^(\d+):(\d{2})$/);
+
+    if (!match) {
+      return 0;
+    }
+
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+
+    if (minutes >= 60) {
+      return 0; // some wrong format
+    }
+
+    return hours * 60 + minutes;
+  }
+
+  // FAA decimal hours
+  const decimal = Number(value);
+
+  if (!Number.isFinite(decimal) || decimal < 0) {
+    return 0;
+  }
+
+  return Math.round(decimal * 60);
 };
 
 export const marshallItem = (item) => {
