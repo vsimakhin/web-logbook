@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import dayjs from "dayjs";
 // MUI
 import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
@@ -23,7 +24,7 @@ export const LicensingNavTitle = () => {
 
     if (licenses) {
       for (const license of licenses) {
-        const expiration = calculateExpiry(license.valid_until || "");
+        const expiration = calculateExpiry(dayjs(license.valid_until) || null);
         if (!expiration) continue;
 
         if (expiration.diffDays < 0) expired++;
