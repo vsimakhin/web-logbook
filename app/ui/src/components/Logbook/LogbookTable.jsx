@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useGridApiRef } from '@mui/x-data-grid';
 // MUI icons
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
+// MUI
+import { darken } from "@mui/material/styles";
 // Custom components
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid'
 import {
@@ -18,13 +20,43 @@ import TableHeader from '../UIElements/TableHeader';
 import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
 import { formatTimeField } from '../../util/helpers';
-
+import BulkEditButtons from './BulkEditButtons';
+import PlaceTimeCell from './EditCells/PlaceTimeCell';
+import AircraftTypeCell from './EditCells/AircraftTypeCell';
+import AircraftRegCell from './EditCells/AircraftRegCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
   const { settings, isSettingsLoading, fieldName, paginationOptions, timeFieldsFormat, dateFieldsFormat } = useSettings();
   const { customFields, isCustomFieldsLoading } = useCustomFields();
   const footerEmptyTimeFieldFormat = useMemo(() => formatTimeField(0, timeFieldsFormat, true), [timeFieldsFormat]);
+
+  const [isBulkEdit, setIsBulkEdit] = useState(false);
+  const [updatedRows, setUpdatedRows] = useState(new Map());
+  const handleCellChange = useCallback((row, key, value) => {
+    const keys = key.split(".");
+
+    const updateNested = (object, keys, value) => {
+      const [currentKey, ...rest] = keys;
+
+      if (!rest.length) {
+        return { ...object, [currentKey]: value };
+      }
+
+      return { ...object, [currentKey]: updateNested(object?.[currentKey] ?? {}, rest, value) };
+    };
+
+    const currentRow = apiRef.current.getRow(row.uuid) ?? row;
+    const updatedRow = updateNested({ uuid: currentRow.uuid, ...currentRow }, keys, value);
+    apiRef.current.updateRows([updatedRow]);
+
+    setUpdatedRows((prev) => {
+      const next = new Map(prev);
+      const existing = next.get(updatedRow.uuid);
+      next.set(updatedRow.uuid, { original: existing?.original ?? currentRow, updated: updatedRow });
+      return next;
+    });
+  }, [apiRef]);
 
   const columns = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -37,16 +69,44 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // date
       createDateColumn({ field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat }),
       // departure
-      createColumn({ field: "departure_place", headerName: fieldName("dep_place"), width: 60, valueGetter: (_value, row) => row.departure?.place }),
-      createColumn({ field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.departure?.time }),
+      createColumn({
+        field: "departure_place", headerName: fieldName("dep_place"), width: 60,
+        valueGetter: (_value, row) => row.departure?.place,
+        editable: true,
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="departure" placeField={true} /> } : {}),
+      }),
+      createColumn({
+        field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string',
+        valueGetter: (_value, row) => row.departure?.time,
+        editable: true,
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="departure" placeField={false} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("departure"), timeFieldsFormat),
       // arrival
-      createColumn({ field: "arrival_place", headerName: fieldName("arr_place"), width: 60, valueGetter: (_value, row) => row.arrival?.place }),
-      createColumn({ field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string', valueGetter: (_value, row) => row.arrival?.time }),
+      createColumn({
+        field: "arrival_place", headerName: fieldName("arr_place"), width: 60,
+        valueGetter: (_value, row) => row.arrival?.place,
+        editable: true,
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="arrival" placeField={true} /> } : {}),
+      }),
+      createColumn({
+        field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string',
+        valueGetter: (_value, row) => row.arrival?.time,
+        editable: true,
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="arrival" placeField={false} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("arrival"), timeFieldsFormat),
       // aircraft
-      createColumn({ field: "aircraft_model", headerName: fieldName("model"), width: 70, valueGetter: (_value, row) => row.aircraft?.model }),
-      createColumn({ field: "aircraft_reg", headerName: fieldName("reg"), width: 75, valueGetter: (_value, row) => row.aircraft?.reg_name }),
+      createColumn({
+        field: "aircraft_model", headerName: fieldName("model"), width: 70,
+        valueGetter: (_value, row) => row.aircraft?.model,
+        ...(isBulkEdit ? { renderCell: (params) => <AircraftTypeCell params={params} handleCellChange={handleCellChange} /> } : {}),
+      }),
+      createColumn({
+        field: "aircraft_reg", headerName: fieldName("reg"), width: 75,
+        valueGetter: (_value, row) => row.aircraft?.reg_name,
+        ...(isBulkEdit ? { renderCell: (params) => <AircraftRegCell params={params} handleCellChange={handleCellChange} aircraft_model={params.row.aircraft.model} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("aircraft"), timeFieldsFormat),
       // single pilot time
       createTimeColumn({ field: "se_time", headerName: fieldName("se"), fieldFormat: timeFieldsFormat }),
@@ -101,7 +161,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createHasAttachmentColumn({ field: "has_attachment" }),
       createColumn({ field: "tags", type: "autocomplete", headerName: fieldName("tags"), align: 'left' }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
-  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, timeFieldsFormat, dateFieldsFormat]);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, timeFieldsFormat, dateFieldsFormat, handleCellChange, isBulkEdit]);
 
   const columnGroupingModel = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -232,8 +292,11 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       <NewFlightRecordButton />
       <CSVExportButton apiRef={apiRef} type="logbook" />
       <PDFExportButton />
+      <BulkEditButtons isBulkEdit={isBulkEdit} setIsBulkEdit={setIsBulkEdit} updatedRows={updatedRows} setUpdatedRows={setUpdatedRows} apiRef={apiRef} />
     </>
-  ), [apiRef]);
+  ), [apiRef, isBulkEdit, setIsBulkEdit, updatedRows, setUpdatedRows]);
+
+  const getRowClassName = useCallback((params) => updatedRows.has(params.id) ? "row--edited" : "", [updatedRows]);
 
   return (
     <XDataGrid
@@ -260,6 +323,15 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
         has_track: false,
         has_attachment: false,
         tags: false,
+      }}
+      getRowClassName={getRowClassName}
+      customSx={{
+        "& .MuiDataGrid-row.row--edited .MuiDataGrid-cell": {
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light"
+              ? "rgba(255, 254, 176, 0.6)"
+              : darken("rgba(255, 254, 176, 1)", 0.6),
+        },
       }}
       {...props}
     />

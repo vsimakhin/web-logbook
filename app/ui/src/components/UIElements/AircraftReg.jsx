@@ -34,7 +34,7 @@ export const AircraftReg = ({ gsize, id = "aircraft.reg_name", label, value, han
     return registrations;
   }, [regs, aircraft_model]);
 
-  const fieldLabel = label || `${fieldName("aircraft", "flightRecord")} ${fieldName("reg", "flightRecord")}`;
+  const fieldLabel = label || label === "" ? label : `${fieldName("aircraft", "flightRecord")} ${fieldName("reg", "flightRecord")}`;
 
   const handleRegChange = useCallback((key, value) => {
     handleChange(key, value);

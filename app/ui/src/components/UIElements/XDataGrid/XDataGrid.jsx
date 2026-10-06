@@ -241,6 +241,7 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
         sx={{
           '& .MuiDataGrid-cell': { px: 0.5 },
           '& .MuiDataGrid-columnHeaderTitle': { px: 0.1 },
+          ...props.customSx,
         }}
         key={tableId}
         apiRef={apiRef}

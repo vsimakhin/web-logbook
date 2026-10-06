@@ -18,7 +18,7 @@ export const AircraftType = ({ gsize, id = "aircraft.model", label, value, handl
   const { data } = useLogbookQuery();
   const options = useMemo(() => getUniqueAircraftTypes(data), [data]);
   const fieldLabel = useMemo(() =>
-    label ? label : `${fieldName("aircraft", "flightRecord")} ${fieldName("model", "flightRecord")}`, [label, fieldName]
+    label || label === "" ? label : `${fieldName("aircraft", "flightRecord")} ${fieldName("model", "flightRecord")}`, [label, fieldName]
   );
 
   return (

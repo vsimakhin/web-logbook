@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import dayjs from 'dayjs';
 
 // MUI Icons
@@ -27,13 +27,52 @@ const calculateTotalTime = (flight) => {
   return adjustedArrival.diff(departure, "minute");
 }
 
-export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
-  const icon = useMemo(() => (type === "departure" ? FlightTakeoffIcon : FlightLandIcon), [type]);
+export const PlaceField = ({
+  flight,
+  handleChange,
+  type,
+  fieldNameF,
+  showPlace = true,
+  showTime = true,
+  disableGrid = false,
+  disableLabel = false,
+  slotProps: additionalSlotProps = {},
+  ...props
+}) => {
+  const placeInitialValue = useRef("");
+  const timeInitialValue = useRef(0);
+
+  const handlePlaceFocus = useCallback((event) => { placeInitialValue.current = event.target.value }, []);
+  const handleTimeFocus = useCallback((event) => { timeInitialValue.current = event.target.value }, []);
+
+  const isDeparture = type === "departure";
+  const icon = isDeparture ? FlightTakeoffIcon : FlightLandIcon;
 
   const { calculateDistance } = useCustomFields();
   const calculateNightTime = useNightTime();
 
-  const handlePlaceChange = useCallback(async () => {
+  const placeValue = isDeparture ? flight.departure?.place : flight.arrival?.place ?? "";
+  const timeValue = isDeparture ? flight.departure?.time : flight.arrival?.time ?? "";
+
+  const placeLabel = isDeparture ? fieldNameF("dep_place") : fieldNameF("arr_place");
+  const timeLabel = isDeparture ? fieldNameF("dep_time") : fieldNameF("arr_time");
+
+  const placeSlotProps = {
+    ...PLACE_SLOT_PROPS,
+    ...additionalSlotProps,
+    input: { ...PLACE_SLOT_PROPS?.input, ...additionalSlotProps?.input },
+  };
+
+  const timeSlotProps = {
+    ...TIME_SLOT_PROPS,
+    ...additionalSlotProps,
+    input: { ...TIME_SLOT_PROPS?.input, ...additionalSlotProps?.input },
+  };
+
+  const handlePlaceChange = useCallback(async (event) => {
+    if (event.target.value === placeInitialValue.current) {
+      return;
+    }
     // quickly recalculate the distance to show on map
     const distance = await calculateDistance(flight);
 
@@ -45,7 +84,11 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
     handleChange("redraw", Math.random());
   }, [flight, handleChange, calculateDistance]);
 
-  const handleTimeChange = useCallback(async () => {
+  const handleTimeChange = useCallback(async (event) => {
+    if (event.target.value === timeInitialValue.current) {
+      return;
+    }
+
     // check length for the time field
     if (flight.departure.time.length !== 4 || flight.arrival.time.length !== 4) return;
 
@@ -70,25 +113,35 @@ export const PlaceField = ({ flight, handleChange, type, fieldNameF }) => {
 
   return (
     <>
-      <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
-        id={`${type}.place`}
-        label={<Label icon={icon} text={fieldNameF(type == "departure" ? "dep_place" : "arr_place")} />}
-        handleChange={handleChange}
-        value={type == "departure" ? flight.departure.place : flight.arrival.place ?? ""}
-        slotProps={PLACE_SLOT_PROPS}
-        tooltip={`${capitalizeFirstLetter(type)} place`}
-        onBlur={() => handlePlaceChange()}
-      />
-      <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
-        id={`${type}.time`}
-        label={<Label icon={icon} text={fieldNameF(type == "departure" ? "dep_time" : "arr_time")} />}
-        handleChange={handleChange}
-        value={type == "departure" ? flight.departure.time : flight.arrival.time ?? ""}
-        slotProps={TIME_SLOT_PROPS}
-        placeholder="HHMM"
-        tooltip={`${capitalizeFirstLetter(type)} time`}
-        onBlur={() => handleTimeChange()}
-      />
+      {showPlace && (
+        <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
+          id={`${type}.place`}
+          label={disableLabel ? "" : <Label icon={icon} text={placeLabel} />}
+          handleChange={handleChange}
+          value={placeValue}
+          slotProps={placeSlotProps}
+          tooltip={`${capitalizeFirstLetter(type)} place`}
+          onBlur={handlePlaceChange}
+          disableGrid={disableGrid}
+          onFocus={handlePlaceFocus}
+          {...props}
+        />
+      )}
+      {showTime && (
+        <TextField gsize={{ xs: 6, sm: 2, md: 2, lg: 2, xl: 2 }}
+          id={`${type}.time`}
+          label={disableLabel ? "" : <Label icon={icon} text={timeLabel} />}
+          handleChange={handleChange}
+          value={timeValue}
+          slotProps={timeSlotProps}
+          placeholder="HHMM"
+          tooltip={`${capitalizeFirstLetter(type)} time`}
+          onBlur={handleTimeChange}
+          onFocus={handleTimeFocus}
+          disableGrid={disableGrid}
+          {...props}
+        />
+      )}
     </>
   )
 };
