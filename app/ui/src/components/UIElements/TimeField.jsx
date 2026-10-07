@@ -55,6 +55,7 @@ export const TimeField = memo(({
   // Local string representation for the text input
   const [text, setText] = useState(() => formatTimeField(value, fieldFormat));
   const isFocused = useRef(false);
+  const initialValue = useRef(value);
 
   // Sync from props when value changes externally (e.g., initial load, record navigation)
   useEffect(() => {
@@ -81,10 +82,15 @@ export const TimeField = memo(({
     isFocused.current = false;
     const minutes = parseTimeToMinutes(text, fieldFormat);
     setText(formatTimeField(minutes, fieldFormat));
-    handleChange(id, minutes);
+    if (minutes !== initialValue.current) {
+      handleChange(id, minutes);
+    }
   }, [text, fieldFormat, id, handleChange]);
 
-  const handleFocus = useCallback(() => { isFocused.current = true }, []);
+  const handleFocus = () => {
+    isFocused.current = true;
+    initialValue.current = value;
+  }
 
   const placeholder = fieldFormat === 3 ? "0.0" : "H:MM";
   const slotProps = fieldFormat === 3 ? FLIGHT_TIME_SLOT_PROPS_FAA : FLIGHT_TIME_SLOT_PROPS;

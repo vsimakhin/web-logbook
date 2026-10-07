@@ -40,7 +40,7 @@ export const PlaceField = ({
   ...props
 }) => {
   const placeInitialValue = useRef("");
-  const timeInitialValue = useRef(0);
+  const timeInitialValue = useRef("");
 
   const handlePlaceFocus = useCallback((event) => { placeInitialValue.current = event.target.value }, []);
   const handleTimeFocus = useCallback((event) => { timeInitialValue.current = event.target.value }, []);
@@ -51,8 +51,8 @@ export const PlaceField = ({
   const { calculateDistance } = useCustomFields();
   const calculateNightTime = useNightTime();
 
-  const placeValue = isDeparture ? flight.departure?.place : flight.arrival?.place ?? "";
-  const timeValue = isDeparture ? flight.departure?.time : flight.arrival?.time ?? "";
+  const placeValue = isDeparture ? flight.departure?.place : flight.arrival?.place;
+  const timeValue = isDeparture ? flight.departure?.time : flight.arrival?.time;
 
   const placeLabel = isDeparture ? fieldNameF("dep_place") : fieldNameF("arr_place");
   const timeLabel = isDeparture ? fieldNameF("dep_time") : fieldNameF("arr_time");
@@ -90,7 +90,7 @@ export const PlaceField = ({
     }
 
     // check length for the time field
-    if (flight.departure.time.length !== 4 || flight.arrival.time.length !== 4) return;
+    if (flight.departure?.time?.length !== 4 || flight.arrival?.time?.length !== 4) return;
 
     const total_time = calculateTotalTime(flight);
     const old_total_time = flight.time.total_time;

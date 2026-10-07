@@ -24,6 +24,7 @@ import BulkEditButtons from './BulkEditButtons';
 import PlaceTimeCell from './EditCells/PlaceTimeCell';
 import AircraftTypeCell from './EditCells/AircraftTypeCell';
 import AircraftRegCell from './EditCells/AircraftRegCell';
+import FlightTimeCell from './EditCells/FlightTimeCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
@@ -72,13 +73,11 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createColumn({
         field: "departure_place", headerName: fieldName("dep_place"), width: 60,
         valueGetter: (_value, row) => row.departure?.place,
-        editable: true,
         ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="departure" placeField={true} /> } : {}),
       }),
       createColumn({
         field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string',
         valueGetter: (_value, row) => row.departure?.time,
-        editable: true,
         ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="departure" placeField={false} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("departure"), timeFieldsFormat),
@@ -86,13 +85,11 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createColumn({
         field: "arrival_place", headerName: fieldName("arr_place"), width: 60,
         valueGetter: (_value, row) => row.arrival?.place,
-        editable: true,
         ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="arrival" placeField={true} /> } : {}),
       }),
       createColumn({
         field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string',
         valueGetter: (_value, row) => row.arrival?.time,
-        editable: true,
         ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="arrival" placeField={false} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("arrival"), timeFieldsFormat),
@@ -109,20 +106,30 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       }),
       ...createCustomFieldColumns(customFields, fieldName("aircraft"), timeFieldsFormat),
       // single pilot time
-      createTimeColumn({ field: "se_time", headerName: fieldName("se"), fieldFormat: timeFieldsFormat }),
+      createTimeColumn({
+        field: "se_time", headerName: fieldName("se"), fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
       createTimeColumn({
         field: "me_time", headerName: fieldName("me"),
         valueFormatter: (_value, row) => row.time.mcc_time !== 0 ? "" : formatTimeField(row.time.me_time, timeFieldsFormat),
         valueGetter: (_value, row) => row.time.mcc_time !== 0 ? 0 : row.time.me_time,
         aggregation: 'sum',
         aggregationFormatter: (value) => value === 0 ? "" : formatTimeField(value, timeFieldsFormat),
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("spt"), timeFieldsFormat),
       // MCC time
-      createTimeColumn({ field: "mcc_time", headerName: fieldName("mcc"), fieldFormat: timeFieldsFormat }),
+      createTimeColumn({
+        field: "mcc_time", headerName: fieldName("mcc"), fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("mcc"), timeFieldsFormat),
       // total
-      createTimeColumn({ field: "total_time", headerName: fieldName("total"), fieldFormat: timeFieldsFormat }),
+      createTimeColumn({
+        field: "total_time", headerName: fieldName("total"), fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("total"), timeFieldsFormat),
       // pic name
       createColumn({ field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left' }),
@@ -131,14 +138,32 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createLandingColumn({ field: "landings_night", headerName: fieldName("land_night") }),
       ...createCustomFieldColumns(customFields, fieldName("landings"), timeFieldsFormat),
       // operation condition time
-      createTimeColumn({ field: "night_time", headerName: fieldName("night"), width: 60, fieldFormat: timeFieldsFormat }),
-      createTimeColumn({ field: "ifr_time", headerName: fieldName("ifr"), width: 59, fieldFormat: timeFieldsFormat }),
+      createTimeColumn({
+        field: "night_time", headerName: fieldName("night"), width: 60, fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
+      createTimeColumn({
+        field: "ifr_time", headerName: fieldName("ifr"), width: 59, fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("oct"), timeFieldsFormat),
       // pilot function time
-      createTimeColumn({ field: "pic_time", headerName: fieldName("pic"), fieldFormat: timeFieldsFormat }),
-      createTimeColumn({ field: "co_pilot_time", headerName: fieldName("cop"), fieldFormat: timeFieldsFormat }),
-      createTimeColumn({ field: "dual_time", headerName: fieldName("dual"), fieldFormat: timeFieldsFormat }),
-      createTimeColumn({ field: "instructor_time", headerName: fieldName("instr"), fieldFormat: timeFieldsFormat }),
+      createTimeColumn({
+        field: "pic_time", headerName: fieldName("pic"), fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
+      createTimeColumn({
+        field: "co_pilot_time", headerName: fieldName("cop"), fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
+      createTimeColumn({
+        field: "dual_time", headerName: fieldName("dual"), fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
+      createTimeColumn({
+        field: "instructor_time", headerName: fieldName("instr"), fieldFormat: timeFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("pft"), timeFieldsFormat),
       // sim
       createColumn({ field: "sim_type", headerName: fieldName("sim_type"), width: 60, valueGetter: (_value, row) => row.sim.type }),
@@ -149,6 +174,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
         valueFormatter: (_value, row) => formatTimeField(row.sim.time, timeFieldsFormat),
         aggregation: 'sum',
         aggregationFormatter: (value) => formatTimeField(value, timeFieldsFormat),
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("fstd"), timeFieldsFormat),
       // custom
