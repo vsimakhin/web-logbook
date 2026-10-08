@@ -10,7 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
 import { formatTimeField } from '../../util/helpers';
 
-export const createDateColumn = ({ field, headerName, width = 90, fieldFormat = "DD/MM/YYYY" }) => ({
+export const createDateColumn = ({ field, headerName, width = 90, fieldFormat = "DD/MM/YYYY", ...props }) => ({
   field: field,
   headerName: headerName,
   headerAlign: 'center',
@@ -27,6 +27,7 @@ export const createDateColumn = ({ field, headerName, width = 90, fieldFormat = 
       </Typography>
     </Box>
   ),
+  ...props,
 })
 
 export const createColumn = ({ field, headerName, width, headerAlign = 'center', align = 'center', ...props }) => ({

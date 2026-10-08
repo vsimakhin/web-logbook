@@ -29,6 +29,7 @@ import TagCell from './EditCells/TagCell';
 import TextCell from './EditCells/TextCell';
 import NumberCell from './EditCells/NumberCell';
 import PICNameCell from './EditCells/PICNameCell';
+import DateCell from './EditCells/DateCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
@@ -72,7 +73,10 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // record number
       createColumn({ field: "record_number", headerName: "#", width: 30, type: 'number', align: 'center', valueFormatter: (value) => value.toString() }),
       // date
-      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat }),
+      createDateColumn({
+        field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat,
+        ...(isBulkEdit ? { renderCell: (params) => <DateCell params={params} handleCellChange={handleCellChange} /> } : {}),
+      }),
       // departure
       createColumn({
         field: "departure_place", headerName: fieldName("dep_place"), width: 60,
