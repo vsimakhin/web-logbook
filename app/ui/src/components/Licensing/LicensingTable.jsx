@@ -16,7 +16,7 @@ import NewLicenseRecordButton from "./NewLicenseRecordButton";
 
 export const LicensingTable = ({ data, isLoading }) => {
   const apiRef = useGridApiRef();
-  const { settings, isSettingsLoading } = useSettings();
+  const { settings, isSettingsLoading, dateFieldsFormat } = useSettings();
 
   const getExpireColor = useCallback((days) => {
     const warning = settings?.licenses_expiration?.warning_period || 90;
@@ -73,8 +73,8 @@ export const LicensingTable = ({ data, isLoading }) => {
         headerAlign: "center",
         type: "date",
         align: "center",
-        valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-        valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+        valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD') : null),
+        valueFormatter: (value) => (value ? dayjs(value).format(dateFieldsFormat) : ''),
       },
       {
         field: "valid_from",
@@ -82,8 +82,8 @@ export const LicensingTable = ({ data, isLoading }) => {
         headerAlign: "center",
         type: "date",
         align: "center",
-        valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-        valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+        valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
+        valueFormatter: (value) => (value ? dayjs(value).format(dateFieldsFormat) : ''),
       },
       {
         field: "valid_until",
@@ -91,8 +91,8 @@ export const LicensingTable = ({ data, isLoading }) => {
         headerAlign: "center",
         align: "center",
         type: "date",
-        valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-        valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+        valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
+        valueFormatter: (value) => (value ? dayjs(value).format(dateFieldsFormat) : ''),
       },
       {
         field: "expire",
@@ -100,7 +100,7 @@ export const LicensingTable = ({ data, isLoading }) => {
         headerAlign: "center",
         width: 150,
         renderCell: (params) => {
-          const expiry = calculateExpiry(params.row.valid_until);
+          const expiry = calculateExpiry(params.row.valid_until ? dayjs(params.row.valid_until, 'YYYY-MM-DD') : null);
           if (!expiry) return null;
 
           return (
@@ -122,7 +122,7 @@ export const LicensingTable = ({ data, isLoading }) => {
         rowSpanValueGetter: () => null,
       },
     ];
-  }, [isSettingsLoading, getExpireColor]);
+  }, [isSettingsLoading, getExpireColor, dateFieldsFormat]);
 
   const customActions = useMemo(() => (
     <>

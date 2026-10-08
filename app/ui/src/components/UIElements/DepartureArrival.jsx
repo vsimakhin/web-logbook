@@ -1,56 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
 // Custom components
 import Select from "../UIElements/Select";
 import useSettings from "../../hooks/useSettings";
-import { fetchLogbookData } from "../../util/http/logbook";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
+import { useLogbookQuery } from "../../hooks/queries";
 
-const getUniquePlaces = (flights) => {
+const getUniquePlaces = (flights, type) => {
   if (!flights) {
-    return { departure: [], arrivals: [] };
+    return [];
   }
 
-  const departure = new Set();
-  const arrival = new Set();
+  const places = new Set();
 
   flights.forEach((flight) => {
-    if (flight.departure?.place) {
-      departure.add(flight.departure.place);
-    }
+    const place = flight[type]?.place;
 
-    if (flight.arrival?.place) {
-      arrival.add(flight.arrival.place);
+    if (place) {
+      places.add(place);
     }
   });
 
-  return {
-    departure: [...departure].sort(),
-    arrival: [...arrival].sort(),
-  };
+  return [...places].sort();
 };
 
-export const DepartureArrival = ({
-  gsize,
-  type,
-  value,
-  preloadedData,
-  handleChange,
-  ...props
-}) => {
+export const DepartureArrival = ({ gsize, type, value, handleChange, ...props }) => {
   const { fieldNameF } = useSettings();
   const label = fieldNameF(type);
 
-  const { data, isError, error } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    enabled: !preloadedData,
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load departures/arrivals' });
-
-  const places = getUniquePlaces(data);
-  const options = places[type];
+  const { data } = useLogbookQuery()
+  const options = getUniquePlaces(data, type);
 
   return (
     <Select

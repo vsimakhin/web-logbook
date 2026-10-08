@@ -8,35 +8,16 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
+import { formatTimeField } from '../../util/helpers';
 
-export const sumTime = (values) => {
-  let totalMinutes = 0;
-  values.forEach(v => {
-    if (typeof v === 'string' && v.includes(':')) {
-      const parts = v.split(':');
-      if (parts.length === 2) {
-        const hh = parseInt(parts[0], 10) || 0;
-        const mm = parseInt(parts[1], 10) || 0;
-        totalMinutes += (hh * 60) + mm;
-      }
-    } else if (typeof v === 'number') {
-      totalMinutes += Math.round(v * 60);
-    }
-  });
-
-  const hh = Math.floor(totalMinutes / 60);
-  const mm = totalMinutes % 60;
-  return `${hh}:${mm.toString().padStart(2, '0')}`;
-}
-
-export const createDateColumn = ({ field, headerName, width = 90 }) => ({
+export const createDateColumn = ({ field, headerName, width = 90, fieldFormat = "DD/MM/YYYY", ...props }) => ({
   field: field,
   headerName: headerName,
   headerAlign: 'center',
   width: width,
   type: 'date',
-  valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-  valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+  valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
+  valueFormatter: (value) => (value ? dayjs(value).format(fieldFormat) : ''),
   renderCell: (params) => (
     <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
       <Typography variant="body2" sx={{ color: "primary.main" }}>
@@ -46,6 +27,7 @@ export const createDateColumn = ({ field, headerName, width = 90 }) => ({
       </Typography>
     </Box>
   ),
+  ...props,
 })
 
 export const createColumn = ({ field, headerName, width, headerAlign = 'center', align = 'center', ...props }) => ({
@@ -57,7 +39,7 @@ export const createColumn = ({ field, headerName, width, headerAlign = 'center',
   ...props,
 })
 
-export const createTimeColumn = ({ field, headerName, width = 55, headerAlign = 'center', align = 'center', ...props }) => ({
+export const createTimeColumn = ({ field, headerName, fieldFormat = 1, width = 55, headerAlign = 'center', align = 'center', ...props }) => ({
   field: field,
   headerName: headerName,
   width: width,
@@ -65,7 +47,9 @@ export const createTimeColumn = ({ field, headerName, width = 55, headerAlign = 
   align: align,
   type: 'time',
   valueGetter: (_value, row) => row.time[field],
-  aggregationFn: sumTime,
+  valueFormatter: (_value, row) => formatTimeField(row.time[field], fieldFormat),
+  aggregation: 'sum',
+  aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
   ...props,
 })
 
@@ -81,7 +65,7 @@ export const createLandingColumn = ({ field, headerName, width = 57, headerAlign
   ...props,
 })
 
-export const createCustomFieldColumns = (customFields, category) => {
+export const createCustomFieldColumns = (customFields, category, fieldFormat = 1) => {
   if (!customFields || !Array.isArray(customFields)) {
     return [];
   }
@@ -99,11 +83,13 @@ export const createCustomFieldColumns = (customFields, category) => {
 
       // Add time footer for duration fields
       if (field.type === 'duration') {
-        baseColumn.type = 'time'
-        baseColumn.aggregationFn = sumTime
+        baseColumn.type = 'time';
+        baseColumn.aggregation = 'sum';
+        baseColumn.valueFormatter = (_value, row) => formatTimeField(row.custom_fields[field.uuid] || 0, fieldFormat);
+        baseColumn.aggregationFormatter = (value) => formatTimeField(value, fieldFormat);
       } else if (field.type === 'number') {
-        baseColumn.aggregation = 'sum'
-        baseColumn.type = 'number'
+        baseColumn.aggregation = 'sum';
+        baseColumn.type = 'number';
       }
 
       return baseColumn;

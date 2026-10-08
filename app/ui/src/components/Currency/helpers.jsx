@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { convertHoursToTime } from "../../util/helpers";
+import { formatTimeField } from "../../util/helpers";
 
 dayjs.extend(customParseFormat);
+
+export const isTimeMetric = (metric, value) => metric.includes('time') ? value * 60 : value;
 
 export const comparisonOptions = [">=", ">", "=", "<", "<="];
 
@@ -24,9 +26,9 @@ const getStartDate = (rule) => {
     case "calendar_years":
       return dayjs(`${now.year() - (value - 1)}-01-01`);
     case "since":
-      return dayjs(since, "DD/MM/YYYY");
+      return dayjs(since, "YYYY-MM-DD");
     case "all_time":
-      return dayjs('17/12/1903', 'DD/MM/YYYY');
+      return dayjs('17/12/1903', 'YYYY-MM-DD');
     case "days":
     default:
       return now.subtract(value, "day");
@@ -48,24 +50,15 @@ const getEndDate = (rule, lastEventDate) => {
   }
 };
 
-const parseMetricValue = (value) => {
-  if (typeof value === "string" && value.includes(":")) {
-    const [hours, minutes] = value.split(":").map(Number);
-    if (isNaN(hours) || isNaN(minutes)) return 0;
-    return hours + minutes / 60;
-  }
-  return parseFloat(value) || 0;
-};
-
-const compareValues = (leftValue, operator, rightValue) => {
-  const rightNum = Number(rightValue);
+const compareValues = (leftValue, operator, rightValue, metric) => {
+  const rightVal = isTimeMetric(metric, rightValue);
 
   switch (operator) {
-    case '>=': return leftValue >= rightNum;
-    case '>': return leftValue > rightNum;
-    case '=': return leftValue === rightNum;
-    case '<': return leftValue < rightNum;
-    case '<=': return leftValue <= rightNum;
+    case '>=': return leftValue >= rightVal;
+    case '>': return leftValue > rightVal;
+    case '=': return leftValue === rightVal;
+    case '<': return leftValue < rightVal;
+    case '<=': return leftValue <= rightVal;
     default: return false;
   }
 };
@@ -104,12 +97,12 @@ export const parseSubMetrics = (subMetrics) => {
 export const getFlightMetricValue = (flight, metric) => {
   if (!flight || !metric) return 0;
   if (metric === "landings.all") {
-    const day = parseMetricValue(flight.landings?.day);
-    const night = parseMetricValue(flight.landings?.night);
+    const day = parseInt(flight.landings?.day) || 0;
+    const night = parseInt(flight.landings?.night) || 0;
     return day + night;
   }
   const value = metric.split('.').reduce((obj, k) => obj?.[k], flight);
-  return parseMetricValue(value);
+  return parseInt(value) || 0;
 };
 
 export const evaluateCurrency = (flights, rule, aircrafts) => {
@@ -123,7 +116,7 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
   const since = getStartDate(rule);
 
   const qualifyingFlights = filteredFlights.filter(flight => {
-    const flightDate = dayjs(flight.date, "DD/MM/YYYY");
+    const flightDate = dayjs(flight.date, "YYYY-MM-DD");
     if (!flightDate.isValid() || flightDate.isBefore(since)) return false;
     return true;
   });
@@ -131,8 +124,7 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
   const total = qualifyingFlights.reduce((sum, flight) => {
     return sum + getFlightMetricValue(flight, rule.metric);
   }, 0);
-
-  const mainMeets = compareValues(total, rule.comparison, rule.target_value);
+  const mainMeets = compareValues(total, rule.comparison, rule.target_value, rule.metric);
 
   const subMetrics = parseSubMetrics(rule.sub_metrics);
   const subResults = subMetrics.map(sub => {
@@ -141,8 +133,8 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
       .filter(flight => getFlightMetricValue(flight, rule.metric) > 0)
       .reduce((sum, flight) => sum + getFlightMetricValue(flight, sub.metric), 0);
 
-    const meetsRequirement = compareValues(subTotal, sub.comparison, sub.target_value);
-    const targetVal = Number(sub.target_value) || 0;
+    const meetsRequirement = compareValues(subTotal, sub.comparison, sub.target_value, sub.metric);
+    const targetVal = isTimeMetric(sub.metric, sub.target_value);
     const percent = targetVal === 0 && subTotal > 0 ? 100 : (subTotal / (targetVal || 1)) * 100;
 
     return {
@@ -168,13 +160,13 @@ export const evaluateCurrency = (flights, rule, aircrafts) => {
   return result;
 };
 
-export const formatCurrencyValue = (value, metric) => {
+export const formatCurrencyValue = (value, metric, format = 1) => {
   if (!metric) return value;
 
   if (metric.includes('landings')) {
     return value;
   } else if (metric.includes('time')) {
-    return convertHoursToTime(value);
+    return formatTimeField(value, format);
   } else {
     return value;
   }
@@ -196,7 +188,7 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
 
     const events = [];
     filteredFlights.forEach(f => {
-      const d = dayjs(f?.date, 'DD/MM/YYYY');
+      const d = dayjs(f?.date, 'YYYY-MM-DD');
       if (!d.isValid()) return;
       const cnt = Math.max(0, selector(f));
       for (let i = 0; i < cnt; i++) events.push(d);
@@ -219,7 +211,7 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
   // Only meaningful for threshold comparisons (>= or >). Others return null.
   const operator = comparison ?? '>=';
   if (!['>=', '>'].includes(operator)) return null;
-  const target = Number(targetValue);
+  const target = Number(targetValue) * 60; // convert rule target hours to minutes
   if (isNaN(target)) return null;
 
   const today = dayjs().startOf('day');
@@ -227,7 +219,7 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
 
   // Collect flights within the window with their metric values
   const flightsInWindow = filteredFlights
-    .map(f => ({ f, d: dayjs(f?.date, 'DD/MM/YYYY') }))
+    .map(f => ({ f, d: dayjs(f?.date, 'YYYY-MM-DD') }))
     .filter(({ d }) => d.isValid() && !d.isBefore(windowStart) && !d.isAfter(today))
     .map(({ f, d }) => {
       const amount = getFlightMetricValue(f, metric);
@@ -242,7 +234,7 @@ const getSingleMetricExpiry = (filteredFlights, metric, comparison, targetValue,
   if (!meets) {
     // Not current today. Compute the most recent expiry in the past (last time the rule was still valid).
     const allFlights = filteredFlights
-      .map(f => ({ d: dayjs(f?.date, 'DD/MM/YYYY'), amount: getFlightMetricValue(f, metric) }))
+      .map(f => ({ d: dayjs(f?.date, 'YYYY-MM-DD'), amount: getFlightMetricValue(f, metric) }))
       .filter(x => x.d.isValid() && !isNaN(x.amount) && x.amount > 0)
       .sort((a, b) => a.d.valueOf() - b.d.valueOf());
 

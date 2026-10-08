@@ -9,9 +9,13 @@ vi.mock("react-router", () => ({
   useNavigate: vi.fn(),
 }));
 
-vi.mock("@tanstack/react-query", () => ({
-  useQuery: vi.fn(),
-}));
+vi.mock("@tanstack/react-query", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useQuery: vi.fn(),
+  };
+});
 
 vi.mock("../util/http/fields", () => ({
   fetchCustomFields: vi.fn(),
@@ -19,6 +23,10 @@ vi.mock("../util/http/fields", () => ({
 
 vi.mock("./useAppNotifications", () => ({
   useErrorNotification: vi.fn(),
+}));
+
+vi.mock("../util/http", () => ({
+  fetchDistance: vi.fn(),
 }));
 
 describe("useCustomFields", () => {

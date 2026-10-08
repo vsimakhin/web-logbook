@@ -23,8 +23,7 @@ const HELP_CONTENT = [
   },
   {
     title: "Date field format",
-    description: `The standard and preferred format is DD/MM/YYYY.
-      The application also recognizes formats like YYYY-MM-DD or DD-MM-YYYY.`,
+    description: `The application recognizes formats like DD/MM/YYYY, YYYY-MM-DD or DD-MM-YYYY.`,
   },
   {
     title: "Departure and Arrival places format",
@@ -35,8 +34,7 @@ const HELP_CONTENT = [
   {
     title: "Departure and Arrival times format",
     description: `The standard and preferred format is HHMM in Zulu time.
-      The application can also recognize times from values like HH:MM 
-      or full timestamps such as DD/MM/YYYY HH:MM:SS.`,
+      The application can also recognize times from values like HH:MM`,
   },
   {
     title: "Flight time format",

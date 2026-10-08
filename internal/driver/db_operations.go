@@ -149,15 +149,19 @@ func (t *Table) ensureColumnsExist(ctx context.Context, db *sql.DB, engine strin
 		var str string
 		var strp *string
 		var val int
-		if engine == SQLite {
+		switch engine {
+		case SQLite:
 			err = rows.Scan(&val, &columnName, &str, &val, &strp, &val)
-		} else if engine == MySQL {
+		case MySQL:
 			err = rows.Scan(&columnName, &str, &str, &str, &strp, &str)
 		}
 		if err != nil {
 			return err
 		}
 		existingColumns[columnName] = true
+	}
+	if err = rows.Err(); err != nil {
+		return err
 	}
 
 	for _, column := range t.Columns {
@@ -192,9 +196,10 @@ func (t *Table) ensureIndexExists(ctx context.Context, db *sql.DB, engine string
 		var indexName string
 
 		var str string
-		if engine == MySQL {
+		switch engine {
+		case MySQL:
 			err = rows.Scan(&indexName)
-		} else if engine == SQLite {
+		case SQLite:
 			err = rows.Scan(&str, &indexName, &str, &str, &str)
 		}
 		if err != nil {
@@ -204,6 +209,9 @@ func (t *Table) ensureIndexExists(ctx context.Context, db *sql.DB, engine string
 		if indexName == fmt.Sprintf("%s_%s", t.Name, column.Name) {
 			return nil
 		}
+	}
+	if err = rows.Err(); err != nil {
+		return err
 	}
 
 	err = t.createIndex(ctx, db, engine, column)

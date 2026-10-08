@@ -49,13 +49,13 @@ export const OtherSettings = ({ pdfSettings, handleChange }) => {
               <ToggleButtonGroup
                 size="small"
                 sx={{ ml: 1 }}
-                value={parseInt(pdfSettings.time_fields_auto_format) || 0}
+                value={parseInt(pdfSettings.time_fields_auto_format) || 2}
                 onChange={(_, value) => handleChange('time_fields_auto_format', parseInt(value))}
                 exclusive
               >
-                <ToggleButton value={0}>None</ToggleButton>
-                <ToggleButton value={1}>HH:MM</ToggleButton>
                 <ToggleButton value={2}>H:MM</ToggleButton>
+                <ToggleButton value={1}>HH:MM</ToggleButton>
+                <ToggleButton value={3}>FAA</ToggleButton>
               </ToggleButtonGroup>
             }
             label="Time fields autoformat" labelPlacement="start"

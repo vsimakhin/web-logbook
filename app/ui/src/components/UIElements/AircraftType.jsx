@@ -1,29 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 // Custom components
 import Select from "../UIElements/Select";
-import { fetchAircraftModels } from "../../util/http/aircraft";
 import useSettings from "../../hooks/useSettings";
+import { useLogbookQuery } from "../../hooks/queries";
 
-export const AircraftType = ({
-  gsize,
-  id = "aircraft.model",
-  label,
-  value,
-  handleChange,
-  ...props
-}) => {
+const getUniqueAircraftTypes = (flights = []) => [
+  ...new Set(
+    flights
+      .map((flight) => flight.aircraft.model?.trim())
+      .filter(Boolean)
+  ),
+].sort();
+
+export const AircraftType = ({ gsize, id = "aircraft.model", label, value, handleChange, ...props }) => {
   const { fieldName } = useSettings();
 
-  const { data: options = [] } = useQuery({
-    queryFn: ({ signal }) => fetchAircraftModels({ signal }),
-    queryKey: ["aircrafts", "models"],
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
-
+  const { data } = useLogbookQuery();
+  const options = useMemo(() => getUniqueAircraftTypes(data), [data]);
   const fieldLabel = useMemo(() =>
-    label ? label : `${fieldName("aircraft", "flightRecord")} ${fieldName("model", "flightRecord")}`, [label, fieldName]
+    label || label === "" ? label : `${fieldName("aircraft", "flightRecord")} ${fieldName("model", "flightRecord")}`, [label, fieldName]
   );
 
   return (
