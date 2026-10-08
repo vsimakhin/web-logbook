@@ -1,9 +1,9 @@
 import TimeField from "../../UIElements/TimeField";
 
-export const FlightTimeCell = ({ params, handleCellChange, fieldFormat }) => {
+export const FlightTimeCell = ({ params, handleCellChange, fieldFormat, id }) => {
   return (
     <TimeField
-      id={`time.${params.field}`}
+      id={id || `time.${params.field}`}
       value={params.value}
       handleChange={(key, value) => handleCellChange(params.row, key, value)}
       fieldFormat={fieldFormat}

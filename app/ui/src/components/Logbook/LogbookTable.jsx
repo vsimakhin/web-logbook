@@ -25,6 +25,9 @@ import PlaceTimeCell from './EditCells/PlaceTimeCell';
 import AircraftTypeCell from './EditCells/AircraftTypeCell';
 import AircraftRegCell from './EditCells/AircraftRegCell';
 import FlightTimeCell from './EditCells/FlightTimeCell';
+import TagCell from './EditCells/TagCell';
+import TextCell from './EditCells/TextCell';
+import NumberCell from './EditCells/NumberCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
@@ -132,10 +135,19 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       }),
       ...createCustomFieldColumns(customFields, fieldName("total"), timeFieldsFormat),
       // pic name
-      createColumn({ field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left' }),
+      createColumn({
+        field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left',
+        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} handleCellChange={handleCellChange} /> } : {}),
+      }),
       // landings
-      createLandingColumn({ field: "landings_day", headerName: fieldName("land_day") }),
-      createLandingColumn({ field: "landings_night", headerName: fieldName("land_night") }),
+      createLandingColumn({
+        field: "landings_day", headerName: fieldName("land_day"),
+        ...(isBulkEdit ? { renderCell: (params) => <NumberCell params={params} handleCellChange={handleCellChange} id="landings.day" /> } : {}),
+      }),
+      createLandingColumn({
+        field: "landings_night", headerName: fieldName("land_night"),
+        ...(isBulkEdit ? { renderCell: (params) => <NumberCell params={params} handleCellChange={handleCellChange} id="landings.night" /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("landings"), timeFieldsFormat),
       // operation condition time
       createTimeColumn({
@@ -166,7 +178,10 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       }),
       ...createCustomFieldColumns(customFields, fieldName("pft"), timeFieldsFormat),
       // sim
-      createColumn({ field: "sim_type", headerName: fieldName("sim_type"), width: 60, valueGetter: (_value, row) => row.sim.type }),
+      createColumn({
+        field: "sim_type", headerName: fieldName("sim_type"), width: 60, valueGetter: (_value, row) => row.sim.type,
+        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} handleCellChange={handleCellChange} id="sim.type" /> } : {}),
+      }),
       createColumn({
         field: "sim_time", headerName: fieldName("sim_time"),
         width: 55, headerAlign: 'center', align: 'center', type: 'time',
@@ -174,18 +189,24 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
         valueFormatter: (_value, row) => formatTimeField(row.sim.time, timeFieldsFormat),
         aggregation: 'sum',
         aggregationFormatter: (value) => formatTimeField(value, timeFieldsFormat),
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} id="sim.time" /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("fstd"), timeFieldsFormat),
       // custom
       ...createCustomFieldColumns(customFields, "Custom", timeFieldsFormat),
       // remarks
-      createColumn({ field: "remarks", headerName: fieldName("remarks"), align: 'left', flex: 1, minWidth: 50 }),
+      createColumn({
+        field: "remarks", headerName: fieldName("remarks"), align: 'left', flex: 1, minWidth: 50,
+        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} handleCellChange={handleCellChange} /> } : {}),
+      }),
       ...createCustomFieldColumns(customFields, fieldName("remarks"), timeFieldsFormat),
       // misc
       createHasTrackColumn({ field: "has_track" }),
       createHasAttachmentColumn({ field: "has_attachment" }),
-      createColumn({ field: "tags", type: "autocomplete", headerName: fieldName("tags"), align: 'left' }),
+      createColumn({
+        field: "tags", type: "autocomplete", headerName: fieldName("tags"), align: 'left',
+        ...(isBulkEdit ? { renderCell: (params) => <TagCell params={params} handleCellChange={handleCellChange} /> } : {}),
+      }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, timeFieldsFormat, dateFieldsFormat, handleCellChange, isBulkEdit]);
 
