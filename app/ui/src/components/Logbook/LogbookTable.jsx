@@ -28,6 +28,7 @@ import FlightTimeCell from './EditCells/FlightTimeCell';
 import TagCell from './EditCells/TagCell';
 import TextCell from './EditCells/TextCell';
 import NumberCell from './EditCells/NumberCell';
+import PICNameCell from './EditCells/PICNameCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
@@ -137,7 +138,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // pic name
       createColumn({
         field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left',
-        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} handleCellChange={handleCellChange} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <PICNameCell params={params} handleCellChange={handleCellChange} /> } : {}),
       }),
       // landings
       createLandingColumn({

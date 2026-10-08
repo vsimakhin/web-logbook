@@ -38,3 +38,5 @@ export const PICNameField = ({ handleChange, value, gsize, ...props }) => {
     />
   )
 }
+
+export default PICNameField;
