@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef } from 'react';
 import { useGridApiRef } from '@mui/x-data-grid';
 // MUI icons
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
@@ -38,7 +38,9 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
   const footerEmptyTimeFieldFormat = useMemo(() => formatTimeField(0, timeFieldsFormat, true), [timeFieldsFormat]);
 
   const [isBulkEdit, setIsBulkEdit] = useState(false);
-  const [updatedRows, setUpdatedRows] = useState(new Map());
+  const updatedRowsRef = useRef(new Map());
+  const [updatedRowCount, setUpdatedRowCount] = useState(0);
+
   const handleCellChange = useCallback((row, key, value) => {
     const keys = key.split(".");
 
@@ -56,12 +58,14 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
     const updatedRow = updateNested({ uuid: currentRow.uuid, ...currentRow }, keys, value);
     apiRef.current.updateRows([updatedRow]);
 
-    setUpdatedRows((prev) => {
-      const next = new Map(prev);
-      const existing = next.get(updatedRow.uuid);
-      next.set(updatedRow.uuid, { original: existing?.original ?? currentRow, updated: updatedRow });
-      return next;
-    });
+    const map = updatedRowsRef.current;
+    const isNew = !map.has(updatedRow.uuid);
+    const existing = map.get(updatedRow.uuid);
+    map.set(updatedRow.uuid, { original: existing?.original ?? currentRow, updated: updatedRow });
+
+    if (isNew) {
+      setUpdatedRowCount(map.size);
+    }
   }, [apiRef]);
 
   const columns = useMemo(() => {
@@ -339,16 +343,32 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
     ].filter(Boolean);
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 
+  const onSave = useCallback(() => {
+    const rows = [...updatedRowsRef.current.values()].map(({ updated }) => updated);
+    console.log("Saving...", rows);
+    updatedRowsRef.current = new Map();
+    setUpdatedRowCount(0);
+  }, []);
+
+  const onCancel = useCallback(() => {
+    for (const { original } of updatedRowsRef.current.values()) {
+      apiRef.current.updateRows([original]);
+    }
+    updatedRowsRef.current = new Map();
+    setUpdatedRowCount(0);
+  }, [apiRef]);
+
   const customActions = useMemo(() => (
     <>
       <NewFlightRecordButton />
       <CSVExportButton apiRef={apiRef} type="logbook" />
       <PDFExportButton />
-      <BulkEditButtons isBulkEdit={isBulkEdit} setIsBulkEdit={setIsBulkEdit} updatedRows={updatedRows} setUpdatedRows={setUpdatedRows} apiRef={apiRef} />
+      <BulkEditButtons isBulkEdit={isBulkEdit} setIsBulkEdit={setIsBulkEdit} updatedRowCount={updatedRowCount} onSave={onSave} onCancel={onCancel} apiRef={apiRef} />
     </>
-  ), [apiRef, isBulkEdit, setIsBulkEdit, updatedRows, setUpdatedRows]);
+  ), [apiRef, isBulkEdit, setIsBulkEdit, updatedRowCount, onSave, onCancel]);
 
-  const getRowClassName = useCallback((params) => updatedRows.has(params.id) ? "row--edited" : "", [updatedRows]);
+  const getRowClassName = useCallback((params) => updatedRowsRef.current.has(params.id) ? "row--edited" : "", [updatedRowCount]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   return (
     <XDataGrid

@@ -12,29 +12,21 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 
-export const BulkEditButtons = ({ isBulkEdit, setIsBulkEdit, updatedRows, setUpdatedRows, apiRef }) => {
+export const BulkEditButtons = ({ isBulkEdit, setIsBulkEdit, updatedRowCount, onSave, onCancel }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const onSaveHandle = useCallback(() => {
-    const rows = [...updatedRows.values()].map(({ updated }) => updated);
-    console.log("Saving...", rows);
-    setUpdatedRows(new Map());
+    onSave();
     setIsBulkEdit(false);
-  }, [setIsBulkEdit, updatedRows, setUpdatedRows]);
+  }, [setIsBulkEdit, onSave]);
 
   const onCancelHandle = useCallback(() => {
-    console.log("Cancel...");
-    for (const { original } of updatedRows.values()) {
-      apiRef.current.updateRows([original]);
-    }
-
-    setUpdatedRows(new Map());
+    onCancel();
     setIsBulkEdit(false);
-  }, [setIsBulkEdit, updatedRows, apiRef, setUpdatedRows])
+  }, [setIsBulkEdit, onCancel]);
 
-  const unsavedChanges = updatedRows.size;
-  const saveButtonLabel = `Save Logbook (${unsavedChanges} unsaved rows)`;
+  const saveButtonLabel = `Save Logbook (${updatedRowCount} unsaved rows)`;
 
   if (isMobile) {
     return null; // don't show button on mobile screens currently
@@ -58,7 +50,7 @@ export const BulkEditButtons = ({ isBulkEdit, setIsBulkEdit, updatedRows, setUpd
       <Divider orientation='vertical' />
       <Tooltip title={saveButtonLabel}>
         <ToolbarButton onClick={onSaveHandle} color="default" label={saveButtonLabel}>
-          <Badge badgeContent={unsavedChanges} color="primary">
+          <Badge badgeContent={updatedRowCount} color="primary">
             <SaveOutlinedIcon />
           </Badge>
         </ToolbarButton>
