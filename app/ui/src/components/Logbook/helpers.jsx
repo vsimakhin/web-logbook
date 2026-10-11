@@ -1,67 +1,100 @@
 import dayjs from 'dayjs';
 import { Link } from 'react-router';
-
+// MUI Icons
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
-
+// MUI
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
+// Custom
 import { formatTimeField } from '../../util/helpers';
+import NumberCell from './EditCells/NumberCell';
+import FlightTimeCell from './EditCells/FlightTimeCell';
+import DateCell from './EditCells/DateCell';
 
-export const createDateColumn = ({ field, headerName, width = 90, fieldFormat = "DD/MM/YYYY", ...props }) => ({
+export const updateNested = (object, keys, value) => {
+  const [currentKey, ...rest] = keys;
+
+  if (!rest.length) {
+    return { ...object, [currentKey]: value };
+  }
+
+  return {
+    ...object,
+    [currentKey]: updateNested(
+      object?.[currentKey] ?? {},
+      rest,
+      value
+    ),
+  };
+};
+
+export const createDateColumn = ({ field, headerName, fieldFormat = "DD/MM/YYYY", isBulkEdit, handleRowUpdate, ...props }) => ({
   field: field,
   headerName: headerName,
   headerAlign: 'center',
-  width: width,
+  width: 90,
   type: 'date',
   valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
   valueFormatter: (value) => (value ? dayjs(value).format(fieldFormat) : ''),
   renderCell: (params) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-      <Typography variant="body2" sx={{ color: "primary.main" }}>
-        <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
-          {params.formattedValue}
-        </Link>
-      </Typography>
-    </Box>
+    isBulkEdit ? (
+      <DateCell params={params} callBackFunction={handleRowUpdate} />
+    ) : (
+      <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+        <Typography variant="body2" sx={{ color: "primary.main" }}>
+          <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
+            {params.formattedValue}
+          </Link>
+        </Typography>
+      </Box>
+    )
   ),
   ...props,
 })
 
-export const createColumn = ({ field, headerName, width, headerAlign = 'center', align = 'center', ...props }) => ({
+export const createColumn = ({ field, headerName, width, ...props }) => ({
   field: field,
   headerName: headerName,
   width: width,
-  headerAlign: headerAlign,
-  align: align,
+  headerAlign: 'center',
+  align: 'center',
   ...props,
 })
 
-export const createTimeColumn = ({ field, headerName, fieldFormat = 1, width = 55, headerAlign = 'center', align = 'center', ...props }) => ({
+export const createTimeColumn = ({ field, headerName, fieldFormat = 1, isBulkEdit, handleRowUpdate, id, ...props }) => ({
   field: field,
   headerName: headerName,
-  width: width,
-  headerAlign: headerAlign,
-  align: align,
+  width: 55,
+  headerAlign: 'center',
+  align: 'center',
   type: 'time',
   valueGetter: (_value, row) => row.time[field],
   valueFormatter: (_value, row) => formatTimeField(row.time[field], fieldFormat),
   aggregation: 'sum',
   aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
+  ...(isBulkEdit ? {
+    renderCell: (params) =>
+      <FlightTimeCell id={id} params={params} callBackFunction={handleRowUpdate} fieldFormat={fieldFormat} />
+  } : {}),
   ...props,
 })
 
-export const createLandingColumn = ({ field, headerName, width = 57, headerAlign = 'center', align = 'center', ...props }) => ({
+export const createLandingColumn = ({ field, headerName, isBulkEdit, handleRowUpdate, ...props }) => ({
   field: field,
   headerName: headerName,
-  width: width,
-  headerAlign: headerAlign,
-  align: align,
+  width: 57,
+  headerAlign: 'center',
+  align: 'center',
   type: 'number',
   valueGetter: (_value, row) => row.landings[field === "landings_day" ? "day" : "night"] !== 0 ? row.landings[field === "landings_day" ? "day" : "night"] : null,
   aggregation: 'sum',
+  ...(isBulkEdit ? {
+    renderCell: (params) =>
+      <NumberCell params={params} id={field === "landings_day" ? "landings.day" : "landings.night"} callBackFunction={handleRowUpdate} />
+  } : {}),
   ...props,
 })
 

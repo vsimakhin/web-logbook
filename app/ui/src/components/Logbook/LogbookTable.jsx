@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useGridApiRef } from '@mui/x-data-grid';
 // MUI icons
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
@@ -24,12 +24,9 @@ import BulkEditButtons from './BulkEditButtons';
 import PlaceTimeCell from './EditCells/PlaceTimeCell';
 import AircraftTypeCell from './EditCells/AircraftTypeCell';
 import AircraftRegCell from './EditCells/AircraftRegCell';
-import FlightTimeCell from './EditCells/FlightTimeCell';
 import TagCell from './EditCells/TagCell';
 import TextCell from './EditCells/TextCell';
-import NumberCell from './EditCells/NumberCell';
 import PICNameCell from './EditCells/PICNameCell';
-import DateCell from './EditCells/DateCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
@@ -38,35 +35,11 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
   const footerEmptyTimeFieldFormat = useMemo(() => formatTimeField(0, timeFieldsFormat, true), [timeFieldsFormat]);
 
   const [isBulkEdit, setIsBulkEdit] = useState(false);
-  const updatedRowsRef = useRef(new Map());
-  const [updatedRowCount, setUpdatedRowCount] = useState(0);
+  const [updatedRows, setUpdatedRows] = useState([]);
 
-  const handleCellChange = useCallback((row, key, value) => {
-    const keys = key.split(".");
-
-    const updateNested = (object, keys, value) => {
-      const [currentKey, ...rest] = keys;
-
-      if (!rest.length) {
-        return { ...object, [currentKey]: value };
-      }
-
-      return { ...object, [currentKey]: updateNested(object?.[currentKey] ?? {}, rest, value) };
-    };
-
-    const currentRow = apiRef.current.getRow(row.uuid) ?? row;
-    const updatedRow = updateNested({ uuid: currentRow.uuid, ...currentRow }, keys, value);
-    apiRef.current.updateRows([updatedRow]);
-
-    const map = updatedRowsRef.current;
-    const isNew = !map.has(updatedRow.uuid);
-    const existing = map.get(updatedRow.uuid);
-    map.set(updatedRow.uuid, { original: existing?.original ?? currentRow, updated: updatedRow });
-
-    if (isNew) {
-      setUpdatedRowCount(map.size);
-    }
-  }, [apiRef]);
+  const handleRowUpdate = useCallback((uuid) => {
+    setUpdatedRows(prev => prev.includes(uuid) ? prev : [...prev, uuid]);
+  }, []);
 
   const columns = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -77,128 +50,87 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // record number
       createColumn({ field: "record_number", headerName: "#", width: 30, type: 'number', align: 'center', valueFormatter: (value) => value.toString() }),
       // date
-      createDateColumn({
-        field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <DateCell params={params} handleCellChange={handleCellChange} /> } : {}),
-      }),
+      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat, isBulkEdit, handleRowUpdate }),
       // departure
       createColumn({
         field: "departure_place", headerName: fieldName("dep_place"), width: 60,
         valueGetter: (_value, row) => row.departure?.place,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="departure" placeField={true} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="departure" placeField={true} /> } : {}),
       }),
       createColumn({
         field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string',
         valueGetter: (_value, row) => row.departure?.time,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="departure" placeField={false} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="departure" placeField={false} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("departure"), timeFieldsFormat),
       // arrival
       createColumn({
         field: "arrival_place", headerName: fieldName("arr_place"), width: 60,
         valueGetter: (_value, row) => row.arrival?.place,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="arrival" placeField={true} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="arrival" placeField={true} /> } : {}),
       }),
       createColumn({
         field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string',
         valueGetter: (_value, row) => row.arrival?.time,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} handleCellChange={handleCellChange} type="arrival" placeField={false} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="arrival" placeField={false} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("arrival"), timeFieldsFormat),
       // aircraft
       createColumn({
         field: "aircraft_model", headerName: fieldName("model"), width: 70,
         valueGetter: (_value, row) => row.aircraft?.model,
-        ...(isBulkEdit ? { renderCell: (params) => <AircraftTypeCell params={params} handleCellChange={handleCellChange} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <AircraftTypeCell params={params} callBackFunction={handleRowUpdate} /> } : {}),
       }),
       createColumn({
         field: "aircraft_reg", headerName: fieldName("reg"), width: 75,
         valueGetter: (_value, row) => row.aircraft?.reg_name,
-        ...(isBulkEdit ? { renderCell: (params) => <AircraftRegCell params={params} handleCellChange={handleCellChange} aircraft_model={params.row.aircraft.model} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <AircraftRegCell params={params} callBackFunction={handleRowUpdate} aircraft_model={params.row.aircraft.model} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("aircraft"), timeFieldsFormat),
       // single pilot time
+      createTimeColumn({ field: "se_time", headerName: fieldName("se"), fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
       createTimeColumn({
-        field: "se_time", headerName: fieldName("se"), fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
-      createTimeColumn({
-        field: "me_time", headerName: fieldName("me"),
+        field: "me_time", headerName: fieldName("me"), isBulkEdit, handleRowUpdate,
         valueFormatter: (_value, row) => row.time.mcc_time !== 0 ? "" : formatTimeField(row.time.me_time, timeFieldsFormat),
         valueGetter: (_value, row) => row.time.mcc_time !== 0 ? 0 : row.time.me_time,
-        aggregation: 'sum',
         aggregationFormatter: (value) => value === 0 ? "" : formatTimeField(value, timeFieldsFormat),
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("spt"), timeFieldsFormat),
       // MCC time
-      createTimeColumn({
-        field: "mcc_time", headerName: fieldName("mcc"), fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
+      createTimeColumn({ field: "mcc_time", headerName: fieldName("mcc"), fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
       ...createCustomFieldColumns(customFields, fieldName("mcc"), timeFieldsFormat),
       // total
-      createTimeColumn({
-        field: "total_time", headerName: fieldName("total"), fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
+      createTimeColumn({ field: "total_time", headerName: fieldName("total"), fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
       ...createCustomFieldColumns(customFields, fieldName("total"), timeFieldsFormat),
       // pic name
       createColumn({
         field: "pic_name", headerName: fieldName("pic_name"), width: 150, align: 'left',
-        ...(isBulkEdit ? { renderCell: (params) => <PICNameCell params={params} handleCellChange={handleCellChange} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <PICNameCell params={params} callBackFunction={handleRowUpdate} /> } : {}),
       }),
       // landings
-      createLandingColumn({
-        field: "landings_day", headerName: fieldName("land_day"),
-        ...(isBulkEdit ? { renderCell: (params) => <NumberCell params={params} handleCellChange={handleCellChange} id="landings.day" /> } : {}),
-      }),
-      createLandingColumn({
-        field: "landings_night", headerName: fieldName("land_night"),
-        ...(isBulkEdit ? { renderCell: (params) => <NumberCell params={params} handleCellChange={handleCellChange} id="landings.night" /> } : {}),
-      }),
+      createLandingColumn({ field: "landings_day", headerName: fieldName("land_day"), isBulkEdit, handleRowUpdate }),
+      createLandingColumn({ field: "landings_night", headerName: fieldName("land_night"), isBulkEdit, handleRowUpdate }),
       ...createCustomFieldColumns(customFields, fieldName("landings"), timeFieldsFormat),
       // operation condition time
-      createTimeColumn({
-        field: "night_time", headerName: fieldName("night"), width: 60, fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
-      createTimeColumn({
-        field: "ifr_time", headerName: fieldName("ifr"), width: 59, fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
+      createTimeColumn({ field: "night_time", headerName: fieldName("night"), width: 60, fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
+      createTimeColumn({ field: "ifr_time", headerName: fieldName("ifr"), width: 59, fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
       ...createCustomFieldColumns(customFields, fieldName("oct"), timeFieldsFormat),
       // pilot function time
-      createTimeColumn({
-        field: "pic_time", headerName: fieldName("pic"), fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
-      createTimeColumn({
-        field: "co_pilot_time", headerName: fieldName("cop"), fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
-      createTimeColumn({
-        field: "dual_time", headerName: fieldName("dual"), fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
-      createTimeColumn({
-        field: "instructor_time", headerName: fieldName("instr"), fieldFormat: timeFieldsFormat,
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} /> } : {}),
-      }),
+      createTimeColumn({ field: "pic_time", headerName: fieldName("pic"), fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
+      createTimeColumn({ field: "co_pilot_time", headerName: fieldName("cop"), fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
+      createTimeColumn({ field: "dual_time", headerName: fieldName("dual"), fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
+      createTimeColumn({ field: "instructor_time", headerName: fieldName("instr"), fieldFormat: timeFieldsFormat, isBulkEdit, handleRowUpdate }),
       ...createCustomFieldColumns(customFields, fieldName("pft"), timeFieldsFormat),
       // sim
       createColumn({
         field: "sim_type", headerName: fieldName("sim_type"), width: 60, valueGetter: (_value, row) => row.sim.type,
-        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} handleCellChange={handleCellChange} id="sim.type" /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} callBackFunction={handleRowUpdate} id="sim.type" /> } : {}),
       }),
-      createColumn({
-        field: "sim_time", headerName: fieldName("sim_time"),
-        width: 55, headerAlign: 'center', align: 'center', type: 'time',
+      createTimeColumn({
+        id: "sim.time", field: "sim_time", headerName: fieldName("sim_time"), isBulkEdit, handleRowUpdate,
         valueGetter: (_value, row) => row.sim.time,
         valueFormatter: (_value, row) => formatTimeField(row.sim.time, timeFieldsFormat),
-        aggregation: 'sum',
         aggregationFormatter: (value) => formatTimeField(value, timeFieldsFormat),
-        ...(isBulkEdit ? { renderCell: (params) => <FlightTimeCell params={params} handleCellChange={handleCellChange} fieldFormat={timeFieldsFormat} id="sim.time" /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("fstd"), timeFieldsFormat),
       // custom
@@ -206,7 +138,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // remarks
       createColumn({
         field: "remarks", headerName: fieldName("remarks"), align: 'left', flex: 1, minWidth: 50,
-        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} handleCellChange={handleCellChange} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <TextCell params={params} callBackFunction={handleRowUpdate} /> } : {}),
       }),
       ...createCustomFieldColumns(customFields, fieldName("remarks"), timeFieldsFormat),
       // misc
@@ -214,10 +146,10 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createHasAttachmentColumn({ field: "has_attachment" }),
       createColumn({
         field: "tags", type: "autocomplete", headerName: fieldName("tags"), align: 'left',
-        ...(isBulkEdit ? { renderCell: (params) => <TagCell params={params} handleCellChange={handleCellChange} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <TagCell params={params} callBackFunction={handleRowUpdate} /> } : {}),
       }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
-  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, timeFieldsFormat, dateFieldsFormat, handleCellChange, isBulkEdit]);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, timeFieldsFormat, dateFieldsFormat, isBulkEdit, handleRowUpdate]);
 
   const columnGroupingModel = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -344,31 +276,37 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 
   const onSave = useCallback(() => {
-    const rows = [...updatedRowsRef.current.values()].map(({ updated }) => updated);
+    const rows = updatedRows
+      .map(uuid => apiRef.current.getRow(uuid))
+      .filter(Boolean);
+
+
     console.log("Saving...", rows);
-    updatedRowsRef.current = new Map();
-    setUpdatedRowCount(0);
-  }, []);
+    setUpdatedRows([]);
+  }, [apiRef, updatedRows]);
 
   const onCancel = useCallback(() => {
-    for (const { original } of updatedRowsRef.current.values()) {
-      apiRef.current.updateRows([original]);
-    }
-    updatedRowsRef.current = new Map();
-    setUpdatedRowCount(0);
-  }, [apiRef]);
+    updatedRows.forEach(uuid => {
+      const row = data.find(row => row.uuid === uuid);
+
+      if (row) {
+        apiRef.current.updateRows([row]);
+      }
+    });
+
+    setUpdatedRows([]);
+  }, [data, updatedRows, apiRef]);
 
   const customActions = useMemo(() => (
     <>
       <NewFlightRecordButton />
       <CSVExportButton apiRef={apiRef} type="logbook" />
       <PDFExportButton />
-      <BulkEditButtons isBulkEdit={isBulkEdit} setIsBulkEdit={setIsBulkEdit} updatedRowCount={updatedRowCount} onSave={onSave} onCancel={onCancel} apiRef={apiRef} />
+      <BulkEditButtons isBulkEdit={isBulkEdit} setIsBulkEdit={setIsBulkEdit} updatedRowCount={updatedRows.length} onSave={onSave} onCancel={onCancel} apiRef={apiRef} />
     </>
-  ), [apiRef, isBulkEdit, setIsBulkEdit, updatedRowCount, onSave, onCancel]);
+  ), [apiRef, isBulkEdit, setIsBulkEdit, updatedRows, onSave, onCancel]);
 
-  const getRowClassName = useCallback((params) => updatedRowsRef.current.has(params.id) ? "row--edited" : "", [updatedRowCount]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  const getRowClassName = useCallback(params => updatedRows.includes(params.id) ? "row--edited" : "", [updatedRows]);
 
   return (
     <XDataGrid

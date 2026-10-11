@@ -1,15 +1,18 @@
 import TextField from "../../UIElements/TextField";
+import { updateNested } from "../helpers";
 
 const NUMBER_SLOT_PROPS = { inputMode: "numeric" };
 
-export const NumberCell = ({ params, handleCellChange, id }) => {
+export const NumberCell = ({ params, callBackFunction, id }) => {
   const targetId = id || params.field;
   const displayValue = params.value === 0 || params.value === null || params.value === undefined ? "" : params.value;
 
   const handleChange = (key, value) => {
     const numValue = value === "" ? 0 : parseInt(value, 10);
     if (!isNaN(numValue)) {
-      handleCellChange(params.row, key, numValue);
+      const updatedRow = updateNested(params.row, key.split("."), numValue);
+      params.api.updateRows([updatedRow]);
+      callBackFunction(params.row.uuid);
     }
   };
 

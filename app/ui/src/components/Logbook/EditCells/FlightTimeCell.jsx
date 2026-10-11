@@ -1,15 +1,21 @@
 import TimeField from "../../UIElements/TimeField";
+import { updateNested } from "../helpers";
 
-export const FlightTimeCell = ({ params, handleCellChange, fieldFormat, id }) => {
+export const FlightTimeCell = ({ params, callBackFunction, fieldFormat, id }) => {
+  const handleChange = (key, value) => {
+    const updatedRow = updateNested(params.row, key.split("."), value);
+    params.api.updateRows([updatedRow]);
+    callBackFunction(params.row.uuid);
+  };
+
   return (
     <TimeField
       id={id || `time.${params.field}`}
       value={params.value}
-      handleChange={(key, value) => handleCellChange(params.row, key, value)}
+      handleChange={handleChange}
       fieldFormat={fieldFormat}
       variant="standard"
       placeholder=""
-    // slotProps={{ input: { disableUnderline: true } }}
     />
   );
 }
