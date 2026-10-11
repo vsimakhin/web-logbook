@@ -2,8 +2,6 @@
 
 ## [5.0.0-alpha1] - to be released
 
-:warning: As this is an alpha release, please back up your database before upgrading. The release includes data migrations for time and date fields :warning:
-
 - Update: Converted time fields from the legacy HH:MM string format to integer minutes, improving consistency and simplifying time calculations.
 - Update: Migrated date fields from the legacy DD/MM/YYYY format to ISO YYYY-MM-DD, separating internal storage from the displayed date format.
 - Update: Optimized HTTP requests to reduce redundant requests and improve data-fetching efficiency.
