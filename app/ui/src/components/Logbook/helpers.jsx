@@ -13,6 +13,9 @@ import { formatTimeField } from '../../util/helpers';
 import NumberCell from './EditCells/NumberCell';
 import FlightTimeCell from './EditCells/FlightTimeCell';
 import DateCell from './EditCells/DateCell';
+import TextCell from './EditCells/TextCell';
+import TimeCell from './EditCells/TimeCell';
+import EnrouteCell from './EditCells/EnrouteCell';
 
 export const updateNested = (object, keys, value) => {
   const [currentKey, ...rest] = keys;
@@ -98,7 +101,7 @@ export const createLandingColumn = ({ field, headerName, isBulkEdit, handleRowUp
   ...props,
 })
 
-export const createCustomFieldColumns = (customFields, category, fieldFormat = 1) => {
+export const createCustomFieldColumns = ({ customFields, category, isBulkEdit, callBackFunction, timeFieldsFormat = 1 }) => {
   if (!customFields || !Array.isArray(customFields)) {
     return [];
   }
@@ -118,13 +121,27 @@ export const createCustomFieldColumns = (customFields, category, fieldFormat = 1
       if (field.type === 'duration') {
         baseColumn.type = 'time';
         baseColumn.aggregation = 'sum';
-        baseColumn.valueFormatter = (_value, row) => formatTimeField(row.custom_fields[field.uuid] || 0, fieldFormat);
-        baseColumn.aggregationFormatter = (value) => formatTimeField(value, fieldFormat);
+        baseColumn.valueFormatter = (_value, row) => formatTimeField(row.custom_fields[field.uuid] || 0, timeFieldsFormat);
+        baseColumn.aggregationFormatter = (value) => formatTimeField(value, timeFieldsFormat);
       } else if (field.type === 'number') {
         baseColumn.aggregation = 'sum';
         baseColumn.type = 'number';
       }
 
+      if (isBulkEdit) {
+        if (field.type === 'duration') {
+          baseColumn.renderCell = (params) => <FlightTimeCell id={`custom_fields.${field.uuid}`} params={params} callBackFunction={callBackFunction} fieldFormat={timeFieldsFormat} />
+        } else if (field.type === 'number') {
+          baseColumn.renderCell = (params) => <NumberCell params={params} id={`custom_fields.${field.uuid}`} callBackFunction={callBackFunction} />
+        } else if (field.type === 'time') {
+          baseColumn.renderCell = (params) => <TimeCell params={params} callBackFunction={callBackFunction} id={`custom_fields.${field.uuid}`} />
+        } else if (field.type === 'enroute') {
+          baseColumn.renderCell = (params) => <EnrouteCell params={params} callBackFunction={callBackFunction} id={`custom_fields.${field.uuid}`} />
+        }
+        else {
+          baseColumn.renderCell = (params) => <TextCell params={params} callBackFunction={callBackFunction} id={`custom_fields.${field.uuid}`} />
+        }
+      }
       return baseColumn;
     })
 }

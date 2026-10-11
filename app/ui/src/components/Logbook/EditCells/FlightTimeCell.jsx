@@ -11,7 +11,7 @@ export const FlightTimeCell = ({ params, callBackFunction, fieldFormat, id }) =>
   return (
     <TimeField
       id={id || `time.${params.field}`}
-      value={params.value}
+      value={params.value || 0}
       handleChange={handleChange}
       fieldFormat={fieldFormat}
       variant="standard"
