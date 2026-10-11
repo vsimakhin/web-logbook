@@ -201,7 +201,7 @@ var logbookView = NewView("logbook_view",
 				SELECT
 					uuid,
 					date,
-					ROW_NUMBER() OVER (date, departure_time)) AS rn,
+					ROW_NUMBER() OVER (ORDER BY date, departure_time) AS rn,
 					departure_place, departure_time, arrival_place, arrival_time,
 					aircraft_model, reg_name, se_time, me_time, mcc_time, total_time,
 					IFNULL(day_landings, 0) as day_landings,
