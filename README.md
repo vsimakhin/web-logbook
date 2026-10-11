@@ -63,9 +63,9 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [5.0.0-alpha1] - to be released
+## [5.0.0-alpha1] - 11.10.2026
 
-:warning: As this is an alpha release, please back up your database before upgrading
+:warning: As this is an alpha (non-production) release, back up your database before upgrading
 
 - Update: Converted time fields from the legacy HH:MM string format to integer minutes, improving consistency and simplifying time calculations.
 - Update: Migrated date fields from the legacy DD/MM/YYYY format to ISO YYYY-MM-DD, separating internal storage from the displayed date format.
