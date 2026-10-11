@@ -36,6 +36,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
 
   const [isBulkEdit, setIsBulkEdit] = useState(false);
   const [updatedRows, setUpdatedRows] = useState([]);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleRowUpdate = useCallback((uuid) => {
     setUpdatedRows(prev => prev.includes(uuid) ? prev : [...prev, uuid]);
@@ -279,36 +280,17 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
     ].filter(Boolean);
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
 
-  const onSave = useCallback(() => {
-    const rows = updatedRows
-      .map(uuid => apiRef.current.getRow(uuid))
-      .filter(Boolean);
-
-
-    console.log("Saving...", rows);
-    setUpdatedRows([]);
-  }, [apiRef, updatedRows]);
-
-  const onCancel = useCallback(() => {
-    updatedRows.forEach(uuid => {
-      const row = data.find(row => row.uuid === uuid);
-
-      if (row) {
-        apiRef.current.updateRows([row]);
-      }
-    });
-
-    setUpdatedRows([]);
-  }, [data, updatedRows, apiRef]);
-
   const customActions = useMemo(() => (
     <>
       <NewFlightRecordButton />
       <CSVExportButton apiRef={apiRef} type="logbook" />
       <PDFExportButton />
-      <BulkEditButtons isBulkEdit={isBulkEdit} setIsBulkEdit={setIsBulkEdit} updatedRowCount={updatedRows.length} onSave={onSave} onCancel={onCancel} apiRef={apiRef} />
+      <BulkEditButtons
+        isBulkEdit={isBulkEdit} setIsBulkEdit={setIsBulkEdit}
+        setUpdatedRows={setUpdatedRows} updatedRows={updatedRows}
+        apiRef={apiRef} data={data} setIsUpdating={setIsUpdating} />
     </>
-  ), [apiRef, isBulkEdit, setIsBulkEdit, updatedRows, onSave, onCancel]);
+  ), [apiRef, isBulkEdit, setIsBulkEdit, updatedRows, data]);
 
   const getRowClassName = useCallback(params => updatedRows.includes(params.id) ? "row--edited" : "", [updatedRows]);
 
@@ -318,7 +300,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       tableId='logbook'
       title='Logbook'
       icon={<AutoStoriesOutlinedIcon />}
-      loading={isLoading}
+      loading={isLoading || isUpdating}
       rows={data}
       columns={columns}
       columnGroupingModel={columnGroupingModel}
