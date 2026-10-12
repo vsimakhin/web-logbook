@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.0.0-alpha1] - 11.10.2026
+
+:warning: As this is an alpha (non-production) release, back up your database before upgrading
+
+- Update: Converted time fields from the legacy HH:MM string format to integer minutes, improving consistency and simplifying time calculations.
+- Update: Migrated date fields from the legacy DD/MM/YYYY format to ISO YYYY-MM-DD, separating internal storage from the displayed date format.
+- Update: Optimized HTTP requests to reduce redundant requests and improve data-fetching efficiency.
+- New: Edit multiple flight records directly in the logbook table, with options to save or cancel changes.
+- New: Configurable time formats - choose between H:MM, HH:MM, and FAA decimal time formats.
+- New: Configurable date formats - Choose between DD/MM/YYYY, YYYY-MM-DD, and MM/DD/YYYY.
+- Update: Added total times to the tables for aircrafts and aircraft categories.
+
 ## [4.10.0] - 24.09.2026
 
 - Fix: The Tags filter on the Map page wasn't working properly.

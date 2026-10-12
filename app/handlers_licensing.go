@@ -123,17 +123,6 @@ func (app *application) HandlerApiUpdateLicensingRecord(w http.ResponseWriter, r
 	app.writeOkResponse(w, "License Record has been updated")
 }
 
-// HandlerApiGetLicensingCategories returns a list of license categories
-func (app *application) HandlerApiGetLicensingCategories(w http.ResponseWriter, r *http.Request) {
-	categories, err := app.db.GetLicensesCategory()
-	if err != nil {
-		app.handleError(w, err)
-		return
-	}
-
-	app.writeJSON(w, http.StatusOK, categories)
-}
-
 // HandlerApiDeleteLicensingRecord is a handler for deleting license record
 func (app *application) HandlerApiDeleteLicensingRecord(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")

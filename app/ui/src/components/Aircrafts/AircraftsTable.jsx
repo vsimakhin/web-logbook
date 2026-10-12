@@ -11,10 +11,13 @@ import EditAircraftModal from './EditAircraftModal';
 import XDataGrid from '../UIElements/XDataGrid/XDataGrid';
 import TableActionHeader from '../UIElements/TableActionHeader';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+import useSettings from '../../hooks/useSettings';
+import { formatTimeField } from '../../util/helpers';
 
 export const AircraftsTable = ({ data, isLoading }) => {
   const apiRef = useGridApiRef();
   const dialogs = useDialogs();
+  const { fieldNameF, timeFieldsFormat } = useSettings();
 
   const columns = useMemo(() => [
     {
@@ -52,7 +55,19 @@ export const AircraftsTable = ({ data, isLoading }) => {
       headerAlign: "center",
       flex: 1
     },
-  ], [dialogs]);
+    {
+      field: "total_time",
+      headerName: fieldNameF("total"),
+      width: 100,
+      headerAlign: "center",
+      align: "center",
+      type: 'time',
+      valueGetter: (_value, row) => row.total_time,
+      valueFormatter: (_value, row) => formatTimeField(row.total_time, timeFieldsFormat),
+      aggregation: 'sum',
+      aggregationFormatter: (value) => formatTimeField(value, timeFieldsFormat),
+    }
+  ], [dialogs, fieldNameF, timeFieldsFormat]);
 
   const customActions = useMemo(() => (<CSVExportButton apiRef={apiRef} type="aircrafts" />), [apiRef]);
 

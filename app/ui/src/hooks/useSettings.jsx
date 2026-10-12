@@ -133,6 +133,8 @@ export const useSettings = () => {
     fieldName,
     fieldNameF,
     paginationOptions,
+    timeFieldsFormat: data.time_fields_auto_format || 1,
+    dateFieldsFormat: data.date_fields_format || "DD/MM/YYYY",
   };
 };
 

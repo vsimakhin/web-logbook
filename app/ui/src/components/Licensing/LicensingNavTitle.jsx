@@ -1,22 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import dayjs from "dayjs";
 // MUI
 import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
 // Custom
 import useSettings from "../../hooks/useSettings";
-import { fetchLicenses } from "../../util/http/licensing";
 import { calculateExpiry } from "./helpers";
+import { useLicensingQuery } from "../../hooks/queries";
 
 export const LicensingNavTitle = () => {
   const { settings } = useSettings();
-
-  const { data: licenses = [] } = useQuery({
-    queryKey: ["licensing"],
-    queryFn: ({ signal }) => fetchLicenses({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data: licenses = [] } = useLicensingQuery();
 
   const { warning, expired } = useMemo(() => {
     const cfg = settings?.licenses_expiration;
@@ -30,7 +24,7 @@ export const LicensingNavTitle = () => {
 
     if (licenses) {
       for (const license of licenses) {
-        const expiration = calculateExpiry(license.valid_until || "");
+        const expiration = calculateExpiry(dayjs(license.valid_until) || null);
         if (!expiration) continue;
 
         if (expiration.diffDays < 0) expired++;

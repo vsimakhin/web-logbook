@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
 // MUI UI elements
 import Grid from "@mui/material/Grid";
@@ -13,7 +12,7 @@ import DatePicker from '../UIElements/DatePicker';
 import TextField from '../UIElements/TextField';
 import AircraftType from '../UIElements/AircraftType';
 import AircraftReg from '../UIElements/AircraftReg';
-import TimeField from './TimeField';
+import TimeField from '../UIElements/TimeField';
 import PlaceField from './PlaceField';
 import LandingFields from './LandingFields';
 import FlightTitle from "./FlightTitle";
@@ -22,16 +21,16 @@ import FlightRecordMenuButtons from './FlightRecordMenuButtons';
 import { FIELDS_VISIBILITY_KEY } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
-import { fetchAircraftModelsCategories } from '../../util/http/aircraft';
 import { PICNameField } from './PICNameField';
 import CustomFields from './CustomFields';
+import { useModelsCategoriesQuery } from '../../hooks/queries';
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() =>
     <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
     [flight.prev_uuid, flight.next_uuid]
   );
-  const { fieldNameF, settings } = useSettings();
+  const { fieldNameF, settings, timeFieldsFormat } = useSettings();
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
 
   const timeFields = useMemo(() => (
@@ -49,14 +48,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     ]
   ), [fieldNameF]);
 
-  const { data: models = [] } = useQuery({
-    queryKey: ['models-categories'],
-    queryFn: ({ signal }) => fetchAircraftModelsCategories({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-    refetchOnWindowFocus: false,
-    select: (data) => data || [], // Ensure options is always an array
-  });
+  const { data: models } = useModelsCategoriesQuery();
 
   // Auto fill pic time
   useEffect(() => {
@@ -98,7 +90,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               id="date"
               handleChange={handleChange}
               label={fieldNameF("date")}
-              value={dayjs(flight?.date ?? dayjs().format('DD/MM/YYYY'), "DD/MM/YYYY")}
+              value={flight?.date ? dayjs(flight.date) : dayjs()}
             />
           </Grid>
 
@@ -133,6 +125,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                 key={field.id} id={field.id} label={field.label}
                 handleChange={handleChange}
                 total_time={flight.time.total_time}
+                fieldFormat={timeFieldsFormat}
                 value={getValue(flight, field.id)} />
             ))}
           </Grid>

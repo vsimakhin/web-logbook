@@ -51,6 +51,7 @@ export const XToolbar = ({
   showResetColumns = true,
   showFilters = true,
   initialColumns = EMPTY_COLUMNS,
+  filterTimeFieldFormat = 1,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -87,7 +88,7 @@ export const XToolbar = ({
     if (showFilters) {
       items.push(
         <MenuItem key="filter" onClick={handleMobileMenuClose} sx={{ p: 0 }}>
-          <XToolbarFilterPanelTrigger />
+          <XToolbarFilterPanelTrigger timeFieldFormat={filterTimeFieldFormat} />
         </MenuItem>
       );
     }
@@ -109,7 +110,7 @@ export const XToolbar = ({
     }
 
     return items;
-  }, [customActions, handleMobileMenuClose, initialColumns, showColumnsPanel, showFilters, showQuickFilter, showResetColumns]);
+  }, [customActions, handleMobileMenuClose, initialColumns, showColumnsPanel, showFilters, showQuickFilter, showResetColumns, filterTimeFieldFormat]);
 
   const toolbarTitle = <ToolbarTitle icon={icon} title={title} hideTitle={isMobile && isQuickFilterActive} />;
 
@@ -156,7 +157,7 @@ export const XToolbar = ({
       )}
 
       {showQuickFilter && <XToolbarQuickFilter onActiveChange={setIsQuickFilterActive} />}
-      {showFilters && <XToolbarFilterPanelTrigger />}
+      {showFilters && <XToolbarFilterPanelTrigger timeFieldFormat={filterTimeFieldFormat} />}
       {showColumnsPanel && <XToolbarColumnsPanelTrigger />}
       {showResetColumns && <XToolbarResetColumns initialColumns={initialColumns} />}
     </Toolbar>

@@ -1,14 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
 // Custom components
 import Select from "../UIElements/Select"
-import { fetchLicenseCategory } from "../../util/http/licensing";
+import { useLicensingQuery } from "../../hooks/queries";
+import { useMemo } from "react";
+
+const getUniqueLicenceCategories = (licengins = []) => [
+  ...new Set(
+    licengins
+      .map((license) => license.category?.trim())
+      .filter(Boolean)
+  ),
+].sort();
+
 
 export const LicenseCategory = ({ gsize, value, handleChange, id = "category" }) => {
-  const { data: options = [] } = useQuery({
-    queryFn: ({ signal }) => fetchLicenseCategory({ signal }),
-    queryKey: ['licensing-categories'],
-    select: (data) => data || [], // Ensure options is always an array
-  })
+  const { data } = useLicensingQuery();
+  const options = useMemo(() => getUniqueLicenceCategories(data), [data]);
 
   return (
     <Select gsize={gsize}

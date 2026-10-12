@@ -48,29 +48,6 @@ func (m *DBModel) GetLicenseRecordByID(uuid string) (lic License, err error) {
 	return lic, nil
 }
 
-// GetLicensesCategory returns all already recorded categories
-func (m *DBModel) GetLicensesCategory() (categories []string, err error) {
-	ctx, cancel := m.ContextWithDefaultTimeout()
-	defer cancel()
-
-	query := "SELECT category FROM licensing GROUP BY category ORDER BY category"
-	rows, err := m.DB.QueryContext(ctx, query)
-	if err != nil {
-		return categories, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var category string
-		if err = rows.Scan(&category); err != nil {
-			return categories, err
-		}
-		categories = append(categories, category)
-	}
-
-	return categories, nil
-}
-
 // UpdateLicenseRecord updates the license records in the licensing table
 func (m *DBModel) UpdateLicenseRecord(lic License) (err error) {
 	ctx, cancel := m.ContextWithDefaultTimeout()

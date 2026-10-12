@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	_ "embed"
@@ -41,8 +42,20 @@ func OpenDB(engine string, dsn string) (*sql.DB, error) {
 // validateDB creates db structure in case it's a first run and the schema is empty
 func validateDB(db *sql.DB, engine string) error {
 	metadataTable.initTable(db, engine)
-	isNewSchema := newShema(db)
-	if isNewSchema {
+	version := getSchemaVersion(db)
+
+	if version != "unknown" {
+		versionInt, err := strconv.Atoi(version)
+		if err == nil && versionInt < 100 {
+			if err := dataOverhaulMigration(db, engine); err != nil {
+				return fmt.Errorf("migration failed: %w", err)
+			}
+		}
+	}
+
+	if version == "unknown" || version != schemaVersion {
+		fmt.Printf("Initializing version %s...\n", schemaVersion)
+
 		// check tables
 		tables := []*Table{logbookTable, airportsTable, customAirportsTable,
 			settingsTable, licensingTable, attachmentsTable, tokensTable,
@@ -57,7 +70,7 @@ func validateDB(db *sql.DB, engine string) error {
 		}
 
 		// check views
-		views := []*View{logbookView, airportsView, aircraftsView, logbookStatsView, attachmentsView}
+		views := []*View{logbookView, airportsView, aircraftsView, attachmentsView}
 		for _, view := range views {
 			if err := view.initView(db, engine); err != nil {
 				return err
@@ -80,28 +93,27 @@ func validateDB(db *sql.DB, engine string) error {
 	return nil
 }
 
-func newShema(db *sql.DB) bool {
+func getSchemaVersion(db *sql.DB) (version string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	query := "SELECT version FROM metadata ORDER BY created_at DESC LIMIT 1"
-	var version string
 	err := db.QueryRowContext(ctx, query).Scan(&version)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Printf("No rows found in 'metadata'. Initializing version %s...\n", schemaVersion)
-			return true
+			fmt.Println("No rows found in 'metadata'")
+			return "unknown"
 		}
 		fmt.Println(err)
-		return true
+		return "unknown"
 	}
 
 	if version != schemaVersion {
-		fmt.Printf("Schema version (%s) mismatch. Initializing version %s...\n", version, schemaVersion)
-		return true
+		fmt.Printf("Schema version (%s) mismatch\n", version)
+		return version
 	}
 
-	return false
+	return version
 }
 
 func updateSchemaVersion(db *sql.DB) error {

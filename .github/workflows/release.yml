@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -82,5 +82,5 @@ jobs:
           push: true
           tags: |
             vsimakhin/web-logbook:${{ github.event.release.tag_name }}
-            vsimakhin/web-logbook:4
-            vsimakhin/web-logbook:latest
+#            vsimakhin/web-logbook:4
+#            vsimakhin/web-logbook:latest

@@ -32,7 +32,6 @@ func (app *application) routes() *chi.Mux {
 		// logbook
 		r.Route("/logbook", func(r chi.Router) {
 			r.With(middleware.Compress(5)).Get("/data", app.HandlerApiLogbookData)
-			r.With(middleware.Compress(5)).Get("/stats-data", app.HandlerApiLogbookStatsData)
 			r.With(middleware.Compress(5)).Get("/mapdata", app.HandlerApiLogbookMapData)
 			r.Get("/{uuid}", app.HandlerApiFlightRecordByID)
 
@@ -49,15 +48,11 @@ func (app *application) routes() *chi.Mux {
 				r.Post("/{uuid}", app.HandlerApiTrackLogNew)
 				r.Delete("/{uuid}", app.HandlerApiTrackLogReset)
 			})
-
-			r.Get("/tags", app.HandlerApiFlightRecordTags)
-			r.Get("/pic-names", app.HandlerApiFlightRecordPicNames)
 		})
 
 		// licensing
 		r.Route("/licensing", func(r chi.Router) {
 			r.Get("/list", app.HandlerApiGetLicensingRecords)
-			r.Get("/categories", app.HandlerApiGetLicensingCategories)
 			r.With(middleware.Compress(5)).Get("/{uuid}", app.HandlerApiGetLicensingRecord)
 			r.Post("/new", app.HandlerApiNewLicensingRecord)
 			r.Put("/{uuid}", app.HandlerApiUpdateLicensingRecord)
@@ -78,12 +73,8 @@ func (app *application) routes() *chi.Mux {
 		// aircrafts
 		r.Route("/aircraft", func(r chi.Router) {
 			r.Get("/list", app.HandlerApiAircraftList)
-			r.Get("/build-list", app.HandlerApiAircraftBuildList)
-			r.Get("/models", app.HandlerApiAircraftModels)
 			r.Get("/models-categories", app.HandlerApiAircraftModelsCategoriesList)
 			r.Put("/models-categories", app.HandlerApiAircraftModelsCategoriesUpdate)
-			r.Get("/logbook", app.HandlerAircrafts)
-			r.Get("/logbook/{filter}", app.HandlerAircrafts)
 			r.Put("/update", app.HandlerApiAircraftUpdate)
 		})
 

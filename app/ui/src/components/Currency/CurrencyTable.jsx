@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGoodOutlined';
 // Custom components and libraries
-import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule, getStatusBarColor, parseSubMetrics } from './helpers';
+import { evaluateCurrency, formatCurrencyValue, timeframeUnitOptions, getCurrencyExpiryForRule, getStatusBarColor, parseSubMetrics, isTimeMetric } from './helpers';
 import { calculateExpiry } from '../Licensing/helpers';
 import dayjs from 'dayjs';
 import NewCurrencyButton from './NewCurrencyButton';
@@ -25,7 +25,7 @@ const getLabel = (metricValue, metricOptions) => {
   return option ? option.label : metricValue;
 }
 
-const formatTimeFrame = (timeFrame) => {
+const formatTimeFrame = (timeFrame, dateFieldsFormat) => {
   if (!timeFrame) return '—';
 
   const { unit, value, since } = timeFrame;
@@ -34,7 +34,7 @@ const formatTimeFrame = (timeFrame) => {
   )?.label;
 
   if (unit === 'all_time') return label;
-  if (unit === 'since') return since ? `Since ${since}` : '—';
+  if (unit === 'since') return since ? `Since ${dayjs(since, "YYYY-MM-DD").format(dateFieldsFormat)}` : '—';
 
   return value ? `${value} ${label}` : '—';
 };
@@ -78,8 +78,7 @@ const ExpireCell = ({ row, currencyResults }) => {
     return '—';
   }
 
-  const expiryStr = dayjs(expiry).format('DD/MM/YYYY');
-  const exp = calculateExpiry(expiryStr);
+  const exp = calculateExpiry(expiry);
   if (!exp) return '—';
 
   const text = exp.diffDays < 0
@@ -100,31 +99,32 @@ const getPercent = (current, target) => {
 };
 
 
-const StatusCell = ({ row, metricOptions, currencyResults }) => {
+const StatusCell = ({ row, metricOptions, currencyResults, timeFieldsFormat }) => {
   const { status } = currencyResults.get(row.uuid) ?? { status: { current: 0, meetsRequirement: false, subResults: [] } };
 
-  const value = formatCurrencyValue(status.current, row.metric);
-  const percent = getPercent(status.current, row.target_value);
+  const value = formatCurrencyValue(status.current, row.metric, timeFieldsFormat);
+  const target = isTimeMetric(row.metric, row.target_value);
+  const percent = getPercent(status.current, target);
   const percentLabel = percent >= 500 ? '(500+%)' : `(${Math.round(percent)}%)`;
   const color = getStatusBarColor(status.meetsRequirement, percent, row.comparison);
   const mainName = getLabel(row.metric, metricOptions);
 
   const tooltipContent = (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Typography variant="caption" display="block" sx={{ fontWeight: 500 }}>
-        {mainName}: {value} / {formatCurrencyValue(row.target_value, row.metric)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
+        {mainName}: {value} / {formatCurrencyValue(target, row.metric, timeFieldsFormat)} ({Math.round(percent)}%) {status.mainMeets ? '✓' : '✗'}
       </Typography>
       {status.subResults?.map((sub, i) => {
         const subName = getLabel(sub.metric, metricOptions);
-        const subVal = formatCurrencyValue(sub.current, sub.metric);
-        const subTarget = formatCurrencyValue(sub.target_value, sub.metric);
+        const subVal = formatCurrencyValue(sub.current, sub.metric, timeFieldsFormat);
+        const subTarget = isTimeMetric(sub.metric, sub.target_value);
         return (
           <Typography key={i} variant="caption" display="block">
-            ↳ {subName}: {subVal} / {subTarget} ({Math.round(sub.percent)}%) {sub.meetsRequirement ? '✓' : '✗'}
+            ↳ {subName}: {subVal} / {formatCurrencyValue(subTarget, sub.metric, timeFieldsFormat)} ({Math.round(sub.percent)}%) {sub.meetsRequirement ? '✓' : '✗'}
           </Typography>
         );
       })}
-    </>
+    </Box>
   );
 
   const progressBar = (
@@ -151,7 +151,7 @@ const StatusCell = ({ row, metricOptions, currencyResults }) => {
 
 export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
   const apiRef = useGridApiRef();
-  const { fieldNameF } = useSettings();
+  const { fieldNameF, timeFieldsFormat, dateFieldsFormat } = useSettings();
 
   const metricOptions = useMemo(() => (
     [
@@ -222,7 +222,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         headerName: "Time Frame",
         headerAlign: 'center',
         width: 170,
-        renderCell: ({ row }) => formatTimeFrame(row.time_frame)
+        renderCell: ({ row }) => formatTimeFrame(row.time_frame, dateFieldsFormat)
       },
       { field: "filters", headerName: "Filters", headerAlign: 'center', width: 150 },
       {
@@ -232,7 +232,7 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         width: 150,
         renderCell: ({ row }) => {
           const { expiry } = currencyResults.get(row.uuid) ?? {};
-          return expiry ? dayjs(expiry).format('DD/MM/YYYY') : '—'
+          return expiry ? dayjs(expiry).format(dateFieldsFormat) : '—'
         }
       },
       {
@@ -247,10 +247,10 @@ export const CurrencyTable = ({ logbookData, currencyData, aircrafts }) => {
         headerName: "Status",
         headerAlign: "center",
         width: 220,
-        renderCell: ({ row }) => <StatusCell row={row} metricOptions={metricOptions} currencyResults={currencyResults} />
+        renderCell: ({ row }) => <StatusCell row={row} metricOptions={metricOptions} currencyResults={currencyResults} timeFieldsFormat={timeFieldsFormat} />
       }
     ]
-  ), [metricOptions, currencyResults]);
+  ), [metricOptions, currencyResults, timeFieldsFormat, dateFieldsFormat]);
 
   const customActions = useMemo(() => (
     <>

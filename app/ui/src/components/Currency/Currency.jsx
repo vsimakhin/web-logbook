@@ -5,18 +5,12 @@ import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import CurrencyTable from "./CurrencyTable";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchLogbookData } from "../../util/http/logbook";
-import { fetchAircrafts } from "../../util/http/aircraft";
 import { fetchCurrency } from "../../util/http/currency";
+import { useAircraftsQuery, useLogbookQuery } from "../../hooks/queries";
 
 export const Currency = () => {
   // load all data
-  const { data: logbookData = [], isLoading: isLogbookDataLoading, isError: isLogbookDataError, error: logbookDataError } = useQuery({
-    queryKey: ['logbook'],
-    queryFn: ({ signal }) => fetchLogbookData({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  });
+  const { data: logbookData = [], isLoading: isLogbookDataLoading, isError: isLogbookDataError, error: logbookDataError } = useLogbookQuery();
   useErrorNotification({ isLogbookDataError, logbookDataError, fallbackMessage: 'Failed to load logbook data' });
 
   const { data: currencyData = [], isLoading: isCurrencyDataLoading, isError, error } = useQuery({
@@ -27,12 +21,7 @@ export const Currency = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load currencies' });
 
-  const { data: aircrafts = [], isLoading: isAircraftsLoading } = useQuery({
-    queryKey: ['aircrafts'],
-    queryFn: ({ signal }) => fetchAircrafts({ signal }),
-    staleTime: 3600000,
-    gcTime: 3600000,
-  })
+  const { data: aircrafts, isLoading: isAircraftsLoading } = useAircraftsQuery();
 
   if (isLogbookDataLoading || isCurrencyDataLoading || isAircraftsLoading) return <LinearProgress />;
 

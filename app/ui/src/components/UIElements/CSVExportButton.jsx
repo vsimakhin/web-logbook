@@ -6,7 +6,8 @@ import Tooltip from '@mui/material/Tooltip';
 // MUI Icons
 import SvgIcon from '@mui/material/SvgIcon';
 // Custom
-import { convertMinutesToTime } from '../../util/helpers';
+import { formatTimeField } from '../../util/helpers';
+import useSettings from '../../hooks/useSettings';
 
 // google material icon since there is no csv icon in material ui icons
 const CsvIcon = (props) => {
@@ -67,7 +68,7 @@ const exportMappers = {
     "Remarks": row.remarks,
   })),
 
-  logbook: (rows) => rows.map((row) => ({
+  logbook: (rows, timeFieldsFormat) => rows.map((row) => ({
     "Date": row.date,
     "Departure Place": row.departure.place,
     "Departure Time": row.departure.time,
@@ -75,60 +76,60 @@ const exportMappers = {
     "Arrival Time": row.arrival.time,
     "Aircraft Model": row.aircraft.model,
     "Aircraft Reg": row.aircraft.reg_name,
-    "Time SE": row.time.se_time,
-    "Time ME": row.time.me_time,
-    "Time MCC": row.time.mcc_time,
-    "Time Total": row.time.total_time,
+    "Time SE": formatTimeField(row.time.se_time, timeFieldsFormat),
+    "Time ME": formatTimeField(row.time.me_time, timeFieldsFormat),
+    "Time MCC": formatTimeField(row.time.mcc_time, timeFieldsFormat),
+    "Time Total": formatTimeField(row.time.total_time, timeFieldsFormat),
     "Landings Day": row.landings.day,
     "Landings Night": row.landings.night,
-    "Time Night": row.time.night_time,
-    "Time IFR": row.time.ifr_time,
-    "Time PIC": row.time.pic_time,
-    "Time CoPilot": row.time.co_pilot_time,
-    "Time Dual": row.time.dual_time,
-    "Time Instructor": row.time.instructor_time,
+    "Time Night": formatTimeField(row.time.night_time, timeFieldsFormat),
+    "Time IFR": formatTimeField(row.time.ifr_time, timeFieldsFormat),
+    "Time PIC": formatTimeField(row.time.pic_time, timeFieldsFormat),
+    "Time CoPilot": formatTimeField(row.time.co_pilot_time, timeFieldsFormat),
+    "Time Dual": formatTimeField(row.time.dual_time, timeFieldsFormat),
+    "Time Instructor": formatTimeField(row.time.instructor_time, timeFieldsFormat),
     "SIM Type": row.sim.type,
-    "SIM Time": row.sim.time,
+    "SIM Time": formatTimeField(row.sim.time, timeFieldsFormat),
     "PIC Name": row.pic_name,
     "Remarks": row.remarks,
     "Tags": row.tags,
   })),
 
-  "totals-by-year": (rows) => rows.map((row) => ({
+  "totals-by-year": (rows, timeFieldsFormat) => rows.map((row) => ({
     "Year": row.year,
     "Month": row.month,
-    "SE": convertMinutesToTime(row.time.se_time),
-    "ME": convertMinutesToTime(row.time.me_time),
-    "MCC": convertMinutesToTime(row.time.mcc_time),
-    "Night": convertMinutesToTime(row.time.night_time),
-    "IFR": convertMinutesToTime(row.time.ifr_time),
-    "PIC": convertMinutesToTime(row.time.pic_time),
-    "Co-Pilot": convertMinutesToTime(row.time.copilot_time),
-    "Dual": convertMinutesToTime(row.time.dual_time),
-    "Instructor": convertMinutesToTime(row.time.instructor_time),
-    "CC": convertMinutesToTime(row.time.cc_time),
-    "Sim": convertMinutesToTime(row.sim.time),
+    "SE": formatTimeField(row.time.se_time, timeFieldsFormat),
+    "ME": formatTimeField(row.time.me_time, timeFieldsFormat),
+    "MCC": formatTimeField(row.time.mcc_time, timeFieldsFormat),
+    "Night": formatTimeField(row.time.night_time, timeFieldsFormat),
+    "IFR": formatTimeField(row.time.ifr_time, timeFieldsFormat),
+    "PIC": formatTimeField(row.time.pic_time, timeFieldsFormat),
+    "Co-Pilot": formatTimeField(row.time.copilot_time, timeFieldsFormat),
+    "Dual": formatTimeField(row.time.dual_time, timeFieldsFormat),
+    "Instructor": formatTimeField(row.time.instructor_time, timeFieldsFormat),
+    "CC": formatTimeField(row.time.cc_time, timeFieldsFormat),
+    "Sim": formatTimeField(row.sim.time, timeFieldsFormat),
     "D/N": `${row.landings.day}/${row.landings.night}`,
     "Distance": row.distance,
-    "Total": convertMinutesToTime(row.time.total_time),
+    "Total": formatTimeField(row.time.total_time, timeFieldsFormat),
   })),
 
-  "totals-by-aircraft": (rows) => rows.map((row) => ({
+  "totals-by-aircraft": (rows, timeFieldsFormat) => rows.map((row) => ({
     "Type/Category": row.model,
-    "SE": convertMinutesToTime(row.time.se_time),
-    "ME": convertMinutesToTime(row.time.me_time),
-    "MCC": convertMinutesToTime(row.time.mcc_time),
-    "Night": convertMinutesToTime(row.time.night_time),
-    "IFR": convertMinutesToTime(row.time.ifr_time),
-    "PIC": convertMinutesToTime(row.time.pic_time),
-    "Co-Pilot": convertMinutesToTime(row.time.copilot_time),
-    "Dual": convertMinutesToTime(row.time.dual_time),
-    "Instructor": convertMinutesToTime(row.time.instructor_time),
-    "CC": convertMinutesToTime(row.time.cc_time),
-    "Sim": convertMinutesToTime(row.sim.time),
+    "SE": formatTimeField(row.time.se_time, timeFieldsFormat),
+    "ME": formatTimeField(row.time.me_time, timeFieldsFormat),
+    "MCC": formatTimeField(row.time.mcc_time, timeFieldsFormat),
+    "Night": formatTimeField(row.time.night_time, timeFieldsFormat),
+    "IFR": formatTimeField(row.time.ifr_time, timeFieldsFormat),
+    "PIC": formatTimeField(row.time.pic_time, timeFieldsFormat),
+    "Co-Pilot": formatTimeField(row.time.copilot_time, timeFieldsFormat),
+    "Dual": formatTimeField(row.time.dual_time, timeFieldsFormat),
+    "Instructor": formatTimeField(row.time.instructor_time, timeFieldsFormat),
+    "CC": formatTimeField(row.time.cc_time, timeFieldsFormat),
+    "Sim": formatTimeField(row.sim.time, timeFieldsFormat),
     "D/N": `${row.landings.day}/${row.landings.night}`,
     "Distance": row.distance,
-    "Total": convertMinutesToTime(row.time.total_time),
+    "Total": formatTimeField(row.time.total_time, timeFieldsFormat),
   })),
 
   "persons": (rows) => rows.map((row) => ({
@@ -148,19 +149,20 @@ const exportMappers = {
   })),
 };
 
-const handleExportRows = (rows, type) => {
+const handleExportRows = (rows, type, timeFieldsFormat) => {
   if (!rows || rows.length === 0) return;
 
   const mapper = exportMappers[type];
   if (!mapper) return;
 
-  const rowData = mapper(rows);
+  const rowData = mapper(rows, timeFieldsFormat);
   const csvConfig = mkConfig({ ...defaultConfig, filename: type });
   const csv = generateCsv(csvConfig)(rowData);
   download(csvConfig)(csv);
 };
 
 export const CSVExportButton = ({ type, apiRef }) => {
+  const { settings } = useSettings();
 
   const handleCSVExport = useCallback(() => {
     if (apiRef.current) {
@@ -173,9 +175,9 @@ export const CSVExportButton = ({ type, apiRef }) => {
       // get rows by visible ids
       const rows = visibleRows.map((id) => apiRef.current.getRow(id));
 
-      handleExportRows(rows, type);
+      handleExportRows(rows, type, settings.time_fields_auto_format);
     }
-  }, [type, apiRef]);
+  }, [type, apiRef, settings.time_fields_auto_format]);
 
   return (
     <Tooltip title="Quick CSV Export">

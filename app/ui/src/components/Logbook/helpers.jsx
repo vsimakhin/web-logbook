@@ -1,87 +1,107 @@
 import dayjs from 'dayjs';
 import { Link } from 'react-router';
-
+// MUI Icons
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
-
+// MUI
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
+// Custom
+import { formatTimeField } from '../../util/helpers';
+import NumberCell from './EditCells/NumberCell';
+import FlightTimeCell from './EditCells/FlightTimeCell';
+import DateCell from './EditCells/DateCell';
+import TextCell from './EditCells/TextCell';
+import TimeCell from './EditCells/TimeCell';
+import EnrouteCell from './EditCells/EnrouteCell';
 
-export const sumTime = (values) => {
-  let totalMinutes = 0;
-  values.forEach(v => {
-    if (typeof v === 'string' && v.includes(':')) {
-      const parts = v.split(':');
-      if (parts.length === 2) {
-        const hh = parseInt(parts[0], 10) || 0;
-        const mm = parseInt(parts[1], 10) || 0;
-        totalMinutes += (hh * 60) + mm;
-      }
-    } else if (typeof v === 'number') {
-      totalMinutes += Math.round(v * 60);
-    }
-  });
+export const updateNested = (object, keys, value) => {
+  const [currentKey, ...rest] = keys;
 
-  const hh = Math.floor(totalMinutes / 60);
-  const mm = totalMinutes % 60;
-  return `${hh}:${mm.toString().padStart(2, '0')}`;
-}
+  if (!rest.length) {
+    return { ...object, [currentKey]: value };
+  }
 
-export const createDateColumn = ({ field, headerName, width = 90 }) => ({
+  return {
+    ...object,
+    [currentKey]: updateNested(
+      object?.[currentKey] ?? {},
+      rest,
+      value
+    ),
+  };
+};
+
+export const createDateColumn = ({ field, headerName, fieldFormat = "DD/MM/YYYY", isBulkEdit, handleRowUpdate, ...props }) => ({
   field: field,
   headerName: headerName,
   headerAlign: 'center',
-  width: width,
+  width: 90,
   type: 'date',
-  valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-  valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+  valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
+  valueFormatter: (value) => (value ? dayjs(value).format(fieldFormat) : ''),
   renderCell: (params) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-      <Typography variant="body2" sx={{ color: "primary.main" }}>
-        <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
-          {params.formattedValue}
-        </Link>
-      </Typography>
-    </Box>
+    isBulkEdit ? (
+      <DateCell params={params} callBackFunction={handleRowUpdate} />
+    ) : (
+      <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+        <Typography variant="body2" sx={{ color: "primary.main" }}>
+          <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
+            {params.formattedValue}
+          </Link>
+        </Typography>
+      </Box>
+    )
   ),
-})
-
-export const createColumn = ({ field, headerName, width, headerAlign = 'center', align = 'center', ...props }) => ({
-  field: field,
-  headerName: headerName,
-  width: width,
-  headerAlign: headerAlign,
-  align: align,
   ...props,
 })
 
-export const createTimeColumn = ({ field, headerName, width = 55, headerAlign = 'center', align = 'center', ...props }) => ({
+export const createColumn = ({ field, headerName, width, ...props }) => ({
   field: field,
   headerName: headerName,
   width: width,
-  headerAlign: headerAlign,
-  align: align,
+  headerAlign: 'center',
+  align: 'center',
+  ...props,
+})
+
+export const createTimeColumn = ({ field, headerName, fieldFormat = 1, isBulkEdit, handleRowUpdate, id, ...props }) => ({
+  field: field,
+  headerName: headerName,
+  width: 55,
+  headerAlign: 'center',
+  align: 'center',
   type: 'time',
   valueGetter: (_value, row) => row.time[field],
-  aggregationFn: sumTime,
+  valueFormatter: (_value, row) => formatTimeField(row.time[field], fieldFormat),
+  aggregation: 'sum',
+  aggregationFormatter: (value) => formatTimeField(value, fieldFormat),
+  ...(isBulkEdit ? {
+    renderCell: (params) =>
+      <FlightTimeCell id={id} params={params} callBackFunction={handleRowUpdate} fieldFormat={fieldFormat} />
+  } : {}),
   ...props,
 })
 
-export const createLandingColumn = ({ field, headerName, width = 57, headerAlign = 'center', align = 'center', ...props }) => ({
+export const createLandingColumn = ({ field, headerName, isBulkEdit, handleRowUpdate, ...props }) => ({
   field: field,
   headerName: headerName,
-  width: width,
-  headerAlign: headerAlign,
-  align: align,
+  width: 57,
+  headerAlign: 'center',
+  align: 'center',
   type: 'number',
   valueGetter: (_value, row) => row.landings[field === "landings_day" ? "day" : "night"] !== 0 ? row.landings[field === "landings_day" ? "day" : "night"] : null,
   aggregation: 'sum',
+  ...(isBulkEdit ? {
+    renderCell: (params) =>
+      <NumberCell params={params} id={field === "landings_day" ? "landings.day" : "landings.night"} callBackFunction={handleRowUpdate} />
+  } : {}),
   ...props,
 })
 
-export const createCustomFieldColumns = (customFields, category) => {
+export const createCustomFieldColumns = ({ customFields, category, isBulkEdit, callBackFunction, timeFieldsFormat = 1 }) => {
   if (!customFields || !Array.isArray(customFields)) {
     return [];
   }
@@ -99,13 +119,29 @@ export const createCustomFieldColumns = (customFields, category) => {
 
       // Add time footer for duration fields
       if (field.type === 'duration') {
-        baseColumn.type = 'time'
-        baseColumn.aggregationFn = sumTime
+        baseColumn.type = 'time';
+        baseColumn.aggregation = 'sum';
+        baseColumn.valueFormatter = (_value, row) => formatTimeField(row.custom_fields[field.uuid] || 0, timeFieldsFormat);
+        baseColumn.aggregationFormatter = (value) => formatTimeField(value, timeFieldsFormat);
       } else if (field.type === 'number') {
-        baseColumn.aggregation = 'sum'
-        baseColumn.type = 'number'
+        baseColumn.aggregation = 'sum';
+        baseColumn.type = 'number';
       }
 
+      if (isBulkEdit) {
+        if (field.type === 'duration') {
+          baseColumn.renderCell = (params) => <FlightTimeCell id={`custom_fields.${field.uuid}`} params={params} callBackFunction={callBackFunction} fieldFormat={timeFieldsFormat} />
+        } else if (field.type === 'number') {
+          baseColumn.renderCell = (params) => <NumberCell params={params} id={`custom_fields.${field.uuid}`} callBackFunction={callBackFunction} />
+        } else if (field.type === 'time') {
+          baseColumn.renderCell = (params) => <TimeCell params={params} callBackFunction={callBackFunction} id={`custom_fields.${field.uuid}`} />
+        } else if (field.type === 'enroute') {
+          baseColumn.renderCell = (params) => <EnrouteCell params={params} callBackFunction={callBackFunction} id={`custom_fields.${field.uuid}`} />
+        }
+        else {
+          baseColumn.renderCell = (params) => <TextCell params={params} callBackFunction={callBackFunction} id={`custom_fields.${field.uuid}`} />
+        }
+      }
       return baseColumn;
     })
 }

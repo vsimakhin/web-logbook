@@ -31,8 +31,8 @@ const prepareFlightDataForAPI = (flight) => {
     ...flight,
     custom_fields: JSON.stringify(customFieldsObj),
     landings: {
-      day: parseInt(flight.landings?.day, 10) || 0,
-      night: parseInt(flight.landings?.night, 10) || 0,
+      day: parseInt(flight.landings?.day) || 0,
+      night: parseInt(flight.landings?.night) || 0,
     },
   };
 }
@@ -163,16 +163,6 @@ export const fetchDistance = async ({ signal, departure, arrival }) => {
   return await handleFetch(url, options, 'Cannot fetch distance');
 }
 
-export const fetchTags = async ({ signal }) => {
-  const url = `${API_URL}/logbook/tags`;
-  const options = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-    signal: signal,
-  };
-  return await handleFetch(url, options, 'Cannot fetch tags');
-}
-
 export const fetchFlightRecordSignature = async ({ signal, id }) => {
   const url = `${API_URL}/logbook/${id}/signature`;
   const options = {
@@ -191,14 +181,4 @@ export const updateFlightRecordSignature = async ({ id, signature }) => {
     body: JSON.stringify(signature),
   };
   return await handleFetch(url, options, 'Cannot update flight record signature');
-}
-
-export const fetchPicNames = async ({ signal }) => {
-  const url = `${API_URL}/logbook/pic-names`;
-  const options = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-    signal: signal,
-  };
-  return await handleFetch(url, options, 'Cannot fetch pic names');
 }

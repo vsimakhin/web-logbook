@@ -13,11 +13,12 @@ import XDataGrid from "../UIElements/XDataGrid/XDataGrid";
 import DownloadAttachmentButton from "./DownloadAttachmentButton";
 import DeleteAttachmentButton from "./DeleteAttachmentButton";
 import DownloadAllAttachmentsButton from "./DownloadAllAttachmentsButton";
-
+import useSettings from "../../hooks/useSettings";
 
 export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
   const apiRef = useGridApiRef();
   const [filteredRows, setFilteredRows] = useState([]);
+  const { dateFieldsFormat } = useSettings();
 
   const columns = useMemo(() => [
     {
@@ -39,8 +40,8 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
       headerAlign: "center",
       width: 90,
       type: "date",
-      valueGetter: (value) => (value ? dayjs(value, 'DD/MM/YYYY').toDate() : null),
-      valueFormatter: (value) => (value ? dayjs(value).format('DD/MM/YYYY') : ''),
+      valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
+      valueFormatter: (value) => (value ? dayjs(value).format(dateFieldsFormat) : ''),
     },
     {
       field: "flight_info",

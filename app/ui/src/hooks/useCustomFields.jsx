@@ -1,8 +1,9 @@
+import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 // Custom
 import { fetchCustomFields } from "../util/http/fields";
 import { useErrorNotification } from "./useAppNotifications";
-import { useCallback } from "react";
+import { fetchDistance } from "../util/http";
 
 export const useCustomFields = () => {
   const { data = [], isError, error, isLoading } = useQuery({
@@ -31,6 +32,29 @@ export const useCustomFields = () => {
     return codes.length > 0 ? codes : null;
   }, [enrouteField]);
 
+
+  const calculateDistance = useCallback(async (flight) => {
+    if (!flight) return 0;
+
+    const enrouteAirports = getEnroute(flight.custom_fields);
+
+    const fullRoute = enrouteAirports
+      ? [flight.departure.place, ...enrouteAirports, flight.arrival.place,]
+      : [flight.departure.place, flight.arrival.place];
+
+    let totalDistance = 0;
+
+    for (let i = 0; i < fullRoute.length - 1; i++) {
+      const legDistance = await fetchDistance({ departure: fullRoute[i], arrival: fullRoute[i + 1] });
+
+      if (legDistance) {
+        totalDistance += legDistance;
+      }
+    }
+
+    return totalDistance;
+  }, [getEnroute]);
+
   return {
     data: data || [],
     customFields: data || [],
@@ -38,6 +62,7 @@ export const useCustomFields = () => {
     isCustomFieldsError: isError,
     customFieldsError: error,
     getEnroute,
+    calculateDistance,
   }
 };
 

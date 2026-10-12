@@ -38,7 +38,7 @@ export const LicenseRecordDetails = ({ license, handleChange }) => {
           id="issued"
           label="Issued"
           handleChange={handleChange}
-          value={license.issued ? dayjs(license.issued, "DD/MM/YYYY") : null}
+          value={license.issued ? dayjs(license.issued, "YYYY-MM-DD") : null}
           clearable
           tooltip="Issued date"
         />
@@ -46,7 +46,7 @@ export const LicenseRecordDetails = ({ license, handleChange }) => {
           id="valid_from"
           label="Valid From"
           handleChange={handleChange}
-          value={license.valid_from ? dayjs(license.valid_from, "DD/MM/YYYY") : null}
+          value={license.valid_from ? dayjs(license.valid_from, "YYYY-MM-DD") : null}
           clearable
           tooltip="Valid from date"
         />
@@ -54,7 +54,7 @@ export const LicenseRecordDetails = ({ license, handleChange }) => {
           id="valid_until"
           label="Valid Until"
           handleChange={handleChange}
-          value={license.valid_until ? dayjs(license.valid_until, "DD/MM/YYYY") : null}
+          value={license.valid_until ? dayjs(license.valid_until, "YYYY-MM-DD") : null}
           clearable
           tooltip="Valid until date"
         />
