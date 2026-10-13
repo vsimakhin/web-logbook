@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Golang and npm packages/security patches.
+
 ## [5.0.0-alpha1] - 11.10.2026
 
 :warning: As this is an alpha (non-production) release, back up your database before upgrading
