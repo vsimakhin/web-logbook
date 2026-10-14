@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
 // MUI UI elements
 import Grid from "@mui/material/Grid";
@@ -18,18 +18,47 @@ import LandingFields from './LandingFields';
 import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
-import { FIELDS_VISIBILITY_KEY } from '../../constants/constants';
+import { FIELDS_VISIBILITY_KEY, PLACE_SLOT_PROPS, TIME_SLOT_PROPS } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 import { PICNameField } from './PICNameField';
-import CustomFields from './CustomFields';
 import { useModelsCategoriesQuery } from '../../hooks/queries';
+import FlightRecordLayout from './FlightRecordLayout';
+import LandingField from '../UIElements/LandingField';
+import useCustomFields from '../../hooks/useCustomFields';
+
+const getFieldProps = (fieldType) => {
+  const props = { slotProps: undefined, type: undefined, placeholder: undefined };
+
+  switch (fieldType) {
+    case 'time':
+      props.slotProps = TIME_SLOT_PROPS;
+      props.placeholder = 'HHMM';
+      break;
+    case 'number':
+      props.type = 'number';
+      break;
+    case 'enroute':
+      props.slotProps = PLACE_SLOT_PROPS;
+      break;
+  }
+
+  return props;
+};
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const title = useMemo(() =>
     <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
     [flight.prev_uuid, flight.next_uuid]
   );
+
+  const { customFields, calculateDistance } = useCustomFields();
+  const enrouteFieldChange = useCallback(async () => {
+    const distance = await calculateDistance(flight);
+    handleChange("distance", distance);
+    handleChange("redraw", Math.random());
+  }, [handleChange, calculateDistance, flight]);
+
   const { fieldNameF, settings, timeFieldsFormat } = useSettings();
   const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
 
@@ -82,9 +111,117 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
-          <CardHeader title={title}
-            action={<FlightRecordMenuButtons flight={flight} handleChange={handleChange} />}
-          />
+          <CardHeader title={title} action={<FlightRecordMenuButtons flight={flight} handleChange={handleChange} />} />
+
+          <FlightRecordLayout editing={true}>
+            <div key="date">
+              <DatePicker
+                id="date"
+                handleChange={handleChange}
+                label={fieldNameF("date")}
+                value={flight?.date ? dayjs(flight.date) : dayjs()}
+              />
+            </div>
+            <div key="departure.place">
+              <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldNameF={fieldNameF} showTime={false} disableGrid />
+            </div>
+            <div key="departure.time">
+              <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldNameF={fieldNameF} showPlace={false} disableGrid />
+            </div>
+            <div key="arrival.place">
+              <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldNameF={fieldNameF} showTime={false} disableGrid />
+            </div>
+            <div key="arrival.time">
+              <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldNameF={fieldNameF} showPlace={false} disableGrid />
+            </div>
+            <div key="landings.day">
+              <LandingField value={flight.landings.day} handleChange={handleChange} type="day" fieldNameF={fieldNameF} />
+            </div>
+            <div key="landings.night">
+              <LandingField value={flight.landings.night} handleChange={handleChange} type="night" fieldNameF={fieldNameF} />
+            </div>
+            <div key="aircraft.model">
+              <AircraftType handleChange={handleChange} value={flight.aircraft.model ?? ""} />
+            </div>
+            <div key="aircraft.reg_name">
+              <AircraftReg handleChange={handleChange} value={flight.aircraft.reg_name} aircraft_model={flight.aircraft.model} />
+            </div>
+            <div key="pic_name">
+              <PICNameField handleChange={handleChange} value={flight.pic_name ?? ""} />
+            </div>
+            {timeFields.map((field) => (
+              <div key={field.id}>
+                <TimeField
+                  gsize={null}
+                  key={field.id} id={field.id} label={field.label}
+                  handleChange={handleChange}
+                  total_time={flight.time.total_time}
+                  fieldFormat={timeFieldsFormat}
+                  value={getValue(flight, field.id)} />
+              </div>
+            ))}
+            <div key="sim.type">
+              <TextField id="sim.type" label={`${fieldNameF("fstd")} ${fieldNameF("sim_type")}`} handleChange={handleChange} value={flight.sim.type ?? ""} />
+            </div>
+            <div key="sim.time">
+              <TimeField gsize={null} id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`} handleChange={handleChange} total_time={flight.time.total_time} value={getValue(flight, "sim.time")} />
+            </div>
+            <div key="tags">
+              <FlightTags id="tags" label={fieldNameF("tags")}
+                tooltip="Flight tags. To add a tag, start typing and press Enter."
+                handleChange={handleChange}
+                value={flight.tags ? flight.tags.split(',') : []}
+              />
+            </div>
+            <div key="remarks">
+              <TextField
+                id="remarks"
+                label={fieldNameF("remarks")}
+                handleChange={handleChange}
+                value={flight.remarks ?? ""}
+                multiline
+              />
+            </div>
+
+            {customFields.map((field) => {
+              const props = getFieldProps(field.type);
+
+              if (field.type === 'duration') {
+                return (
+                  <div key={field.uuid}>
+                    <TimeField
+                      gsize={null}
+                      id={`custom_fields.${field.uuid}`}
+                      label={field.name}
+                      tooltip={field.description}
+                      value={flight.custom_fields?.[field.uuid] || 0}
+                      handleChange={handleChange}
+                      fieldFormat={timeFieldsFormat}
+                    />
+                  </div>
+                );
+              }
+
+              return (
+                <div key={field.uuid}>
+                  <TextField key={field.uuid}
+                    label={field.name}
+                    id={`custom_fields.${field.uuid}`}
+                    tooltip={field.description}
+                    value={flight.custom_fields?.[field.uuid] || ''}
+                    handleChange={handleChange}
+                    slotProps={props.slotProps}
+                    placeholder={props.placeholder}
+                    type={props.type}
+                    onBlur={field.type === 'enroute' ? enrouteFieldChange : undefined}
+                  />
+                </div>
+              );
+            })}
+          </FlightRecordLayout>
+
+          <br></br><br></br>
+
           <Grid container spacing={1} >
             <DatePicker gsize={{ xs: 12, sm: 4, md: 4, lg: 3, xl: 3 }}
               id="date"
@@ -170,7 +307,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
             </Grid>
           }
 
-          <CustomFields flight={flight} handleChange={handleChange} />
+          {/* <CustomFields flight={flight} handleChange={handleChange} /> */}
         </CardContent>
       </Card >
     </>
