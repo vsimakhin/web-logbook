@@ -26,7 +26,7 @@ export const TextField = ({ gsize, id, name = id, label, handleChange, tooltip =
     </Tooltip>
   );
 
-  return disableGrid ? content : <Grid size={gsize}>{content}</Grid>;
+  return (disableGrid || !gsize) ? content : <Grid size={gsize}>{content}</Grid>;
 }
 
 export default TextField;
