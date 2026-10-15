@@ -5,10 +5,10 @@ import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 // Custom
-import { queryClient } from '../../util/http/http';
-import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
-import { resetTrackLog } from '../../util/http/logbook';
-import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+import { queryClient } from '../../../util/http/http';
+import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
+import { resetTrackLog } from '../../../util/http/logbook';
+import { useDialogs } from '../../../hooks/useDialogs/useDialogs';
 
 export const ResetTrackButton = ({ uuid, handleChange, handleCloseMenu }) => {
   const dialogs = useDialogs();

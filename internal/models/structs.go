@@ -217,6 +217,21 @@ type ExportPDF struct {
 	CustomTitleBlob      []byte
 }
 
+type FlightRecordLayoutItem struct {
+	I string `json:"i"`
+	X int    `json:"x"`
+	Y int    `json:"y"`
+	W int    `json:"w"`
+	H int    `json:"h"`
+}
+
+type FlightRecordLayout map[string][]FlightRecordLayoutItem
+
+type Profile struct {
+	FieldsVisibility   map[string]bool    `json:"fields_visibility"`
+	FlightRecordLayout FlightRecordLayout `json:"flight_record_layout"`
+}
+
 // Settings is a type for settings
 type Settings struct {
 	OwnerName       string            `json:"owner_name"`
@@ -269,6 +284,8 @@ type Settings struct {
 		LandingsDay   int `json:"landings_day"`
 		LandingsNight int `json:"landings_night"`
 	} `json:"previous_experience"`
+
+	LogbookProfile Profile `json:"logbook_profile"`
 }
 
 // License is a type for licesing
