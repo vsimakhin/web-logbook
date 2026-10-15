@@ -19,7 +19,7 @@ import EditLayoutButton from './MenuButtons/EditLayoutButton';
 import SaveLayoutButton from './MenuButtons/SaveLayoutButton';
 import ResetLayoutButton from './MenuButtons/ResetLayoutButton';
 
-export const FlightRecordMenuButtons = ({ flight, handleChange, editingLayout, setEditingLayout }) => {
+export const FlightRecordMenuButtons = ({ flight, handleChange, editingLayout, setEditingLayout, layouts, setLayouts }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = useCallback((event) => setAnchorEl(event.currentTarget), []);
   const handleCloseMenu = useCallback(() => setAnchorEl(null), []);
@@ -70,11 +70,11 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, editingLayout, s
 
     return (
       <>
-        <ResetLayoutButton setEditingLayout={setEditingLayout} />
-        <SaveLayoutButton setEditingLayout={setEditingLayout} />
+        <ResetLayoutButton setLayouts={setLayouts} />
+        <SaveLayoutButton setEditingLayout={setEditingLayout} layouts={layouts} />
       </>
     )
-  }, [editingLayout, setEditingLayout])
+  }, [editingLayout, setEditingLayout, layouts, setLayouts])
 
   return (
     <>
