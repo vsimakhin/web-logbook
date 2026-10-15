@@ -52,7 +52,7 @@ const ShowHideFieldsModal = ({ open, onClose }) => {
       ...settings,
       logbook_profile: {
         ...settings.logbook_profile,
-        fieldsVisibility: updatedVisibility,
+        fields_visibility: updatedVisibility,
       },
     };
     await saveSettings(updatedSettings);

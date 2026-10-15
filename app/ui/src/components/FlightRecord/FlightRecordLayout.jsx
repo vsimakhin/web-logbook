@@ -1,4 +1,4 @@
-import { Children, useCallback, useEffect, useMemo } from 'react';
+import { Children, useCallback, useMemo } from 'react';
 import { Responsive, useContainerWidth, horizontalCompactor } from 'react-grid-layout';
 // MUI
 import Box from '@mui/material/Box';
@@ -47,29 +47,26 @@ const getLayoutStyles = (editing) => (theme) => ({
   },
 });
 
-export const FlightRecordLayout = ({ editing, setLayouts, children }) => {
+export const FlightRecordLayout = ({ editing, layouts, setLayouts, children }) => {
   const { customFields } = useCustomFields();
   const { logbookProfile } = useSettings();
 
-  // form fields layout
-  const layouts = useMemo(() => {
-    if (!customFields) return logbookProfile.flightRecordLayout;
+  // check for the custom fields which are not in the profile yet
+  const layoutsF = useMemo(() => {
+    if (!customFields) return layouts;
 
-    const result = Object.fromEntries(Object.entries(logbookProfile.flightRecordLayout).map(([breakpoint, items]) => [breakpoint, items.map((item) => ({ ...item }))]));
+    const result = Object.fromEntries(Object.entries(layouts).map(([breakpoint, items]) => [breakpoint, items.map((item) => ({ ...item }))]));
 
     customFields?.forEach((field, index) => {
       Object.keys(result).forEach((breakpoint) => {
         const layout = result[breakpoint];
-
         if (layout.some((item) => item.i === field.uuid)) return;
-
         layout.push({ i: field.uuid, x: index, y: Infinity, w: 30, h: 1, minW: 4 });
       });
     });
 
     return result;
-  }, [customFields, logbookProfile]);
-  useEffect(() => setLayouts(layouts), [layouts, setLayouts]);
+  }, [customFields, layouts]);
 
   // apply fields visibility
   const visibleChildren = useMemo(() => {
@@ -88,13 +85,13 @@ export const FlightRecordLayout = ({ editing, setLayouts, children }) => {
   }, [children, logbookProfile.fieldsVisibility]);
 
   // force Responsive to remount when visible fields change
-  const visibilityKey = useMemo(() => visibleChildren.map((c) => c.key).join(','), [visibleChildren]);
+  const visibilityKey = useMemo(() => `${visibleChildren.map((c) => c.key).join('-')}`, [visibleChildren]);
 
   const { width, containerRef, mounted } = useContainerWidth();
 
   const handleLayoutChange = useCallback((_layout, allLayouts) => {
     if (editing) {
-      setLayouts(allLayouts)
+      setLayouts({ ...allLayouts });
     }
   }, [editing, setLayouts]);
 
@@ -104,7 +101,7 @@ export const FlightRecordLayout = ({ editing, setLayouts, children }) => {
         <Responsive
           key={visibilityKey}
           width={width}
-          layouts={layouts}
+          layouts={layoutsF}
           breakpoints={BREAKPOINTS}
           cols={COLUMNS}
           rowHeight={32}
