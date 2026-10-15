@@ -14,13 +14,13 @@ import Switch from "@mui/material/Switch";
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 // Custom
-import CardHeader from "../UIElements/CardHeader";
-import useSettings from '../../hooks/useSettings';
-import useCustomFields from '../../hooks/useCustomFields';
-import { useDialogs } from '../../hooks/useDialogs/useDialogs';
-import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
-import { queryClient } from '../../util/http/http';
-import { updateSettings } from '../../util/http/settings';
+import CardHeader from "../../UIElements/CardHeader";
+import useSettings from '../../../hooks/useSettings';
+import useCustomFields from '../../../hooks/useCustomFields';
+import { useDialogs } from '../../../hooks/useDialogs/useDialogs';
+import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
+import { queryClient } from '../../../util/http/http';
+import { updateSettings } from '../../../util/http/settings';
 
 const CloseDialogButton = ({ onClose }) => {
   return (
