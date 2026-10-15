@@ -1,4 +1,4 @@
-import { Children, useCallback, useMemo } from 'react';
+import { Children, useCallback, useEffect, useMemo } from 'react';
 import { Responsive, useContainerWidth, horizontalCompactor } from 'react-grid-layout';
 // MUI
 import Box from '@mui/material/Box';
@@ -47,7 +47,7 @@ const getLayoutStyles = (editing) => (theme) => ({
   },
 });
 
-export const FlightRecordLayout = ({ editing, children }) => {
+export const FlightRecordLayout = ({ editing, setLayouts, children }) => {
   const { customFields } = useCustomFields();
   const { logbookProfile } = useSettings();
 
@@ -69,6 +69,7 @@ export const FlightRecordLayout = ({ editing, children }) => {
 
     return result;
   }, [customFields, logbookProfile]);
+  useEffect(() => setLayouts(layouts), [layouts, setLayouts]);
 
   // apply fields visibility
   const visibleChildren = useMemo(() => {
@@ -88,11 +89,11 @@ export const FlightRecordLayout = ({ editing, children }) => {
 
   const { width, containerRef, mounted } = useContainerWidth();
 
-  const handleLayoutChange = useCallback((layout, allLayouts) => {
+  const handleLayoutChange = useCallback((_layout, allLayouts) => {
     if (editing) {
-      console.log(layout, allLayouts)
+      setLayouts(allLayouts)
     }
-  }, [editing]);
+  }, [editing, setLayouts]);
 
   return (
     <Box ref={containerRef} sx={getLayoutStyles(editing)}>
