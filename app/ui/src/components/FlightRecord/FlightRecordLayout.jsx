@@ -87,6 +87,9 @@ export const FlightRecordLayout = ({ editing, setLayouts, children }) => {
     return result;
   }, [children, logbookProfile.fieldsVisibility]);
 
+  // force Responsive to remount when visible fields change
+  const visibilityKey = useMemo(() => visibleChildren.map((c) => c.key).join(','), [visibleChildren]);
+
   const { width, containerRef, mounted } = useContainerWidth();
 
   const handleLayoutChange = useCallback((_layout, allLayouts) => {
@@ -99,6 +102,7 @@ export const FlightRecordLayout = ({ editing, setLayouts, children }) => {
     <Box ref={containerRef} sx={getLayoutStyles(editing)}>
       {mounted && (
         <Responsive
+          key={visibilityKey}
           width={width}
           layouts={layouts}
           breakpoints={BREAKPOINTS}
