@@ -1,9 +1,6 @@
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useLocalStorageState, CODEC_JSON } from '../../hooks/useLocalStorageState';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 // MUI UI elements
-import Grid from "@mui/material/Grid";
-import Divider from '@mui/material/Divider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 // Custom
@@ -14,11 +11,10 @@ import AircraftType from '../UIElements/AircraftType';
 import AircraftReg from '../UIElements/AircraftReg';
 import TimeField from '../UIElements/TimeField';
 import PlaceField from './PlaceField';
-import LandingFields from './LandingFields';
 import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
-import { FIELDS_VISIBILITY_KEY, PLACE_SLOT_PROPS, TIME_SLOT_PROPS } from '../../constants/constants';
+import { PLACE_SLOT_PROPS, TIME_SLOT_PROPS } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 import { PICNameField } from './PICNameField';
@@ -46,7 +42,21 @@ const getFieldProps = (fieldType) => {
   return props;
 };
 
+const timeFields = [
+  "time.total_time",
+  "time.se_time",
+  "time.me_time",
+  "time.mcc_time",
+  "time.night_time",
+  "time.ifr_time",
+  "time.pic_time",
+  "time.co_pilot_time",
+  "time.dual_time",
+  "time.instructor_time"
+];
+
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
+  const [editingLayout, setEditingLayout] = useState(false);
   const title = useMemo(() =>
     <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
     [flight.prev_uuid, flight.next_uuid]
@@ -60,21 +70,26 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   }, [handleChange, calculateDistance, flight]);
 
   const { fieldNameF, settings, timeFieldsFormat } = useSettings();
-  const [visibility] = useLocalStorageState(FIELDS_VISIBILITY_KEY, {}, { codec: CODEC_JSON });
-
-  const timeFields = useMemo(() => (
-    [
-      { id: "time.total_time", label: fieldNameF("total") },
-      { id: "time.se_time", label: fieldNameF("se") },
-      { id: "time.me_time", label: fieldNameF("me") },
-      { id: "time.mcc_time", label: fieldNameF("mcc") },
-      { id: "time.night_time", label: fieldNameF("night") },
-      { id: "time.ifr_time", label: fieldNameF("ifr") },
-      { id: "time.pic_time", label: fieldNameF("pic") },
-      { id: "time.co_pilot_time", label: fieldNameF("cop") },
-      { id: "time.dual_time", label: fieldNameF("dual") },
-      { id: "time.instructor_time", label: fieldNameF("instr") },
-    ]
+  const labels = useMemo(() => (
+    {
+      date: fieldNameF("total"),
+      "time.total_time": fieldNameF("total"),
+      "time.se_time": fieldNameF("se"),
+      "time.me_time": fieldNameF("me"),
+      "time.mcc_time": fieldNameF("mcc"),
+      "time.night_time": fieldNameF("night"),
+      "time.ifr_time": fieldNameF("ifr"),
+      "time.pic_time": fieldNameF("pic"),
+      "time.co_pilot_time": fieldNameF("cop"),
+      "time.dual_time": fieldNameF("dual"),
+      "time.instructor_time": fieldNameF("instr"),
+      "sim.type": `${fieldNameF("fstd")} ${fieldNameF("sim_type")}`,
+      "sim.time": `${fieldNameF("fstd")} ${fieldNameF("sim_time")}`,
+      tags: fieldNameF("tags"),
+      remarks: fieldNameF("remarks"),
+      "landings.day": `${fieldNameF("land_day")} ${fieldNameF("landings")}`,
+      "landings.night": `${fieldNameF("land_night")} ${fieldNameF("landings")}`,
+    }
   ), [fieldNameF]);
 
   const { data: models } = useModelsCategoriesQuery();
@@ -111,18 +126,16 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
-          <CardHeader title={title} action={<FlightRecordMenuButtons flight={flight} handleChange={handleChange} />} />
+          <CardHeader title={title}
+            action={
+              <FlightRecordMenuButtons flight={flight} handleChange={handleChange} editingLayout={editingLayout} setEditingLayout={setEditingLayout} />
+            } />
 
-          <FlightRecordLayout editing={true}>
+          <FlightRecordLayout editing={editingLayout}>
             <div key="date">
-              <DatePicker
-                id="date"
-                handleChange={handleChange}
-                label={fieldNameF("date")}
-                value={flight?.date ? dayjs(flight.date) : dayjs()}
-              />
+              <DatePicker id="date" handleChange={handleChange} label={labels.date} value={flight?.date ? dayjs(flight.date) : dayjs()} />
             </div>
-            <div key="departure.place">
+            <div key="departure.place" >
               <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldNameF={fieldNameF} showTime={false} disableGrid />
             </div>
             <div key="departure.time">
@@ -135,10 +148,10 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldNameF={fieldNameF} showPlace={false} disableGrid />
             </div>
             <div key="landings.day">
-              <LandingField value={flight.landings.day} handleChange={handleChange} type="day" fieldNameF={fieldNameF} />
+              <LandingField value={flight.landings.day} handleChange={handleChange} type="day" label={labels["landings.day"]} />
             </div>
             <div key="landings.night">
-              <LandingField value={flight.landings.night} handleChange={handleChange} type="night" fieldNameF={fieldNameF} />
+              <LandingField value={flight.landings.night} handleChange={handleChange} type="night" label={labels["landings.night"]} />
             </div>
             <div key="aircraft.model">
               <AircraftType handleChange={handleChange} value={flight.aircraft.model ?? ""} />
@@ -150,24 +163,23 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               <PICNameField handleChange={handleChange} value={flight.pic_name ?? ""} />
             </div>
             {timeFields.map((field) => (
-              <div key={field.id}>
+              <div key={field}>
                 <TimeField
-                  gsize={null}
-                  key={field.id} id={field.id} label={field.label}
+                  id={field} label={labels[field]}
                   handleChange={handleChange}
                   total_time={flight.time.total_time}
                   fieldFormat={timeFieldsFormat}
-                  value={getValue(flight, field.id)} />
+                  value={getValue(flight, field)} />
               </div>
             ))}
             <div key="sim.type">
-              <TextField id="sim.type" label={`${fieldNameF("fstd")} ${fieldNameF("sim_type")}`} handleChange={handleChange} value={flight.sim.type ?? ""} />
+              <TextField id="sim.type" label={labels["sim.type"]} handleChange={handleChange} value={flight.sim.type ?? ""} />
             </div>
             <div key="sim.time">
-              <TimeField gsize={null} id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`} handleChange={handleChange} total_time={flight.time.total_time} value={getValue(flight, "sim.time")} />
+              <TimeField gsize={null} id="sim.time" label={labels["sim.time"]} handleChange={handleChange} total_time={flight.time.total_time} value={getValue(flight, "sim.time")} />
             </div>
             <div key="tags">
-              <FlightTags id="tags" label={fieldNameF("tags")}
+              <FlightTags id="tags" label={labels.tags}
                 tooltip="Flight tags. To add a tag, start typing and press Enter."
                 handleChange={handleChange}
                 value={flight.tags ? flight.tags.split(',') : []}
@@ -176,7 +188,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
             <div key="remarks">
               <TextField
                 id="remarks"
-                label={fieldNameF("remarks")}
+                label={labels.remarks}
                 handleChange={handleChange}
                 value={flight.remarks ?? ""}
                 multiline
@@ -190,7 +202,6 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                 return (
                   <div key={field.uuid}>
                     <TimeField
-                      gsize={null}
                       id={`custom_fields.${field.uuid}`}
                       label={field.name}
                       tooltip={field.description}
@@ -219,95 +230,6 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               );
             })}
           </FlightRecordLayout>
-
-          <br></br><br></br>
-
-          <Grid container spacing={1} >
-            <DatePicker gsize={{ xs: 12, sm: 4, md: 4, lg: 3, xl: 3 }}
-              id="date"
-              handleChange={handleChange}
-              label={fieldNameF("date")}
-              value={flight?.date ? dayjs(flight.date) : dayjs()}
-            />
-          </Grid>
-
-          <Grid container spacing={1} sx={{ mt: 1 }}>
-            <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldNameF={fieldNameF} />
-            <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldNameF={fieldNameF} />
-            <LandingFields day={flight.landings.day} night={flight.landings.night} handleChange={handleChange} fieldNameF={fieldNameF} />
-          </Grid>
-
-          <Grid container spacing={1} sx={{ mt: 1 }}>
-            <AircraftType gsize={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}
-              handleChange={handleChange}
-              value={flight.aircraft.model ?? ""}
-            />
-            <AircraftReg gsize={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}
-              handleChange={handleChange}
-              value={flight.aircraft.reg_name}
-              aircraft_model={flight.aircraft.model}
-            />
-            <PICNameField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
-              handleChange={handleChange}
-              value={flight.pic_name ?? ""}
-            />
-          </Grid>
-
-          <Divider sx={{ mt: 1 }} />
-
-          <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
-            {timeFields.map((field) => (
-              (visibility?.[field.id] ?? true) &&
-              <TimeField
-                key={field.id} id={field.id} label={field.label}
-                handleChange={handleChange}
-                total_time={flight.time.total_time}
-                fieldFormat={timeFieldsFormat}
-                value={getValue(flight, field.id)} />
-            ))}
-          </Grid>
-
-          <Grid container spacing={1} sx={{ mt: 1 }} columns={10}>
-            {(visibility?.["simulator"] ?? true) &&
-              <>
-                <TextField gsize={{ xs: 5, sm: 2 }}
-                  id="sim.type"
-                  label={`${fieldNameF("fstd")} ${fieldNameF("sim_type")}`}
-                  handleChange={handleChange}
-                  value={flight.sim.type ?? ""}
-                />
-                <TimeField
-                  id="sim.time" label={`${fieldNameF("fstd")} ${fieldNameF("sim_time")}`}
-                  handleChange={handleChange}
-                  total_time={flight.time.total_time}
-                  value={getValue(flight, "sim.time")}
-                />
-              </>
-            }
-            {((visibility?.["tags"] ?? true)) &&
-              <FlightTags gsize={{ xs: 12, sm: 6 }}
-                id="tags"
-                label={fieldNameF("tags")}
-                tooltip="Flight tags. To add a tag, start typing and press Enter."
-                handleChange={handleChange}
-                value={flight.tags ? flight.tags.split(',') : []}
-              />
-            }
-          </Grid>
-
-          {(visibility?.["remarks"] ?? true) &&
-            <Grid container spacing={1} sx={{ mt: 1 }} >
-              <TextField gsize={{ xs: 12 }}
-                id="remarks"
-                label={fieldNameF("remarks")}
-                handleChange={handleChange}
-                value={flight.remarks ?? ""}
-                multiline
-              />
-            </Grid>
-          }
-
-          {/* <CustomFields flight={flight} handleChange={handleChange} /> */}
         </CardContent>
       </Card >
     </>
