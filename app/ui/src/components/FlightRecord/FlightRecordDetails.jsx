@@ -42,36 +42,27 @@ const getFieldProps = (fieldType) => {
   return props;
 };
 
-const timeFields = [
-  "time.total_time",
-  "time.se_time",
-  "time.me_time",
-  "time.mcc_time",
-  "time.night_time",
-  "time.ifr_time",
-  "time.pic_time",
-  "time.co_pilot_time",
-  "time.dual_time",
-  "time.instructor_time"
+const TIME_FIELDS = [
+  "time.total_time", "time.se_time", "time.me_time", "time.mcc_time", "time.night_time",
+  "time.ifr_time", "time.pic_time", "time.co_pilot_time", "time.dual_time", "time.instructor_time"
 ];
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
-  const [editingLayout, setEditingLayout] = useState(false);
-  const [layouts, setLayouts] = useState({});
-
-  const title = useMemo(() =>
-    <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
-    [flight.prev_uuid, flight.next_uuid]
-  );
-
   const { customFields, calculateDistance } = useCustomFields();
+  const { fieldNameF, settings, timeFieldsFormat, logbookProfile } = useSettings();
+
+  const [editingLayout, setEditingLayout] = useState(false);
+  const [layouts, setLayouts] = useState(() => ({ ...logbookProfile.flightRecordLayout }));
+  console.log(layouts)
+
+  const title = useMemo(() => <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />, [flight.prev_uuid, flight.next_uuid]);
+
   const enrouteFieldChange = useCallback(async () => {
     const distance = await calculateDistance(flight);
     handleChange("distance", distance);
     handleChange("redraw", Math.random());
   }, [handleChange, calculateDistance, flight]);
 
-  const { fieldNameF, settings, timeFieldsFormat } = useSettings();
   const labels = useMemo(() => (
     {
       date: fieldNameF("total"),
@@ -131,10 +122,11 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
           <CardHeader title={title}
             action={
               <FlightRecordMenuButtons flight={flight} handleChange={handleChange}
-                editingLayout={editingLayout} setEditingLayout={setEditingLayout} layouts={layouts} setLayouts={setLayouts} />
+                editingLayout={editingLayout} setEditingLayout={setEditingLayout}
+                layouts={layouts} setLayouts={setLayouts} />
             } />
 
-          <FlightRecordLayout editing={editingLayout} setLayouts={setLayouts}>
+          <FlightRecordLayout editing={editingLayout} layouts={layouts} setLayouts={setLayouts}>
             <div key="date">
               <DatePicker id="date" handleChange={handleChange} label={labels.date} value={flight?.date ? dayjs(flight.date) : dayjs()} />
             </div>
@@ -165,7 +157,7 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
             <div key="pic_name">
               <PICNameField handleChange={handleChange} value={flight.pic_name ?? ""} />
             </div>
-            {timeFields.map((field) => (
+            {TIME_FIELDS.map((field) => (
               <div key={field}>
                 <TimeField
                   id={field} label={labels[field]}

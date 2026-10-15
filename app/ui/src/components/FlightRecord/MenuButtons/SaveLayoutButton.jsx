@@ -28,7 +28,7 @@ export const SaveLayoutButton = ({ setEditingLayout, layouts }) => {
       ...settings,
       logbook_profile: {
         ...settings.logbook_profile,
-        flightRecordLayout: layouts,
+        flight_record_layout: layouts,
       },
     };
     await saveSettings(updatedSettings);

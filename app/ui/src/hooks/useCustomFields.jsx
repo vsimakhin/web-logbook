@@ -11,6 +11,7 @@ export const useCustomFields = () => {
     queryFn: ({ signal }) => fetchCustomFields({ signal }),
     staleTime: 3600000,
     gcTime: 3600000,
+    refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load custom fields' });
 
