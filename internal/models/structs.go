@@ -228,8 +228,8 @@ type FlightRecordLayoutItem struct {
 type FlightRecordLayout map[string][]FlightRecordLayoutItem
 
 type Profile struct {
-	FieldsVisibility   map[string]bool    `json:"fieldsVisibility"`
-	FlightRecordLayout FlightRecordLayout `json:"flightRecordLayout"`
+	FieldsVisibility   map[string]bool    `json:"fields_visibility"`
+	FlightRecordLayout FlightRecordLayout `json:"flight_record_layout"`
 }
 
 // Settings is a type for settings

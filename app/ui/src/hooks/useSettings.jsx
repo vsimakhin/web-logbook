@@ -288,8 +288,8 @@ export const useSettings = () => {
   const fieldNameF = useCallback((fieldId) => fieldName(fieldId, "flightRecord"), [fieldName]);
 
   const logbookProfile = useMemo(() => ({
-    fieldsVisibility: data.logbook_profile?.fieldsVisibility ?? DEFAULT_PROFILE.fieldsVisibility,
-    flightRecordLayout: data.logbook_profile?.flightRecordLayout ?? DEFAULT_PROFILE.flightRecordLayout,
+    fieldsVisibility: data.logbook_profile?.fields_visibility ?? DEFAULT_PROFILE.fieldsVisibility,
+    flightRecordLayout: data.logbook_profile?.flight_record_layout ?? DEFAULT_PROFILE.flightRecordLayout,
   }), [data.logbook_profile]);
 
   return {
