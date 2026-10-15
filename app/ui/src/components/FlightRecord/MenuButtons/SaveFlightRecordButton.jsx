@@ -7,11 +7,11 @@ import IconButton from "@mui/material/IconButton";
 // MUI Icons
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 // Custom
-import { createFlightRecord, updateFlightRecord } from "../../util/http/logbook";
-import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
-import { queryClient } from "../../util/http/http";
-import useCustomFields from "../../hooks/useCustomFields";
-import { copyPersonsFlightRecord } from "../../util/http/person";
+import { createFlightRecord, updateFlightRecord } from "../../../util/http/logbook";
+import { useErrorNotification, useSuccessNotification } from "../../../hooks/useAppNotifications";
+import { queryClient } from "../../../util/http/http";
+import useCustomFields from "../../../hooks/useCustomFields";
+import { copyPersonsFlightRecord } from "../../../util/http/person";
 
 export const SaveFlightRecordButton = ({ flight, handleChange }) => {
   const navigate = useNavigate();

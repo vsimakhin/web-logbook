@@ -4,8 +4,8 @@ import DrawOutlinedIcon from '@mui/icons-material/DrawOutlined';
 // MUI UI elements
 import MenuItem from '@mui/material/MenuItem';
 // Custom components and libraries
-import SignModal from './SignModal';
-import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+import SignModal from '../SignModal';
+import { useDialogs } from '../../../hooks/useDialogs/useDialogs';
 
 export const SignFlightRecordButton = ({ uuid, handleCloseMenu }) => {
   const dialogs = useDialogs();

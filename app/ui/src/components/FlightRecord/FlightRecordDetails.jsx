@@ -53,7 +53,6 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
 
   const [editingLayout, setEditingLayout] = useState(false);
   const [layouts, setLayouts] = useState(() => ({ ...logbookProfile.flightRecordLayout }));
-  console.log(layouts)
 
   const title = useMemo(() => <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />, [flight.prev_uuid, flight.next_uuid]);
 
