@@ -78,7 +78,7 @@ const DEFAULT_FIELD_NAMES = {
 
 const DEFAULT_PAGINATION_OPTIONS = [5, 10, 15, 20, 25, 30, 50, 100];
 
-const DEFAULT_PROFILE = {
+export const DEFAULT_PROFILE = {
   fieldsVisibility: {
     'departure.place': true,
     'departure.time': true,
@@ -287,6 +287,11 @@ export const useSettings = () => {
 
   const fieldNameF = useCallback((fieldId) => fieldName(fieldId, "flightRecord"), [fieldName]);
 
+  const logbookProfile = useMemo(() => ({
+    fieldsVisibility: data.logbook_profile?.fieldsVisibility ?? DEFAULT_PROFILE.fieldsVisibility,
+    flightRecordLayout: data.logbook_profile?.flightRecordLayout ?? DEFAULT_PROFILE.flightRecordLayout,
+  }), [data.logbook_profile]);
+
   return {
     settings: data,
     data,
@@ -296,7 +301,7 @@ export const useSettings = () => {
     paginationOptions,
     timeFieldsFormat: data.time_fields_auto_format || 1,
     dateFieldsFormat: data.date_fields_format || "DD/MM/YYYY",
-    logbookProfile: data.logbook_profile ? data.logbook_profile : DEFAULT_PROFILE,
+    logbookProfile,
   };
 };
 

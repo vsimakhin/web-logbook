@@ -57,6 +57,8 @@ const timeFields = [
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const [editingLayout, setEditingLayout] = useState(false);
+  const [layouts, setLayouts] = useState({});
+
   const title = useMemo(() =>
     <FlightTitle prev_uuid={flight.prev_uuid} next_uuid={flight.next_uuid} />,
     [flight.prev_uuid, flight.next_uuid]
@@ -128,10 +130,11 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
         <CardContent>
           <CardHeader title={title}
             action={
-              <FlightRecordMenuButtons flight={flight} handleChange={handleChange} editingLayout={editingLayout} setEditingLayout={setEditingLayout} />
+              <FlightRecordMenuButtons flight={flight} handleChange={handleChange}
+                editingLayout={editingLayout} setEditingLayout={setEditingLayout} layouts={layouts} setLayouts={setLayouts} />
             } />
 
-          <FlightRecordLayout editing={editingLayout}>
+          <FlightRecordLayout editing={editingLayout} setLayouts={setLayouts}>
             <div key="date">
               <DatePicker id="date" handleChange={handleChange} label={labels.date} value={flight?.date ? dayjs(flight.date) : dayjs()} />
             </div>
