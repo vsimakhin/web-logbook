@@ -21,12 +21,13 @@ import CSVExportButton from '../UIElements/CSVExportButton';
 import PDFExportButton from './PDFExportButton';
 import { formatTimeField } from '../../util/helpers';
 import BulkEditButtons from './BulkEditButtons';
-import PlaceTimeCell from './EditCells/PlaceTimeCell';
 import AircraftTypeCell from './EditCells/AircraftTypeCell';
 import AircraftRegCell from './EditCells/AircraftRegCell';
 import TagCell from './EditCells/TagCell';
 import TextCell from './EditCells/TextCell';
 import PICNameCell from './EditCells/PICNameCell';
+import DepArrPlaceCell from './EditCells/DepArrPlaceCell';
+import DepArrTimeCell from './EditCells/DepArrTimeCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
@@ -60,24 +61,24 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       createColumn({
         field: "departure_place", headerName: fieldName("dep_place"), width: 60,
         valueGetter: (_value, row) => row.departure?.place,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="departure" placeField={true} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <DepArrPlaceCell params={params} callBackFunction={handleRowUpdate} type="departure" /> } : {}),
       }),
       createColumn({
         field: "departure_time", headerName: fieldName("dep_time"), width: 55, type: 'string',
         valueGetter: (_value, row) => row.departure?.time,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="departure" placeField={false} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <DepArrTimeCell params={params} callBackFunction={handleRowUpdate} type="departure" /> } : {}),
       }),
       ...createCustomFieldColumns({ category: fieldName("departure"), ...customFieldsColumnsProps }),
       // arrival
       createColumn({
         field: "arrival_place", headerName: fieldName("arr_place"), width: 60,
         valueGetter: (_value, row) => row.arrival?.place,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="arrival" placeField={true} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <DepArrPlaceCell params={params} callBackFunction={handleRowUpdate} type="arrival" /> } : {}),
       }),
       createColumn({
         field: "arrival_time", headerName: fieldName("arr_time"), width: 55, type: 'string',
         valueGetter: (_value, row) => row.arrival?.time,
-        ...(isBulkEdit ? { renderCell: (params) => <PlaceTimeCell params={params} callBackFunction={handleRowUpdate} type="arrival" placeField={false} /> } : {}),
+        ...(isBulkEdit ? { renderCell: (params) => <DepArrTimeCell params={params} callBackFunction={handleRowUpdate} type="arrival" /> } : {}),
       }),
       ...createCustomFieldColumns({ category: fieldName("arrival"), ...customFieldsColumnsProps }),
       // aircraft
