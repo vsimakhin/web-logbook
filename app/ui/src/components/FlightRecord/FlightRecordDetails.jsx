@@ -10,7 +10,6 @@ import TextField from '../UIElements/TextField';
 import AircraftType from '../UIElements/AircraftType';
 import AircraftReg from '../UIElements/AircraftReg';
 import TimeField from '../UIElements/TimeField';
-import PlaceField from './PlaceField';
 import FlightTitle from "./FlightTitle";
 import useSettings from '../../hooks/useSettings';
 import FlightRecordMenuButtons from './FlightRecordMenuButtons';
@@ -22,6 +21,8 @@ import { useModelsCategoriesQuery } from '../../hooks/queries';
 import FlightRecordLayout from './FlightRecordLayout';
 import LandingField from '../UIElements/LandingField';
 import useCustomFields from '../../hooks/useCustomFields';
+import DepArrPlace from '../UIElements/DepArrPlace';
+import DepArrTime from '../UIElements/DepArrTime';
 
 const getFieldProps = (fieldType) => {
   const props = { slotProps: undefined, type: undefined, placeholder: undefined };
@@ -65,6 +66,10 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const labels = useMemo(() => (
     {
       date: fieldNameF("total"),
+      dep_place: fieldNameF("dep_place"),
+      arr_place: fieldNameF("arr_place"),
+      dep_time: fieldNameF("dep_time"),
+      arr_time: fieldNameF("arr_time"),
       "time.total_time": fieldNameF("total"),
       "time.se_time": fieldNameF("se"),
       "time.me_time": fieldNameF("me"),
@@ -130,16 +135,16 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
               <DatePicker id="date" handleChange={handleChange} label={labels.date} value={flight?.date ? dayjs(flight.date) : dayjs()} />
             </div>
             <div key="departure.place" >
-              <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldNameF={fieldNameF} showTime={false} disableGrid />
+              <DepArrPlace flight={flight} handleChange={handleChange} type="departure" label={labels.dep_place} />
             </div>
             <div key="departure.time">
-              <PlaceField flight={flight} handleChange={handleChange} type="departure" fieldNameF={fieldNameF} showPlace={false} disableGrid />
+              <DepArrTime flight={flight} handleChange={handleChange} type="departure" label={labels.dep_time} />
             </div>
             <div key="arrival.place">
-              <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldNameF={fieldNameF} showTime={false} disableGrid />
+              <DepArrPlace flight={flight} handleChange={handleChange} type="arrival" label={labels.arr_place} />
             </div>
             <div key="arrival.time">
-              <PlaceField flight={flight} handleChange={handleChange} type="arrival" fieldNameF={fieldNameF} showPlace={false} disableGrid />
+              <DepArrTime flight={flight} handleChange={handleChange} type="arrival" label={labels.arr_time} />
             </div>
             <div key="landings.day">
               <LandingField value={flight.landings.day} handleChange={handleChange} type="day" label={labels["landings.day"]} />
