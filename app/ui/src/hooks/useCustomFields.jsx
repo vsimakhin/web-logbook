@@ -1,13 +1,16 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 // Custom
 import { fetchCustomFields } from "../util/http/fields";
 import { useErrorNotification } from "./useAppNotifications";
 import { fetchDistance } from "../util/http";
+import useSettings from "./useSettings";
 
 const getUniqueFieldsCategories = (fields = []) => [...new Set(fields.map((field) => field.category?.trim()).filter(Boolean))];
 
 export const useCustomFields = () => {
+  const { fieldName } = useSettings();
+
   const { data = [], isError, error, isLoading } = useQuery({
     queryKey: ['custom-fields'],
     queryFn: ({ signal }) => fetchCustomFields({ signal }),
@@ -17,7 +20,36 @@ export const useCustomFields = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load custom fields' });
 
-  const customFieldsCategories = getUniqueFieldsCategories(data);
+  const defaultCategories = useMemo(() => [
+    "Custom",
+    fieldName("departure"),
+    fieldName("arrival"),
+    fieldName("aircraft"),
+    fieldName("spt"),
+    fieldName("mcc"),
+    fieldName("total"),
+    fieldName("landings"),
+    fieldName("oct"),
+    fieldName("pft"),
+    fieldName("fstd"),
+    fieldName("remarks")
+  ], [fieldName]);
+
+  const usedCategories = useMemo(() => getUniqueFieldsCategories(data), [data]);
+
+  const allCategories = useMemo(
+    () => [...new Set([...defaultCategories, ...usedCategories])].sort(),
+    [defaultCategories, usedCategories]
+  );
+
+  const userDefinedCategories = useMemo(() => {
+    const predefined = new Set(defaultCategories);
+
+    return [
+      ...new Set(
+        (usedCategories ?? []).map(category => category.trim()).filter(category => category && !predefined.has(category))),
+    ];
+  }, [usedCategories, defaultCategories]);
 
   const enrouteField = data?.find?.(f => f.type === 'enroute');
 
@@ -63,7 +95,7 @@ export const useCustomFields = () => {
   return {
     data: data || [],
     customFields: data || [],
-    customFieldsCategories,
+    customFieldsCategories: { defaultCategories, usedCategories, allCategories, userDefinedCategories },
     isCustomFieldsLoading: isLoading,
     isCustomFieldsError: isError,
     customFieldsError: error,
