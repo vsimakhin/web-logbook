@@ -5,6 +5,8 @@ import { fetchCustomFields } from "../util/http/fields";
 import { useErrorNotification } from "./useAppNotifications";
 import { fetchDistance } from "../util/http";
 
+const getUniqueFieldsCategories = (fields = []) => [...new Set(fields.map((field) => field.category?.trim()).filter(Boolean))];
+
 export const useCustomFields = () => {
   const { data = [], isError, error, isLoading } = useQuery({
     queryKey: ['custom-fields'],
@@ -14,6 +16,8 @@ export const useCustomFields = () => {
     refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load custom fields' });
+
+  const customFieldsCategories = getUniqueFieldsCategories(data);
 
   const enrouteField = data?.find?.(f => f.type === 'enroute');
 
@@ -59,6 +63,7 @@ export const useCustomFields = () => {
   return {
     data: data || [],
     customFields: data || [],
+    customFieldsCategories,
     isCustomFieldsLoading: isLoading,
     isCustomFieldsError: isError,
     customFieldsError: error,
