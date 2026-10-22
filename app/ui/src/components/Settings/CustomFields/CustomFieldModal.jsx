@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -17,9 +17,8 @@ import Select from '../../UIElements/Select';
 import { createCustomField, updateCustomField } from '../../../util/http/fields';
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { queryClient } from '../../../util/http/http';
-import useSettings from '../../../hooks/useSettings';
 import useCustomFields from '../../../hooks/useCustomFields';
-import { Typography } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 
 const typeOptions = ["text", "number", "time", "duration", "enroute"];
 
@@ -68,7 +67,6 @@ const SaveButton = ({ field, onClose }) => {
 
 export const CustomFieldModal = ({ open, onClose, payload }) => {
   const [field, setField] = useState({ ...payload });
-  const { fieldName } = useSettings();
   const { customFieldsCategories } = useCustomFields();
 
   useEffect(() => {
@@ -80,26 +78,6 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
 
   const title = field?.uuid === "new" ? "New Custom Field" : "Edit Custom Field";
   const isTypeDisabled = field.uuid !== "new";
-
-  const categoryOptions = useMemo(() => [
-    "Custom",
-    fieldName("departure"),
-    fieldName("arrival"),
-    fieldName("aircraft"),
-    fieldName("spt"),
-    fieldName("mcc"),
-    fieldName("total"),
-    fieldName("landings"),
-    fieldName("oct"),
-    fieldName("pft"),
-    fieldName("fstd"),
-    fieldName("remarks")
-  ], [fieldName]);
-
-  const allCategoryOptions = useMemo(
-    () => [...new Set([...categoryOptions, ...customFieldsCategories])].sort(),
-    [categoryOptions, customFieldsCategories]
-  );
 
   const handleChange = useCallback((key, value) => {
     setField(prev => {
@@ -149,7 +127,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               handleChange={handleChange}
               onBlur={(e) => handleChange("category", e.target.value)}
               value={field.category}
-              options={allCategoryOptions}
+              options={customFieldsCategories.allCategories}
               freeSolo={true}
             />
             <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
@@ -172,7 +150,12 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               value={field.stats_function}
               options={statsFunction[field.type] || []}
             />
+
           </Grid>
+          <Divider sx={{ m: 1 }} />
+          <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
+            After adding a new category or custom field, the new columns may appear at the end of the Logbook table. Refresh the page (F5 or Ctrl+F5) to update the column order.
+          </Typography>
         </CardContent>
       </Card >
     </Dialog>

@@ -32,7 +32,7 @@ import DepArrTimeCell from './EditCells/DepArrTimeCell';
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
   const { settings, isSettingsLoading, fieldName, paginationOptions, timeFieldsFormat, dateFieldsFormat } = useSettings();
-  const { customFields, isCustomFieldsLoading } = useCustomFields();
+  const { customFields, isCustomFieldsLoading, customFieldsCategories } = useCustomFields();
   const footerEmptyTimeFieldFormat = useMemo(() => formatTimeField(0, timeFieldsFormat, true), [timeFieldsFormat]);
 
   const [isBulkEdit, setIsBulkEdit] = useState(false);
@@ -141,6 +141,11 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       ...createCustomFieldColumns({ category: fieldName("fstd"), ...customFieldsColumnsProps }),
       // custom
       ...createCustomFieldColumns({ category: "Custom", ...customFieldsColumnsProps }),
+      // additional custom categories
+      ...customFieldsCategories.userDefinedCategories.flatMap(category =>
+        createCustomFieldColumns({ category, ...customFieldsColumnsProps })
+      ),
+
       // remarks
       createColumn({
         field: "remarks", headerName: fieldName("remarks"), align: 'left', flex: 1, minWidth: 50,
@@ -155,7 +160,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
         ...(isBulkEdit ? { renderCell: (params) => <TagCell params={params} callBackFunction={handleRowUpdate} /> } : {}),
       }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
-  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, timeFieldsFormat, dateFieldsFormat, isBulkEdit, handleRowUpdate, customFieldsColumnsProps]);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, timeFieldsFormat, dateFieldsFormat, isBulkEdit, handleRowUpdate, customFieldsColumnsProps, customFieldsCategories]);
 
   const columnGroupingModel = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -261,6 +266,18 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
           ...getCustomFieldColumnsForGrouping(customFields, "Custom")
         ],
       },
+      ...customFieldsCategories.userDefinedCategories.map(category => {
+        const children = getCustomFieldColumnsForGrouping(customFields, category);
+
+        return children.length > 0
+          ? {
+            groupId: `custom-${category}`,
+            headerName: <TableHeader title={category} />,
+            headerAlign: "center",
+            children,
+          }
+          : null;
+      }),
       getCustomFieldColumnsForGrouping(customFields, fieldName("remarks")).length > 0 && {
         groupId: 'Remarks',
         headerName: <TableHeader title={fieldName("remarks")} />,
@@ -279,7 +296,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
         ],
       },
     ].filter(Boolean);
-  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields]);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, customFields, customFieldsCategories]);
 
   const customActions = useMemo(() => (
     <>
