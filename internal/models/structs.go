@@ -364,8 +364,4 @@ type CustomField struct {
 	Category      string `json:"category"`
 	Type          string `json:"type"`
 	StatsFunction string `json:"stats_function"`
-	SizeXs        int    `json:"size_xs"`
-	SizeMd        int    `json:"size_md"`
-	SizeLg        int    `json:"size_lg"`
-	DisplayOrder  int    `json:"display_order"`
 }
