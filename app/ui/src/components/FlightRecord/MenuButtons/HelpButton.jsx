@@ -6,7 +6,7 @@ import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 import DrawOutlinedIcon from '@mui/icons-material/DrawOutlined';
 import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOutlined';
 // Custom
-import HelpButtonDrawer from "../UIElements/HelpButtonDrawer";
+import HelpButtonDrawer from "../../UIElements/HelpButtonDrawer";
 
 const HELP_CONTENT = [
   {

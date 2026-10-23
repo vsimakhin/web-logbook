@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 - Update: Golang and npm packages/security patches.
+- Update: Reorganized the Settings page into two sections: `General` and `Fields & Layout`.
+- New: Flight record fields can now be resized and reordered using the new Layout button in the menu.
+- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in `Settings` -> `Fields & Layout`. The layout is saved to the user profile.
 
 ## [5.0.0-alpha1] - 11.10.2026
 

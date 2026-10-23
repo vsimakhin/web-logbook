@@ -1,0 +1,88 @@
+import { useCallback, useRef } from 'react';
+import dayjs from 'dayjs';
+
+// MUI Icons
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
+import FlightLandIcon from '@mui/icons-material/FlightLand';
+// Custom components
+import Label from "./Label"
+import TextField from "./TextField"
+import { TIME_SLOT_PROPS } from '../../constants/constants';
+import { useNightTime } from '../../hooks/queries';
+
+const capitalizeFirstLetter = (str) => str ? `${str[0].toUpperCase()}${str.slice(1)}` : "";
+
+const calculateTotalTime = (flight) => {
+  if (!flight) {
+    return 0
+  }
+
+  const departure = dayjs(flight.departure.time, "HHmm");
+  const arrival = dayjs(flight.arrival.time, "HHmm");
+
+  // If arrival time is earlier than departure time, assume it's on the next day
+  const adjustedArrival = arrival.isBefore(departure) ? arrival.add(1, "day") : arrival;
+
+  return adjustedArrival.diff(departure, "minute");
+}
+
+export const DepArrTime = ({ flight, handleChange, type, label, slotProps: additionalSlotProps = {}, ...props }) => {
+  const timeInitialValue = useRef("");
+  const handleTimeFocus = useCallback((event) => { timeInitialValue.current = event.target.value }, []);
+  const isDeparture = type === "departure";
+  const icon = isDeparture ? FlightTakeoffIcon : FlightLandIcon;
+
+  const calculateNightTime = useNightTime();
+
+  const timeValue = isDeparture ? flight.departure?.time : flight.arrival?.time;
+
+  const timeSlotProps = {
+    ...TIME_SLOT_PROPS,
+    ...additionalSlotProps,
+    input: { ...TIME_SLOT_PROPS?.input, ...additionalSlotProps?.input },
+  };
+
+  const handleTimeChange = useCallback(async (event) => {
+    if (event.target.value === timeInitialValue.current) {
+      return;
+    }
+
+    // check length for the time field
+    if (flight.departure?.time?.length !== 4 || flight.arrival?.time?.length !== 4) return;
+
+    const total_time = calculateTotalTime(flight);
+    const old_total_time = flight.time.total_time;
+    handleChange("time.total_time", total_time);
+
+    // iterate over the flight.time fields and update them
+    for (const key in flight.time) {
+      if (key !== "total_time" && key !== "night_time" && old_total_time !== 0 && flight.time[key] === old_total_time) {
+        handleChange(`time.${key}`, total_time);
+      }
+    }
+
+    // night time
+    if (flight.date && flight.departure.place && flight.arrival.place) {
+      const nightTimeData = await calculateNightTime(flight);
+      const nightTime = parseInt(nightTimeData.data) || 0;
+      handleChange("time.night_time", nightTime);
+    }
+  }, [flight, handleChange, calculateNightTime]);
+
+  return (
+    <TextField
+      id={`${type}.time`}
+      label={(!label || label === "") ? "" : <Label icon={icon} text={label} />}
+      handleChange={handleChange}
+      value={timeValue}
+      slotProps={timeSlotProps}
+      placeholder="HHMM"
+      tooltip={`${capitalizeFirstLetter(type)} time`}
+      onBlur={handleTimeChange}
+      onFocus={handleTimeFocus}
+      {...props}
+    />
+  )
+};
+
+export default DepArrTime;

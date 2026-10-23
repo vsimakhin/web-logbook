@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from '@mui/material/styles';
 // Custom
 import TextField from "../UIElements/TextField";
+import { useMemo } from "react";
+import useSettings from "../../hooks/useSettings";
 
 const size = { xs: 4, sm: 2, md: 4, lg: 2, xl: 2 };
 
@@ -104,6 +106,7 @@ const HEADERS_CONFIG = [
   },
   {
     size: { xs: 12, sm: 7, md: 12, lg: 7, xl: 7 },
+    category: "oct",
     group: [
       { id: "oct", label: "Operational Condition Time", size: { xs: 8, sm: 8, md: 8, lg: 8, xl: 8 }, col: "col15,col16" },
       { id: "night", label: "Night", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col15" },
@@ -134,9 +137,22 @@ const HEADERS_CONFIG = [
   },
 ];
 
+const getHeadersConfig = (fieldName) =>
+  HEADERS_CONFIG.map((header) => ({
+    ...header,
+    group: header.group.map((item) => ({
+      ...item,
+      label: fieldName(item.id) || item.label,
+    })),
+  }));
+
+
 export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnChange, handleHeaderChange }) => {
   const theme = useTheme();
   const borderRadius = theme.shape.borderRadius;
+  const { fieldName } = useSettings();
+
+  const headers = useMemo(() => getHeadersConfig(fieldName), [fieldName]);
 
   return (
     <>
@@ -171,7 +187,7 @@ export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnCh
       </Grid>
       <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Columns Header</Typography>
       <Grid container spacing={1}>
-        {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
+        {headers.map(({ size, group }, groupIndex) => (
           <Grid size={size} key={`group-${groupIndex}`}>
             <Grid container spacing={0}>
               {group.map(({ id, label, size: fieldSize, col }, fieldIndex) => (
