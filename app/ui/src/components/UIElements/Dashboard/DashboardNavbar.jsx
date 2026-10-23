@@ -35,6 +35,8 @@ import SecurityUpdateGoodOutlinedIcon from '@mui/icons-material/SecurityUpdateGo
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 import LicensingNavTitle from '../../Licensing/LicensingNavTitle';
+import PictureInPictureOutlinedIcon from '@mui/icons-material/PictureInPictureOutlined';
+import SettingsSuggestOutlinedIcon from '@mui/icons-material/SettingsSuggestOutlined';
 // Custom
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../../../constants/constants';
 
@@ -65,7 +67,12 @@ const NAV_ITEMS = [
   },
   { segment: 'import', title: 'Import', icon: <FileUploadOutlinedIcon /> },
   { kind: 'divider' },
-  { segment: 'settings', title: 'Settings', icon: <SettingsIcon /> },
+  {
+    segment: 'settings', title: 'Settings', icon: <SettingsIcon />, children: [
+      { segment: 'general', title: 'General', icon: <SettingsSuggestOutlinedIcon /> },
+      { segment: 'fields-and-layout', title: 'Fields & Layout', icon: <PictureInPictureOutlinedIcon /> },
+    ]
+  },
 ];
 
 const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'expanded' })(({ theme, expanded }) => ({

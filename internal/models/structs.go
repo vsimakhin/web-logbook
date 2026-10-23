@@ -230,6 +230,8 @@ type FlightRecordLayout map[string][]FlightRecordLayoutItem
 type Profile struct {
 	FieldsVisibility   map[string]bool    `json:"fields_visibility"`
 	FlightRecordLayout FlightRecordLayout `json:"flight_record_layout"`
+	TableColumns       []string           `json:"table_columns"`
+	TableHiddenColumns []string           `json:"table_hidden_columns"`
 }
 
 // Settings is a type for settings

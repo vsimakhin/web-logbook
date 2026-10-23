@@ -103,3 +103,13 @@ export const fetchStandardFields = async ({ signal }) => {
   };
   return await handleFetch(url, options, 'Cannot fetch standard fields');
 }
+
+export const updateProfileSettings = async ({ settings }) => {
+  const url = `${API_URL}/settings/profile`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(settings),
+  };
+  return await handleFetch(url, options, 'Cannot update profile settings');
+}

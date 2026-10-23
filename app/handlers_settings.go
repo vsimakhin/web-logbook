@@ -157,3 +157,27 @@ func (app *application) HandlerApiSettingsFieldsDefaults(w http.ResponseWriter, 
 	defaults := app.db.GetStandardFieldsHeaders()
 	app.writeJSON(w, http.StatusOK, defaults)
 }
+
+func (app *application) HandlerApiSettingsProfile(w http.ResponseWriter, r *http.Request) {
+	oldsettings, err := app.db.GetSettings()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var settings models.Settings
+	err = json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	oldsettings.LogbookProfile = settings.LogbookProfile
+	err = app.db.UpdateSettings(oldsettings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Profile settings updated")
+}

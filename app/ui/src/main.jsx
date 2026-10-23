@@ -16,7 +16,7 @@ import FlightRecordPage from './pages/FlightRecordPage.jsx';
 import LicensingPage from './pages/LicensingPage.jsx';
 import LicenseRecordPage from './pages/LicenseRecordPage.jsx';
 import MapPage from './pages/MapPage.jsx';
-import SettingsPage from './pages/SettingsPage.jsx';
+import SettingsGeneralPage from './pages/SettingsGeneralPage.jsx';
 import SignInPage from './pages/SignInPage.jsx';
 import LogoutPage from './pages/LogoutPage.jsx';
 import AircraftsPage from './pages/AircraftsPage.jsx';
@@ -33,6 +33,7 @@ import PersonsPage from './pages/PersonsPage.jsx'
 import PersonViewPage from './pages/PersonViewPage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import AttachmentsPage from './pages/AttachmentsPage.jsx';
+import SettingsFieldsAndLayoutPage from './pages/SettingsFieldsAndLayoutPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -89,7 +90,13 @@ const router = createBrowserRouter([
           {
             path: 'import', element: <ImportPage />,
           },
-          { path: 'settings', element: <SettingsPage /> },
+          {
+            path: 'settings', children: [
+              { index: true, element: <SettingsGeneralPage /> },
+              { path: 'general', element: <SettingsGeneralPage /> },
+              { path: 'fields-and-layout', element: <SettingsFieldsAndLayoutPage /> },
+            ]
+          },
         ]
       },
       { path: '/signin', element: <SignInPage /> },
