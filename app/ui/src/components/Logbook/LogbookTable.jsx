@@ -31,7 +31,7 @@ import DepArrTimeCell from './EditCells/DepArrTimeCell';
 
 export const LogbookTable = ({ data, isLoading, ...props }) => {
   const apiRef = useGridApiRef();
-  const { settings, isSettingsLoading, fieldName, paginationOptions, timeFieldsFormat, dateFieldsFormat } = useSettings();
+  const { settings, isSettingsLoading, fieldName, paginationOptions, timeFieldsFormat, dateFieldsFormat, logbookProfile } = useSettings();
   const { customFields, isCustomFieldsLoading, customFieldsCategories } = useCustomFields();
   const footerEmptyTimeFieldFormat = useMemo(() => formatTimeField(0, timeFieldsFormat, true), [timeFieldsFormat]);
 
@@ -161,6 +161,17 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
   }, [isSettingsLoading, isCustomFieldsLoading, fieldName, timeFieldsFormat, dateFieldsFormat, isBulkEdit, handleRowUpdate, customFieldsColumnsProps, customFieldsCategories]);
+
+  const orderedColumns = useMemo(() => {
+    const order = logbookProfile.tableColumns;
+    if (!order || order.length === 0) return columns;
+    const fieldIndexMap = new Map(order.map((f, i) => [f, i]));
+    return [...columns].sort((a, b) => {
+      const ia = fieldIndexMap.has(a.field) ? fieldIndexMap.get(a.field) : Infinity;
+      const ib = fieldIndexMap.has(b.field) ? fieldIndexMap.get(b.field) : Infinity;
+      return ia - ib;
+    });
+  }, [columns, logbookProfile.tableColumns]);
 
   const columnGroupingModel = useMemo(() => {
     if (isCustomFieldsLoading || isSettingsLoading) {
@@ -320,7 +331,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       icon={<AutoStoriesOutlinedIcon />}
       loading={isLoading || isUpdating}
       rows={data}
-      columns={columns}
+      columns={orderedColumns}
       columnGroupingModel={columnGroupingModel}
       pageSizeOptions={paginationOptions}
       getRowId={(row) => row.uuid}
