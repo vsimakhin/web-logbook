@@ -31,6 +31,7 @@ export const CustomFieldsTable = () => {
       ),
     },
     { field: "name", headerName: "Name", headerAlign: "center", flex: 1 },
+    { field: "pdf_header", headerName: "PDF Header", headerAlign: "center", flex: 1 },
     { field: "description", headerName: "Description", headerAlign: "center", flex: 1 },
     { field: "category", headerName: "Category", headerAlign: "center", width: 150 },
     { field: "type", headerName: "Type", headerAlign: "center", width: 100 },
@@ -47,7 +48,7 @@ export const CustomFieldsTable = () => {
   return (
     <XDataGrid
       apiRef={apiRef}
-      tableId='custom-fields'
+      tableId='custom-fields-2'
       title='Custom Fields'
       icon={<TuneOutlinedIcon />}
       loading={isCustomFieldsLoading}

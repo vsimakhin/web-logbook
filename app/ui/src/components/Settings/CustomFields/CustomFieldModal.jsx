@@ -114,6 +114,13 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               value={field.name}
             />
             <TextField gsize={{ xs: 12 }}
+              id="pdf_header"
+              label="PDF Header"
+              tooltip="Column name for PDF exports"
+              handleChange={handleChange}
+              value={field.pdf_header}
+            />
+            <TextField gsize={{ xs: 12 }}
               id="description"
               label="Description"
               tooltip="Custom field description"
