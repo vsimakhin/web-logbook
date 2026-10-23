@@ -66,6 +66,9 @@ The application will automatically create a local SQLite database on the first s
 ## [Unreleased]
 
 - Update: Golang and npm packages/security patches.
+- Update: Reorganized the Settings page into two sections: `General` and `Fields & Layout`.
+- New: Flight record fields can now be resized and reordered using the new Layout button in the menu.
+- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in `Settings` -> `Fields & Layout`. The layout is saved to the user profile.
 
 ## [5.0.0-alpha1] - 11.10.2026
 
@@ -415,6 +418,7 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/jnko266" title="jnko266"><img src="https://github.com/jnko266.png" width="40" height="40" alt="jnko266" /></a>
   <a href="https://github.com/Samueld59" title="Samueld59"><img src="https://github.com/Samueld59.png" width="40" height="40" alt="Samueld59" /></a>
   <a href="https://github.com/benbox69" title="benbox69"><img src="https://github.com/benbox69.png" width="40" height="40" alt="benbox69" /></a>
+  <a href="https://github.com/Cyclic407" title="Cyclic407"><img src="https://github.com/Cyclic407.png" width="40" height="40" alt="Cyclic407" /></a>
 </p>
 
 --
@@ -443,6 +447,9 @@ Frontend:
 * compare-versions https://github.com/omichelsen/compare-versions
 * file-type https://github.com/sindresorhus/file-type
 * mapbox/togeojson https://github.com/mapbox/togeojson
+* dnd-kit https://github.com/clauderic/dnd-kit
+* react-grid-layout https://github.com/react-grid-layout/react-grid-layout
+
 
 Map Sources:
 * OpenStreetMap https://www.openstreetmap.org/

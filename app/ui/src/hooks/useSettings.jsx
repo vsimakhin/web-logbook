@@ -290,7 +290,10 @@ export const useSettings = () => {
   const logbookProfile = useMemo(() => ({
     fieldsVisibility: data.logbook_profile?.fields_visibility ?? DEFAULT_PROFILE.fieldsVisibility,
     flightRecordLayout: data.logbook_profile?.flight_record_layout ?? DEFAULT_PROFILE.flightRecordLayout,
+    tableColumns: data.logbook_profile?.table_columns ?? [],
   }), [data.logbook_profile]);
+
+
 
   return {
     settings: data,
