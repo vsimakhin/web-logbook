@@ -143,6 +143,7 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 	targetExport.IncludeSignature = updated.IncludeSignature
 	targetExport.IsExtended = updated.IsExtended
 	targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
+	targetExport.TableProfile = updated.TableProfile
 
 	err = app.db.UpdateSettings(s)
 	if err != nil {

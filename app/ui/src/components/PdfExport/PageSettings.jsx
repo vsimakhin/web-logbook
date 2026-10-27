@@ -147,7 +147,7 @@ const getHeadersConfig = (fieldName) =>
   }));
 
 
-export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnChange, handleHeaderChange }) => {
+export const PageSettings = ({ format, pdfSettings, handleChange }) => {
   const theme = useTheme();
   const borderRadius = theme.shape.borderRadius;
   const { fieldName } = useSettings();
@@ -177,9 +177,9 @@ export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnCh
         {COLUMN_CONFIG.map(({ id, label }) => (
           <TextField key={id}
             gsize={size}
-            id={id}
+            id={`columns.${id}`}
             label={label}
-            handleChange={handleColumnChange}
+            handleChange={handleChange}
             value={pdfSettings.columns[id] ?? ""}
             tooltip={`${label} column width`}
           />
@@ -192,9 +192,9 @@ export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnCh
             <Grid container spacing={0}>
               {group.map(({ id, label, size: fieldSize, col }, fieldIndex) => (
                 <TextField key={id}
-                  id={id}
+                  id={`headers.${id}`}
                   label={label}
-                  handleChange={handleHeaderChange}
+                  handleChange={handleChange}
                   value={pdfSettings.headers[id] ?? ""}
                   gsize={fieldSize}
                   tooltip={label}
