@@ -54,10 +54,11 @@ export const SaveSettingsButton = ({ settings, format }) => {
       columns: parseColumns(settings.columns),
       table_profile: {
         ...settings.table_profile,
-        table_column_widths: parseColumnWidths(settings.page_profile?.table_column_widths),
+        table_column_widths: parseColumnWidths(settings.table_profile?.table_column_widths),
       },
     };
 
+    console.log(parsedSettings)
     await saveSettings({ settings: parsedSettings, format });
   }
   return (

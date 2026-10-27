@@ -161,6 +161,8 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
     handleChange(HIDDEN_COLUMNS_PATH, []);
   }, [handleChange]);
 
+  const totalWidth = visibleColumns.reduce((sum, c) => sum + (parseFloat(c.width) || 0), 0);
+
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent>
@@ -196,7 +198,7 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
               <Typography variant="subtitle2">Visible columns</Typography>
-              <Typography variant="caption" color="text.secondary">{visibleColumns.length} columns</Typography>
+              <Typography variant="caption" color="text.secondary">{visibleColumns.length} columns, {totalWidth.toFixed(1)} mm of XXX</Typography>
             </Box>
 
             <Box sx={{ overflowY: 'auto', border: 1, borderColor: 'divider', borderRadius: 1 }}>

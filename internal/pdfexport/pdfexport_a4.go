@@ -1,8 +1,8 @@
 package pdfexport
 
 import (
-	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
 )
@@ -15,6 +15,7 @@ func (p *PDFExporter) ExportA4(flightRecords []models.FlightRecord, w io.Writer)
 	if err != nil {
 		return err
 	}
+	p.buildLayout()
 
 	p.rowCounter = 0
 	p.pageCounter = 1
@@ -45,55 +46,43 @@ func (p *PDFExporter) printA4LogbookHeader() {
 	p.pdf.AddPage()
 	p.setFontLogbookHeader()
 
-	// First header
-	p.pdf.SetXY(p.Export.LeftMargin, p.Export.TopMargin)
-	x, y := p.pdf.GetXY()
-	for i, str := range p.headers.header1 {
-		width := p.columns.w1[i]
-		p.pdf.Rect(x, y-1, width, 5, "FD")
-		p.pdf.MultiCell(width, 1, str, "", "C", false)
-		x += width
-		p.pdf.SetXY(x, y)
-	}
-	p.pdf.Ln(-1)
+	groups := p.headerGroups()
+	left, top := p.Export.LeftMargin, p.Export.TopMargin
 
-	// Second header
-	p.pdf.SetXY(p.Export.LeftMargin, p.Export.TopMargin+3)
-	x, y = p.pdf.GetXY()
-	for i, str := range p.headers.header2 {
-		width := p.columns.w2[i]
-		p.pdf.Rect(x, y-1, width, 12, "FD")
-		p.pdf.MultiCell(width, 3, str, "", "C", false)
-		x += width
-		p.pdf.SetXY(x, y)
+	// row 1: numbers, one per group
+	x := left
+	for i, g := range groups {
+		p.pdf.Rect(x, top-1, g.width, 5, "FD")
+		p.pdf.SetXY(x, top)
+		p.pdf.MultiCell(g.width, 1, strconv.Itoa(i+1), "", "C", false)
+		x += g.width
 	}
-	p.pdf.Ln(-1)
 
-	// Header inside header
-	p.pdf.SetXY(p.Export.LeftMargin, p.Export.TopMargin+11)
-	x, y = p.pdf.GetXY()
-	for i, str := range p.headers.header3 {
-		width := p.columns.w3[i]
-		// add Date columns for FSTD if format is extended
-		if i == 20 && p.Export.IsExtended {
-			p.pdf.Rect(x, y-1, p.columns.w3[0], 4, "FD")
-			p.pdf.MultiCell(p.columns.w3[0], 2, "Date", "", "C", false)
-			x += p.columns.w3[0]
-			p.pdf.SetXY(x, y)
+	// row 2: category (or the column label for standalone columns)
+	x = left
+	for _, g := range groups {
+		p.pdf.Rect(x, top+2, g.width, 12, "FD")
+		p.pdf.SetXY(x, top+3)
+		p.pdf.MultiCell(g.width, 3, g.label, "", "C", false)
+		x += g.width
+	}
+
+	// row 3: sub-headers, only for grouped columns
+	x = left
+	for _, g := range groups {
+		if !g.grouped {
+			x += g.width
+			continue
 		}
-		if str != "" {
-			p.pdf.Rect(x, y-1, width, 4, "FD")
-			p.pdf.MultiCell(width, 2, str, "", "C", false)
+		for _, c := range g.cols {
+			p.pdf.Rect(x, top+10, c.Width, 4, "FD")
+			p.pdf.SetXY(x, top+11)
+			p.pdf.MultiCell(c.Width, 2, c.Label, "", "C", false)
+			x += c.Width
 		}
-		x += width
-		p.pdf.SetXY(x, y)
 	}
-	p.pdf.Ln(-1)
 
-	// Align the logbook body
-	_, y = p.pdf.GetXY()
-	y += 1
-	p.pdf.SetY(y)
+	p.pdf.SetY(top + 14)
 }
 
 // logBookRow prints the logbook row
@@ -129,45 +118,25 @@ func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 // printA4LogbookBody prints the logbook body
 func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	fill := p.isFillLine()
-
 	p.setFontLogbookBody()
+	p.loadRowCustomFields(record)
 
-	// 	Data
 	p.pdf.SetX(p.Export.LeftMargin)
-	if p.Export.IsExtended && record.SIM.Type != "" {
-		p.printBodyTimeCell(p.columns.w3[0], "", fill)
-	} else {
-		p.printBodyTimeCell(p.columns.w3[0], record.Date, fill)
-	}
-	p.printBodyTimeCell(p.columns.w3[1], record.Departure.Place, fill)
-	p.printBodyTimeCell(p.columns.w3[2], record.Departure.Time, fill)
-	p.printBodyTimeCell(p.columns.w3[3], record.Arrival.Place, fill)
-	p.printBodyTimeCell(p.columns.w3[4], record.Arrival.Time, fill)
-	p.printBodyTimeCell(p.columns.w3[5], record.Aircraft.Model, fill)
-	p.printBodyTimeCell(p.columns.w3[6], record.Aircraft.Reg, fill)
-	p.printSinglePilotTime(p.columns.w3[7], p.formatTimeField(record.Time.SE), fill)
-	p.printSinglePilotTime(p.columns.w3[8], p.formatTimeField(record.Time.ME), fill)
-	p.printBodyTimeCell(p.columns.w3[9], p.formatTimeField(record.Time.MCC), fill)
-	p.printBodyTimeCell(p.columns.w3[10], p.formatTimeField(record.Time.Total), fill)
-	p.printBodyTextCell(p.columns.w3[11], record.PIC, fill)
-	p.printBodyTimeCell(p.columns.w3[12], formatLandings(record.Landings.Day), fill)
-	p.printBodyTimeCell(p.columns.w3[12], formatLandings(record.Landings.Night), fill)
-	p.printBodyTimeCell(p.columns.w3[14], p.formatTimeField(record.Time.Night), fill)
-	p.printBodyTimeCell(p.columns.w3[15], p.formatTimeField(record.Time.IFR), fill)
-	p.printBodyTimeCell(p.columns.w3[16], p.formatTimeField(record.Time.PIC), fill)
-	p.printBodyTimeCell(p.columns.w3[17], p.formatTimeField(record.Time.CoPilot), fill)
-	p.printBodyTimeCell(p.columns.w3[18], p.formatTimeField(record.Time.Dual), fill)
-	p.printBodyTimeCell(p.columns.w3[19], p.formatTimeField(record.Time.Instructor), fill)
-	if p.Export.IsExtended {
-		if record.SIM.Type != "" {
-			p.printBodyTimeCell(p.columns.w3[0], record.Date, fill)
-		} else {
-			p.printBodyTimeCell(p.columns.w3[0], "", fill)
+	for i := range p.layout {
+		c := &p.layout[i]
+		value := c.body(p, &record)
+
+		switch {
+		case c.Field == "remarks":
+			p.printBodyRemarksCell(c.Width, record.Remarks, record.Signature, record.UUID, fill)
+		case c.singlePilot:
+			p.printSinglePilotTime(c.Width, value, fill)
+		case c.align == "L":
+			p.printBodyTextCell(c.Width, value, fill)
+		default:
+			p.printBodyTimeCell(c.Width, value, fill)
 		}
 	}
-	p.printBodyTimeCell(p.columns.w3[20], record.SIM.Type, fill)
-	p.printBodyTimeCell(p.columns.w3[21], p.formatTimeField(record.SIM.Time), fill)
-	p.printBodyRemarksCell(p.columns.w3[22], record.Remarks, record.Signature, record.UUID, fill)
 
 	p.pdf.Ln(-1)
 	p.pdf.SetX(p.Export.LeftMargin)
@@ -183,27 +152,38 @@ func (p *PDFExporter) printA4LogbookFooter() {
 // printA4Total prints the logbook total
 func (p *PDFExporter) printA4Total(totalName string, total models.FlightRecord) {
 	p.setFontLogbookFooter()
-
 	p.pdf.SetX(p.Export.LeftMargin)
 
-	p.printFooterLeftBlock(totalName)
-	p.printFooterCell(p.columns.w4[1], totalName)
-	p.printFooterCell(p.columns.w4[2], p.formatTimeFieldTotals(total.Time.SE))
-	p.printFooterCell(p.columns.w4[3], p.formatTimeFieldTotals(total.Time.ME))
-	p.printFooterCell(p.columns.w4[4], p.formatTimeFieldTotals(total.Time.MCC))
-	p.printFooterCell(p.columns.w4[5], p.formatTimeFieldTotals(total.Time.Total))
-	p.printFooterCell(p.columns.w4[6], "")
-	p.printFooterCell(p.columns.w4[7], fmt.Sprintf("%d", total.Landings.Day))
-	p.printFooterCell(p.columns.w4[8], fmt.Sprintf("%d", total.Landings.Night))
-	p.printFooterCell(p.columns.w4[9], p.formatTimeFieldTotals(total.Time.Night))
-	p.printFooterCell(p.columns.w4[10], p.formatTimeFieldTotals(total.Time.IFR))
-	p.printFooterCell(p.columns.w4[11], p.formatTimeFieldTotals(total.Time.PIC))
-	p.printFooterCell(p.columns.w4[12], p.formatTimeFieldTotals(total.Time.CoPilot))
-	p.printFooterCell(p.columns.w4[13], p.formatTimeFieldTotals(total.Time.Dual))
-	p.printFooterCell(p.columns.w4[14], p.formatTimeFieldTotals(total.Time.Instructor))
-	p.printFooterCell(p.columns.w4[15], "")
-	p.printFooterCell(p.columns.w4[16], p.formatTimeFieldTotals(total.SIM.Time))
-	p.printFooterSignatureBlock(totalName)
+	sum := func(cols []pdfColumn) (w float64) {
+		for _, c := range cols {
+			w += c.Width
+		}
+		return
+	}
+
+	// leading columns without totals form the "TOTAL THIS PAGE" label area
+	lead := 0
+	for lead < len(p.layout) && p.layout[lead].total == nil && p.layout[lead].Field != "remarks" {
+		lead++
+	}
+	leftN := 0
+	if lead >= 2 {
+		leftN = 1 // first column is the empty left block
+	}
+
+	p.printFooterLeftBlock(totalName, sum(p.layout[:leftN]))
+	p.printFooterCell(sum(p.layout[leftN:lead]), totalName)
+
+	for _, c := range p.layout[lead:] {
+		switch {
+		case c.Field == "remarks":
+			p.printFooterSignatureBlock(totalName, c.Width)
+		case c.total != nil:
+			p.printFooterCell(c.Width, c.total(p, &total))
+		default:
+			p.printFooterCell(c.Width, "")
+		}
+	}
 
 	p.pdf.Ln(-1)
 }
