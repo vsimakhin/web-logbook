@@ -172,7 +172,7 @@ export const PageSettings = ({ format, pdfSettings, handleChange }) => {
           )
         ))}
       </Grid>
-      <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Columns Width</Typography>
+      {/* <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Columns Width</Typography>
       <Grid container spacing={1} columns={16} >
         {COLUMN_CONFIG.map(({ id, label }) => (
           <TextField key={id}
@@ -184,8 +184,8 @@ export const PageSettings = ({ format, pdfSettings, handleChange }) => {
             tooltip={`${label} column width`}
           />
         ))}
-      </Grid>
-      <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Columns Header</Typography>
+      </Grid> */}
+      <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Standard Columns Header</Typography>
       <Grid container spacing={1}>
         {headers.map(({ size, group }, groupIndex) => (
           <Grid size={size} key={`group-${groupIndex}`}>

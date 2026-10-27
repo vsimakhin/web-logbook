@@ -57,6 +57,12 @@ func (app *application) HandlerApiUploadDB(w http.ResponseWriter, r *http.Reques
 
 	app.db = models.DBModel{DB: conn}
 
+	err = app.db.CheckDefaultValues()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
 	app.writeOkResponse(w, "Database file uploaded")
 }
 

@@ -6,7 +6,13 @@ import { useErrorNotification } from "./useAppNotifications";
 import { fetchDistance } from "../util/http";
 import useSettings from "./useSettings";
 
-const getUniqueFieldsCategories = (fields = []) => [...new Set(fields.map((field) => field.category?.trim()).filter(Boolean))];
+const getUniqueFieldsCategories = (fields = []) => [
+  ...new Set(
+    (fields ?? [])
+      .map((field) => field.category?.trim())
+      .filter(Boolean)
+  ),
+];
 
 export const useCustomFields = () => {
   const { fieldName } = useSettings();

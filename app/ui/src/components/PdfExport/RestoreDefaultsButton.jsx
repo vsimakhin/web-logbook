@@ -35,7 +35,8 @@ export const RestoreDefaultsButton = ({ format, handleChange }) => {
           handleChange(field, data[field]);
         });
       } else if (section === SECTION_COLUMN_WIDTH) {
-        handleChange("columns", data.columns);
+        // TO-DO
+        // handleChange("columns", data.columns);
       } else if (section === SECTION_COLUMN_HEADER) {
         handleChange("headers", data.headers);
       }

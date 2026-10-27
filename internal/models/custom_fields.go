@@ -7,8 +7,7 @@ func (m *DBModel) GetCustomFields() (fields []CustomField, err error) {
 	query := `
 		SELECT
 			uuid, name, description, category, type, stats_function, IFNULL(pdf_header,"") as pdf_header
-		FROM custom_fields
-		ORDER BY display_order`
+		FROM custom_fields`
 	rows, err := m.DB.QueryContext(ctx, query)
 
 	if err != nil {

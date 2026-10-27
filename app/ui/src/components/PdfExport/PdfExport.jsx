@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid";
 import Card from '@mui/material/Card';
@@ -36,7 +36,7 @@ export const PdfExport = ({ format }) => {
   }, [data, format]);
 
   // const handleChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, [key]: value })) };
-  const handleChange = (path, value) => {
+  const handleChange = useCallback((path, value) => {
     setPdfSettings((prev) => {
       const keys = path.split('.');
       const next = { ...prev };
@@ -54,7 +54,7 @@ export const PdfExport = ({ format }) => {
 
       return next;
     });
-  };
+  }, []);
 
   return (
     <>
