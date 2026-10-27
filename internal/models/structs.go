@@ -215,6 +215,8 @@ type ExportPDF struct {
 	TimeFieldsAutoFormat byte          `json:"time_fields_auto_format"`
 	CustomTitle          string        `json:"custom_title"`
 	CustomTitleBlob      []byte
+
+	TableProfile Profile `json:"table_profile"`
 }
 
 type FlightRecordLayoutItem struct {
@@ -228,10 +230,11 @@ type FlightRecordLayoutItem struct {
 type FlightRecordLayout map[string][]FlightRecordLayoutItem
 
 type Profile struct {
-	FieldsVisibility   map[string]bool    `json:"fields_visibility"`
-	FlightRecordLayout FlightRecordLayout `json:"flight_record_layout"`
-	TableColumns       []string           `json:"table_columns"`
-	TableHiddenColumns []string           `json:"table_hidden_columns"`
+	FieldsVisibility   map[string]bool    `json:"fields_visibility,omitempty"`
+	FlightRecordLayout FlightRecordLayout `json:"flight_record_layout,omitempty"`
+	TableColumns       []string           `json:"table_columns,omitempty"`
+	TableHiddenColumns []string           `json:"table_hidden_columns,omitempty"`
+	TableColumnWidths  map[string]float64 `json:"table_column_widths,omitempty"`
 }
 
 // Settings is a type for settings
