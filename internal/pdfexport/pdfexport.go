@@ -113,6 +113,11 @@ type PDFExporter struct {
 	pageCounter     int
 	signatureBlockX float64
 	signatureBlockY float64
+
+	CustomFields []models.CustomField
+
+	layout    []pdfColumn
+	rowCustom map[string]string
 }
 
 // NewPDFExporter creates a new PDFExporter object
@@ -576,11 +581,10 @@ func (p *PDFExporter) printBodyRemarksCell(w float64, value string, signature st
 }
 
 // printFooterLeftBlock prints left block in the footer of the logbook
-func (p *PDFExporter) printFooterLeftBlock(totalName string) {
-	if p.columns.w4[0] <= 0 {
+func (p *PDFExporter) printFooterLeftBlock(totalName string, w float64) {
+	if w <= 0 {
 		return
 	}
-
 	var border string
 	switch totalName {
 	case FooterThisPage:
@@ -590,12 +594,11 @@ func (p *PDFExporter) printFooterLeftBlock(totalName string) {
 	case FooterTotalTime:
 		border = "LBR"
 	}
-
-	p.pdf.CellFormat(p.columns.w4[0], p.Export.FooterRow, "", border, 0, "", true, 0, "")
+	p.pdf.CellFormat(w, p.Export.FooterRow, "", border, 0, "", true, 0, "")
 }
 
 // printFooterSignatureBlock prints signature block in the footer of the logbook
-func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
+func (p *PDFExporter) printFooterSignatureBlock(totalName string, w float64) {
 	p.pdf.SetFont(fontRegular, "", SignatureFontSize)
 
 	switch totalName {
@@ -604,12 +607,12 @@ func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
 			// let's save the coordinates
 			p.signatureBlockX, p.signatureBlockY = p.pdf.GetXY()
 			// and put empty filled box
-			p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, "", "LTR", 0, "C", true, 0, "")
+			p.pdf.CellFormat(w, p.Export.FooterRow, "", "LTR", 0, "C", true, 0, "")
 		} else {
-			p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, p.Signature, "LTR", 0, "C", true, 0, "")
+			p.pdf.CellFormat(w, p.Export.FooterRow, p.Signature, "LTR", 0, "C", true, 0, "")
 		}
 	case FooterPreviousPage:
-		p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, "", "LR", 0, "", true, 0, "")
+		p.pdf.CellFormat(w, p.Export.FooterRow, "", "LR", 0, "", true, 0, "")
 
 		if p.Export.IsExtended {
 			// in case it's extended format, the remarks field can be too short to
@@ -617,27 +620,27 @@ func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
 			// there will be MultiCell function which support new line automatically
 			x, y := p.pdf.GetXY()
 			rowH := p.Export.FooterRow
-			if len(p.Signature) > int(p.columns.w4[17]*0.8) {
+			if len(p.Signature) > int(w*0.8) {
 				// looks like the signature text is really too long,
 				// so let's fit multiline cell into one normal footerRowHeight
 				rowH = p.Export.FooterRow / 2
 			}
 			p.pdf.SetXY(p.signatureBlockX, p.signatureBlockY)
-			p.pdf.MultiCell(p.columns.w4[17], rowH, strings.TrimRight(p.Signature, "\r\n"), "LTR", "C", true)
+			p.pdf.MultiCell(w, rowH, strings.TrimRight(p.Signature, "\r\n"), "LTR", "C", true)
 			p.pdf.SetXY(x, y)
 			// empty tiny cell to set the footerRowHeight back
 			p.pdf.CellFormat(0.01, p.Export.FooterRow, "", "", 0, "", true, 0, "")
 		}
 	default:
-		p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, p.OwnerName, "LBR", 0, "C", true, 0, "")
-		p.printSignature()
+		p.pdf.CellFormat(w, p.Export.FooterRow, p.OwnerName, "LBR", 0, "C", true, 0, "")
+		p.printSignature(w)
 	}
 }
 
 // printSignature prints signature in the footer of the logbook
-func (p *PDFExporter) printSignature() {
+func (p *PDFExporter) printSignature(w float64) {
 	if p.SignatureImage != "" {
-		p.pdf.Image("signature", p.pdf.GetX()-p.columns.w4[17], p.pdf.GetY()-p.Export.FooterRow*2, p.columns.w4[17],
+		p.pdf.Image("signature", p.pdf.GetX()-w, p.pdf.GetY()-p.Export.FooterRow*2, w,
 			p.Export.FooterRow*3, false, "", 0, "")
 	}
 }

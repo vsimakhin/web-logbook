@@ -105,6 +105,12 @@ func (app *application) HandlerApiExportLogbook(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	customFields, err := app.db.GetCustomFields()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
 	var contentType, fileName string
 	var exportFunc func() error
 
@@ -145,6 +151,8 @@ func (app *application) HandlerApiExportLogbook(w http.ResponseWriter, r *http.R
 			settings.OwnerName, settings.LicenseNumber, settings.Address,
 			settings.SignatureText, settings.SignatureImage, exportSettings,
 			previousExperience)
+
+		pdfExporter.CustomFields = customFields
 
 		if err != nil {
 			app.handleError(w, err)
