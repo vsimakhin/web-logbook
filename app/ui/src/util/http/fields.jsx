@@ -2,14 +2,6 @@ import { handleFetch } from './http';
 import { API_URL } from '../../constants/constants';
 import { getAuthToken } from '../auth';
 
-const transformFieldData = (field) => ({
-  ...field,
-  size_xs: parseInt(field.size_xs) || 0,
-  size_md: parseInt(field.size_md) || 0,
-  size_lg: parseInt(field.size_lg) || 0,
-  display_order: parseInt(field.display_order) || 0,
-});
-
 export const fetchCustomFields = async ({ signal }) => {
   const url = `${API_URL}/custom-fields/list`;
   const options = {
@@ -36,7 +28,7 @@ export const createCustomField = async ({ field }) => {
   const options = {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(transformFieldData(field)),
+    body: JSON.stringify(field),
   };
   return await handleFetch(url, options, 'Cannot create new custom field');
 }
@@ -47,7 +39,7 @@ export const updateCustomField = async ({ field }) => {
   const options = {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(transformFieldData(field)),
+    body: JSON.stringify(field),
   };
   return await handleFetch(url, options, 'Cannot update custom field');
 }

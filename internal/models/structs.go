@@ -215,6 +215,26 @@ type ExportPDF struct {
 	TimeFieldsAutoFormat byte          `json:"time_fields_auto_format"`
 	CustomTitle          string        `json:"custom_title"`
 	CustomTitleBlob      []byte
+
+	TableProfile Profile `json:"table_profile"`
+}
+
+type FlightRecordLayoutItem struct {
+	I string `json:"i"`
+	X int    `json:"x"`
+	Y int    `json:"y"`
+	W int    `json:"w"`
+	H int    `json:"h"`
+}
+
+type FlightRecordLayout map[string][]FlightRecordLayoutItem
+
+type Profile struct {
+	FieldsVisibility   map[string]bool    `json:"fields_visibility,omitempty"`
+	FlightRecordLayout FlightRecordLayout `json:"flight_record_layout,omitempty"`
+	TableColumns       []string           `json:"table_columns,omitempty"`
+	TableHiddenColumns []string           `json:"table_hidden_columns,omitempty"`
+	TableColumnWidths  map[string]float64 `json:"table_column_widths,omitempty"`
 }
 
 // Settings is a type for settings
@@ -269,6 +289,8 @@ type Settings struct {
 		LandingsDay   int `json:"landings_day"`
 		LandingsNight int `json:"landings_night"`
 	} `json:"previous_experience"`
+
+	LogbookProfile Profile `json:"logbook_profile"`
 }
 
 // License is a type for licesing
@@ -347,8 +369,5 @@ type CustomField struct {
 	Category      string `json:"category"`
 	Type          string `json:"type"`
 	StatsFunction string `json:"stats_function"`
-	SizeXs        int    `json:"size_xs"`
-	SizeMd        int    `json:"size_md"`
-	SizeLg        int    `json:"size_lg"`
-	DisplayOrder  int    `json:"display_order"`
+	PDFHeader     string `json:"pdf_header"`
 }

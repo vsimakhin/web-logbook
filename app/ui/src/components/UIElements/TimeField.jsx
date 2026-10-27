@@ -11,7 +11,7 @@ export const TimeField = memo(({
   tooltip = label,
   fieldFormat = 1,
   maxLength = 5,
-  gsize = { xs: 5, sm: 2 },
+  gsize,
   ...props
 }) => {
   const FLIGHT_TIME_SLOT_PROPS = {

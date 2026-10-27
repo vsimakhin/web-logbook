@@ -146,6 +146,38 @@ var pdfA5Defaults = ExportPDF{
 	FooterRow:   5.0,
 }
 
+var pdfA4TableColumns = []string{
+	"date", "dep_place", "dep_time", "arr_place", "arr_time", "model", "reg", "se",
+	"me", "mcc", "total", "pic_name", "land_day", "land_night", "night", "ifr",
+	"pic", "cop", "dual", "instr", "sim_type", "sim_time", "remarks",
+}
+
+var pdfA4TableColumnWidth = map[string]float64{
+	"date":       12.2,
+	"dep_place":  8.25,
+	"dep_time":   8.25,
+	"arr_place":  8.25,
+	"arr_time":   8.25,
+	"model":      10.0,
+	"reg":        12.9,
+	"se":         11.2,
+	"me":         11.2,
+	"mcc":        11.2,
+	"total":      11.2,
+	"pic_name":   22.86,
+	"land_day":   8.38,
+	"land_night": 8.38,
+	"night":      11.2,
+	"ifr":        11.2,
+	"pic":        11.2,
+	"cop":        11.2,
+	"dual":       11.2,
+	"instr":      11.2,
+	"sim_type":   11.2,
+	"sim_time":   11.2,
+	"remarks":    33.8,
+}
+
 // CheckDefaultValues checks if some certain settings parameters are empty and
 // fills them in with the default values
 func (m *DBModel) CheckDefaultValues() error {
@@ -164,6 +196,10 @@ func (m *DBModel) CheckDefaultValues() error {
 		s.ExportA4 = pdfA4Defaults
 		s.ExportA4.Columns = pdfA4DefaultColumns
 		s.ExportA4.Headers = pdfDefaultHeaders
+		s.ExportA4.TableProfile.TableColumns = pdfA4TableColumns
+		s.ExportA4.TableProfile.TableHiddenColumns = []string{}
+		s.ExportA4.TableProfile.TableColumnWidths = pdfA4TableColumnWidth
+
 		applyDefaults = true
 	}
 
@@ -185,6 +221,70 @@ func (m *DBModel) CheckDefaultValues() error {
 		s.StandardFieldsHeaders = standardFieldsHeaders
 		applyDefaults = true
 	}
+
+	// check and migrate pdf export values
+	if len(s.ExportA4.TableProfile.TableColumns) == 0 {
+		s.ExportA4.TableProfile.TableColumns = pdfA4TableColumns
+		s.ExportA4.TableProfile.TableHiddenColumns = []string{}
+		s.ExportA4.TableProfile.TableColumnWidths = map[string]float64{
+			"date":       s.ExportA4.Columns.Col1,
+			"dep_place":  s.ExportA4.Columns.Col2,
+			"dep_time":   s.ExportA4.Columns.Col3,
+			"arr_place":  s.ExportA4.Columns.Col4,
+			"arr_time":   s.ExportA4.Columns.Col5,
+			"model":      s.ExportA4.Columns.Col6,
+			"reg":        s.ExportA4.Columns.Col7,
+			"se":         s.ExportA4.Columns.Col8,
+			"me":         s.ExportA4.Columns.Col9,
+			"mcc":        s.ExportA4.Columns.Col10,
+			"total":      s.ExportA4.Columns.Col11,
+			"pic_name":   s.ExportA4.Columns.Col12,
+			"land_day":   s.ExportA4.Columns.Col13,
+			"land_night": s.ExportA4.Columns.Col14,
+			"night":      s.ExportA4.Columns.Col15,
+			"ifr":        s.ExportA4.Columns.Col16,
+			"pic":        s.ExportA4.Columns.Col17,
+			"cop":        s.ExportA4.Columns.Col18,
+			"dual":       s.ExportA4.Columns.Col19,
+			"instr":      s.ExportA4.Columns.Col20,
+			"sim_type":   s.ExportA4.Columns.Col21,
+			"sim_time":   s.ExportA4.Columns.Col22,
+			"remarks":    s.ExportA4.Columns.Col23,
+		}
+		applyDefaults = true
+	}
+
+	// TO-DO
+	// if len(s.ExportA5.TableProfile.TableColumns) == 0 {
+	// 	s.ExportA4.TableProfile.TableColumns = pdfA4TableColumns
+	// 	s.ExportA4.TableProfile.TableHiddenColumns = []string{}
+	// 	s.ExportA4.TableProfile.TableColumnWidths = map[string]float64{
+	// 		"date":       s.ExportA4.Columns.Col1,
+	// 		"dep_place":  s.ExportA4.Columns.Col2,
+	// 		"dep_time":   s.ExportA4.Columns.Col3,
+	// 		"arr_place":  s.ExportA4.Columns.Col4,
+	// 		"arr_time":   s.ExportA4.Columns.Col5,
+	// 		"model":      s.ExportA4.Columns.Col6,
+	// 		"reg":        s.ExportA4.Columns.Col7,
+	// 		"se":         s.ExportA4.Columns.Col8,
+	// 		"me":         s.ExportA4.Columns.Col9,
+	// 		"mcc":        s.ExportA4.Columns.Col10,
+	// 		"total":      s.ExportA4.Columns.Col11,
+	// 		"pic_name":   s.ExportA4.Columns.Col12,
+	// 		"land_day":   s.ExportA4.Columns.Col13,
+	// 		"land_night": s.ExportA4.Columns.Col14,
+	// 		"night":      s.ExportA4.Columns.Col15,
+	// 		"ifr":        s.ExportA4.Columns.Col16,
+	// 		"pic":        s.ExportA4.Columns.Col17,
+	// 		"cop":        s.ExportA4.Columns.Col18,
+	// 		"dual":       s.ExportA4.Columns.Col19,
+	// 		"instr":      s.ExportA4.Columns.Col20,
+	// 		"sim_type":   s.ExportA4.Columns.Col21,
+	// 		"sim_time":   s.ExportA4.Columns.Col22,
+	// 		"remarks":    s.ExportA4.Columns.Col23,
+	// 	}
+	// 	applyDefaults = true
+	// }
 
 	if applyDefaults {
 		err = m.UpdateSettings(s)

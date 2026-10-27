@@ -219,7 +219,7 @@ func (p *PDFExporter) printA5TotalA(totalName string, total models.FlightRecord)
 
 	p.pdf.SetX(p.Export.LeftMarginA)
 
-	p.printFooterLeftBlock(totalName)
+	// p.printFooterLeftBlock(totalName) TO-DO
 	p.printFooterCell(p.columns.w4[1], totalName)
 	p.printFooterCell(p.columns.w4[2], p.formatTimeFieldTotals(total.Time.SE))
 	p.printFooterCell(p.columns.w4[3], p.formatTimeFieldTotals(total.Time.ME))
@@ -246,7 +246,7 @@ func (p *PDFExporter) printA5TotalB(totalName string, total models.FlightRecord)
 	p.printFooterCell(p.columns.w4[14], p.formatTimeFieldTotals(total.Time.Instructor))
 	p.printFooterCell(p.columns.w4[15], "")
 	p.printFooterCell(p.columns.w4[16], p.formatTimeFieldTotals(total.SIM.Time))
-	p.printFooterSignatureBlock(totalName)
+	// p.printFooterSignatureBlock(totalName) TO-DO
 
 	p.pdf.Ln(-1)
 }

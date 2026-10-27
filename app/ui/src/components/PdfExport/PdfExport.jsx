@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid";
 import Card from '@mui/material/Card';
@@ -17,6 +17,7 @@ import ExportButton from "./ExportButton";
 import CustomTitlePreview from "./CustomTitlePreview";
 import AddCustomTitleButton from "./AddCustomTitleButton";
 import DeleteCustomTitleButton from "./DeleteCustomTitleButton";
+import PDFPageLayout from "./PDFPageLayout/PDFPageLayout";
 
 export const PdfExport = ({ format }) => {
   const [pdfSettings, setPdfSettings] = useState({ columns: {}, headers: {} });
@@ -34,9 +35,26 @@ export const PdfExport = ({ format }) => {
     }
   }, [data, format]);
 
-  const handleChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, [key]: value })) };
-  const handleColumnChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, columns: { ...prev.columns, [key]: value } })) };
-  const handleHeaderChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, headers: { ...prev.headers, [key]: value } })) };
+  // const handleChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, [key]: value })) };
+  const handleChange = useCallback((path, value) => {
+    setPdfSettings((prev) => {
+      const keys = path.split('.');
+      const next = { ...prev };
+      let current = next;
+      let previous = prev;
+
+      for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        current[key] = { ...(previous[key] ?? {}) };
+        current = current[key];
+        previous = previous[key] ?? {};
+      }
+
+      current[keys[keys.length - 1]] = value;
+
+      return next;
+    });
+  }, []);
 
   return (
     <>
@@ -52,8 +70,7 @@ export const PdfExport = ({ format }) => {
                   <RestoreDefaultsButton format={format} handleChange={handleChange} />
                 </>
               } />
-              <PageSettings format={format} pdfSettings={pdfSettings}
-                handleChange={handleChange} handleColumnChange={handleColumnChange} handleHeaderChange={handleHeaderChange} />
+              <PageSettings format={format} pdfSettings={pdfSettings} handleChange={handleChange} />
             </CardContent>
           </Card >
 
@@ -81,6 +98,9 @@ export const PdfExport = ({ format }) => {
               <CustomTitlePreview format={format} />
             </CardContent>
           </Card >
+
+          <PDFPageLayout settings={pdfSettings} handleChange={handleChange} format={format} />
+
         </Grid>
       </Grid>
     </>

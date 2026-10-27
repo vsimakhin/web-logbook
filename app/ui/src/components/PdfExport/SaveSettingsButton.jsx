@@ -29,6 +29,14 @@ const parseColumns = (columns) => {
     }, {});
 };
 
+const parseColumnWidths = (widths = {}) =>
+  Object.fromEntries(
+    Object.entries(widths)
+      .filter(([, value]) => value !== '' && value != null)
+      .map(([field, value]) => [field, Number(value)])
+      .filter(([, value]) => Number.isFinite(value))
+  );
+
 export const SaveSettingsButton = ({ settings, format }) => {
   const { mutateAsync: saveSettings, isError, error, isSuccess } = useMutation({
     mutationFn: ({ settings, format }) => updatePdfSettings({ settings, format }),
@@ -43,8 +51,14 @@ export const SaveSettingsButton = ({ settings, format }) => {
     const parsedSettings = {
       ...settings,
       ...parseNumericFields(settings, INT_FIELDS, parseInt),
-      columns: parseColumns(settings.columns)
+      columns: parseColumns(settings.columns),
+      table_profile: {
+        ...settings.table_profile,
+        table_column_widths: parseColumnWidths(settings.table_profile?.table_column_widths),
+      },
     };
+
+    console.log(parsedSettings)
     await saveSettings({ settings: parsedSettings, format });
   }
   return (

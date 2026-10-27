@@ -1,9 +1,7 @@
-import PlaceField from "../../FlightRecord/PlaceField";
+import DepArrTime from "../../UIElements/DepArrTime";
 import { updateNested } from "../helpers";
 
-const fieldNameMock = () => "";
-
-export const PlaceTimeCell = ({ params, callBackFunction, type, placeField = true }) => {
+export const DepArrTimeCell = ({ params, callBackFunction, type }) => {
   const handleChange = (key, value) => {
     const currentRow = params.api.getRow(params.row.uuid);
     const updatedRow = updateNested(currentRow, key.split("."), value);
@@ -12,19 +10,15 @@ export const PlaceTimeCell = ({ params, callBackFunction, type, placeField = tru
   };
 
   return (
-    <PlaceField
+    <DepArrTime
       flight={params.row}
       type={type}
-      fieldNameF={fieldNameMock}
       handleChange={handleChange}
-      showPlace={placeField}
-      showTime={!placeField}
       variant="standard"
       slotProps={{ input: { disableUnderline: true } }}
-      disableLabel
-      disableGrid
+      label=""
     />
   )
 }
 
-export default PlaceTimeCell;
+export default DepArrTimeCell;

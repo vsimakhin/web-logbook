@@ -143,6 +143,7 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 	targetExport.IncludeSignature = updated.IncludeSignature
 	targetExport.IsExtended = updated.IsExtended
 	targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
+	targetExport.TableProfile = updated.TableProfile
 
 	err = app.db.UpdateSettings(s)
 	if err != nil {
@@ -156,4 +157,28 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 func (app *application) HandlerApiSettingsFieldsDefaults(w http.ResponseWriter, r *http.Request) {
 	defaults := app.db.GetStandardFieldsHeaders()
 	app.writeJSON(w, http.StatusOK, defaults)
+}
+
+func (app *application) HandlerApiSettingsProfile(w http.ResponseWriter, r *http.Request) {
+	oldsettings, err := app.db.GetSettings()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var settings models.Settings
+	err = json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	oldsettings.LogbookProfile = settings.LogbookProfile
+	err = app.db.UpdateSettings(oldsettings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Profile settings updated")
 }
