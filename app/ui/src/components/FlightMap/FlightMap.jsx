@@ -7,6 +7,7 @@ import View from 'ol/View';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import FullScreen from 'ol/control/FullScreen';
+import Attribution from 'ol/control/Attribution';
 import Overlay from 'ol/Overlay';
 import { transform } from 'ol/proj';
 // MUI UI elements
@@ -83,7 +84,7 @@ export const FlightMap = ({ data, title = "Flight Map", sx, airportsMap }) => {
         center: transform([10, 45], "EPSG:4326", "EPSG:3857"),
         zoom: 4,
       }),
-      controls: [new FullScreen()],
+      controls: [new FullScreen(), new Attribution()],
       overlays: [overlayRef.current],
     });
 

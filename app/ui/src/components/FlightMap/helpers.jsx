@@ -121,12 +121,19 @@ export const addMarker = (features, airport, options) => {
 export const getMapBase = (index) => {
   switch (index) {
     case 0:
-      return new TileLayer({ source: new OSM() });
+      return new TileLayer({
+        source: new OSM({
+          attributions:
+            'Map data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+        }),
+      });
     case 1:
       return new TileLayer({
         source: new XYZ({
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          attributions: '© Esri',
+          attributions:
+            `Powered by <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a> |
+             Sources: Esri, DigitalGlobe, GeoEye, i-cubed, USDA FSA, USGS, AEX, Getmapping, Aerogrid, IGN, IGP, swisstopo, and the GIS User Community`,
           maxZoom: 19,
           crossOrigin: 'anonymous',
         }),
@@ -135,12 +142,17 @@ export const getMapBase = (index) => {
       return new TileLayer({
         source: new XYZ({
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
-          attributions: '© Esri',
+          attributions: 'Powered by <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a> | Sources: Esri, USGS, NOAA',
           maxZoom: 19,
           crossOrigin: 'anonymous',
         }),
       });
     default:
-      return new TileLayer({ source: new OSM() });
+      return new TileLayer({
+        source: new OSM({
+          attributions:
+            'Map data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+        }),
+      });
   }
 }
