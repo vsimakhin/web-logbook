@@ -66,6 +66,7 @@ The application will automatically create a local SQLite database on the first s
 ## [Unreleased]
 
 - Update: Golang and npm packages/security patches.
+- Update: Add proper map layer attributions and copyright notices.
 
 ## [5.0.0-alpha1] - 11.10.2026
 
