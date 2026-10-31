@@ -112,6 +112,121 @@ func headerMap(h models.ColumnsHeader) map[string]string {
 	return m
 }
 
+var standardOrder = []string{
+	"date",
+	"dep_place", "dep_time",
+	"arr_place", "arr_time",
+	"model", "reg",
+	"se", "me",
+	"mcc",
+	"total",
+	"pic_name",
+	"land_day", "land_night",
+	"night", "ifr",
+	"pic", "cop", "dual", "instr",
+	"sim_type", "sim_time",
+	"remarks",
+}
+
+func matchStandardCategory(cat string, headers map[string]string) string {
+	clean := strings.ToLower(strings.TrimSpace(cat))
+	if clean == "" || clean == "custom" {
+		return cat
+	}
+
+	switch clean {
+	case "departure":
+		return headers["departure"]
+	case "arrival":
+		return headers["arrival"]
+	case "aircraft":
+		return headers["aircraft"]
+	case "spt", "single pilot", "single pilot time":
+		return headers["spt"]
+	case "mcc", "multi pilot time":
+		return headers["mcc"]
+	case "total", "total time":
+		return headers["total"]
+	case "landings":
+		return headers["landings"]
+	case "oct", "operational condition time":
+		return headers["oct"]
+	case "pft", "pilot function time":
+		return headers["pft"]
+	case "fstd", "fstd session":
+		return headers["fstd"]
+	case "remarks", "remarks and endorsements":
+		return headers["remarks"]
+	}
+
+	for key, hVal := range headers {
+		if strings.EqualFold(cat, hVal) {
+			return headers[key]
+		}
+	}
+
+	return cat
+}
+
+func groupCustomFieldsByCategory(cols []pdfColumn) []pdfColumn {
+	if len(cols) == 0 {
+		return cols
+	}
+
+	lastIndexForCategory := make(map[string]int)
+	for i, c := range cols {
+		if c.Category != "" && !strings.HasPrefix(c.Field, customPrefix) {
+			lastIndexForCategory[c.Category] = i
+		}
+	}
+
+	type toMove struct {
+		col      pdfColumn
+		category string
+	}
+	var moves []toMove
+	var remaining []pdfColumn
+
+	for i, c := range cols {
+		if strings.HasPrefix(c.Field, customPrefix) && c.Category != "" {
+			if lastIdx, ok := lastIndexForCategory[c.Category]; ok && i > lastIdx {
+				moves = append(moves, toMove{col: c, category: c.Category})
+				continue
+			}
+		}
+		remaining = append(remaining, c)
+	}
+
+	if len(moves) == 0 {
+		return cols
+	}
+
+	lastInRemaining := make(map[string]int)
+	for i, c := range remaining {
+		if c.Category != "" {
+			lastInRemaining[c.Category] = i
+		}
+	}
+
+	res := make([]pdfColumn, 0, len(cols))
+	for i, c := range remaining {
+		res = append(res, c)
+		if lastInRemaining[c.Category] == i {
+			for j := 0; j < len(moves); j++ {
+				if moves[j].category == c.Category {
+					res = append(res, moves[j].col)
+					moves = append(moves[:j], moves[j+1:]...)
+					j--
+				}
+			}
+		}
+	}
+	for _, m := range moves {
+		res = append(res, m.col)
+	}
+	return res
+}
+
 func (p *PDFExporter) widthOf(field string) float64 {
 	if w := p.Export.TableProfile.TableColumnWidths[field]; w > 0 {
 		return w
@@ -154,9 +269,9 @@ func (p *PDFExporter) buildLayout() {
 	for _, f := range profile.TableColumns {
 		add(f)
 	}
-	// for _, f := range standardOrder {
-	// 	add(f)
-	// }
+	for _, f := range standardOrder {
+		add(f)
+	}
 
 	cols := make([]pdfColumn, 0, len(order)+1)
 	for _, f := range order {
@@ -169,17 +284,44 @@ func (p *PDFExporter) buildLayout() {
 		} else {
 			cf := customs[f]
 			uuid := cf.UUID
+			cfType := cf.Type
 			c.Label = cf.PDFHeader
 			if c.Label == "" {
 				c.Label = cf.Name
 			}
-			// must equal the header text of the neighbours (e.g. "FSTD SESSION") to be grouped with them
-			c.Category = cf.Category
+			c.Category = matchStandardCategory(cf.Category, headers)
 			c.align = "C"
-			c.body = func(p *PDFExporter, _ *models.FlightRecord) string { return p.rowCustom[uuid] }
+
+			switch cfType {
+			case "duration":
+				c.body = func(p *PDFExporter, _ *models.FlightRecord) string {
+					return p.formatTimeField(p.rowCustomInt(uuid))
+				}
+				c.total = func(p *PDFExporter, _ *models.FlightRecord) string {
+					return p.formatTimeFieldTotals(p.customTotalForRow(uuid))
+				}
+			case "number":
+				c.body = func(p *PDFExporter, _ *models.FlightRecord) string {
+					raw := p.rowCustom[uuid]
+					if raw == "" {
+						return ""
+					}
+					return formatLandings(p.rowCustomInt(uuid))
+				}
+				c.total = func(p *PDFExporter, _ *models.FlightRecord) string {
+					return fmt.Sprintf("%d", p.customTotalForRow(uuid))
+				}
+			default:
+				c.body = func(p *PDFExporter, _ *models.FlightRecord) string { return p.rowCustom[uuid] }
+			}
 		}
 		cols = append(cols, c)
 	}
+
+	// Re-order custom-field columns so they sit adjacent to the last standard column
+	// that shares their category. This enables headerGroups() to merge them into the
+	// same group header even when the user dragged them to the end of the list.
+	cols = groupCustomFieldsByCategory(cols)
 
 	// extended format: extra "Date" column in front of the FSTD type, taken from remarks
 	if p.Export.IsExtended {
@@ -207,23 +349,6 @@ func (p *PDFExporter) buildLayout() {
 
 	p.layout = cols
 	// p.fitLayoutToPage()
-}
-
-// fitLayoutToPage scales the columns down if the user made the table wider than the page
-func (p *PDFExporter) fitLayoutToPage() {
-	pageW, _ := p.pdf.GetPageSize()
-	avail := pageW - 2*p.Export.LeftMargin
-	var sum float64
-	for _, c := range p.layout {
-		sum += c.Width
-	}
-	if sum <= avail || sum == 0 {
-		return
-	}
-	k := avail / sum
-	for i := range p.layout {
-		p.layout[i].Width *= k
-	}
 }
 
 type headerGroup struct {
@@ -301,4 +426,42 @@ func (p *PDFExporter) loadRowCustomFields(r models.FlightRecord) {
 	}
 
 	fmt.Printf("cannot parse custom fields of %s: %q\n", r.UUID, r.CustomFields)
+}
+
+func (p *PDFExporter) rowCustomInt(uuid string) int {
+	raw := p.rowCustom[uuid]
+	if raw == "" {
+		return 0
+	}
+	if v, err := strconv.Atoi(raw); err == nil {
+		return v
+	}
+	if f, err := strconv.ParseFloat(raw, 64); err == nil {
+		return int(f)
+	}
+	return 0
+}
+
+// accumulateCustomTotals sums duration/number custom fields from the current row into the page and time totals.
+func (p *PDFExporter) accumulateCustomTotals() {
+	for _, cf := range p.CustomFields {
+		if cf.Type != "duration" && cf.Type != "number" {
+			continue
+		}
+		val := p.rowCustomInt(cf.UUID)
+		p.customTotalPage[cf.UUID] += val
+		p.customTotalTime[cf.UUID] += val
+	}
+}
+
+// customTotalForRow returns the right accumulator bucket for the current footer row.
+func (p *PDFExporter) customTotalForRow(uuid string) int {
+	switch p.currentFooterRow {
+	case FooterThisPage:
+		return p.customTotalPage[uuid]
+	case FooterPreviousPage:
+		return p.customTotalPrevious[uuid]
+	default: // FooterTotalTime
+		return p.customTotalTime[uuid]
+	}
 }

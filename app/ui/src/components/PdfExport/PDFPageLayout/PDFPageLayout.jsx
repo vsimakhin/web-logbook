@@ -12,6 +12,7 @@ import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBacku
 // Custom
 import CardHeader from '../../UIElements/CardHeader';
 import useCustomFields from '../../../hooks/useCustomFields';
+import useSettings from '../../../hooks/useSettings';
 import { AvailableColumnList, SortableColumnList } from './SortableColumnList';
 import SaveSettingsButton from '../SaveSettingsButton';
 
@@ -21,58 +22,104 @@ const COLUMN_WIDTHS_PATH = 'table_profile.table_column_widths';
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 
+const matchCategoryKey = (cat, logbookFieldName) => {
+  if (!cat) return '';
+  const c = cat.trim().toLowerCase();
+  const check = (key) => {
+    const name = logbookFieldName(key);
+    return c === key.toLowerCase() || (name && c === name.toLowerCase());
+  };
+
+  if (check('departure')) return 'departure';
+  if (check('arrival')) return 'arrival';
+  if (check('aircraft')) return 'aircraft';
+  if (check('spt') || c === 'single pilot' || c === 'single pilot time') return 'spt';
+  if (check('mcc') || c === 'multi pilot time') return 'mcc';
+  if (check('total') || c === 'total time') return 'total';
+  if (check('landings')) return 'landings';
+  if (check('oct') || c === 'operational condition time') return 'oct';
+  if (check('pft') || c === 'pilot function time') return 'pft';
+  if (check('fstd') || c === 'fstd session') return 'fstd';
+  if (check('remarks') || c === 'remarks and endorsements') return 'remarks';
+  return '';
+};
+
 export const PDFPageLayout = ({ settings, handleChange, format }) => {
   const { customFields, isCustomFieldsLoading } = useCustomFields();
-
-  const standardPageColumns = useMemo(() => {
-    const fieldName = (id) => (settings.headers[id]);
-
-    return [
-      { field: 'date', category: '', label: fieldName("date") },
-      { field: 'dep_place', category: fieldName("departure"), label: fieldName("dep_place") },
-      { field: 'dep_time', category: fieldName("departure"), label: fieldName("dep_time") },
-      { field: 'arr_place', category: fieldName("arrival"), label: fieldName("arr_place") },
-      { field: 'arr_time', category: fieldName("arrival"), label: fieldName("arr_time") },
-      { field: 'model', category: fieldName("aircraft"), label: fieldName("model") },
-      { field: 'reg', category: fieldName("aircraft"), label: fieldName("reg") },
-      { field: 'se', category: fieldName("spt"), label: fieldName("se") },
-      { field: 'me', category: fieldName("spt"), label: fieldName("me") },
-      { field: 'mcc', category: '', label: fieldName("mcc") },
-      { field: 'total', category: '', label: fieldName("total") },
-      { field: 'pic_name', category: '', label: fieldName("pic_name") },
-      { field: 'land_day', category: fieldName("landings"), label: fieldName("land_day") },
-      { field: 'land_night', category: fieldName("landings"), label: fieldName("land_night") },
-      { field: 'night', category: fieldName("oct"), label: fieldName("night") },
-      { field: 'ifr', category: fieldName("oct"), label: fieldName("ifr") },
-      { field: 'pic', category: fieldName("pft"), label: fieldName("pic") },
-      { field: 'cop', category: fieldName("pft"), label: fieldName("cop") },
-      { field: 'dual', category: fieldName("pft"), label: fieldName("dual") },
-      { field: 'instr', category: fieldName("pft"), label: fieldName("instr") },
-      { field: 'sim_type', category: fieldName("fstd"), label: fieldName("sim_type") },
-      { field: 'sim_time', category: fieldName("fstd"), label: fieldName("sim_time") },
-      { field: 'remarks', category: '', label: fieldName("remarks") },
-    ];
-  }, [settings.headers]);
+  const { fieldName: logbookFieldName } = useSettings();
 
   const savedOrder = settings.table_profile?.table_columns ?? EMPTY_ARRAY;
   const hiddenColumns = settings.table_profile?.table_hidden_columns ?? EMPTY_ARRAY;
   const columnWidths = settings.table_profile?.table_column_widths ?? EMPTY_OBJECT;
 
   const allColumns = useMemo(() => {
-    const customColumns =
-      !isCustomFieldsLoading && customFields
-        ? customFields.map((field) => ({
-          field: `custom_fields.${field.uuid}`,
-          label: field.name,
-          category: field.category,
-        }))
-        : [];
+    const pdfHeader = (id) => settings.headers[id];
 
-    return [...standardPageColumns, ...customColumns].map((column) => ({
+    const getCustomColumns = (categoryKey) => {
+      if (isCustomFieldsLoading || !customFields) return [];
+      return customFields
+        .filter((field) => matchCategoryKey(field.category, logbookFieldName) === categoryKey)
+        .map((field) => ({
+          field: `custom_fields.${field.uuid}`,
+          label: field.pdf_header || field.name,
+          category: pdfHeader(categoryKey) || field.category,
+        }));
+    };
+
+    const getOtherCustomColumns = () => {
+      if (isCustomFieldsLoading || !customFields) return [];
+      return customFields
+        .filter((field) => !matchCategoryKey(field.category, logbookFieldName))
+        .map((field) => ({
+          field: `custom_fields.${field.uuid}`,
+          label: field.pdf_header || field.name,
+          category: field.category || 'Custom',
+        }));
+    };
+
+    const cols = [
+      { field: 'date', category: '', label: pdfHeader("date") },
+      { field: 'dep_place', category: pdfHeader("departure"), label: pdfHeader("dep_place") },
+      { field: 'dep_time', category: pdfHeader("departure"), label: pdfHeader("dep_time") },
+      ...getCustomColumns('departure'),
+      { field: 'arr_place', category: pdfHeader("arrival"), label: pdfHeader("arr_place") },
+      { field: 'arr_time', category: pdfHeader("arrival"), label: pdfHeader("arr_time") },
+      ...getCustomColumns('arrival'),
+      { field: 'model', category: pdfHeader("aircraft"), label: pdfHeader("model") },
+      { field: 'reg', category: pdfHeader("aircraft"), label: pdfHeader("reg") },
+      ...getCustomColumns('aircraft'),
+      { field: 'se', category: pdfHeader("spt"), label: pdfHeader("se") },
+      { field: 'me', category: pdfHeader("spt"), label: pdfHeader("me") },
+      ...getCustomColumns('spt'),
+      { field: 'mcc', category: '', label: pdfHeader("mcc") },
+      ...getCustomColumns('mcc'),
+      { field: 'total', category: '', label: pdfHeader("total") },
+      ...getCustomColumns('total'),
+      { field: 'pic_name', category: '', label: pdfHeader("pic_name") },
+      { field: 'land_day', category: pdfHeader("landings"), label: pdfHeader("land_day") },
+      { field: 'land_night', category: pdfHeader("landings"), label: pdfHeader("land_night") },
+      ...getCustomColumns('landings'),
+      { field: 'night', category: pdfHeader("oct"), label: pdfHeader("night") },
+      { field: 'ifr', category: pdfHeader("oct"), label: pdfHeader("ifr") },
+      ...getCustomColumns('oct'),
+      { field: 'pic', category: pdfHeader("pft"), label: pdfHeader("pic") },
+      { field: 'cop', category: pdfHeader("pft"), label: pdfHeader("cop") },
+      { field: 'dual', category: pdfHeader("pft"), label: pdfHeader("dual") },
+      { field: 'instr', category: pdfHeader("pft"), label: pdfHeader("instr") },
+      ...getCustomColumns('pft'),
+      { field: 'sim_type', category: pdfHeader("fstd"), label: pdfHeader("sim_type") },
+      { field: 'sim_time', category: pdfHeader("fstd"), label: pdfHeader("sim_time") },
+      ...getCustomColumns('fstd'),
+      ...getOtherCustomColumns(),
+      { field: 'remarks', category: '', label: pdfHeader("remarks") },
+      ...getCustomColumns('remarks'),
+    ];
+
+    return cols.map((column) => ({
       ...column,
       width: columnWidths[column.field] ?? '',
     }));
-  }, [customFields, isCustomFieldsLoading, standardPageColumns, columnWidths]);
+  }, [settings.headers, customFields, isCustomFieldsLoading, logbookFieldName, columnWidths]);
 
 
   const visibleColumns = useMemo(() => {
@@ -134,12 +181,15 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
       return;
     }
 
-    const nextOrder = [...visibleColumns.map((column) => column.field), field];
+    const allIndexMap = new Map(allColumns.map((c, i) => [c.field, i]));
+    const nextCols = [...visibleColumns, allColumns.find((c) => c.field === field)].filter(Boolean);
+    nextCols.sort((a, b) => (allIndexMap.get(a.field) ?? 0) - (allIndexMap.get(b.field) ?? 0));
+    const nextOrder = nextCols.map((column) => column.field);
     const nextHidden = hiddenColumns.filter((hiddenField) => hiddenField !== field);
 
     handleChange(TABLE_COLUMNS_PATH, nextOrder);
     handleChange(HIDDEN_COLUMNS_PATH, nextHidden);
-  }, [visibleColumns, hiddenColumns, handleChange]);
+  }, [visibleColumns, allColumns, hiddenColumns, handleChange]);
 
   const handleWidthChange = useCallback(
     (field, value) => {

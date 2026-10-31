@@ -105,6 +105,14 @@ func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 		p.totalPrevious = p.totalTime
 		p.totalPage = EmptyTotals()
 
+		// carry custom field running totals forward as "previous", then reset page accumulators
+		for uuid, v := range p.customTotalTime {
+			p.customTotalPrevious[uuid] = v
+		}
+		for uuid := range p.customTotalPage {
+			p.customTotalPage[uuid] = 0
+		}
+
 		// check for the page breakes to separate logbooks
 		p.checkPageBreaks()
 
@@ -120,6 +128,7 @@ func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	fill := p.isFillLine()
 	p.setFontLogbookBody()
 	p.loadRowCustomFields(record)
+	p.accumulateCustomTotals()
 
 	p.pdf.SetX(p.Export.LeftMargin)
 	for i := range p.layout {
@@ -148,9 +157,9 @@ func (p *PDFExporter) printA4LogbookFooter() {
 	p.printA4Total(FooterPreviousPage, p.totalPrevious)
 	p.printA4Total(FooterTotalTime, p.totalTime)
 }
-
 // printA4Total prints the logbook total
 func (p *PDFExporter) printA4Total(totalName string, total models.FlightRecord) {
+	p.currentFooterRow = totalName
 	p.setFontLogbookFooter()
 	p.pdf.SetX(p.Export.LeftMargin)
 

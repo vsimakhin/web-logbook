@@ -118,6 +118,16 @@ type PDFExporter struct {
 
 	layout    []pdfColumn
 	rowCustom map[string]string
+
+	// custom field totals: keyed by CustomField UUID
+	customTotalPage     map[string]int
+	customTotalPrevious map[string]int
+	customTotalTime     map[string]int
+
+	// which footer row is currently being printed ("TOTAL THIS PAGE" / etc.)
+	// set by printA4Total / printA5Total before iterating columns, so that
+	// custom-field total-funcs can pick the right accumulator.
+	currentFooterRow string
 }
 
 // NewPDFExporter creates a new PDFExporter object
@@ -138,6 +148,10 @@ func NewPDFExporter(format, ownerName, licenseNumber, address,
 
 		totalPrevious: models.CalculateTotals(EmptyTotals(), previousExperience),
 		totalTime:     models.CalculateTotals(EmptyTotals(), previousExperience),
+
+		customTotalPage:     map[string]int{},
+		customTotalPrevious: map[string]int{},
+		customTotalTime:     map[string]int{},
 	}
 
 	err := pdfExporter.init()
