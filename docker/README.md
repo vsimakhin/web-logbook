@@ -11,6 +11,7 @@ This guide provides instructions on how to run the **web-logbook** application u
 - [Running with Docker](#running-with-docker)
   - [Docker Run Command](#docker-run-command)
   - [Docker Compose](#docker-compose)
+  - [Custom CSS and JS](#custom-css-and-js)
 - [Kubernetes & Cloudflare Deployment](#kubernetes--cloudflare-example)
 - [Health Checks](#health-checks)
 - [Persistence & Permissions](#persistence--permissions)
@@ -83,6 +84,23 @@ services:
     volumes:
       - /YOUR/FULL/PATH/WITH/DATABASE:/data
 ```
+
+## Custom CSS and JS
+
+To load your own `custom.css` and/or `custom.js` (see [Custom CSS and JS](../README.md#custom-css-and-js)), put the files into a directory that is mounted into the container, for example `/YOUR/FULL/PATH/WITH/DATABASE/custom`, and pass it with the `-custom-dir` option:
+
+```yaml
+services:
+  web-logbook:
+    image: vsimakhin/web-logbook:latest
+    command: -dsn /data/web-logbook.sql -custom-dir /data/custom
+    ports:
+      - 4000:4000
+    volumes:
+      - /YOUR/FULL/PATH/WITH/DATABASE:/data
+```
+
+Changes in the files are picked up on the next page load, the container does not need a restart.
 
 # Kubernetes & Cloudflare example
 

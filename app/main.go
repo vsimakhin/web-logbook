@@ -23,10 +23,11 @@ const (
 )
 
 type config struct {
-	url  string
-	port int
-	env  string
-	db   struct {
+	url       string
+	port      int
+	env       string
+	customDir string
+	db        struct {
 		engine string
 		dsn    string
 	}
@@ -82,6 +83,7 @@ func parseFlags() (config, bool, bool) {
 	flag.StringVar(&cfg.url, "url", "", "Server URL (default empty - the app will listen on all network interfaces)")
 	flag.IntVar(&cfg.port, "port", 4000, "Server port")
 	flag.StringVar(&cfg.env, "env", "prod", "Environment {dev|prod}")
+	flag.StringVar(&cfg.customDir, "custom-dir", "", "Directory with optional custom.css and custom.js files that are added to the UI (default empty - disabled)")
 	flag.StringVar(&cfg.db.engine, "engine", "sqlite", "Database engine {sqlite|mysql}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "web-logbook.sql", "Data source name {sqlite: file path|mysql: user:password@protocol(address)/dbname?param=value}")
 	flag.BoolVar(&isPrintVersion, "version", false, "Prints current version")
@@ -204,6 +206,15 @@ func main() {
 	// calculate distance for the records that don't have it
 	// this is needed for the first run or if some records were imported
 	app.db.UpdateFlightRecordsDistance()
+
+	// custom css/js
+	if cfg.customDir != "" {
+		if info, err := os.Stat(cfg.customDir); err != nil || !info.IsDir() {
+			app.warningLog.Printf("custom directory %q is not available, custom.css and custom.js will not be loaded\n", cfg.customDir)
+		} else {
+			app.infoLog.Printf("custom.css and custom.js are loaded from %q if they exist\n", cfg.customDir)
+		}
+	}
 
 	// main app
 	err = app.serve()
