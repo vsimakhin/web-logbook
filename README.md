@@ -63,13 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
-
-- Update: Golang and npm packages/security patches.
-- Update: Add proper map layer attributions and copyright notices.
-- New: Custom styles and scripts - the new `-custom-dir` option adds your own `custom.css` and/or `custom.js` to the UI, no reverse proxy needed.
-
-## [5.0.0-alpha1] - 11.10.2026
+## [5.0.0-alpha2] - 04.11.2026
 
 :warning: As this is an alpha (non-production) release, back up your database before upgrading
 
@@ -80,6 +74,9 @@ The application will automatically create a local SQLite database on the first s
 - New: Configurable time formats - choose between H:MM, HH:MM, and FAA decimal time formats.
 - New: Configurable date formats - Choose between DD/MM/YYYY, YYYY-MM-DD, and MM/DD/YYYY.
 - Update: Added total times to the tables for aircrafts and aircraft categories.
+- Update: Golang and npm packages/security patches.
+- Update: Add proper map layer attributions and copyright notices.
+- New: Custom styles and scripts - the new `-custom-dir` option adds your own `custom.css` and/or `custom.js` to the UI, no reverse proxy needed.
 
 ## [4.10.0] - 24.09.2026
 
@@ -87,18 +84,6 @@ The application will automatically create a local SQLite database on the first s
 - Update: Improved multiple-selection options and filtering logic in the Filter panel.
 - New: Split Code/Name field for the Custom Airports into two separate fields.
 - Update: Golang and npm packages/security patches.
-
-## [4.9.1] - 22.09.2026
-
-- Fix: Import failes if record number column is visible in the table.
-- Update: Upgraded to the latest Material UI libraries (v9).
-
-## [4.9.0] - 10.09.2026
-
-- Update: Golang and npm packages/security patches.
-- New: New button "Return flight" for the flight record - creates a new flight, swap the Departure/Arrival Place, copy over the aircraft/reg, PIC and any persons.
-- Fix: Add missing tags field import/export.
-- New: Preserve table filter sets when switching to and from records.
 
 The full changelog is [here](https://github.com/vsimakhin/web-logbook/blob/main/CHANGELOG.md)
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [5.0.0-alpha2] - 04.11.2026
 
 - Update: Golang and npm packages/security patches.
 - Update: Add proper map layer attributions and copyright notices.
