@@ -4,6 +4,7 @@
 
 - Update: Golang and npm packages/security patches.
 - Update: Add proper map layer attributions and copyright notices.
+- New: Custom styles and scripts - the new `-custom-dir` option adds your own `custom.css` and/or `custom.js` to the UI, no reverse proxy needed.
 
 ## [5.0.0-alpha1] - 11.10.2026
 

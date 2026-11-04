@@ -29,13 +29,14 @@ The code lives in `app/main.go`, `app/routes.go`, `app/helpers.go`, `app/handler
 | Term | Meaning | Evidence |
 |---|---|---|
 | `application` | One struct holds the config, the three loggers, the version, the `models.DBModel` and a cached `timeFieldsAutoFormat`. Every HTTP handler is a method on it | `app/main.go:40-48` |
-| `config` | Flag values: `url`, `port`, `env`, `db.engine`, `db.dsn`, `tls.enabled`, `tls.key`, `tls.crt` | `app/main.go:25-38` |
+| `config` | Flag values: `url`, `port`, `env`, `customDir`, `db.engine`, `db.dsn`, `tls.enabled`, `tls.key`, `tls.crt` | `app/main.go:25-39` |
 | `models.DBModel` | A thin wrapper around `*sql.DB`. All data access methods hang off it | `internal/models/structs.go:12-14` |
 | `models.JSONResponse` | The `{ok, message, redirect_url, data}` envelope used by `writeOkResponse` / `writeErrorResponse` | `internal/models/structs.go:17-22`, `app/helpers.go:37-51` |
 | Engine name = SQL driver name | The `-engine` value goes straight to `sql.Open`. Valid values are `sqlite` (modernc) and `mysql` | `internal/driver/driver.go:24`, `internal/driver/db_operations.go:11-12` |
 | Protected API | Everything under `/api` except `POST /api/login` passes through the `app.Auth` middleware | `app/routes.go:24-27`, `Auth` in `app/handlers_auth.go:112` |
 | SPA fallback | A path that is not `/` and does not contain `assets` or `favicon.ico` is rewritten to `/` (index.html). react-router then routes on the client | `HandlerUI` in `app/handlers_aux.go:21-29`, `app/ui/src/main.jsx:35` |
-| Embedded UI | `app/ui/dist/*` is compiled into the binary, so `go build` needs `make build_ui` first | `app/handlers_aux.go:12-13` |
+| Embedded UI | `app/ui/dist/*` is compiled into the binary, so `go build` needs `make build_ui` first | `app/handlers_aux.go:15-16` |
+| Custom CSS/JS | With `-custom-dir`, `HandlerUI` serves `index.html` with `<link>`/`<script>` tags for `custom.css` / `custom.js` (only the files that exist, `?v=<mtime>`) injected before `</head>`. The two files are served by `HandlerCustomFile` on public `GET`/`HEAD` `/custom.css` and `/custom.js`, registered before `/*` and only when the flag is set. Files are read per request, no restart. Without the flag nothing changes | `app/handlers_aux.go:24-98`, `app/routes.go:165-171`, `app/main.go:29,86` |
 | Time as integer minutes | `formatTimeField` renders minutes as `H:MM` (codes 0, 2 and default), `HH:MM` (1) or decimal hours `%.1f` (3) | `app/helpers.go:115-140` |
 | Package-level caches | `authCache`, `airportCache` and `distanceCache` are `sync.Map` globals in `internal/models`. They live outside `application` and stay in memory for the whole process | `internal/models/auth.go:11`, `internal/models/airports.go:13`, `internal/models/helpers.go:26` |
 
@@ -56,7 +57,7 @@ The code lives in `app/main.go`, `app/routes.go`, `app/helpers.go`, `app/handler
 | 9 | `GetSettings`, then cache `TimeFieldsAutoFormat` in `app.timeFieldsAutoFormat` | `app/main.go:194-199` | Logged, then `return` (exit 0) |
 | 10 | `go app.db.CreateDistanceCache()` runs in the background | `app/main.go:202`, `internal/models/helpers.go:106-129` | Errors are silently ignored |
 | 11 | `UpdateFlightRecordsDistance()` runs synchronously and fills `logbook.distance` where it is NULL | `app/main.go:206`, `internal/models/helpers.go:65-103` | Errors are silently ignored |
-| 12 | `serve()` starts an `http.Server` on `url:port`, with TLS when `-enable-https` is set | `app/main.go:50-75`, `:209-214` | `errorLog.Fatalln` (exit 1) |
+| 12 | With `-custom-dir`, logs whether the directory is available (a warning if not, the app still starts). Then `serve()` starts an `http.Server` on `url:port`, with TLS when `-enable-https` is set | `app/main.go:51-76`, `:210-225` | `errorLog.Fatalln` (exit 1) |
 
 ### 3.2 Request pipeline (`routes` in `app/routes.go:9-168`)
 
@@ -80,7 +81,7 @@ The code lives in `app/main.go`, `app/routes.go`, `app/helpers.go`, `app/handler
 | `app/main.go` | `version` const, log prefixes, the `config` and `application` types, `serve`, `parseFlags`, `setupLogger`, `createDBConnection`, `main` (startup sequence) |
 | `app/routes.go` | The chi router, global middleware (dev logger, CORS), the auth group and the full route table (76 registrations) |
 | `app/helpers.go` | Response helpers `writeJSON`, `writeErrorResponse`, `writeOkResponse`, `handleError`. Also the shared domain helpers `calculateNightTime` (night-time minutes and night landing) and `formatTimeField` |
-| `app/handlers_aux.go` | The `//go:embed ui/dist/*` FS and `HandlerUI` (SPA server), plus `HandlerVersion`, `HandlerAuthEnabled` and `HandlerDistance` |
+| `app/handlers_aux.go` | The `//go:embed ui/dist/*` FS and `HandlerUI` (SPA server), `HandlerCustomFile` with the `-custom-dir` helpers (`customAssetsTags`, `injectIntoHead`), plus `HandlerVersion`, `HandlerAuthEnabled` and `HandlerDistance` |
 | `app/handlers_db.go` | `HandlerApiDBFile`, `HandlerApiUploadDB` and `HandlerApiDownloadDB` (whole-database backup and restore) |
 | `internal/driver/driver.go` | `OpenDB`, the integration point used at startup and after a DB upload (documented in ARCHITECTURE_DATABASE.md) |
 | `Makefile` | `build_ui`, `build_backend`, `start` (runs with `-port=4000 -env=dev`, `Makefile:42-44`) |
@@ -208,7 +209,7 @@ The app layer has no SQL of its own. It calls these `DBModel` methods (grouped b
 
 ### 6.5 SPA serving
 
-`GET /logbook/<uuid>` does not match `/api`, so it falls to `/*` (`app/routes.go:165`). The path contains neither `assets` nor `favicon.ico`, so it is rewritten to `/` (`app/handlers_aux.go:24-26`) and `http.FileServer` serves the embedded `index.html`. `createBrowserRouter` (`app/ui/src/main.jsx:35`) then renders the page. `/assets/*.js` is served unchanged from the embedded FS (Vite's default `assets` dir; `app/ui/vite.config.js` does not override it).
+`GET /logbook/<uuid>` does not match `/api`, so it falls to `/*` (`app/routes.go:173`). The path contains neither `assets` nor `favicon.ico`, so it is rewritten to `/` (`app/handlers_aux.go:34-36`) and `http.FileServer` serves the embedded `index.html`. With `-custom-dir` set, `HandlerUI` answers instead with the same `index.html` plus the custom CSS/JS tags (`app/handlers_aux.go:39-49`), `Cache-Control: no-cache`. `createBrowserRouter` (`app/ui/src/main.jsx:35`) then renders the page. `/assets/*.js` is served unchanged from the embedded FS (Vite's default `assets` dir; `app/ui/vite.config.js` does not override it).
 
 ## 7. Config & Constants
 
@@ -220,7 +221,8 @@ The app layer has no SQL of its own. It calls these `DBModel` methods (grouped b
 | Log file | `weblogbook-output.log`, `O_RDWR\|O_CREATE\|O_TRUNC`, `0666` | `app/main.go:98` | hardcoded |
 | `-url` | `""` (listen on all interfaces; the log line shows `localhost`) | `app/main.go:82,61-64` | configurable |
 | `-port` | `4000` | `app/main.go:83` | configurable |
-| `-env` | `prod`. `dev` turns on the chi request logger | `app/main.go:84`, `app/routes.go:12` | configurable |
+| `-env` | `prod`. `dev` turns on the chi request logger | `app/main.go:85`, `app/routes.go:12` | configurable |
+| `-custom-dir` | `""` (disabled). Directory with optional `custom.css` / `custom.js` added to the UI | `app/main.go:86` | configurable |
 | `-engine` | `sqlite` (`sqlite`\|`mysql`) | `app/main.go:85` | configurable |
 | `-dsn` | `web-logbook.sql` | `app/main.go:86` | configurable |
 | `-version` | `false` | `app/main.go:87` | configurable |
@@ -290,7 +292,7 @@ The app layer has no SQL of its own. It calls these `DBModel` methods (grouped b
 
 ## 10. Testing
 
-- **Existing:** none of `app/main.go`, `app/routes.go`, `app/helpers.go`, `app/handlers_aux.go` or `app/handlers_db.go` has tests. The only Go test in `app/` is `TestParseName` (`app/handlers_import_test.go:7`). The other Go test file is `internal/nighttime/nighttime_test.go`.
+- **Existing:** `app/handlers_aux.go` has tests for the custom CSS/JS feature (`app/handlers_aux_test.go`: tags, injection, `HandlerCustomFile`, `HandlerUI` with and without `-custom-dir`). None of `app/main.go`, `app/routes.go`, `app/helpers.go` or `app/handlers_db.go` has tests. The only Go test in `app/` is `TestParseName` (`app/handlers_import_test.go:7`). The other Go test file is `internal/nighttime/nighttime_test.go`.
 - **How to run:** `make test` → `go fmt ./...`, then `go test -v ./... -coverpkg=./...` (`Makefile:32-33`). It needs `app/ui/dist` because of `go:embed`, so run `make build_ui` first. CI runs `make npm_install build_ui` → `go vet ./...` → `make test` → `make build_backend` (`.github/workflows/go.yml:21-31`). `npm run build` runs vitest before `vite build` (`app/ui/package.json:8`).
 - **Gaps worth filling:** a table test for `formatTimeField` (pure). An `httptest` test of `HandlerUI` path rewriting. A route smoke test with auth on and off (temp SQLite DSN). Upload and download against a temp SQLite file, including an invalid upload. The `writeJSON` marshal-error path.
 

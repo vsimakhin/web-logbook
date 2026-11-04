@@ -162,6 +162,14 @@ func (app *application) routes() *chi.Mux {
 		r.Get("/distance/{departure}/{arrival}", app.HandlerDistance)
 	})
 
+	// custom css/js are public, as they have to be loaded on the login page too
+	if app.config.customDir != "" {
+		for _, name := range []string{customCSSFile, customJSFile} {
+			r.Get("/"+name, app.HandlerCustomFile(name))
+			r.Head("/"+name, app.HandlerCustomFile(name))
+		}
+	}
+
 	r.Handle("/*", middleware.Compress(5)(app.HandlerUI()))
 
 	return r

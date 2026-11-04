@@ -67,6 +67,7 @@ The application will automatically create a local SQLite database on the first s
 
 - Update: Golang and npm packages/security patches.
 - Update: Add proper map layer attributions and copyright notices.
+- New: Custom styles and scripts - the new `-custom-dir` option adds your own `custom.css` and/or `custom.js` to the UI, no reverse proxy needed.
 
 ## [5.0.0-alpha1] - 11.10.2026
 
@@ -135,6 +136,8 @@ Check the [readme](./docker/README.md) for more details and Kubernetes deploymen
 $ ./web-logbook -h
   -cert string
       certificate path (default "certs/localhost.pem")
+  -custom-dir string
+      Directory with optional custom.css and custom.js files that are added to the UI (default empty - disabled)
   -disable-authentication
       Disable authentication (in case you forgot login credentials)
   -dsn string
@@ -298,6 +301,28 @@ If you enable the `No ICAO codes filter` option, the app will ignore ICAO airpor
 ## HTTPS enable
 
 You can generate your own certificate and key and store it in the different directories in your operating system. For that use `--key` and `--cert` parameters to specify the exact location and run the app with `--enable-https` flag.
+
+## Custom CSS and JS
+
+To change the look of the app or add small tweaks you can load your own stylesheet and/or script without rebuilding the app or setting up a reverse proxy. Create a directory with a `custom.css` and/or a `custom.js` file and pass it with the `-custom-dir` option:
+
+```sh
+./web-logbook -custom-dir /path/to/custom
+```
+
+```
+/path/to/custom
+├── custom.css
+└── custom.js
+```
+
+- Both files are optional, the app adds only the files that exist. Without `-custom-dir` nothing changes.
+- The files are read on every page load, so after editing a file just refresh the page (Ctrl+F5 if the browser keeps the old one), no restart is needed.
+- The files are served without authentication (`/custom.css`, `/custom.js`), as they also have to be loaded on the login page. Do not put anything private in them.
+- `custom.js` runs with full access to the page, so use only your own scripts.
+- The app is built with MUI, which generates its own class names and injects its styles at runtime, so you may need more specific selectors or `!important` to override them.
+
+For Docker, put the files into the mounted `/data` volume, for example `/data/custom`, and add the option to the command, see the [Docker readme](./docker/README.md#custom-css-and-js).
 
 ## MySQL database
 
