@@ -80,7 +80,7 @@ export const CustomTitlePreview = ({ format }) => {
       {isLoading && <LinearProgress />}
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
-          <CardHeader title="Custom title page" action={
+          <CardHeader title={`${format} Custom title page`} action={
             <>
               <AddCustomTitleButton format={format} />
               <DeleteCustomTitleButton format={format} />

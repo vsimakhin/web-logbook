@@ -32,11 +32,13 @@ const SortableColumnRow = ({ column, onRemove, onWidthChange }) => {
         zIndex: isDragging ? 1 : 'auto',
       }}
       secondaryAction={
-        <Tooltip title="Remove from visible columns">
-          <IconButton edge="end" onClick={() => onRemove(column.field)}>
-            <DisabledByDefaultOutlinedIcon />
-          </IconButton>
-        </Tooltip>
+        ((column.field !== "PAGE_DIVIDER") &&
+          <Tooltip title="Remove from visible columns">
+            <IconButton edge="end" onClick={() => onRemove(column.field)}>
+              <DisabledByDefaultOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+        )
       }
     >
       <Box
@@ -56,7 +58,7 @@ const SortableColumnRow = ({ column, onRemove, onWidthChange }) => {
         <ListItemText primary={column.label} secondary={column.category} />
       </Box>
 
-      {onWidthChange && (
+      {(onWidthChange && column.field !== "PAGE_DIVIDER") && (
         <TextField
           label="Width"
           size="small"

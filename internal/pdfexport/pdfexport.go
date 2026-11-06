@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"codeberg.org/go-pdf/fpdf"
 	"codeberg.org/go-pdf/fpdf/contrib/gofpdi"
@@ -685,4 +686,28 @@ func formatLandings(landing int) string {
 		return ""
 	}
 	return fmt.Sprintf("%d", landing)
+}
+
+func formatDate(date string, format string) string {
+	parsedDate, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return date
+	}
+
+	if format == "" {
+		format = "DD/MM/YYYY"
+	}
+
+	layouts := map[string]string{
+		"DD/MM/YYYY": "02/01/2006",
+		"YYYY-MM-DD": "2006-01-02",
+		"MM/DD/YYYY": "01/02/2006",
+	}
+
+	layout, ok := layouts[format]
+	if !ok {
+		layout = layouts["DD/MM/YYYY"]
+	}
+
+	return parsedDate.Format(layout)
 }

@@ -138,7 +138,7 @@ export const PageSettings = ({ format, pdfSettings, handleChange }) => {
     <>
       <Card variant="outlined" sx={{ mb: 1 }}>
         <CardContent>
-          <CardHeader title="Page Settings" action={
+          <CardHeader title={`${format} Page Settings`} action={
             <>
               <ExportButton format={format} />
               <SaveSettingsButton settings={pdfSettings} format={format} />

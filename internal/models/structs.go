@@ -213,6 +213,7 @@ type ExportPDF struct {
 	IncludeSignature     bool          `json:"include_signature"`
 	IsExtended           bool          `json:"is_extended"`
 	TimeFieldsAutoFormat byte          `json:"time_fields_auto_format"`
+	DateFieldsFormat     string        `json:"date_fields_format"`
 	CustomTitle          string        `json:"custom_title"`
 	CustomTitleBlob      []byte
 

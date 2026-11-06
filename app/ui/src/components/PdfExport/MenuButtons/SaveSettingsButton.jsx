@@ -58,7 +58,6 @@ export const SaveSettingsButton = ({ settings, format }) => {
       },
     };
 
-    console.log(parsedSettings)
     await saveSettings({ settings: parsedSettings, format });
   }
   return (

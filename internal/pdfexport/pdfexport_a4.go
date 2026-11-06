@@ -133,7 +133,11 @@ func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	p.pdf.SetX(p.Export.LeftMargin)
 	for i := range p.layout {
 		c := &p.layout[i]
+
 		value := c.body(p, &record)
+		if c.Field == "date" {
+			value = formatDate(value, p.Export.DateFieldsFormat)
+		}
 
 		switch {
 		case c.Field == "remarks":
@@ -157,6 +161,7 @@ func (p *PDFExporter) printA4LogbookFooter() {
 	p.printA4Total(FooterPreviousPage, p.totalPrevious)
 	p.printA4Total(FooterTotalTime, p.totalTime)
 }
+
 // printA4Total prints the logbook total
 func (p *PDFExporter) printA4Total(totalName string, total models.FlightRecord) {
 	p.currentFooterRow = totalName

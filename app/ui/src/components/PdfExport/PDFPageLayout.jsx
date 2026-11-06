@@ -96,6 +96,11 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
       { field: 'land_day', category: pdfHeader("landings"), label: pdfHeader("land_day") },
       { field: 'land_night', category: pdfHeader("landings"), label: pdfHeader("land_night") },
       ...getCustomColumns('landings'),
+
+      ...(format === "A5"
+        ? [{ field: "PAGE_DIVIDER", category: "End of left page · Start of right page", label: "Page Split" }]
+        : []).filter(Boolean),
+
       { field: 'night', category: pdfHeader("oct"), label: pdfHeader("night") },
       { field: 'ifr', category: pdfHeader("oct"), label: pdfHeader("ifr") },
       ...getCustomColumns('oct'),
@@ -116,7 +121,7 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
       ...column,
       width: columnWidths[column.field] ?? '',
     }));
-  }, [settings.headers, customFields, isCustomFieldsLoading, logbookFieldName, columnWidths]);
+  }, [settings.headers, customFields, isCustomFieldsLoading, logbookFieldName, columnWidths, format]);
 
 
   const visibleColumns = useMemo(() => {

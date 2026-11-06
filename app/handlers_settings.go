@@ -144,6 +144,7 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 	targetExport.IsExtended = updated.IsExtended
 	targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
 	targetExport.TableProfile = updated.TableProfile
+	targetExport.DateFieldsFormat = updated.DateFieldsFormat
 
 	err = app.db.UpdateSettings(s)
 	if err != nil {
