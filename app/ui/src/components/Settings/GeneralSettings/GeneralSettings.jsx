@@ -22,7 +22,7 @@ const ActionButtons = ({ settings }) => (
 
 export const GeneralSettings = ({ settings, handleChange }) => {
   return (
-    <Card variant="outlined" sx={{ mb: 1 }}>
+    <Card variant="outlined" sx={{ mb: 0 }}>
       <CardContent>
         <CardHeader title="Settings" action={<ActionButtons settings={settings} />} />
 

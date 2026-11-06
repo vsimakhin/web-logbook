@@ -1,9 +1,17 @@
+import { useMemo } from "react";
 // MUI
+import { useTheme } from '@mui/material/styles';
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useTheme } from '@mui/material/styles';
+import CardHeader from "../UIElements/CardHeader";
 // Custom
+import RestoreDefaultsButton from "./MenuButtons/RestoreDefaultsButton";
+import useSettings from "../../hooks/useSettings";
 import TextField from "../UIElements/TextField";
+import CardContent from "@mui/material/CardContent";
+import Card from "@mui/material/Card";
+import ExportButton from "./MenuButtons/ExportButton";
+import SaveSettingsButton from "./MenuButtons/SaveSettingsButton";
 
 const size = { xs: 4, sm: 2, md: 4, lg: 2, xl: 2 };
 
@@ -17,32 +25,6 @@ const PAGE_SETTINGS_CONFIG = [
   { id: "body_row_height", label: "Row Height", tooltip: "Logbook row height" },
   { id: "footer_row_height", label: "Footer Row Height", tooltip: "Logbook footer row height" },
   { id: "page_breaks", label: "Page breaks", tooltip: "Page breaks, when the page counter start from 1", placeholder: "X,Y,Z" },
-];
-
-const COLUMN_CONFIG = [
-  { id: "col1", label: "Date" },
-  { id: "col2", label: "Departure Place" },
-  { id: "col3", label: "Departure Time" },
-  { id: "col4", label: "Arrival Place" },
-  { id: "col5", label: "Arrival Time" },
-  { id: "col6", label: "Aircraft Type" },
-  { id: "col7", label: "Aircraft Reg" },
-  { id: "col8", label: "SE Time" },
-  { id: "col9", label: "ME Time" },
-  { id: "col10", label: "MCC Time" },
-  { id: "col11", label: "Total Time" },
-  { id: "col12", label: "PIC Name" },
-  { id: "col13", label: "Day Landings" },
-  { id: "col14", label: "Night Landings" },
-  { id: "col15", label: "Night Time" },
-  { id: "col16", label: "IFR Time" },
-  { id: "col17", label: "PIC Time" },
-  { id: "col18", label: "Co-Pilot Time" },
-  { id: "col19", label: "Dual Time" },
-  { id: "col20", label: "Instructor Time" },
-  { id: "col21", label: "FSTD Type" },
-  { id: "col22", label: "FSTD Time" },
-  { id: "col23", label: "Remarks" },
 ];
 
 const HEADERS_CONFIG = [
@@ -104,6 +86,7 @@ const HEADERS_CONFIG = [
   },
   {
     size: { xs: 12, sm: 7, md: 12, lg: 7, xl: 7 },
+    category: "oct",
     group: [
       { id: "oct", label: "Operational Condition Time", size: { xs: 8, sm: 8, md: 8, lg: 8, xl: 8 }, col: "col15,col16" },
       { id: "night", label: "Night", size: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }, col: "col15" },
@@ -134,71 +117,83 @@ const HEADERS_CONFIG = [
   },
 ];
 
-export const PageSettings = ({ format, pdfSettings, handleChange, handleColumnChange, handleHeaderChange }) => {
+const getHeadersConfig = (fieldName) =>
+  HEADERS_CONFIG.map((header) => ({
+    ...header,
+    group: header.group.map((item) => ({
+      ...item,
+      label: fieldName(item.id) || item.label,
+    })),
+  }));
+
+
+export const PageSettings = ({ format, pdfSettings, handleChange }) => {
   const theme = useTheme();
   const borderRadius = theme.shape.borderRadius;
+  const { fieldName } = useSettings();
+
+  const headers = useMemo(() => getHeadersConfig(fieldName), [fieldName]);
 
   return (
     <>
-      <Grid container spacing={1} columns={16} >
-        {PAGE_SETTINGS_CONFIG.map(({ id, label, tooltip, placeholder, showIf }) => (
-          (!showIf || showIf(format)) && (
-            <TextField
-              key={id}
-              gsize={size}
-              id={id}
-              label={label}
-              handleChange={handleChange}
-              value={pdfSettings[id] ?? ""}
-              tooltip={tooltip}
-              placeholder={placeholder}
-            />
-          )
-        ))}
-      </Grid>
-      <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Columns Width</Typography>
-      <Grid container spacing={1} columns={16} >
-        {COLUMN_CONFIG.map(({ id, label }) => (
-          <TextField key={id}
-            gsize={size}
-            id={id}
-            label={label}
-            handleChange={handleColumnChange}
-            value={pdfSettings.columns[id] ?? ""}
-            tooltip={`${label} column width`}
-          />
-        ))}
-      </Grid>
-      <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Columns Header</Typography>
-      <Grid container spacing={1}>
-        {HEADERS_CONFIG.map(({ size, group }, groupIndex) => (
-          <Grid size={size} key={`group-${groupIndex}`}>
-            <Grid container spacing={0}>
-              {group.map(({ id, label, size: fieldSize, col }, fieldIndex) => (
-                <TextField key={id}
+      <Card variant="outlined" sx={{ mb: 1 }}>
+        <CardContent>
+          <CardHeader title={`${format} Page Settings`} action={
+            <>
+              <ExportButton format={format} />
+              <SaveSettingsButton settings={pdfSettings} format={format} />
+              <RestoreDefaultsButton format={format} handleChange={handleChange} />
+            </>
+          } />
+
+          <Grid container spacing={1} columns={16} >
+            {PAGE_SETTINGS_CONFIG.map(({ id, label, tooltip, placeholder, showIf }) => (
+              (!showIf || showIf(format)) && (
+                <TextField
+                  key={id}
+                  gsize={size}
                   id={id}
                   label={label}
-                  handleChange={handleHeaderChange}
-                  value={pdfSettings.headers[id] ?? ""}
-                  gsize={fieldSize}
-                  tooltip={label}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 0,
-                      borderTopLeftRadius: fieldIndex === 0 ? borderRadius : 0,
-                      borderBottomLeftRadius: fieldIndex === 0 ? borderRadius : 0,
-                      borderTopRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
-                      borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
-                    }
-                  }}
-                  disabled={col && col.split(',').every(c => parseInt(pdfSettings.columns[c]) === 0)}
+                  handleChange={handleChange}
+                  value={pdfSettings[id] ?? ""}
+                  tooltip={tooltip}
+                  placeholder={placeholder}
                 />
-              ))}
-            </Grid>
+              )
+            ))}
           </Grid>
-        ))
-        }
-      </Grid >
+          <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Standard Columns Header</Typography>
+          <Grid container spacing={1}>
+            {headers.map(({ size, group }, groupIndex) => (
+              <Grid size={size} key={`group-${groupIndex}`}>
+                <Grid container spacing={0}>
+                  {group.map(({ id, label, size: fieldSize, col }, fieldIndex) => (
+                    <TextField key={id}
+                      id={`headers.${id}`}
+                      label={label}
+                      handleChange={handleChange}
+                      value={pdfSettings.headers[id] ?? ""}
+                      gsize={fieldSize}
+                      tooltip={label}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 0,
+                          borderTopLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                          borderBottomLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                          borderTopRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
+                          borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
+                        }
+                      }}
+                      disabled={col && col.split(',').every(c => parseInt(pdfSettings.columns[c]) === 0)}
+                    />
+                  ))}
+                </Grid>
+              </Grid>
+            ))
+            }
+          </Grid >
+        </CardContent>
+      </Card >
     </>
   );
 }

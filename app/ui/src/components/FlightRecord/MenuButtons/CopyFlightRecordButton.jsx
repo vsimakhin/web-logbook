@@ -4,7 +4,8 @@ import { useCallback } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { useNotifications } from '../../hooks/useNotifications/useNotifications';
+// Custom
+import { useNotifications } from '../../../hooks/useNotifications/useNotifications';
 
 export const CopyFlightRecordButton = ({ flight, handleCloseMenu }) => {
   const navigate = useNavigate();

@@ -8,11 +8,10 @@ import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBackupRestoreOutlined';
 // Custom
-import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchPdfDefaults } from "../../util/http/settings";
+import { useErrorNotification } from "../../../hooks/useAppNotifications";
+import { fetchPdfDefaults } from "../../../util/http/settings";
 
 const SECTION_PAGE_SETTINGS = "page";
-const SECTION_COLUMN_WIDTH = "columns";
 const SECTION_COLUMN_HEADER = "headers";
 
 const PageSettingsFields = [
@@ -34,8 +33,6 @@ export const RestoreDefaultsButton = ({ format, handleChange }) => {
         PageSettingsFields.forEach((field) => {
           handleChange(field, data[field]);
         });
-      } else if (section === SECTION_COLUMN_WIDTH) {
-        handleChange("columns", data.columns);
       } else if (section === SECTION_COLUMN_HEADER) {
         handleChange("headers", data.headers);
       }
@@ -64,9 +61,6 @@ export const RestoreDefaultsButton = ({ format, handleChange }) => {
       >
         <MenuItem sx={{ p: 0 }} onClick={() => onRestore(SECTION_PAGE_SETTINGS)}>
           <IconButton size="small"><SettingsBackupRestoreOutlinedIcon /></IconButton>Restore Page Settings
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => onRestore(SECTION_COLUMN_WIDTH)}>
-          <IconButton size="small"><SettingsBackupRestoreOutlinedIcon /></IconButton>Restore Columns Width
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => onRestore(SECTION_COLUMN_HEADER)}>
           <IconButton size="small"><SettingsBackupRestoreOutlinedIcon /></IconButton>Restore Columns Headers

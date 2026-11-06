@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOutlined';
-import { useNotifications } from '../../hooks/useNotifications/useNotifications';
+import { useNotifications } from '../../../hooks/useNotifications/useNotifications';
 
 export const ReturnFlightRecordButton = ({ flight, handleCloseMenu }) => {
   const navigate = useNavigate();

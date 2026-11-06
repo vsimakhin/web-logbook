@@ -1,10 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+- Update: Reorganized the Settings page into two sections: `General` and `Fields & Layout`.
+- New: Flight record fields can now be resized and reordered using the new Layout button in the menu.
+- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in `Settings` -> `Fields & Layout`. The layout is saved to the user profile.
+
 ## [5.0.0-alpha2] - 04.11.2026
 
 - Update: Golang and npm packages/security patches.
 - Update: Add proper map layer attributions and copyright notices.
-- New: Custom styles and scripts - the new `-custom-dir` option adds your own `custom.css` and/or `custom.js` to the UI, no reverse proxy needed.
+- Update: Reorganized the Settings page into two sections: `General` and `Fields & Layout`.
+- New: Flight record fields can now be resized and reordered using the new Layout button in the menu.
+- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in `Settings` -> `Fields & Layout`. The layout is saved to the user profile.
 
 ## [5.0.0-alpha1] - 11.10.2026
 
