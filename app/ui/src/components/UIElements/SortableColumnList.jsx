@@ -9,12 +9,13 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
+import TextField from '@mui/material/TextField';
 // MUI Icons
 import DragIndicatorOutlinedIcon from '@mui/icons-material/DragIndicatorOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 
-const SortableColumnRow = ({ column, onRemove }) => {
+const SortableColumnRow = ({ column, onRemove, onWidthChange }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: column.field });
 
   return (
@@ -52,21 +53,28 @@ const SortableColumnRow = ({ column, onRemove }) => {
         }}
       >
         <DragIndicatorOutlinedIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary', flexShrink: 0 }} />
-        <ListItemText primary={column.label} slotProps={{ primary: { variant: 'body2' }, secondary: { variant: 'caption' } }}
-        />
+        <ListItemText primary={column.label} secondary={column.category} />
       </Box>
+
+      {onWidthChange && (
+        <TextField
+          label="Width"
+          size="small"
+          value={column.width}
+          onChange={(event) => onWidthChange(column.field, event.target.value)}
+          onKeyDown={(event) => event.stopPropagation()}
+          slotProps={{ htmlInput: { inputMode: 'decimal' } }}
+          sx={{ width: 65, mr: 0, flexShrink: 0 }}
+        />)
+      }
     </ListItem>
   );
 };
 
-export const SortableColumnList = ({ columns, onReorder, onRemove }) => {
+export const SortableColumnList = ({ columns, onReorder, onRemove, onWidthChange }) => {
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
   const handleDragEnd = useCallback((event) => {
@@ -76,13 +84,8 @@ export const SortableColumnList = ({ columns, onReorder, onRemove }) => {
       return;
     }
 
-    const oldIndex = columns.findIndex(
-      (column) => column.field === active.id
-    );
-
-    const newIndex = columns.findIndex(
-      (column) => column.field === over.id
-    );
+    const oldIndex = columns.findIndex((column) => column.field === active.id);
+    const newIndex = columns.findIndex((column) => column.field === over.id);
 
     if (oldIndex === -1 || newIndex === -1) {
       return;
@@ -96,7 +99,7 @@ export const SortableColumnList = ({ columns, onReorder, onRemove }) => {
       <SortableContext items={columns.map((column) => column.field)} strategy={verticalListSortingStrategy}>
         <List disablePadding>
           {columns.map((column) => (
-            <SortableColumnRow key={column.field} column={column} onRemove={onRemove} />
+            <SortableColumnRow key={column.field} column={column} onRemove={onRemove} onWidthChange={onWidthChange} />
           ))}
         </List>
       </SortableContext>
@@ -116,7 +119,7 @@ export const AvailableColumnList = ({ columns, onAdd }) => (
           </Tooltip>
         }
       >
-        <ListItemText primary={column.label} slotProps={{ primary: { variant: 'body2' } }} />
+        <ListItemText primary={column.label} secondary={column.category} />
       </ListItem>
     ))}
 

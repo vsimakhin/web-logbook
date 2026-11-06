@@ -6,9 +6,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 // MUI Icons
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 // Custom components
-import { queryClient } from "../../util/http/http";
-import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
-import { uploadCustomTitle } from "../../util/http/export";
+import { queryClient } from "../../../util/http/http";
+import { useErrorNotification, useSuccessNotification } from "../../../hooks/useAppNotifications";
+import { uploadCustomTitle } from "../../../util/http/export";
 
 export const AddCustomTitleButton = ({ format }) => {
   const id = `custom_title_${format.toLowerCase()}`;

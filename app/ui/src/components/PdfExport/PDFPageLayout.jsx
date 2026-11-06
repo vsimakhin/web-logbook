@@ -5,16 +5,13 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-// MUI Icons
-import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBackupRestoreOutlined';
 // Custom
-import CardHeader from '../../UIElements/CardHeader';
-import useCustomFields from '../../../hooks/useCustomFields';
-import useSettings from '../../../hooks/useSettings';
-import { AvailableColumnList, SortableColumnList } from './SortableColumnList';
-import SaveSettingsButton from '../SaveSettingsButton';
+import CardHeader from '../UIElements/CardHeader';
+import useCustomFields from '../../hooks/useCustomFields';
+import useSettings from '../../hooks/useSettings';
+import { AvailableColumnList, SortableColumnList } from '../UIElements/SortableColumnList';
+import SaveSettingsButton from './MenuButtons/SaveSettingsButton';
+import RestoreColumnsButton from './MenuButtons/RestoreColumnsButton';
 
 const TABLE_COLUMNS_PATH = 'table_profile.table_columns';
 const HIDDEN_COLUMNS_PATH = 'table_profile.table_hidden_columns';
@@ -206,25 +203,17 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
     [columnWidths, handleChange]
   );
 
-  const handleReset = useCallback(() => {
-    handleChange(TABLE_COLUMNS_PATH, []);
-    handleChange(HIDDEN_COLUMNS_PATH, []);
-  }, [handleChange]);
-
+  // TO-DO proper calculation for A5 with a page divider
   const totalWidth = visibleColumns.reduce((sum, c) => sum + (parseFloat(c.width) || 0), 0);
+  const pageWidth = format === "A4" ? 297 : 210;
 
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent>
-        <CardHeader title="PDF Export Table Layout"
+        <CardHeader title={`${format} PDF Export Table Layout`}
           action={
             <>
-              <Tooltip title="Restore column order and visibility">
-                <IconButton size="small" onClick={handleReset}>
-                  <SettingsBackupRestoreOutlinedIcon />
-                </IconButton>
-              </Tooltip>
-
+              <RestoreColumnsButton format={format} handleChange={handleChange} />
               <SaveSettingsButton settings={settings} format={format} />
             </>
           }
@@ -248,7 +237,7 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
               <Typography variant="subtitle2">Visible columns</Typography>
-              <Typography variant="caption" color="text.secondary">{visibleColumns.length} columns, {totalWidth.toFixed(1)} mm of XXX</Typography>
+              <Typography variant="caption" color={totalWidth <= pageWidth ? "text.secondary" : "warning"}>{visibleColumns.length} columns, {totalWidth.toFixed(1)} mm of {pageWidth}</Typography>
             </Box>
 
             <Box sx={{ overflowY: 'auto', border: 1, borderColor: 'divider', borderRadius: 1 }}>

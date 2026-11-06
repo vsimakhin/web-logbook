@@ -68,12 +68,14 @@ func (m *DBModel) UpdateSettings(settings Settings) error {
 }
 
 func (m *DBModel) GetPdfDefaults(format string) (pdfDefaults ExportPDF) {
-	if format == "A4" {
+	switch format {
+	case "A4":
 		pdfDefaults = pdfA4Defaults
-		pdfDefaults.Columns = pdfA4DefaultColumns
-	} else if format == "A5" {
+		pdfDefaults.TableProfile.TableColumnWidths = pdfA4TableColumnWidth
+	case "A5":
 		pdfDefaults = pdfA5Defaults
-		pdfDefaults.Columns = pdfA5DefaultColumns
+		pdfDefaults.TableProfile.TableColumnWidths = pdfA5TableColumnWidth
+
 	}
 	pdfDefaults.Headers = pdfDefaultHeaders
 

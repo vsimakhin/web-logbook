@@ -13,7 +13,7 @@ import SettingsBackupRestoreOutlinedIcon from '@mui/icons-material/SettingsBacku
 import CardHeader from '../../UIElements/CardHeader';
 import SaveProfileButton from './SaveProfileButton';
 import useCustomFields from '../../../hooks/useCustomFields';
-import { AvailableColumnList, SortableColumnList } from './SortableColumnList';
+import { AvailableColumnList, SortableColumnList } from '../../UIElements/SortableColumnList';
 
 const TABLE_COLUMNS_PATH = 'logbook_profile.table_columns';
 const HIDDEN_COLUMNS_PATH = 'logbook_profile.table_hidden_columns';
@@ -22,33 +22,33 @@ export const LogbookLayout = ({ settings, handleChange, fieldName }) => {
   const { customFields, isCustomFieldsLoading } = useCustomFields();
 
   const standardLogbookColumns = useMemo(() => ([
-    { field: 'record_number', label: 'Record #' },
-    { field: 'date', label: fieldName("date") },
-    { field: 'departure_place', label: `${fieldName("departure")} - ${fieldName("dep_place")}` },
-    { field: 'departure_time', label: `${fieldName("departure")} - ${fieldName("dep_time")}` },
-    { field: 'arrival_place', label: `${fieldName("arrival")} - ${fieldName("arr_place")}` },
-    { field: 'arrival_time', label: `${fieldName("arrival")} - ${fieldName("arr_time")}` },
-    { field: 'aircraft_model', label: `${fieldName("aircraft")} - ${fieldName("model")}` },
-    { field: 'aircraft_reg', label: `${fieldName("aircraft")} - ${fieldName("reg")}` },
-    { field: 'se_time', label: `${fieldName("spt")} - ${fieldName("se")}` },
-    { field: 'me_time', label: `${fieldName("spt")} - ${fieldName("me")}` },
+    { field: 'record_number', category: "", label: 'Record #' },
+    { field: 'date', category: "", label: fieldName("date") },
+    { field: 'departure_place', category: fieldName("departure"), label: fieldName("dep_place") },
+    { field: 'departure_time', category: fieldName("departure"), label: fieldName("dep_time") },
+    { field: 'arrival_place', category: fieldName("arrival"), label: fieldName("arr_place") },
+    { field: 'arrival_time', category: fieldName("arrival"), label: fieldName("arr_time") },
+    { field: 'aircraft_model', category: fieldName("aircraft"), label: fieldName("model") },
+    { field: 'aircraft_reg', category: fieldName("aircraft"), label: fieldName("reg") },
+    { field: 'se_time', category: fieldName("spt"), label: fieldName("se") },
+    { field: 'me_time', category: fieldName("spt"), label: fieldName("me") },
     { field: 'mcc_time', label: fieldName("mcc") },
     { field: 'total_time', label: fieldName("total") },
     { field: 'pic_name', label: fieldName("pic_name") },
-    { field: 'landings_day', label: `${fieldName("landings")} - ${fieldName("land_day")}` },
-    { field: 'landings_night', label: `${fieldName("landings")} - ${fieldName("land_night")}` },
-    { field: 'night_time', label: `${fieldName("oct")} - ${fieldName("night")}` },
-    { field: 'ifr_time', label: `${fieldName("oct")} - ${fieldName("ifr")}` },
-    { field: 'pic_time', label: `${fieldName("pft")} - ${fieldName("pic")}` },
-    { field: 'co_pilot_time', label: `${fieldName("pft")} - ${fieldName("cop")}` },
-    { field: 'dual_time', label: `${fieldName("pft")} - ${fieldName("dual")}` },
-    { field: 'instructor_time', label: `${fieldName("pft")} - ${fieldName("instr")}` },
-    { field: 'sim_type', label: `${fieldName("fstd")} - ${fieldName("sim_type")}` },
-    { field: 'sim_time', label: `${fieldName("fstd")} - ${fieldName("sim_time")}` },
+    { field: 'landings_day', category: fieldName("landings"), label: fieldName("land_day") },
+    { field: 'landings_night', category: fieldName("landings"), label: fieldName("land_night") },
+    { field: 'night_time', category: fieldName("oct"), label: fieldName("night") },
+    { field: 'ifr_time', category: fieldName("oct"), label: fieldName("ifr") },
+    { field: 'pic_time', category: fieldName("pft"), label: fieldName("pic") },
+    { field: 'co_pilot_time', category: fieldName("pft"), label: fieldName("cop") },
+    { field: 'dual_time', category: fieldName("pft"), label: fieldName("dual") },
+    { field: 'instructor_time', category: fieldName("pft"), label: fieldName("instr") },
+    { field: 'sim_type', category: fieldName("fstd"), label: fieldName("sim_type") },
+    { field: 'sim_time', category: fieldName("fstd"), label: fieldName("sim_time") },
     { field: 'remarks', label: fieldName("remarks") },
-    { field: 'has_track', label: 'Track' },
-    { field: 'has_attachment', label: 'Attachment' },
-    { field: 'tags', label: fieldName("tags") },
+    { field: 'has_track', category: "Misc", label: 'Track' },
+    { field: 'has_attachment', category: "Misc", label: 'Attachment' },
+    { field: 'tags', category: "Misc", label: fieldName("tags") },
   ]), [fieldName]);
 
   const allColumns = useMemo(() => {
@@ -56,7 +56,8 @@ export const LogbookLayout = ({ settings, handleChange, fieldName }) => {
       !isCustomFieldsLoading && customFields
         ? customFields.map((field) => ({
           field: `custom_fields.${field.uuid}`,
-          label: `${field.category} - ${field.name}`,
+          category: field.category,
+          label: field.name,
         }))
         : [];
 

@@ -6,10 +6,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // Custom components
-import { queryClient } from "../../util/http/http";
-import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
-import { deleteAttachment } from "../../util/http/attachment";
-import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+import { queryClient } from "../../../util/http/http";
+import { useErrorNotification, useSuccessNotification } from "../../../hooks/useAppNotifications";
+import { deleteAttachment } from "../../../util/http/attachment";
+import { useDialogs } from '../../../hooks/useDialogs/useDialogs';
 
 export const DeleteCustomTitleButton = ({ format }) => {
   const dialogs = useDialogs();

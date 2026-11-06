@@ -4,9 +4,9 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 // MUI Icons
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { useErrorNotification, useSuccessNotification } from "../../hooks/useAppNotifications";
-import { queryClient } from "../../util/http/http";
-import { updatePdfSettings } from "../../util/http/settings";
+import { useErrorNotification, useSuccessNotification } from "../../../hooks/useAppNotifications";
+import { queryClient } from "../../../util/http/http";
+import { updatePdfSettings } from "../../../util/http/settings";
 
 const INT_FIELDS = [
   'logbook_rows', 'fill', 'left_margin', 'left_margin_a', 'left_margin_b',

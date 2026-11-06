@@ -1,32 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 // MUI
 import Grid from "@mui/material/Grid";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import LinearProgress from "@mui/material/LinearProgress";
 // Custom
-import CardHeader from "../UIElements/CardHeader";
-import { useErrorNotification } from "../../hooks/useAppNotifications";
-import { fetchSettings } from "../../util/http/settings";
-import RestoreDefaultsButton from "./RestoreDefaultsButton";
 import PageSettings from "./PageSettings";
 import OtherSettings from "./OtherSettings";
-import SaveSettingsButton from "./SaveSettingsButton";
-import ExportButton from "./ExportButton";
 import CustomTitlePreview from "./CustomTitlePreview";
-import AddCustomTitleButton from "./AddCustomTitleButton";
-import DeleteCustomTitleButton from "./DeleteCustomTitleButton";
-import PDFPageLayout from "./PDFPageLayout/PDFPageLayout";
+import PDFPageLayout from "./PDFPageLayout";
+import useSettings from "../../hooks/useSettings";
 
 export const PdfExport = ({ format }) => {
   const [pdfSettings, setPdfSettings] = useState({ columns: {}, headers: {} });
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['settings'],
-    queryFn: ({ signal }) => fetchSettings({ signal }),
-  });
-  useErrorNotification({ isError, error, fallbackMessage: 'Failed to load settings' });
+  const { data, isLoading } = useSettings();
 
   useEffect(() => {
     if (data) {
@@ -35,7 +20,6 @@ export const PdfExport = ({ format }) => {
     }
   }, [data, format]);
 
-  // const handleChange = (key, value) => { setPdfSettings((prev) => ({ ...prev, [key]: value })) };
   const handleChange = useCallback((path, value) => {
     setPdfSettings((prev) => {
       const keys = path.split('.');
@@ -56,54 +40,20 @@ export const PdfExport = ({ format }) => {
     });
   }, []);
 
+  if (isLoading || !pdfSettings) return <LinearProgress />
+
   return (
-    <>
-      {isLoading && <LinearProgress />}
-      <Grid container spacing={1} >
-        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Page Settings" action={
-                <>
-                  <ExportButton format={format} />
-                  <SaveSettingsButton settings={pdfSettings} format={format} />
-                  <RestoreDefaultsButton format={format} handleChange={handleChange} />
-                </>
-              } />
-              <PageSettings format={format} pdfSettings={pdfSettings} handleChange={handleChange} />
-            </CardContent>
-          </Card >
-
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Other Settings" action={
-                <>
-                  <SaveSettingsButton settings={pdfSettings} format={format} />
-                </>
-              } />
-              <OtherSettings pdfSettings={pdfSettings} handleChange={handleChange} />
-            </CardContent>
-          </Card >
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-          <Card variant="outlined" sx={{ mb: 1 }}>
-            <CardContent>
-              <CardHeader title="Custom title page" action={
-                <>
-                  <AddCustomTitleButton format={format} />
-                  <DeleteCustomTitleButton format={format} />
-                </>
-              } />
-              <CustomTitlePreview format={format} />
-            </CardContent>
-          </Card >
-
-          <PDFPageLayout settings={pdfSettings} handleChange={handleChange} format={format} />
-
-        </Grid>
+    <Grid container spacing={1} >
+      <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+        <PageSettings format={format} pdfSettings={pdfSettings} handleChange={handleChange} />
+        <PDFPageLayout settings={pdfSettings} handleChange={handleChange} format={format} />
       </Grid>
-    </>
+
+      <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
+        <CustomTitlePreview format={format} />
+        <OtherSettings pdfSettings={pdfSettings} format={format} handleChange={handleChange} />
+      </Grid>
+    </Grid>
   );
 }
 
