@@ -41,6 +41,7 @@ func TestMatchStandardCategory(t *testing.T) {
 }
 
 func TestA4IgnoresPageDivider(t *testing.T) {
+	// PAGE_DIVIDER is defined for A5 export only; A4 layout should not include it
 	exp := &PDFExporter{
 		Format: PDFA4,
 		Export: models.ExportPDF{
@@ -54,7 +55,7 @@ func TestA4IgnoresPageDivider(t *testing.T) {
 
 	for _, col := range exp.layout {
 		if col.Field == "PAGE_DIVIDER" {
-			t.Errorf("A4 layout contains PAGE_DIVIDER, which is forbidden")
+			t.Errorf("A4 layout should not include PAGE_DIVIDER (defined for A5 only)")
 		}
 		if col.body == nil {
 			t.Errorf("Column %s has nil body func", col.Field)

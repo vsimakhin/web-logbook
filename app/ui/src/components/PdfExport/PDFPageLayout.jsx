@@ -208,9 +208,14 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
     [columnWidths, handleChange]
   );
 
-  // TO-DO proper calculation for A5 with a page divider
+  const dividerIndex = visibleColumns.findIndex((c) => c.field === "PAGE_DIVIDER");
+  const splitIndex = dividerIndex !== -1 ? dividerIndex : visibleColumns.findIndex((c) => c.field === "night");
+  const leftColumns = splitIndex !== -1 ? visibleColumns.slice(0, splitIndex) : visibleColumns;
+  const rightColumns = splitIndex !== -1 ? visibleColumns.slice(dividerIndex !== -1 ? splitIndex + 1 : splitIndex) : [];
+  const leftWidth = leftColumns.reduce((sum, c) => sum + (parseFloat(c.width) || 0), 0);
+  const rightWidth = rightColumns.reduce((sum, c) => sum + (parseFloat(c.width) || 0), 0);
   const totalWidth = visibleColumns.reduce((sum, c) => sum + (parseFloat(c.width) || 0), 0);
-  const pageWidth = format === "A4" ? 297 : 210;
+  const columnCount = visibleColumns.filter((c) => c.field !== "PAGE_DIVIDER").length;
 
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
@@ -242,7 +247,15 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
               <Typography variant="subtitle2">Visible columns</Typography>
-              <Typography variant="caption" color={totalWidth <= pageWidth ? "text.secondary" : "warning"}>{visibleColumns.length} columns, {totalWidth.toFixed(1)} mm of {pageWidth}</Typography>
+              {format === "A4" ? (
+                <Typography variant="caption" color={totalWidth <= 297 ? "text.secondary" : "warning"}>
+                  {visibleColumns.length} columns, {totalWidth.toFixed(1)} mm of 297
+                </Typography>
+              ) : (
+                <Typography variant="caption" color={((leftWidth <= 210) && (rightWidth <= 210)) ? "text.secondary" : "warning"}>
+                  {columnCount} columns: {leftWidth.toFixed(1)}(L) mm/{rightWidth.toFixed(1)}(R) mm of 210
+                </Typography>
+              )}
             </Box>
 
             <Box sx={{ overflowY: 'auto', border: 1, borderColor: 'divider', borderRadius: 1 }}>
