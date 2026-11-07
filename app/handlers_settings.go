@@ -129,6 +129,19 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 		targetExport = &s.ExportA5
 	}
 
+	if format == "A4" {
+		var cleanCols []string
+		for _, col := range updated.TableProfile.TableColumns {
+			if col != "PAGE_DIVIDER" {
+				cleanCols = append(cleanCols, col)
+			}
+		}
+		updated.TableProfile.TableColumns = cleanCols
+		if updated.TableProfile.TableColumnWidths != nil {
+			delete(updated.TableProfile.TableColumnWidths, "PAGE_DIVIDER")
+		}
+	}
+
 	targetExport.LogbookRows = updated.LogbookRows
 	targetExport.Fill = updated.Fill
 	targetExport.LeftMargin = updated.LeftMargin

@@ -175,6 +175,9 @@ func groupCustomFieldsByCategory(cols []pdfColumn) []pdfColumn {
 
 	lastIndexForCategory := make(map[string]int)
 	for i, c := range cols {
+		if c.Field == "PAGE_DIVIDER" {
+			continue
+		}
 		if c.Category != "" && !strings.HasPrefix(c.Field, customPrefix) {
 			lastIndexForCategory[c.Category] = i
 		}
@@ -250,6 +253,9 @@ func (p *PDFExporter) buildLayout() {
 		customs[customPrefix+cf.UUID] = cf
 	}
 	known := func(f string) bool {
+		if f == "PAGE_DIVIDER" {
+			return p.Format == PDFA5
+		}
 		if _, ok := standardColumns[f]; ok {
 			return true
 		}
@@ -275,6 +281,13 @@ func (p *PDFExporter) buildLayout() {
 
 	cols := make([]pdfColumn, 0, len(order)+1)
 	for _, f := range order {
+		if f == "PAGE_DIVIDER" {
+			if p.Format == PDFA5 {
+				cols = append(cols, pdfColumn{Field: "PAGE_DIVIDER", Width: 0})
+			}
+			continue
+		}
+
 		c := pdfColumn{Field: f, Width: p.widthOf(f)}
 
 		if def, ok := standardColumns[f]; ok {
@@ -360,8 +373,16 @@ type headerGroup struct {
 
 // headerGroups merges consecutive columns with the same category
 func (p *PDFExporter) headerGroups() []headerGroup {
+	return headerGroupsFor(p.layout)
+}
+
+// headerGroupsFor is like headerGroups but operates on the provided column slice.
+func headerGroupsFor(cols []pdfColumn) []headerGroup {
 	var groups []headerGroup
-	for _, c := range p.layout {
+	for _, c := range cols {
+		if c.Field == "PAGE_DIVIDER" {
+			continue
+		}
 		n := len(groups)
 		if c.Category != "" && n > 0 && groups[n-1].grouped && groups[n-1].label == c.Category {
 			groups[n-1].width += c.Width
@@ -464,4 +485,24 @@ func (p *PDFExporter) customTotalForRow(uuid string) int {
 	default: // FooterTotalTime
 		return p.customTotalTime[uuid]
 	}
+}
+
+// splitLayoutAtDivider splits p.layout at the PAGE_DIVIDER marker.
+// pageA contains columns before the divider, pageB columns after.
+// If no PAGE_DIVIDER is present, falls back to splitting just before "night"
+// (the traditional A5 split point). If "night" is also absent, all columns
+// are placed on page A.
+func (p *PDFExporter) splitLayoutAtDivider() (pageA, pageB []pdfColumn) {
+	for i, c := range p.layout {
+		if c.Field == "PAGE_DIVIDER" {
+			return p.layout[:i], p.layout[i+1:]
+		}
+	}
+	// fallback: split at "night" column
+	for i, c := range p.layout {
+		if c.Field == "night" {
+			return p.layout[:i], p.layout[i:]
+		}
+	}
+	return p.layout, nil
 }

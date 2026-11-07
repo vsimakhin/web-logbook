@@ -260,6 +260,20 @@ func (m *DBModel) CheckDefaultValues() error {
 		s.ExportA4.TableProfile.TableHiddenColumns = []string{}
 		s.ExportA4.TableProfile.TableColumnWidths = pdfA4TableColumnWidth
 		applyDefaults = true
+	} else {
+		var cleanA4Cols []string
+		for _, col := range s.ExportA4.TableProfile.TableColumns {
+			if col != "PAGE_DIVIDER" {
+				cleanA4Cols = append(cleanA4Cols, col)
+			}
+		}
+		if len(cleanA4Cols) != len(s.ExportA4.TableProfile.TableColumns) {
+			s.ExportA4.TableProfile.TableColumns = cleanA4Cols
+			if s.ExportA4.TableProfile.TableColumnWidths != nil {
+				delete(s.ExportA4.TableProfile.TableColumnWidths, "PAGE_DIVIDER")
+			}
+			applyDefaults = true
+		}
 	}
 
 	if len(s.ExportA5.TableProfile.TableColumns) == 0 {

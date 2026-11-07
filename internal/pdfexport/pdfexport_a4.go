@@ -134,7 +134,10 @@ func (p *PDFExporter) printA4LogbookBody(record models.FlightRecord) {
 	for i := range p.layout {
 		c := &p.layout[i]
 
-		value := c.body(p, &record)
+		value := ""
+		if c.body != nil {
+			value = c.body(p, &record)
+		}
 		if c.Field == "date" {
 			value = formatDate(value, p.Export.DateFieldsFormat)
 		}

@@ -1,7 +1,6 @@
 package pdfexport
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/vsimakhin/web-logbook/internal/models"
@@ -9,19 +8,13 @@ import (
 
 // this file contains the A5 format specific functions
 
-// Constants for the A5 format to split the headers between two pages
-const (
-	header1_div int = 8
-	header2_div int = 9
-	header3_div int = 14
-)
-
 // ExportA5 creates A5 pdf with logbook in EASA format
 func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer) error {
 	err := p.initPDF()
 	if err != nil {
 		return err
 	}
+	p.buildLayout()
 
 	p.rowCounter = 0
 	p.pageCounter = 1
@@ -49,10 +42,18 @@ func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer)
 
 			// end of page B
 			p.printA5LogbookFooterB()
+
+			// roll custom totals forward
 			p.totalPrevious = p.totalTime
 			p.totalPage = EmptyTotals()
+			for uuid, v := range p.customTotalTime {
+				p.customTotalPrevious[uuid] = v
+			}
+			for uuid := range p.customTotalPage {
+				p.customTotalPage[uuid] = 0
+			}
 
-			// check for the page breakes to separate logbooks
+			// check for the page breaks to separate logbooks
 			p.checkPageBreaks()
 			p.pageCounter += 1
 
@@ -94,164 +95,141 @@ func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer)
 
 // printA5LogbookHeaderA prints the logbook header for the left page
 func (p *PDFExporter) printA5LogbookHeaderA() {
-
-	p.setFontLogbookHeader()
-
-	// First header
-	p.pdf.SetXY(p.Export.LeftMarginA, p.Export.TopMargin)
-
-	x, y := p.pdf.GetXY()
-	for i := 0; i < header1_div; i++ {
-		width := p.columns.w1[i]
-		p.pdf.Rect(x, y-1, width, 5, "FD")
-		p.pdf.MultiCell(width, 1, p.headers.header1[i], "", "C", false)
-		x += width
-		p.pdf.SetXY(x, y)
-	}
-	p.pdf.Ln(-1)
-
-	// Second header
-	p.pdf.SetXY(p.Export.LeftMarginA, p.Export.TopMargin+3)
-	x, y = p.pdf.GetXY()
-	for i := 0; i < header2_div; i++ {
-		width := p.columns.w2[i]
-		p.pdf.Rect(x, y-1, width, 12, "FD")
-		p.pdf.MultiCell(width, 3, p.headers.header2[i], "", "C", false)
-		x += width
-		p.pdf.SetXY(x, y)
-	}
-	p.pdf.Ln(-1)
-
-	// Header inside header
-	p.pdf.SetXY(p.Export.LeftMarginA, p.Export.TopMargin+11)
-	x, y = p.pdf.GetXY()
-	for i := 0; i < header3_div; i++ {
-		width := p.columns.w3[i]
-		if p.headers.header3[i] != "" {
-			p.pdf.Rect(x, y-1, width, 4, "FD")
-			p.pdf.MultiCell(width, 2, p.headers.header3[i], "", "C", false)
-		}
-		x += width
-		p.pdf.SetXY(x, y)
-	}
-	p.pdf.Ln(-1)
-
-	// Align the logbook body
-	_, y = p.pdf.GetXY()
-	y += 1
-	p.pdf.SetY(y)
+	pageA, _ := p.splitLayoutAtDivider()
+	p.printA5Header(pageA, p.Export.LeftMarginA)
 }
 
 // printA5LogbookHeaderB prints the logbook header for the right page
 func (p *PDFExporter) printA5LogbookHeaderB() {
+	_, pageB := p.splitLayoutAtDivider()
+	p.printA5Header(pageB, p.Export.LeftMarginB)
+}
 
+// printA5Header prints the 3-row logbook header for a given column slice and left margin.
+func (p *PDFExporter) printA5Header(cols []pdfColumn, leftMargin float64) {
 	p.setFontLogbookHeader()
+	groups := headerGroupsFor(cols)
+	top := p.Export.TopMargin
 
-	// First header
-	p.pdf.SetXY(p.Export.LeftMarginB, p.Export.TopMargin)
-	x, y := p.pdf.GetXY()
-	for i := header1_div; i < len(p.headers.header1); i++ {
-		width := p.columns.w1[i]
-		p.pdf.Rect(x, y-1, width, 5, "FD")
-		p.pdf.MultiCell(width, 1, p.headers.header1[i], "", "C", false)
-		x += width
-		p.pdf.SetXY(x, y)
+	// row 1: group numbers
+	x := leftMargin
+	for i, g := range groups {
+		p.pdf.Rect(x, top-1, g.width, 5, "FD")
+		p.pdf.SetXY(x, top)
+		p.pdf.MultiCell(g.width, 1, intToStr(i+1), "", "C", false)
+		x += g.width
 	}
-	p.pdf.Ln(-1)
 
-	// Second header
-	p.pdf.SetXY(p.Export.LeftMarginB, p.Export.TopMargin+3)
-	x, y = p.pdf.GetXY()
-	for i := header2_div; i < len(p.headers.header2); i++ {
-		width := p.columns.w2[i]
-		p.pdf.Rect(x, y-1, width, 12, "FD")
-		p.pdf.MultiCell(width, 3, p.headers.header2[i], "", "C", false)
-		x += width
-		p.pdf.SetXY(x, y)
+	// row 2: category (or standalone column label)
+	x = leftMargin
+	for _, g := range groups {
+		p.pdf.Rect(x, top+2, g.width, 12, "FD")
+		p.pdf.SetXY(x, top+3)
+		p.pdf.MultiCell(g.width, 3, g.label, "", "C", false)
+		x += g.width
 	}
-	p.pdf.Ln(-1)
 
-	// Header inside header
-	p.pdf.SetXY(p.Export.LeftMarginB, p.Export.TopMargin+11)
-	x, y = p.pdf.GetXY()
-	for i := header3_div; i < len(p.headers.header3); i++ {
-		width := p.columns.w3[i]
-		// add Date columns for FSTD if format is extended
-		if i == 20 && p.Export.IsExtended {
-			p.pdf.Rect(x, y-1, p.columns.w3[0], 4, "FD")
-			p.pdf.MultiCell(p.columns.w3[0], 2, "Date", "", "C", false)
-			x += p.columns.w3[0]
-			p.pdf.SetXY(x, y)
+	// row 3: sub-headers, only for grouped columns
+	x = leftMargin
+	for _, g := range groups {
+		if !g.grouped {
+			x += g.width
+			continue
 		}
-		if p.headers.header3[i] != "" {
-			p.pdf.Rect(x, y-1, width, 4, "FD")
-			p.pdf.MultiCell(width, 2, p.headers.header3[i], "", "C", false)
+		for _, c := range g.cols {
+			p.pdf.Rect(x, top+10, c.Width, 4, "FD")
+			p.pdf.SetXY(x, top+11)
+			p.pdf.MultiCell(c.Width, 2, c.Label, "", "C", false)
+			x += c.Width
 		}
-
-		x += width
-		p.pdf.SetXY(x, y)
 	}
-	p.pdf.Ln(-1)
 
-	// Align the logbook body
-	_, y = p.pdf.GetXY()
-	y += 1
-	p.pdf.SetY(y)
+	_, y := p.pdf.GetXY()
+	p.pdf.SetY(y + 1)
 }
 
 // printA5LogbookFooterA prints the logbook footer for the left page
 func (p *PDFExporter) printA5LogbookFooterA() {
-	p.printA5TotalA(FooterThisPage, p.totalPage)
-	p.printA5TotalA(FooterPreviousPage, p.totalPrevious)
-	p.printA5TotalA(FooterTotalTime, p.totalTime)
+	p.printA5TotalA(FooterThisPage)
+	p.printA5TotalA(FooterPreviousPage)
+	p.printA5TotalA(FooterTotalTime)
 }
 
 // printA5LogbookFooterB prints the logbook footer for the right page
 func (p *PDFExporter) printA5LogbookFooterB() {
-	p.printA5TotalB(FooterThisPage, p.totalPage)
-	p.printA5TotalB(FooterPreviousPage, p.totalPrevious)
-	p.printA5TotalB(FooterTotalTime, p.totalTime)
+	p.printA5TotalB(FooterThisPage)
+	p.printA5TotalB(FooterPreviousPage)
+	p.printA5TotalB(FooterTotalTime)
 }
 
-// printA5TotalA prints the totals for the left page
-func (p *PDFExporter) printA5TotalA(totalName string, total models.FlightRecord) {
+// printA5TotalA prints one footer row for the left page (page A columns).
+func (p *PDFExporter) printA5TotalA(totalName string) {
+	p.currentFooterRow = totalName
 	p.setFontLogbookFooter()
 
-	p.pdf.SetX(p.Export.LeftMarginA)
+	pageA, _ := p.splitLayoutAtDivider()
+	p.printA5TotalRow(totalName, pageA, p.Export.LeftMarginA)
+}
 
-	// p.printFooterLeftBlock(totalName) // TO-DO: adjust printFooterLeftBlock according to the new implementation
-	p.printFooterCell(p.columns.w4[1], totalName)
-	p.printFooterCell(p.columns.w4[2], p.formatTimeFieldTotals(total.Time.SE))
-	p.printFooterCell(p.columns.w4[3], p.formatTimeFieldTotals(total.Time.ME))
-	p.printFooterCell(p.columns.w4[4], p.formatTimeFieldTotals(total.Time.MCC))
-	p.printFooterCell(p.columns.w4[5], p.formatTimeFieldTotals(total.Time.Total))
-	p.printFooterCell(p.columns.w4[6], "")
-	p.printFooterCell(p.columns.w4[7], fmt.Sprintf("%d", total.Landings.Day))
-	p.printFooterCell(p.columns.w4[8], fmt.Sprintf("%d", total.Landings.Night))
+// printA5TotalB prints one footer row for the right page (page B columns).
+func (p *PDFExporter) printA5TotalB(totalName string) {
+	p.currentFooterRow = totalName
+	p.setFontLogbookFooter()
+
+	_, pageB := p.splitLayoutAtDivider()
+	p.printA5TotalRow(totalName, pageB, p.Export.LeftMarginB)
+}
+
+// printA5TotalRow renders one footer row for the given column slice, starting at leftMargin.
+func (p *PDFExporter) printA5TotalRow(totalName string, cols []pdfColumn, leftMargin float64) {
+	p.pdf.SetX(leftMargin)
+
+	// pick the right FlightRecord accumulator for standard totals
+	var total models.FlightRecord
+	switch totalName {
+	case FooterThisPage:
+		total = p.totalPage
+	case FooterPreviousPage:
+		total = p.totalPrevious
+	default:
+		total = p.totalTime
+	}
+
+	sum := func(cs []pdfColumn) (w float64) {
+		for _, c := range cs {
+			w += c.Width
+		}
+		return
+	}
+
+	// leading columns without totals form the label area
+	lead := 0
+	for lead < len(cols) && cols[lead].total == nil && cols[lead].Field != "remarks" {
+		lead++
+	}
+	leftN := 0
+	if lead >= 2 {
+		leftN = 1
+	}
+
+	p.printFooterLeftBlock(totalName, sum(cols[:leftN]))
+	p.printFooterCell(sum(cols[leftN:lead]), totalName)
+
+	for _, c := range cols[lead:] {
+		switch {
+		case c.Field == "remarks":
+			p.printFooterSignatureBlock(totalName, c.Width)
+		case c.total != nil:
+			p.printFooterCell(c.Width, c.total(p, &total))
+		default:
+			p.printFooterCell(c.Width, "")
+		}
+	}
 
 	p.pdf.Ln(-1)
 }
 
-// printA5TotalB prints the totals for the right page
-func (p *PDFExporter) printA5TotalB(totalName string, total models.FlightRecord) {
-	p.setFontLogbookFooter()
-
-	p.pdf.SetX(p.Export.LeftMarginB)
-
-	p.printFooterCell(p.columns.w4[9], p.formatTimeFieldTotals(total.Time.Night))
-	p.printFooterCell(p.columns.w4[10], p.formatTimeFieldTotals(total.Time.IFR))
-	p.printFooterCell(p.columns.w4[11], p.formatTimeFieldTotals(total.Time.PIC))
-	p.printFooterCell(p.columns.w4[12], p.formatTimeFieldTotals(total.Time.CoPilot))
-	p.printFooterCell(p.columns.w4[13], p.formatTimeFieldTotals(total.Time.Dual))
-	p.printFooterCell(p.columns.w4[14], p.formatTimeFieldTotals(total.Time.Instructor))
-	p.printFooterCell(p.columns.w4[15], "")
-	p.printFooterCell(p.columns.w4[16], p.formatTimeFieldTotals(total.SIM.Time))
-	// p.printFooterSignatureBlock(totalName) // TO-DO adjust printFooterSignatureBlock according to the new implementation
-
-	p.pdf.Ln(-1)
-}
-
-// logBookRowA prints logbook record row for the left page
+// logBookRowA prints a logbook record row for the left page and returns true when the page is full.
 func (p *PDFExporter) logBookRowA(record models.FlightRecord) bool {
 	p.rowCounter += 1
 
@@ -262,20 +240,26 @@ func (p *PDFExporter) logBookRowA(record models.FlightRecord) bool {
 	p.totalPage = models.CalculateTotals(p.totalPage, record)
 	p.totalTime = models.CalculateTotals(p.totalTime, record)
 
+	p.loadRowCustomFields(record)
+	p.accumulateCustomTotals()
+
 	p.printA5LogbookBodyA(record, p.isFillLine())
 
 	if p.rowCounter >= p.Export.LogbookRows {
 		p.rowCounter = 0
-
 		return true
 	}
 
 	return false
 }
 
-// logBookRowV prints logbook record row for the right page
+// logBookRowB prints a logbook record row for the right page.
 func (p *PDFExporter) logBookRowB(record models.FlightRecord) {
 	p.rowCounter += 1
+
+	// custom fields were already loaded and accumulated in logBookRowA for this record;
+	// reload without accumulating so the body funcs can read p.rowCustom.
+	p.loadRowCustomFields(record)
 
 	p.printA5LogbookBodyB(record, p.isFillLine())
 
@@ -284,60 +268,64 @@ func (p *PDFExporter) logBookRowB(record models.FlightRecord) {
 	}
 }
 
-// printA5LogbookBodyA prints the logbook body for the left page
+// printA5LogbookBodyA prints the logbook body row for the left page
 func (p *PDFExporter) printA5LogbookBodyA(record models.FlightRecord, fill bool) {
 	p.setFontLogbookBody()
-
-	// 	Data
 	p.pdf.SetX(p.Export.LeftMarginA)
-	if p.Export.IsExtended && record.SIM.Type != "" {
-		p.printBodyTimeCell(p.columns.w3[0], "", fill)
-	} else {
-		p.printBodyTimeCell(p.columns.w3[0], record.Date, fill)
+
+	pageA, _ := p.splitLayoutAtDivider()
+	p.printA5BodyRow(record, fill, pageA)
+}
+
+// printA5LogbookBodyB prints the logbook body row for the right page
+func (p *PDFExporter) printA5LogbookBodyB(record models.FlightRecord, fill bool) {
+	p.setFontLogbookBody()
+	p.pdf.SetX(p.Export.LeftMarginB)
+
+	_, pageB := p.splitLayoutAtDivider()
+	p.printA5BodyRow(record, fill, pageB)
+}
+
+// printA5BodyRow iterates the given column slice and renders one body row.
+func (p *PDFExporter) printA5BodyRow(record models.FlightRecord, fill bool, cols []pdfColumn) {
+	for i := range cols {
+		c := &cols[i]
+
+		value := ""
+		if c.body != nil {
+			value = c.body(p, &record)
+		}
+		if c.Field == "date" {
+			value = formatDate(value, p.Export.DateFieldsFormat)
+		}
+
+		switch {
+		case c.Field == "remarks":
+			p.printBodyRemarksCell(c.Width, record.Remarks, record.Signature, record.UUID, fill)
+		case c.singlePilot:
+			p.printSinglePilotTime(c.Width, value, fill)
+		case c.align == "L":
+			p.printBodyTextCell(c.Width, value, fill)
+		default:
+			p.printBodyTimeCell(c.Width, value, fill)
+		}
 	}
-	p.printBodyTimeCell(p.columns.w3[1], record.Departure.Place, fill)
-	p.printBodyTimeCell(p.columns.w3[2], record.Departure.Time, fill)
-	p.printBodyTimeCell(p.columns.w3[3], record.Arrival.Place, fill)
-	p.printBodyTimeCell(p.columns.w3[4], record.Arrival.Time, fill)
-	p.printBodyTimeCell(p.columns.w3[5], record.Aircraft.Model, fill)
-	p.printBodyTimeCell(p.columns.w3[6], record.Aircraft.Reg, fill)
-	p.printSinglePilotTime(p.columns.w3[7], p.formatTimeField(record.Time.SE), fill)
-	p.printSinglePilotTime(p.columns.w3[8], p.formatTimeField(record.Time.ME), fill)
-	p.printBodyTimeCell(p.columns.w3[9], p.formatTimeField(record.Time.MCC), fill)
-	p.printBodyTimeCell(p.columns.w3[10], p.formatTimeField(record.Time.Total), fill)
-	p.printBodyTextCell(p.columns.w3[11], record.PIC, fill)
-	p.printBodyTimeCell(p.columns.w3[12], formatLandings(record.Landings.Day), fill)
-	p.printBodyTimeCell(p.columns.w3[12], formatLandings(record.Landings.Night), fill)
 
 	p.pdf.Ln(-1)
-
 	p.pdf.SetX(p.Export.LeftMarginA)
 }
 
-// printA5LogbookBodyB prints the logbook body for the right page
-func (p *PDFExporter) printA5LogbookBodyB(record models.FlightRecord, fill bool) {
-
-	p.setFontLogbookBody()
-
-	p.pdf.SetX(p.Export.LeftMarginB)
-	p.printBodyTimeCell(p.columns.w3[14], p.formatTimeField(record.Time.Night), fill)
-	p.printBodyTimeCell(p.columns.w3[15], p.formatTimeField(record.Time.IFR), fill)
-	p.printBodyTimeCell(p.columns.w3[16], p.formatTimeField(record.Time.PIC), fill)
-	p.printBodyTimeCell(p.columns.w3[17], p.formatTimeField(record.Time.CoPilot), fill)
-	p.printBodyTimeCell(p.columns.w3[18], p.formatTimeField(record.Time.Dual), fill)
-	p.printBodyTimeCell(p.columns.w3[19], p.formatTimeField(record.Time.Instructor), fill)
-	if p.Export.IsExtended {
-		if record.SIM.Type != "" {
-			p.printBodyTimeCell(p.columns.w3[0], record.Date, fill)
-		} else {
-			p.printBodyTimeCell(p.columns.w3[0], "", fill)
-		}
+// intToStr converts an integer to its string representation (avoids import of strconv in this file).
+func intToStr(n int) string {
+	if n == 0 {
+		return "0"
 	}
-	p.printBodyTimeCell(p.columns.w3[20], record.SIM.Type, fill)
-	p.printBodyTimeCell(p.columns.w3[21], p.formatTimeField(record.SIM.Time), fill)
-	p.printBodyRemarksCell(p.columns.w3[22], record.Remarks, record.Signature, record.UUID, fill)
-
-	p.pdf.Ln(-1)
-
-	p.pdf.SetX(p.Export.LeftMarginA)
+	buf := [20]byte{}
+	pos := len(buf)
+	for n > 0 {
+		pos--
+		buf[pos] = byte('0' + n%10)
+		n /= 10
+	}
+	return string(buf[pos:])
 }
