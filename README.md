@@ -65,9 +65,11 @@ The application will automatically create a local SQLite database on the first s
 
 ## [Unreleased]
 
-- Update: Reorganized the Settings page into two sections: `General` and `Fields & Layout`.
-- New: Flight record fields can now be resized and reordered using the new Layout button in the menu.
-- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in `Settings` -> `Fields & Layout`. The layout is saved to the user profile.
+- Update: Reorganized the Settings page into two sections: General and Fields & Layout.
+- New: Flight record fields can now be resized, reordered, or hidden using the new Layout button in the menu.
+- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in Fields & Layout. Layout is saved to the user profile.
+- New: PDF export (A4 & A5) supports custom fields, category grouping, and calculates totals for custom duration and number fields.
+- New: Customizable PDF column layout with page-divider support for two-page A5 exports.
 
 ## [5.0.0-alpha2] - 11.10.2026
 
