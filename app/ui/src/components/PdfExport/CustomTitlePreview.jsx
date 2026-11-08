@@ -27,6 +27,9 @@ export const CustomTitlePreview = ({ format }) => {
     queryKey: ['custom-title', format],
     queryFn: ({ signal }) => fetchAttachment({ id, signal }),
     placeholderData: { document: null },
+    staleTime: 3600000,
+    gcTime: 3600000,
+    refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to custom title page' });
 
