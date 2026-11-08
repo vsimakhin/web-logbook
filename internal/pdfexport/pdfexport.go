@@ -711,3 +711,27 @@ func formatDate(date string, format string) string {
 
 	return parsedDate.Format(layout)
 }
+
+// numberGroupWidths returns the widths of the cells in the numbering row.
+// It mostly follows headerGroups, but "single pilot time" and "multi pilot time"
+// share one number (column 5 in the EASA layout).
+func (p *PDFExporter) numberGroupWidths(groups []headerGroup) []float64 {
+	h := headerMap(p.Export.Headers)
+
+	isPilotTime := func(g headerGroup) bool {
+		if g.grouped {
+			return g.label == h["spt"]
+		}
+		return len(g.cols) > 0 && g.cols[0].Field == "mcc"
+	}
+
+	var widths []float64
+	for i, g := range groups {
+		if i > 0 && isPilotTime(g) && isPilotTime(groups[i-1]) {
+			widths[len(widths)-1] += g.width
+			continue
+		}
+		widths = append(widths, g.width)
+	}
+	return widths
+}

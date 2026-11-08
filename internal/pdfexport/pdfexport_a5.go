@@ -96,28 +96,31 @@ func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer)
 // printA5LogbookHeaderA prints the logbook header for the left page
 func (p *PDFExporter) printA5LogbookHeaderA() {
 	pageA, _ := p.splitLayoutAtDivider()
-	p.printA5Header(pageA, p.Export.LeftMarginA)
+	p.printA5Header(pageA, p.Export.LeftMarginA, 0)
 }
 
 // printA5LogbookHeaderB prints the logbook header for the right page
 func (p *PDFExporter) printA5LogbookHeaderB() {
-	_, pageB := p.splitLayoutAtDivider()
-	p.printA5Header(pageB, p.Export.LeftMarginB)
+	pageA, pageB := p.splitLayoutAtDivider()
+
+	// continue numbering after the last number used on page A
+	offset := len(p.numberGroupWidths(headerGroupsFor(pageA)))
+	p.printA5Header(pageB, p.Export.LeftMarginB, offset)
 }
 
 // printA5Header prints the 3-row logbook header for a given column slice and left margin.
-func (p *PDFExporter) printA5Header(cols []pdfColumn, leftMargin float64) {
+func (p *PDFExporter) printA5Header(cols []pdfColumn, leftMargin float64, numberOffset int) {
 	p.setFontLogbookHeader()
 	groups := headerGroupsFor(cols)
 	top := p.Export.TopMargin
 
-	// row 1: group numbers
+	// row 1: numbers (SPT + MCC share one number)
 	x := leftMargin
-	for i, g := range groups {
-		p.pdf.Rect(x, top-1, g.width, 5, "FD")
+	for i, w := range p.numberGroupWidths(groups) {
+		p.pdf.Rect(x, top-1, w, 5, "FD")
 		p.pdf.SetXY(x, top)
-		p.pdf.MultiCell(g.width, 1, intToStr(i+1), "", "C", false)
-		x += g.width
+		p.pdf.MultiCell(w, 1, intToStr(numberOffset+i+1), "", "C", false)
+		x += w
 	}
 
 	// row 2: category (or standalone column label)

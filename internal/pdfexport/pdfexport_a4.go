@@ -51,11 +51,11 @@ func (p *PDFExporter) printA4LogbookHeader() {
 
 	// row 1: numbers, one per group
 	x := left
-	for i, g := range groups {
-		p.pdf.Rect(x, top-1, g.width, 5, "FD")
+	for i, w := range p.numberGroupWidths(groups) {
+		p.pdf.Rect(x, top-1, w, 5, "FD")
 		p.pdf.SetXY(x, top)
-		p.pdf.MultiCell(g.width, 1, strconv.Itoa(i+1), "", "C", false)
-		x += g.width
+		p.pdf.MultiCell(w, 1, strconv.Itoa(i+1), "", "C", false)
+		x += w
 	}
 
 	// row 2: category (or the column label for standalone columns)
