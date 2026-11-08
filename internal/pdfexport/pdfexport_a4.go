@@ -187,17 +187,7 @@ func (p *PDFExporter) printA4Total(totalName string, total models.FlightRecord) 
 
 	p.printFooterLeftBlock(totalName, sum(p.layout[:leftN]))
 	p.printFooterCell(sum(p.layout[leftN:lead]), totalName)
-
-	for _, c := range p.layout[lead:] {
-		switch {
-		case c.Field == "remarks":
-			p.printFooterSignatureBlock(totalName, c.Width)
-		case c.total != nil:
-			p.printFooterCell(c.Width, c.total(p, &total))
-		default:
-			p.printFooterCell(c.Width, "")
-		}
-	}
+	p.printFooterColumns(totalName, p.layout[lead:], total)
 
 	p.pdf.Ln(-1)
 }

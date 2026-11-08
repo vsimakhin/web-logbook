@@ -214,17 +214,7 @@ func (p *PDFExporter) printA5TotalRow(totalName string, cols []pdfColumn, leftMa
 
 	p.printFooterLeftBlock(totalName, sum(cols[:leftN]))
 	p.printFooterCell(sum(cols[leftN:lead]), totalName)
-
-	for _, c := range cols[lead:] {
-		switch {
-		case c.Field == "remarks":
-			p.printFooterSignatureBlock(totalName, c.Width)
-		case c.total != nil:
-			p.printFooterCell(c.Width, c.total(p, &total))
-		default:
-			p.printFooterCell(c.Width, "")
-		}
-	}
+	p.printFooterColumns(totalName, cols[lead:], total)
 
 	p.pdf.Ln(-1)
 }

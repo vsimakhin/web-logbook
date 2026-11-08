@@ -749,3 +749,24 @@ func footerLeftBlockCols(lead int) int {
 	}
 	return n
 }
+
+func (p *PDFExporter) printFooterColumns(totalName string, cols []pdfColumn, total models.FlightRecord) {
+	for i := 0; i < len(cols); i++ {
+		c := cols[i]
+
+		switch {
+		case c.Field == "remarks":
+			p.printFooterSignatureBlock(totalName, c.Width)
+
+		case c.Field == "sim_date" && i+1 < len(cols) && cols[i+1].Field == "sim_type":
+			p.printFooterCell(c.Width+cols[i+1].Width, "")
+			i++ // sim_type is already included in the merged cell
+
+		case c.total != nil:
+			p.printFooterCell(c.Width, c.total(p, &total))
+
+		default:
+			p.printFooterCell(c.Width, "")
+		}
+	}
+}
