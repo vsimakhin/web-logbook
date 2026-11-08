@@ -3,7 +3,13 @@ import { useMemo } from "react";
 import Select from "./Select";
 import { useAircraftsQuery, useModelsCategoriesQuery } from "../../hooks/queries";
 
+const EMPTY = [];
+
 const getUniqueCategoriesFromKey = (items, key) => {
+  if (!items || !Array.isArray(items)) {
+    return EMPTY;
+  }
+
   const set = new Set();
   items.forEach(item => {
     item[key]?.split(",").forEach(c => {
@@ -29,19 +35,19 @@ export const AircraftCategories = ({
     select: data => getUniqueCategoriesFromKey(data, "category"),
   })
 
-  const { data: customCategoriesOptions = [] } = useAircraftsQuery({
+  const { data: customCategoriesOptions = EMPTY } = useAircraftsQuery({
     select: data => getUniqueCategoriesFromKey(data, "custom_category"),
   });
 
   const selectOptions = useMemo(() => {
-    if (options === "models") return modelCategoriesOptions ?? [];
-    if (options === "custom") return customCategoriesOptions ?? [];
+    if (options === "models") return modelCategoriesOptions ?? EMPTY;
+    if (options === "custom") return customCategoriesOptions ?? EMPTY;
     if (options === "all")
       return Array.from(new Set([
-        ...(modelCategoriesOptions ?? []),
-        ...(customCategoriesOptions ?? [])
+        ...(modelCategoriesOptions ?? EMPTY),
+        ...(customCategoriesOptions ?? EMPTY)
       ])).sort();
-    return [];
+    return EMPTY;
   }, [options, modelCategoriesOptions, customCategoriesOptions]);
 
   return (
