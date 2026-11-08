@@ -437,6 +437,7 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/Samueld59" title="Samueld59"><img src="https://github.com/Samueld59.png" width="40" height="40" alt="Samueld59" /></a>
   <a href="https://github.com/benbox69" title="benbox69"><img src="https://github.com/benbox69.png" width="40" height="40" alt="benbox69" /></a>
   <a href="https://github.com/Cyclic407" title="Cyclic407"><img src="https://github.com/Cyclic407.png" width="40" height="40" alt="Cyclic407" /></a>
+  <a href="https://github.com/Thomas-DPRX" title="Thomas-DPRX"><img src="https://github.com/Thomas-DPRX.png" width="40" height="40" alt="Thomas-DPRX" /></a>
 </p>
 
 --
