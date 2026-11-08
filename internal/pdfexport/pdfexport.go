@@ -735,3 +735,17 @@ func (p *PDFExporter) numberGroupWidths(groups []headerGroup) []float64 {
 	}
 	return widths
 }
+
+// footerLeftBlockCols returns how many leading columns form the empty grey block
+// in the footer (Date + Departure place in the EASA layout). `lead` is the number
+// of leading columns without totals; at least one of them is kept for the label.
+func footerLeftBlockCols(lead int) int {
+	n := 2
+	if lead-1 < n {
+		n = lead - 1
+	}
+	if n < 0 {
+		n = 0
+	}
+	return n
+}

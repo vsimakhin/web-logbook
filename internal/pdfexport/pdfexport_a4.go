@@ -183,10 +183,7 @@ func (p *PDFExporter) printA4Total(totalName string, total models.FlightRecord) 
 	for lead < len(p.layout) && p.layout[lead].total == nil && p.layout[lead].Field != "remarks" {
 		lead++
 	}
-	leftN := 0
-	if lead >= 2 {
-		leftN = 1 // first column is the empty left block
-	}
+	leftN := footerLeftBlockCols(lead)
 
 	p.printFooterLeftBlock(totalName, sum(p.layout[:leftN]))
 	p.printFooterCell(sum(p.layout[leftN:lead]), totalName)

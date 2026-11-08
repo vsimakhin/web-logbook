@@ -210,10 +210,7 @@ func (p *PDFExporter) printA5TotalRow(totalName string, cols []pdfColumn, leftMa
 	for lead < len(cols) && cols[lead].total == nil && cols[lead].Field != "remarks" {
 		lead++
 	}
-	leftN := 0
-	if lead >= 2 {
-		leftN = 1
-	}
+	leftN := footerLeftBlockCols(lead)
 
 	p.printFooterLeftBlock(totalName, sum(cols[:leftN]))
 	p.printFooterCell(sum(cols[leftN:lead]), totalName)
