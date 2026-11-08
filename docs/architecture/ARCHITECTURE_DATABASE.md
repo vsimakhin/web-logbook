@@ -1,6 +1,6 @@
 # Database — Architecture
 
-**Last Updated:** 2026-10-14 — initial version generated from code and fact-checked (TASK_AGENT_WORKFLOW_SETUP); 2026-10-14 — §11 #6/#7/#8/#17 aligned and cross-linked with sibling docs (consistency pass)
+**Last Updated:** 2026-10-14 — initial version generated from code and fact-checked (TASK_AGENT_WORKFLOW_SETUP); 2026-10-14 — §11 #6/#7/#8/#17 aligned and cross-linked with sibling docs (consistency pass); 2026-11-08 — schema 103, custom_fields pdf_header, re-runnable overhaul, upload default check (sync 30 days)
 
 ## Table of Contents
 
@@ -20,7 +20,7 @@
 
 ## 1. Overview
 
-The database layer stores the whole pilot logbook: flight records, aircraft, airports, licences, currencies, attachments, persons, custom fields, settings and auth tokens. It supports two engines through `database/sql`: **SQLite** (`modernc.org/sqlite`, the default, a single local file) and **MySQL** (`github.com/go-sql-driver/mysql`). Both drivers are blank-imported in `internal/driver/driver.go:13-15`. The engine and DSN come from the `-engine` / `-dsn` flags (`app/main.go:85-86`).
+The database layer stores the whole pilot logbook: flight records, aircraft, airports, licences, currencies, attachments, persons, custom fields, settings and auth tokens. It supports two engines through `database/sql`: **SQLite** (`modernc.org/sqlite`, the default, a single local file) and **MySQL** (`github.com/go-sql-driver/mysql`). Both drivers are blank-imported in `internal/driver/driver.go:13-15`. The engine and DSN come from the `-engine` / `-dsn` flags (`app/main.go:87-88`).
 
 `internal/driver` owns the schema. The schema is **declarative**: Go values in `internal/driver/db_structure.go` describe tables, columns and views, with one DDL variant per engine. At startup `OpenDB` → `validateDB` (`internal/driver/driver.go:23-94`) reconciles the live database with those values. Reconciliation only adds things: it creates missing tables, adds missing columns and indexes, and drops and recreates views. It never changes a column type and never drops a table or column. Data/type changes need an explicit migration. The only migration today is the v5 "data overhaul" (`internal/driver/data_overhaul.go`). It converts legacy `HH:MM` time strings to integer minutes and `DD/MM/YYYY` dates to ISO `YYYY-MM-DD`. All runtime SQL lives in `internal/models` as methods on `DBModel` (`internal/models/structs.go:12-14`). `DBModel` wraps a `*sql.DB` and carries **no engine information**. `internal/models/helpers.go` provides the query-timeout helpers and the airport-distance cache.
 
@@ -29,16 +29,16 @@ The database layer stores the whole pilot logbook: flight records, aircraft, air
 | Concept | Definition / invariant | Evidence |
 |---|---|---|
 | Engine key | The strings `"sqlite"` / `"mysql"` are used three ways: as the `database/sql` driver name, as the key into the DDL `queries` map, and as the key into every `ColumnType` / `SQLQuery` map. | `SQLite`/`MySQL` consts `internal/driver/db_operations.go:11-12`; `sql.Open(engine, dsn)` `internal/driver/driver.go:24` |
-| `schemaVersion` | A string holding an integer, currently `"101"`. Reconciliation runs only when the stored version differs from it. | `internal/driver/db_structure.go:4`; `internal/driver/driver.go:56` |
+| `schemaVersion` | A string holding an integer, currently `"103"` (raised from `"101"` in git `9bb8263`). Reconciliation runs only when the stored version differs from it. | `internal/driver/db_structure.go:4`; `internal/driver/driver.go:56` |
 | `metadata` table | Append-only history of applied schema versions. The "current" version is the row with the greatest `created_at` **string**. | `metadataTable` `internal/driver/db_structure.go:17-21`; `getSchemaVersion` `internal/driver/driver.go:96-117` |
 | Declarative table | `Table{Name, PrimaryKeyName, PrimaryKeyType, Columns}`. A table is created with the PK column only. Every other column is then added with `ALTER TABLE ... ADD COLUMN`, also on a fresh DB. | `internal/driver/db_operations.go:60-65`, `:30`, `:167-173` |
 | `ColumnType` | Map from engine to SQL type. The shared type vocabulary is `UUID`, `DateTime`, `SmallText`, `BigText`, `FullText`, `SmallInt`, `Int`, `Real`, `Blob`. | `internal/driver/db_structure.go:6-14` |
 | View | `View{Name, Query SQLQuery}` with one SQL text per engine. It is always dropped and recreated during reconciliation. | `internal/driver/db_operations.go:69-72`, `:231-241` |
 | Index | `Column.Index: true` creates the index `<table>_<column>`. Only `airports.iata` and `tokens.username` use it. | `internal/driver/db_operations.go:209`, `:223`; `internal/driver/db_structure.go:58`, `:104` |
-| Time = integer minutes | Since v5 every flight-time column, the duration custom fields and `previous_experience` hold integer minutes. Go structs use `int`. | `internal/models/structs.go:40-54`, `:255-271`; `internal/driver/data_overhaul.go:46-65` |
+| Time = integer minutes | Since v5 every flight-time column, the duration custom fields and `previous_experience` hold integer minutes. Go structs use `int`. | `internal/models/structs.go:40-54`, `:276-292`; `internal/driver/data_overhaul.go:54-73` |
 | Date = ISO text | `logbook.date`, licence dates and the currency "since" date are stored as `YYYY-MM-DD` text. Departure/arrival times are `HHMM` text. | `dateFormat` `internal/driver/data_overhaul.go:15`; parse layout `"2006-01-02 1504"` in `app/helpers.go:78`, `:88` |
 | Overhaul gate | The data overhaul runs only if the stored version is an integer `< 100`. Non-integer (dotted) versions skip it. | `internal/driver/driver.go:47-54` |
-| Views as the read model | Model reads of the logbook go through `logbook_view`, which adds `rn`, `prev_uuid`, `next_uuid`, `has_track`, `attachments_count` and NULL defaults for some columns (§5.2). Writes go to the `logbook` table. Exceptions: `UpdateFlightRecordsDistance` reads `logbook` directly (without the view's NULL defaults), and `aircrafts_view` / `attachments_view` join `logbook`. | `internal/driver/db_structure.go:168-227`; `internal/models/flightrecords.go:39`, `:66`; exceptions `internal/models/helpers.go:69`, `internal/driver/db_structure.go:266`, `:318` |
+| Views as the read model | Model reads of the logbook go through `logbook_view`, which adds `rn`, `prev_uuid`, `next_uuid`, `has_track`, `attachments_count` and NULL defaults for some columns (§5.2). Writes go to the `logbook` table. Exceptions: `UpdateFlightRecordsDistance` reads `logbook` directly (without the view's NULL defaults), and `aircrafts_view` / `attachments_view` join `logbook`. | `internal/driver/db_structure.go:165-224`; `internal/models/flightrecords.go:39`, `:66`; exceptions `internal/models/helpers.go:69`, `internal/driver/db_structure.go:263`, `:315` |
 | Default timeout | Every model query uses a 60 s context unless it chooses another value. | `DefaultTimeout` `internal/models/helpers.go:14`, `ContextWithDefaultTimeout` `:22-24` |
 | No foreign keys | No FK constraints are declared. Cascades are done by hand in handlers/models. | `internal/driver/db_structure.go` (no FK clauses); `HandlerApiFlightRecordDelete` `app/handlers_flightrecord.go:52-70` |
 
@@ -48,13 +48,13 @@ The database layer stores the whole pilot logbook: flight records, aircraft, air
 
 | # | Step | Evidence |
 |---|---|---|
-| 1 | Parse `-engine` (default `sqlite`) and `-dsn` (default `web-logbook.sql`). | `app/main.go:85-86` |
-| 2 | `createDBConnection` → `driver.OpenDB`: `sql.Open`, `Ping`, `validateDB`. Any error is fatal. | `app/main.go:111-117`, `:138-141`; `internal/driver/driver.go:23-40` |
-| 3 | Optional `-disable-authentication`: rewrites settings and exits. | `app/main.go:154-161` |
-| 4 | `CheckDefaultValues` fills empty settings parts (PDF export, airport source, headers). | `app/main.go:164`; `internal/models/models_defaults.go:151` |
-| 5 | If the `airports` table is empty, download the airport DB and run `UpdateAirportDB` (one transaction, 300 s). | `app/main.go:171-191`; `internal/models/airports.go:55-99` |
-| 6 | `GetSettings` → cache `timeFieldsAutoFormat` on the app. | `app/main.go:194-199` |
-| 7 | `go CreateDistanceCache()` (background) and `UpdateFlightRecordsDistance()` (synchronous, fills `distance IS NULL`). | `app/main.go:202-206`; `internal/models/helpers.go:65-129` |
+| 1 | Parse `-engine` (default `sqlite`) and `-dsn` (default `web-logbook.sql`). | `app/main.go:87-88` |
+| 2 | `createDBConnection` → `driver.OpenDB`: `sql.Open`, `Ping`, `validateDB`. Any error is fatal. | `app/main.go:113-119`, `:140-143`; `internal/driver/driver.go:23-40` |
+| 3 | Optional `-disable-authentication`: rewrites settings and exits. | `app/main.go:156-163` |
+| 4 | `CheckDefaultValues` fills empty settings parts (PDF export, airport source, headers). | `app/main.go:166`; `internal/models/models_defaults.go:215` |
+| 5 | If the `airports` table is empty, download the airport DB and run `UpdateAirportDB` (one transaction, 300 s). | `app/main.go:173-193`; `internal/models/airports.go:55-99` |
+| 6 | `GetSettings` → cache `timeFieldsAutoFormat` on the app. | `app/main.go:196-201` |
+| 7 | `go CreateDistanceCache()` (background) and `UpdateFlightRecordsDistance()` (synchronous, fills `distance IS NULL`). | `app/main.go:204-208`; `internal/models/helpers.go:65-129` |
 
 ### 3.2 `validateDB` decision table
 
@@ -62,11 +62,11 @@ The database layer stores the whole pilot logbook: flight records, aircraft, air
 
 | Stored version (`getSchemaVersion`) | Data overhaul | Tables/views reconciled + settings seeded | New `metadata` row |
 |---|---|---|---|
-| no row / any query error → `"unknown"` | no | yes | `101` |
-| integer `< 100` (e.g. `"45"` = v4.x) | **yes**, before reconciliation | yes | `101` |
-| non-integer (e.g. `"3.1.0"`, `"2.0.3"`) | no (`strconv.Atoi` fails) | yes | `101` |
-| `"101"` | no | **no** (nothing touched) | — |
-| other integer `>= 100` (e.g. a future `"102"` read by an older binary) | no | yes (recreates *this* binary's views) | `101` |
+| no row / any query error → `"unknown"` | no | yes | `103` |
+| integer `< 100` (e.g. `"45"` = v4.x) | **yes**, before reconciliation | yes | `103` |
+| non-integer (e.g. `"3.1.0"`, `"2.0.3"`) | no (`strconv.Atoi` fails) | yes | `103` |
+| `"103"` | no | **no** (nothing touched) | — |
+| other integer `>= 100` (e.g. `"101"` from a DB last opened by 5.0.0-alpha1/alpha2, which gains `custom_fields.pdf_header`; or a future `"104"` read by an older binary) | no | yes (recreates *this* binary's views) | `103` |
 
 Evidence: `internal/driver/driver.go:45-91`, `:96-117`.
 
@@ -81,19 +81,19 @@ Evidence: `internal/driver/driver.go:45-91`, `:96-117`.
 
 ### 3.4 v5 data overhaul (`dataOverhaulMigration`)
 
-This runs in a single transaction (`BeginTx`, deferred `Rollback`, one 300 s context): `internal/driver/data_overhaul.go:428-474`.
+`dataOverhaulMigration` (`internal/driver/data_overhaul.go:441-487`) runs the data steps 1-5 in a single transaction (`BeginTx`, deferred `Rollback`, one 300 s context: `:442-449`) and commits it. Only then, on MySQL, it runs the column-type change outside the transaction with its own 300 s context (`:417-419`, `:478-482`). Before git `d8a4866` the `ALTER` ran inside the transaction, before the commit.
 
 | Order | Function | Effect | Evidence |
 |---|---|---|---|
-| 1 | `getDurationFields` | Collects the UUIDs of `custom_fields` with `type='duration'`. | `internal/driver/data_overhaul.go:67-91` |
-| 2 | `migrateFlightRecords` → `readFlightRecordUpdates` | `readFlightRecordUpdates` (`:132-188`) reads all logbook rows and converts `date` (`02/01/2006` → `2006-01-02`, error aborts), the 11 time columns with `parseTimeToMinutes` and the duration values inside the `custom_fields` JSON. `migrateFlightRecords` (`:190-243`) then runs a prepared `UPDATE` per row (`:198-240`). | `internal/driver/data_overhaul.go:132-243` |
-| 3 | `migratePreviousExperience` | In the `settings2` JSON, `previous_experience` time strings become minutes and missing keys become 0 (query errors are ignored, §11 #24). | `internal/driver/data_overhaul.go:245-309` |
-| 4 | `migrateCurrencyDates` | `currency.time_frame_since` is converted where `time_frame_unit='since'`. | `internal/driver/data_overhaul.go:311-351` |
-| 5 | `migrateLicensingDates` | Non-empty `issued`/`valid_from`/`valid_until` are converted. | `internal/driver/data_overhaul.go:353-405` |
-| 6 | `migrateLogbookTimeColumns` (**MySQL only**) | `ALTER TABLE logbook MODIFY <11 time cols> INT NOT NULL DEFAULT 0`. | `internal/driver/data_overhaul.go:407-426`, `:461-465` |
-| 7 | `tx.Commit()` | — | `internal/driver/data_overhaul.go:467` |
+| 1 | `getDurationFields` | Collects the UUIDs of `custom_fields` with `type='duration'`. | `internal/driver/data_overhaul.go:75-99` |
+| 2 | `migrateFlightRecords` → `readFlightRecordUpdates` | `readFlightRecordUpdates` (`:140-196`) reads all logbook rows and converts `date` with `convertDate` (`02/01/2006` → `2006-01-02`; ISO and empty values pass through; anything else aborts), the 11 time columns with `parseTimeToMinutes` and the string duration values inside the `custom_fields` JSON (`migrateCustomFields`, `:101-138`). `migrateFlightRecords` (`:198-251`) then runs a prepared `UPDATE` per row (`:206-248`). | `internal/driver/data_overhaul.go:140-251` |
+| 3 | `migratePreviousExperience` | In the `settings2` JSON, `previous_experience` time strings become minutes, non-string values are left as they are, and missing keys become 0 (query errors are ignored, §11 #24). | `internal/driver/data_overhaul.go:253-317` |
+| 4 | `migrateCurrencyDates` | `currency.time_frame_since` is passed through `convertDate` where `time_frame_unit='since'`. | `internal/driver/data_overhaul.go:319-359` |
+| 5 | `migrateLicensingDates` | `issued`/`valid_from`/`valid_until` are passed through `convertDate` (empty values stay empty). | `internal/driver/data_overhaul.go:361-415` |
+| 6 | `tx.Commit()` | — | `internal/driver/data_overhaul.go:474-476` |
+| 7 | `migrateLogbookTimeColumns` (**MySQL only**, after the commit) | `ALTER TABLE logbook MODIFY <11 time cols> INT NOT NULL DEFAULT 0` on the `*sql.DB`, own 300 s context. | `internal/driver/data_overhaul.go:417-439`, `:478-482` |
 
-`parseTimeToMinutes` accepts an integer string (returned as-is) or `H:MM`. Anything else returns `0` (`internal/driver/data_overhaul.go:46-65`). SQLite column types are **not** altered (see §11 #10).
+`convertDate` returns `""` for an empty value, returns a value that already parses as `YYYY-MM-DD` unchanged, and otherwise parses `DD/MM/YYYY` (`internal/driver/data_overhaul.go:37-52`). `parseTimeToMinutes` accepts an integer string (returned as-is) or `H:MM`. Anything else returns `0` (`:54-73`). `migrateCustomFields` and `migratePreviousExperience` convert only string values (`:119-122`, `:302-304`). Since git `d8a4866` the data steps are therefore safe to re-run on already-converted data (§11 #4). SQLite column types are **not** altered (see §11 #10).
 
 ## 4. Components & Files
 
@@ -114,14 +114,14 @@ This runs in a single transaction (`BeginTx`, deferred `Rollback`, one 300 s con
 
 ### 4.2 API Endpoints
 
-All are inside the `r.Use(app.Auth)` group (`app/routes.go:26-27`, `:150-154`, `:162`).
+All are inside the `r.Use(app.Auth)` group (`app/routes.go:26-27`, `:151-155`, `:163`).
 
 | Method | Path | Handler | Notes |
 |---|---|---|---|
 | GET | `/api/db/filename` | `HandlerApiDBFile` `app/handlers_db.go:12-14` | Returns the raw `-dsn` string (see §11 #7). |
-| POST | `/api/db/upload-db` | `HandlerApiUploadDB` `app/handlers_db.go:16-61` | Multipart field `dbfile`. SQLite only. Closes the pool, overwrites the file and reopens it through `createDBConnection`, so `validateDB` and possibly the overhaul run on the uploaded file. Not atomic (§11 #20). |
-| GET | `/api/db/download-db` | `HandlerApiDownloadDB` `app/handlers_db.go:63-88` | Streams the file at the DSN path as `application/octet-stream`. Returns 404 for MySQL (the DSN is not a file). |
-| GET | `/api/distance/{departure}/{arrival}` | `HandlerDistance` `app/handlers_aux.go:41-46` | Thin wrapper over `DBModel.Distance`. |
+| POST | `/api/db/upload-db` | `HandlerApiUploadDB` `app/handlers_db.go:16-67` | Multipart field `dbfile`. SQLite only. Closes the pool, overwrites the file and reopens it through `createDBConnection`, so `validateDB` and possibly the overhaul run on the uploaded file. After swapping `app.db` it runs `CheckDefaultValues` on the uploaded DB (`:60-64`). Not atomic (§11 #20). |
+| GET | `/api/db/download-db` | `HandlerApiDownloadDB` `app/handlers_db.go:69-94` | Streams the file at the DSN path as `application/octet-stream`. Returns 404 for MySQL (the DSN is not a file). |
+| GET | `/api/distance/{departure}/{arrival}` | `HandlerDistance` `app/handlers_aux.go:109-114` | Thin wrapper over `DBModel.Distance`. |
 
 ### 4.3 Data Access
 
@@ -141,20 +141,20 @@ Distance semantics, airport lookups and cache behaviour from the airport side: s
 
 | Table / view | Read | Written |
 |---|---|---|
-| `logbook` | `internal/models/helpers.go:69`; `internal/driver/data_overhaul.go:138` | `internal/models/flightrecords.go:66`, `:94`, `:123`, `:209`, `:278`; `internal/models/aircrafts.go:197`; `internal/models/helpers.go:91`; `internal/driver/data_overhaul.go:199` |
+| `logbook` | `internal/models/helpers.go:69`; `internal/driver/data_overhaul.go:146` | `internal/models/flightrecords.go:66`, `:94`, `:123`, `:209`, `:278`; `internal/models/aircrafts.go:197`; `internal/models/helpers.go:91`; `internal/driver/data_overhaul.go:207`, `:424` (MySQL `ALTER`) |
 | `logbook_view` | `internal/models/flightrecords.go:39`, `:140`, `:179`, `:230`, `:262`; `internal/models/aircrafts.go:20`, `:36`, `:49`, `:57`, `:72`, `:96`; `internal/models/persons.go:159`; `internal/models/helpers.go:113` | — (view) |
 | `airports` / `airports_custom` / `airports_view` | `internal/models/airports.go:50`, `:132` / `:138`, `:148` / `:27`, `:126` | `internal/models/airports.go:65`, `:78` / `:154`, `:172`, `:182` |
 | `aircrafts` / `aircrafts_view` / `aircraft_categories` | `internal/models/aircrafts.go:25` (subquery) / `:132`, `:171` / `:73`, `:95` | `internal/models/aircrafts.go:18`, `:33`, `:46`, `:190` / — / `:70`, `:158` |
 | `attachments` / `attachments_view` | `attachments_view`: `internal/models/attachments.go:15`, `:42`, `:102` | `internal/models/attachments.go:68`, `:79`, `:89` |
-| `licensing` | `internal/models/licensing.go:11`, `:39`; `internal/driver/data_overhaul.go:356` | `internal/models/licensing.go:57`, `:69`, `:88`, `:105`, `:114`; `internal/driver/data_overhaul.go:395` |
-| `currency` | `internal/models/currency.go:10`, `:36`; `internal/driver/data_overhaul.go:314` | `internal/models/currency.go:50`, `:64`, `:76`; `internal/driver/data_overhaul.go:343` |
-| `custom_fields` | `internal/models/custom_fields.go:10`, `:37`; `internal/driver/data_overhaul.go:68` | `internal/models/custom_fields.go:52`, `:68`, `:83` |
+| `licensing` | `internal/models/licensing.go:11`, `:39`; `internal/driver/data_overhaul.go:364` | `internal/models/licensing.go:57`, `:69`, `:88`, `:105`, `:114`; `internal/driver/data_overhaul.go:405` |
+| `currency` | `internal/models/currency.go:10`, `:36`; `internal/driver/data_overhaul.go:322` | `internal/models/currency.go:50`, `:64`, `:76`; `internal/driver/data_overhaul.go:351` |
+| `custom_fields` | `internal/models/custom_fields.go:10`, `:38`; `internal/driver/data_overhaul.go:76` | `internal/models/custom_fields.go:53`, `:67`, `:81` |
 | `persons` / `person_to_log` | `internal/models/persons.go:35`, `:40`, `:74` / `:49`, `:113`, `:158`, `:204` | `internal/models/persons.go:80`, `:99`, `:194` / `:119`, `:137`, `:147`, `:187` |
-| `settings2` | `internal/models/settings.go:17`; `internal/driver/driver.go:137`; `internal/driver/data_overhaul.go:250` | `internal/models/settings.go:59`; `internal/driver/driver.go:153`; `internal/driver/data_overhaul.go:306` |
+| `settings2` | `internal/models/settings.go:17`; `internal/driver/driver.go:137`; `internal/driver/data_overhaul.go:258` | `internal/models/settings.go:59`; `internal/driver/driver.go:153`; `internal/driver/data_overhaul.go:314` |
 | `tokens` | `internal/models/auth.go:55` | `internal/models/auth.go:102`, `:115` |
 | `metadata` | `internal/driver/driver.go:100` | `internal/driver/driver.go:123` |
 
-**Transactions in use:** `GenerateAircraftTable` (`internal/models/aircrafts.go:12-84`), `UpdateAirportDB` (`internal/models/airports.go:60-92`), `UpdateFlightRecordsDistance` (`internal/models/helpers.go:78-102`), `dataOverhaulMigration` (`internal/driver/data_overhaul.go:432-467`). The model transactions use `m.DB.Begin()` without a context, so only the statements are bounded by the context.
+**Transactions in use:** `GenerateAircraftTable` (`internal/models/aircrafts.go:12-84`), `UpdateAirportDB` (`internal/models/airports.go:60-92`), `UpdateFlightRecordsDistance` (`internal/models/helpers.go:78-102`), `dataOverhaulMigration` (`internal/driver/data_overhaul.go:445-476`; the MySQL `ALTER` at `:478-482` runs after the commit, outside it). The model transactions use `m.DB.Begin()` without a context, so only the statements are bounded by the context.
 
 ### 4.4 UI
 
@@ -183,18 +183,18 @@ Distance semantics, airport lookups and cache behaviour from the airport side: s
 | `aircrafts` | `reg_name` | `aircraft_model NOT NULL`, `custom_categories NOT NULL DEFAULT ''` | `:109-113` |
 | `aircraft_categories` | `model` | `categories NOT NULL`, `time_fields_auto_fill FullText` (JSON) | `:115-119` |
 | `currency` | `uuid` | name, metric, target, `time_frame_*`, comparison, `filters`/`sub_metrics` FullText (JSON) | `:121-132` |
-| `custom_fields` | `uuid` | name, description, `category DEFAULT 'Custom'`, `type`, `stats_function`, sizes, `display_order` | `:134-145` |
-| `persons` | `uuid` | first/middle/last name, phone, email, remarks | `:147-155` |
-| `person_to_log` | `uuid` (unused surrogate; see the TODO) | `person_uuid`, `log_uuid`, `role` | `:157-166` |
+| `custom_fields` | `uuid` | name, description, `category DEFAULT 'Custom'`, `type`, `stats_function`, `pdf_header NOT NULL DEFAULT ''` (since schema `103`). The former `size_xs`/`size_md`/`size_lg`/`display_order` columns were removed from the definition in git `9bb8263` but stay in upgraded DBs (§11 #25). | `:134-142` |
+| `persons` | `uuid` | first/middle/last name, phone, email, remarks | `:144-152` |
+| `person_to_log` | `uuid` (unused surrogate; see the TODO) | `person_uuid`, `log_uuid`, `role` | `:154-163` |
 
 ### 5.2 Views
 
 | View | Purpose | Engine differences | Lines |
 |---|---|---|---|
-| `logbook_view` | CTE + window functions. `rn = ROW_NUMBER() OVER (ORDER BY date, departure_time)`, `prev_uuid`/`next_uuid` via `LAG`/`LEAD` (no unique tie-breaker, §11 #22), `has_track`, `attachments_count` (grouped subquery on `attachments`). NULL → `0`/`''`/`'{}'` defaults only for landings, `distance`, `custom_fields`, `tags` and `signature`. The other text columns (`departure_*`, `arrival_*`, `aircraft_model`, `reg_name`, `sim_type`, `pic_name`, `remarks`) pass through raw. | SQLite also maps `''` landings to 0 with `NULLIF`. MySQL only uses `IFNULL`. | `:168-227` |
-| `airports_view` | `airports UNION airports_custom` (custom code is upper-cased into both `icao` and `iata`). | identical | `:229-242` |
-| `aircrafts_view` | Joins `aircrafts`, `aircraft_categories` and `logbook`. Merged `categories` string, `SUM(total_time)`. | SQLite uses `||`, MySQL uses `CONCAT` | `:244-293` |
-| `attachments_view` | Attachment plus `document_size` (KB) and `flight_date`/`flight_info` from `logbook`. | identical text (both use `CONCAT`) | `:295-342` |
+| `logbook_view` | CTE + window functions. `rn = ROW_NUMBER() OVER (ORDER BY date, departure_time)`, `prev_uuid`/`next_uuid` via `LAG`/`LEAD` (no unique tie-breaker, §11 #22), `has_track`, `attachments_count` (grouped subquery on `attachments`). NULL → `0`/`''`/`'{}'` defaults only for landings, `distance`, `custom_fields`, `tags` and `signature`. The other text columns (`departure_*`, `arrival_*`, `aircraft_model`, `reg_name`, `sim_type`, `pic_name`, `remarks`) pass through raw. | SQLite also maps `''` landings to 0 with `NULLIF`. MySQL only uses `IFNULL`. | `:165-224` |
+| `airports_view` | `airports UNION airports_custom` (custom code is upper-cased into both `icao` and `iata`). | identical | `:226-239` |
+| `aircrafts_view` | Joins `aircrafts`, `aircraft_categories` and `logbook`. Merged `categories` string, `SUM(total_time)`. | SQLite uses `||`, MySQL uses `CONCAT` | `:241-290` |
+| `attachments_view` | Attachment plus `document_size` (KB) and `flight_date`/`flight_info` from `logbook`. | identical text (both use `CONCAT`) | `:292-339` |
 
 ### 5.3 Type mapping (`internal/driver/db_structure.go:6-14`)
 
@@ -212,10 +212,10 @@ Distance semantics, airport lookups and cache behaviour from the airport side: s
 
 | Data | Format | Evidence |
 |---|---|---|
-| Flight times, sim time, `previous_experience` | integer minutes | `internal/models/structs.go:40-54`, `:59-62`, `:255-271` |
-| `logbook.date`, licence dates, currency since | `YYYY-MM-DD` | `internal/driver/data_overhaul.go:15`, `:311-405` |
+| Flight times, sim time, `previous_experience` | integer minutes | `internal/models/structs.go:40-54`, `:59-62`, `:276-292` |
+| `logbook.date`, licence dates, currency since | `YYYY-MM-DD` | `internal/driver/data_overhaul.go:15`, `:319-415` |
 | Departure/arrival time | `HHMM` text | `app/helpers.go:78`, `:88` |
-| `logbook.custom_fields` | JSON object keyed by custom-field UUID. Duration values are minutes. The view default is `'{}'`. | `internal/driver/data_overhaul.go:93-130`; `internal/driver/db_structure.go:184` |
+| `logbook.custom_fields` | JSON object keyed by custom-field UUID. Duration values are minutes. The view default is `'{}'`. | `internal/driver/data_overhaul.go:101-138`; `internal/driver/db_structure.go:181` |
 | `logbook.track` | JSON `[[lat,lon],...]` stored as BLOB. Sent to the UI as base64 (`[]byte`). | `app/handlers_flightrecord.go:130-148`; `internal/models/structs.go:68` |
 | `logbook.tags` | comma-separated string | `app/ui/src/components/UIElements/FlightTags.jsx:9` |
 | `settings2.settings` | JSON of `models.Settings` (row `id=0`) | `internal/models/settings.go:17-25`, `:54-60` |
@@ -231,11 +231,12 @@ Distance semantics, airport lookups and cache behaviour from the airport side: s
 | `FlightRecord` (+`DisplayName`) | `:25-88` | `logbook` / `logbook_view`. Calculated fields `:73-78`. |
 | `Airport` | `:91-100` | `airports`, `airports_custom`, `airports_view` |
 | `Person`, `PersonToLog`, `PersonForLog`, `FlightRecordForPerson` | `:103-137` | `persons`, `person_to_log` (`TotalTime` is still `string`, `:131`) |
-| `ColumnsWidth`, `ColumnsHeader`, `ExportPDF` | `:139-218` | inside the settings JSON (`export_a4`, `export_a5`) |
-| `Settings` | `:221-272` | `settings2.settings` JSON |
-| `License` / `Attachment` | `:275-286` / `:289-298` | `licensing` / `attachments_view` |
-| `Aircraft` / `Category` | `:301-308` / `:310-324` | `aircrafts_view` / `aircraft_categories` |
-| `Currency` / `CustomField` | `:327-340` / `:343-354` | `currency` / `custom_fields` |
+| `ColumnsWidth`, `ColumnsHeader`, `ExportPDF` | `:139-221` | inside the settings JSON (`export_a4`, `export_a5`) |
+| `FlightRecordLayoutItem`, `FlightRecordLayout`, `Profile` | `:223-239` | inside the settings JSON (`logbook_profile`, `export_a4.table_profile`, `export_a5.table_profile`) |
+| `Settings` | `:242-295` | `settings2.settings` JSON |
+| `License` / `Attachment` | `:298-309` / `:312-321` | `licensing` / `attachments_view` |
+| `Aircraft` / `Category` | `:324-331` / `:333-347` | `aircrafts_view` / `aircraft_categories` |
+| `Currency` / `CustomField` | `:350-363` / `:366-374` | `currency` / `custom_fields` (`PDFHeader` ↔ `pdf_header`) |
 
 ### 5.6 In-memory state (lost on restart, not reset by DB upload)
 
@@ -253,23 +254,25 @@ All three maps are unexported package variables of `internal/models`, so code ou
 
 **Create flight:** POST `/api/logbook/new` → `HandlerApiFlightRecordNew` (`app/handlers_flightrecord.go:73-103`) generates the UUID → `InsertFlightRecord` (`internal/models/flightrecords.go:87-116`) computes `distance` with `Distance` → `INSERT logbook` → `GenerateAircraftTable` (transaction over `aircrafts`/`aircraft_categories` derived from `logbook_view`; the error is ignored at `app/handlers_flightrecord.go:95`).
 
-**Upgrade start (v4 → v5):** `OpenDB` → `validateDB` reads `"45"` → `dataOverhaulMigration` (one transaction) → table/column/index reconciliation → views recreated → `metadata` gets `101` (§3.2-3.4).
+**Upgrade start (v4 → v5):** `OpenDB` → `validateDB` reads `"45"` → `dataOverhaulMigration` (one transaction) → table/column/index reconciliation → views recreated → `metadata` gets `103` (§3.2-3.4).
 
-**DB upload (SQLite):** `DBUploadButton` → POST `/api/db/upload-db` → `HandlerApiUploadDB` closes `app.db.DB`, truncates and writes the DSN file, then runs `createDBConnection` (full `validateDB`) and swaps `app.db` → the UI invalidates all queries.
+**Upgrade start (5.0.0-alpha1/alpha2 → current):** stored `"101"` ≠ `"103"` → no overhaul → reconciliation adds `custom_fields.pdf_header` → views recreated → `metadata` gets `103` (§3.2).
+
+**DB upload (SQLite):** `DBUploadButton` → POST `/api/db/upload-db` → `HandlerApiUploadDB` closes `app.db.DB`, truncates and writes the DSN file, then runs `createDBConnection` (full `validateDB`), swaps `app.db` and runs `CheckDefaultValues` on the new DB (`app/handlers_db.go:53-64`) → the UI invalidates all queries.
 
 ## 7. Config & Constants
 
 | Name | Value | Kind | Evidence |
 |---|---|---|---|
-| `-engine` | `sqlite` (or `mysql`) | (configurable) | `app/main.go:85` |
-| `-dsn` | `web-logbook.sql` (SQLite path) or `user:pass@tcp(host)/db` | (configurable) | `app/main.go:86`; `README.md:307-315` |
+| `-engine` | `sqlite` (or `mysql`) | (configurable) | `app/main.go:87` |
+| `-dsn` | `web-logbook.sql` (SQLite path) or `user:pass@tcp(host)/db` | (configurable) | `app/main.go:88`; `README.md:325-333` |
 | Docker DSN | `/data/web-logbook.sql` | (configurable, CMD arg) | `docker/release.Dockerfile:41` |
-| `schemaVersion` | `"101"` | (hardcoded) | `internal/driver/db_structure.go:4` |
+| `schemaVersion` | `"103"` | (hardcoded) | `internal/driver/db_structure.go:4` |
 | Overhaul threshold | stored version `< 100` | (hardcoded) | `internal/driver/driver.go:49` |
 | `DefaultTimeout` (models) | 60 s | (hardcoded) | `internal/models/helpers.go:14` |
 | Schema version read/write, settings seed | 60 s each | (hardcoded) | `internal/driver/driver.go:97`, `:120`, `:130` |
 | `initTable` / `initView` / `dropView` | 300 s each | (hardcoded) | `internal/driver/db_operations.go:95`, `:232`, `:245` |
-| `dataOverhaulMigration` (whole transaction) | 300 s | (hardcoded) | `internal/driver/data_overhaul.go:429` |
+| `dataOverhaulMigration` (data transaction) / `migrateLogbookTimeColumns` (MySQL `ALTER`, own context) | 300 s / 300 s | (hardcoded) | `internal/driver/data_overhaul.go:442`, `:418` |
 | `UpdateFlightRecordsDistance` / `CreateDistanceCache` | 60 s / 120 s | (hardcoded) | `internal/models/helpers.go:66`, `:107` |
 | `UpdateAirportDB` | 300 s | (hardcoded) | `internal/models/airports.go:56` |
 | Legacy / new date layout | `02/01/2006` → `2006-01-02` | (hardcoded) | `internal/driver/data_overhaul.go:14-15` |
@@ -278,29 +281,31 @@ All three maps are unexported package variables of `internal/models`, so code ou
 | Index name | `<table>_<column>` | (hardcoded) | `internal/driver/db_operations.go:223` |
 | Upload multipart memory | `1000 << 20` bytes | (hardcoded) | `app/handlers_db.go:22` |
 | UI DB filename cache | 86 400 000 ms | (hardcoded) | `app/ui/src/components/Settings/GeneralSettings/DBControl/DBUploadButton.jsx:20-21` |
-| Driver versions | `go-sql-driver/mysql v1.10.1`, `modernc.org/sqlite v1.60.1` | (go.mod) | `go.mod:9`, `go.mod:15` |
+| Driver versions | `go-sql-driver/mysql v1.10.1`, `modernc.org/sqlite v1.61.1` | (go.mod) | `go.mod:9`, `go.mod:15` |
 | Pool limits / SQLite pragmas | **Not found in code.** No `SetMaxOpenConns`, `busy_timeout` or `journal_mode`. | — | `internal/driver/driver.go:23-40` |
 
 ## 8. Error Handling & Edge Cases
 
 | Case | Behaviour | Evidence |
 |---|---|---|
-| Unknown engine string | `sql.Open` fails → `OpenDB` returns the error → `errorLog.Fatalln`. | `internal/driver/driver.go:24-27`; `app/main.go:139-141` |
-| Overhaul error | Wrapped as `migration failed: ...`, which makes startup fatal. The SQLite transaction rolls back. | `internal/driver/driver.go:50-52`; `internal/driver/data_overhaul.go:436` |
-| Legacy date not `DD/MM/YYYY` | The overhaul aborts with `invalid flight date "<v>" for <uuid>`. | `internal/driver/data_overhaul.go:162-165` |
-| Unparseable legacy time | Silently becomes `0`. | `internal/driver/data_overhaul.go:55-63` |
+| Unknown engine string | `sql.Open` fails → `OpenDB` returns the error → `errorLog.Fatalln`. | `internal/driver/driver.go:24-27`; `app/main.go:140-143` |
+| Overhaul error (data steps) | Wrapped as `migration failed: ...`, which makes startup fatal. The data transaction rolls back (deferred `Rollback`) on both engines. | `internal/driver/driver.go:50-52`; `internal/driver/data_overhaul.go:445-449` |
+| Overhaul error (MySQL `ALTER`) | The data is already committed, the version is still `< 100`, startup is fatal. The next start re-runs the data steps (no-op on converted data) and retries the `ALTER`. | `internal/driver/data_overhaul.go:474-482`; `internal/driver/driver.go:47-54` |
+| Legacy date neither `DD/MM/YYYY` nor `YYYY-MM-DD` | The overhaul aborts with `invalid flight date "<v>" for <uuid>`. An empty date passes through as `""`. | `internal/driver/data_overhaul.go:37-52`, `:170-173` |
+| Unparseable legacy time | Silently becomes `0`. | `internal/driver/data_overhaul.go:63-71` |
 | Metadata read error | Printed. The version is treated as `"unknown"`. | `internal/driver/driver.go:101-109` |
 | `metadataTable.initTable` error | Ignored. | `internal/driver/driver.go:44` |
 | `isExists` | Any error, not only "no such table", counts as "table missing" → `CREATE TABLE` is attempted. | `internal/driver/db_operations.go:115-120` |
 | Add column fails | `failed to add column X to table Y: ...` → startup fatal. | `internal/driver/db_operations.go:169-172` |
 | View drop error | Ignored. The `CREATE VIEW` error is returned. | `internal/driver/db_operations.go:235-239` |
-| MySQL < 8.0 / old MariaDB | `logbook_view` needs a CTE and window functions, so view creation fails on servers without them. | `internal/driver/db_structure.go:199-225` |
+| MySQL < 8.0 / old MariaDB | `logbook_view` needs a CTE and window functions, so view creation fails on servers without them. | `internal/driver/db_structure.go:196-222` |
 | NULL in a scanned column | Model scans target plain Go types. A NULL that the view does not default fails the scan (`converting NULL to ...`). | e.g. `internal/models/flightrecords.go:150-156` |
-| Driver logging | `fmt.Print*` to stdout only. It does not reach `weblogbook-output.log`, because the app loggers are created separately. | `internal/driver/driver.go:57`, `:104-112`; `app/main.go:97-108` |
+| Driver logging | `fmt.Print*` to stdout only. It does not reach `weblogbook-output.log`, because the app loggers are created separately. | `internal/driver/driver.go:57`, `:104-112`; `app/main.go:99-110` |
 | Upload on MySQL | Rejected: `upload DB supported for SQLite engine only`. | `app/handlers_db.go:17-20` |
 | Upload: `os.Create` / `io.Copy` fails | 500, but `app.db.DB` was already closed and is not reopened, so every later request fails until restart (§11 #20). | `app/handlers_db.go:36-51` |
 | Upload: reopen fails | `errorLog.Fatalln` → the process exits. The on-disk file is already replaced (§11 #20). | `app/handlers_db.go:39-56` |
-| Download on MySQL | `os.Open(dsn)` fails → 404 `File not found`. | `app/handlers_db.go:64-67` |
+| Upload: `CheckDefaultValues` fails | 500, but the uploaded DB is already open and swapped into `app.db`, so it stays in use. | `app/handlers_db.go:58-64` |
+| Download on MySQL | `os.Open(dsn)` fails → 404 `File not found`. | `app/handlers_db.go:70-73` |
 | Distance for unknown airport | `GetAirportByID` returns a zero `Airport` and `nil` error, so the distance is computed from (0,0) (§11 #6). | `internal/models/airports.go:32-35`; `internal/models/helpers.go:45-52` |
 | Distance for the same place | `0`, not cached. | `internal/models/helpers.go:30-32` |
 
@@ -316,7 +321,7 @@ All three maps are unexported package variables of `internal/models`, so code ou
 | `ARCHITECTURE_PERSONS.md` | `persons`, `person_to_log` (no FK, orphan rows §11 #16). |
 | `ARCHITECTURE_AIRCRAFT_AIRPORTS.md` | `aircrafts`, `aircraft_categories`, `aircrafts_view`, `airports*`, airport download, `airportCache`, `distanceCache`. |
 | `ARCHITECTURE_CURRENCY_LICENSING.md` | `currency`, `licensing`, `attachments`, `attachments_view`. The overhaul converts their dates. |
-| `ARCHITECTURE_PDF_EXPORT.md` | `GetFlightRecordsForExport`, `CalculateTotals` (`internal/models/flightrecords.go:4-24`), export settings inside the settings JSON. |
+| `ARCHITECTURE_PDF_EXPORT.md` | `GetFlightRecordsForExport`, `CalculateTotals` (`internal/models/flightrecords.go:4-24`), export settings inside the settings JSON. `custom_fields.pdf_header` is read by `GetCustomFields` (`app/handlers_export.go:108`) and used as the PDF column label (`internal/pdfexport/layout.go:301`). |
 | `ARCHITECTURE_IMPORT.md` | The import inserts through `InsertFlightRecord`/`AddPerson`/`AddPersonToLog`, then calls `GenerateAircraftTable` (`app/handlers_import.go:217`, `:347`). |
 | `ARCHITECTURE_FRONTEND.md` | `handleFetch`, global `queryClient.invalidateQueries()` after a DB upload. |
 
@@ -324,47 +329,48 @@ All three maps are unexported package variables of `internal/models`, so code ou
 
 | Item | State |
 |---|---|
-| Driver/model tests | **None.** There is no test file in `internal/driver` or `internal/models`. The only Go tests are `app/handlers_import_test.go` and `internal/nighttime/nighttime_test.go`. |
+| Driver/model tests | **None.** There is no test file in `internal/driver` or `internal/models`. The Go tests are `app/handlers_import_test.go`, `app/handlers_aux_test.go`, `internal/nighttime/nighttime_test.go` and `internal/pdfexport/layout_test.go`; none of them touches the DB layer. |
 | How to run | `make test` → `go test -v ./... -coverpkg=./...` (`Makefile:32-33`). It needs `make build_ui` first (`app/ui/dist` embed). |
 | CI | `.github/workflows/go.yml` runs vet + tests. It has no MySQL service, so the MySQL paths are never exercised. |
-| Gaps (highest value first) | 1) Pure functions `convertDate`, `parseTimeToMinutes`, `migrateCustomFields` (`internal/driver/data_overhaul.go:37-130`). 2) `validateDB` on a temp-file SQLite DB (`t.TempDir()`; avoid `:memory:` because each pooled connection gets its own DB): fresh DB, v4 fixture (`"45"`, `HH:MM`, `DD/MM/YYYY`), already-migrated DB, metadata with mixed `created_at` formats. 3) `ensureColumnsExist` adds a new column to a populated table. 4) The `Distance` cache key and the unknown-airport case. |
+| Gaps (highest value first) | 1) Pure functions `convertDate` (incl. the empty and already-ISO pass-through), `parseTimeToMinutes`, `migrateCustomFields` (`internal/driver/data_overhaul.go:37-138`). 2) `validateDB` on a temp-file SQLite DB (`t.TempDir()`; avoid `:memory:` because each pooled connection gets its own DB): fresh DB, v4 fixture (`"45"`, `HH:MM`, `DD/MM/YYYY`), a second run of the overhaul on already-converted data, an already-migrated DB, a `"101"` DB with the legacy `custom_fields` columns (§11 #25), metadata with mixed `created_at` formats. 3) `ensureColumnsExist` adds a new column to a populated table. 4) The `Distance` cache key and the unknown-airport case. |
 
 ## 11. Known Issues & Tech Debt
 
-| # | Issue | Location | Status | Severity | verified: 2026-10-14 |
+| # | Issue | Location | Status | Severity | verified: 2026-11-08 |
 |---|---|---|---|---|---|
-| 1 | The "current" schema version is chosen with `ORDER BY created_at DESC` on a **string** column. Rows written by app 2.44.0–2.45.0 used `DD.MM.YYYY hh:mm:ss` (format introduced in git `dcf1263`, first released in 2.44.0; changed in `a46e936` = 3.0.0-alpha1). Current rows use `YYYYMMDD hh:mm:ss`. Any old row dated day 21–31 compares greater than every `20xx...` row, so `getSchemaVersion` keeps returning that old dotted version (e.g. `"2.0.3"`). `Atoi` then fails → the v5 overhaul is **skipped** and the stamp `101` never "wins". Legacy `H:MM` strings stay in columns that models scan into Go `int`, so logbook reads fail when the string is converted to int. Fix idea: `ORDER BY id DESC`. | `internal/driver/driver.go:100`, `:124`, `:47-54` | Confirmed: deterministic string ordering. Both formats are present in git history. | BLOCKER | verified: 2026-10-14 |
-| 2 | Non-integer stored versions (DBs last opened by app ≤ 3.1.x: `"3.1.0"`, `"3.0.0-beta3"`, …) skip the overhaul silently and are stamped `101` with legacy data. | `internal/driver/driver.go:47-54` | Confirmed: `strconv.Atoi` error → branch not taken. | MAJOR | verified: 2026-10-14 |
-| 3 | The overhaul runs **before** table/column reconciliation. DBs last opened by app 3.2.0–3.10.0 (schema `7`–`10`) lack `currency.time_frame_since` (added at `11`, git `71526a4`, first released in 3.11.0). Schema `6` (git `1407f99`) was never released. The overhaul's currency `SELECT` fails → `migration failed` → the app cannot start. | `internal/driver/driver.go:44-54` vs `:60-70`; `internal/driver/data_overhaul.go:314` | Confirmed: call order is fixed and the column is absent in those schema versions. | MAJOR | verified: 2026-10-14 |
-| 4 | The overhaul is not idempotent (`convertDate` rejects ISO dates) and the `101` stamp is written only after table/view reconciliation. If anything fails between the overhaul commit and the stamp, every later start re-runs the overhaul and aborts. The same happens after running a v4 binary on a v5 DB, which re-stamps `45`. | `internal/driver/data_overhaul.go:162-165`, `:329-332`; `internal/driver/driver.go:56-90` | Confirmed: control flow. | MAJOR | verified: 2026-10-14 |
-| 5 | MySQL: `ALTER TABLE ... MODIFY` runs inside the overhaul transaction. MySQL DDL implicitly commits, so the earlier UPDATEs are committed before the ALTER. A failing ALTER leaves converted data with version `< 100` → trap #4. | `internal/driver/data_overhaul.go:432-467` | Confirmed: MySQL implicit-commit semantics on DDL. | MAJOR | verified: 2026-10-14 |
-| 6 | `Distance` treats a not-found airport as coordinates (0,0): `GetAirportByID` returns `nil` error on `ErrNoRows`. The bogus distance is cached and persisted by `InsertFlightRecord`. It remains cached after the airport is added as a custom airport, because custom-airport CRUD does not clear the caches. `calculateNightTime` uses the same lookup, so night time is also computed against (0,0) for unknown codes. Same issue: `ARCHITECTURE_AIRCRAFT_AIRPORTS.md` §11 #1; for the `/api/distance` endpoint and lower-case codes see `ARCHITECTURE_APPLICATION.md` §11 #15. | `internal/models/helpers.go:45-52`; `internal/models/airports.go:32-35`, `:143-184`; `internal/models/flightrecords.go:91`; `app/helpers.go:73`, `:83` | Confirmed: code path. | MAJOR | verified: 2026-10-14 |
-| 7 | `GET /api/db/filename` returns the raw DSN. On MySQL that includes the password. Canonical entry (auth default, listen address): see `ARCHITECTURE_APPLICATION.md` §11 #4. | `app/handlers_db.go:12-14` | Confirmed | MAJOR | verified: 2026-10-14 |
-| 8 | DB upload does not reset `airportCache`, `distanceCache` or `authCache`. Stale airports/distances and a stale auth flag/secret from the previous DB stay until restart or a settings save. Auth consequence: `Auth` reads the cached `isAuthEnabled`, so if the previous DB had auth off, an uploaded DB with auth on is served without authentication. `app.timeFieldsAutoFormat` (loaded at startup, refreshed only by the settings handler) also keeps the previous DB's value. Canonical entry: `ARCHITECTURE_APPLICATION.md` §11 #2 (also `ARCHITECTURE_AUTH.md` §11 #8, `ARCHITECTURE_SETTINGS.md` §11 #5). | `app/handlers_db.go:53-58`; `internal/models/airports.go:13`; `internal/models/helpers.go:26`; `internal/models/auth.go:11`, `:28-41`; `app/handlers_auth.go:115-124`; `app/main.go:199`; `app/handlers_settings.go:48` | Confirmed: `authCache.Clear()` is called only in `UpdateSettings` (`internal/models/settings.go:65`) | MAJOR | verified: 2026-10-14 |
-| 9 | `parseTimeToMinutes` maps any value other than an integer or `H:MM` to `0` without logging, so legacy values in other formats are lost silently. | `internal/driver/data_overhaul.go:55-63` | Confirmed | MINOR | verified: 2026-10-14 |
-| 10 | Schema drift after v5. Migrated SQLite DBs keep the `TEXT` declared type on the 11 time columns (only MySQL is altered, and `ensureColumnsExist` never alters existing columns), so values are stored as text. MySQL fresh DBs use `SMALLINT`, migrated ones `INT`. SQL `MIN`/`MAX`/`ORDER BY`/comparisons on time columns would differ between fresh and migrated DBs. No such query exists today. | `internal/driver/data_overhaul.go:461-465`; `internal/driver/db_operations.go:167-173`; `internal/driver/db_structure.go:11`, `:32-45` | Confirmed (drift); impact latent | MINOR | verified: 2026-10-14 |
-| 11 | `logbook_stats_view` was removed from the code in v5 but is never dropped, so upgraded DBs keep a dead view with legacy `HH:MM` parsing logic. | `internal/driver/driver.go:73`; git `8b2fa8d` | Confirmed | MINOR | verified: 2026-10-14 |
-| 12 | The MySQL index check queries `information_schema.statistics` by `table_name` only (no `table_schema`). A same-named table in another schema can hide a missing index. | `internal/driver/db_operations.go:45` | Confirmed | MINOR | verified: 2026-10-14 |
-| 13 | `UpdateFlightRecordsDistance` returns on a `Scan` error without `tx.Rollback()`, which leaks an open transaction. Both distance helpers swallow every error without logging. | `internal/models/helpers.go:72-102`, `:116-125` | Confirmed | MINOR | verified: 2026-10-14 |
-| 14 | `metadataTable.initTable` error is ignored, and `getSchemaVersion` maps any error to `"unknown"`. A transient read error on a v4 DB skips the overhaul and stamps `101`. | `internal/driver/driver.go:44`, `:101-109` | Confirmed | MINOR | verified: 2026-10-14 |
-| 15 | The `distanceCache` key concatenates the two codes without a separator, so mixed-length codes can collide (`ABCD`+`EFG` and `EFGA`+`BCD` both give `EFGABCD`). | `internal/models/helpers.go:34-39` | Confirmed | MINOR | verified: 2026-10-14 |
-| 16 | `person_to_log` rows are never deleted when a flight is deleted (there is no `DELETE ... WHERE log_uuid`). Orphans accumulate and still feed `GetPersonsRoles`. | `app/handlers_flightrecord.go:52-70`; `internal/models/persons.go:147`, `:204` | Confirmed | MINOR | verified: 2026-10-14 |
-| 17 | `tokens.username` is typed `UUID` (MySQL `VARCHAR(36)`) but stores the login name, so MySQL sign-in breaks for logins longer than 36 characters. `HandlerLogin` also has no `return` after `handleError` for `AddToken` (see `ARCHITECTURE_AUTH.md` §11 #3, #15). | `internal/driver/db_structure.go:104`; `app/handlers_auth.go:206`, `:211-213`, `:149-153`; `internal/models/auth.go:55-56` | Confirmed: strict mode rejects the INSERT (login returns 500). Non-strict mode stores the login truncated to 36 chars, so `VerifyToken` (`WHERE username = ?` with the full login from the JWT claim) never matches and every authenticated request returns 401. | MINOR | verified: 2026-10-14 |
-| 18 | There are no pool limits and no SQLite `busy_timeout`/journal mode. Concurrent writers (e.g. the startup distance-update transaction while `CreateDistanceCache` reads) may get `SQLITE_BUSY` ("database is locked"). | `internal/driver/driver.go:23-40`; `app/main.go:202-206` | Suspected: confirm by reproducing concurrent writes on SQLite | MINOR | verified: 2026-10-14 |
-| 19 | `migrateLicensingDates` scans nullable `DateTime` columns into a plain `string`. A NULL date would abort the overhaul and therefore startup. | `internal/driver/data_overhaul.go:367` | Suspected: confirm by finding NULL licence dates in real v4 DBs | MINOR | verified: 2026-10-14 |
-| 20 | `HandlerApiUploadDB` closes the pool and truncates the live SQLite file before anything is validated. A failing `os.Create`/`io.Copy` returns 500 but leaves `app.db.DB` closed, so all later requests fail with `sql: database is closed` until restart. An upload that `OpenDB`/`validateDB` rejects hits `errorLog.Fatalln` with the original DB already overwritten, and every restart then fails the same way. Same issue: `ARCHITECTURE_APPLICATION.md` §11 #1. | `app/handlers_db.go:36-56` | Confirmed: control flow | MAJOR | verified: 2026-10-14 |
-| 21 | `migrateLicensingDates` overwrites `issued`/`valid_from`/`valid_until` with `""` before formatting the error, so the abort message shows an empty value instead of the bad legacy date. Same issue: `ARCHITECTURE_CURRENCY_LICENSING.md` §11 #19. | `internal/driver/data_overhaul.go:372-384` | Confirmed: `convertDate` returns `""` on error (`:38-41`) | MINOR | verified: 2026-10-14 |
-| 22 | `logbook_view` does not `IFNULL` the nullable text columns (`departure_*`, `arrival_*`, `aircraft_model`, `reg_name`, `sim_type`, `pic_name`, `remarks`), which models scan into Go `string`, so one NULL there makes `GetFlightRecords` fail. Its window ordering `(date, departure_time)` has no unique tie-breaker, so `rn`/`prev_uuid`/`next_uuid` are nondeterministic for same-day records with equal or empty times. Fix idea: `IFNULL(col, '')` and `uuid` as the last `ORDER BY` key. Same issues: `ARCHITECTURE_LOGBOOK.md` §11 #15, #17. | `internal/driver/db_structure.go:175-181`, `:195-196`, `:204-210`, `:222-223`; `internal/models/flightrecords.go:150-159` | Suspected: confirm with NULL text values in legacy DBs / duplicate `(date, departure_time)` rows | MINOR | verified: 2026-10-14 |
-| 23 | `GetAirportDBRecordsCount` discards the `Scan` error and returns `(0, nil)`, so a failing count query triggers the airport download plus `DELETE FROM airports`, and the startup error branch is unreachable. Same issue: `ARCHITECTURE_AIRCRAFT_AIRPORTS.md` §11 #8. | `internal/models/airports.go:50-51`, `:65`; `app/main.go:171-191` | Confirmed: control flow | MINOR | verified: 2026-10-14 |
-| 24 | `migratePreviousExperience` returns nil on any `SELECT` error (`rawSettings` stays empty), so the overhaul commits without converting `previous_experience`. The `err != nil` branch is dead. | `internal/driver/data_overhaul.go:250-257` | Confirmed: control flow | MINOR | verified: 2026-10-14 |
+| 1 | The "current" schema version is chosen with `ORDER BY created_at DESC` on a **string** column. Rows written by app 2.44.0–2.45.0 used `DD.MM.YYYY hh:mm:ss` (format introduced in git `dcf1263`, first released in 2.44.0; changed in `a46e936` = 3.0.0-alpha1). Current rows use `YYYYMMDD hh:mm:ss`. Any old row dated day 21–31 compares greater than every `20xx...` row, so `getSchemaVersion` keeps returning that old dotted version (e.g. `"2.0.3"`). `Atoi` then fails → the v5 overhaul is **skipped** and the stamp `103` never "wins". Legacy `H:MM` strings stay in columns that models scan into Go `int`, so logbook reads fail when the string is converted to int. Fix idea: `ORDER BY id DESC`. | `internal/driver/driver.go:100`, `:124`, `:47-54` | Confirmed: deterministic string ordering. Both formats are present in git history. | BLOCKER | verified: 2026-11-08 |
+| 2 | Non-integer stored versions (DBs last opened by app ≤ 3.1.x: `"3.1.0"`, `"3.0.0-beta3"`, …) skip the overhaul silently and are stamped `103` with legacy data. | `internal/driver/driver.go:47-54` | Confirmed: `strconv.Atoi` error → branch not taken. | MAJOR | verified: 2026-11-08 |
+| 3 | The overhaul runs **before** table/column reconciliation. DBs last opened by app 3.2.0–3.10.0 (schema `7`–`10`) lack `currency.time_frame_since` (added at `11`, git `71526a4`, first released in 3.11.0). Schema `6` (git `1407f99`) was never released. The overhaul's currency `SELECT` fails → `migration failed` → the app cannot start. | `internal/driver/driver.go:44-54` vs `:60-70`; `internal/driver/data_overhaul.go:322` | Confirmed: call order is fixed and the column is absent in those schema versions. | MAJOR | verified: 2026-11-08 |
+| 4 | **Fixed in git `d8a4866`.** The overhaul was not idempotent (`convertDate` rejected ISO dates), and the stamp is written only after table/view reconciliation, so a failure between the overhaul commit and the stamp (or a v4 binary re-stamping `45`) made every later start re-run the overhaul and abort. `convertDate` now returns empty and already-ISO values unchanged, and the time/custom-field/previous-experience steps convert only strings or `H:MM`, so a re-run is a no-op. The re-run itself still happens on every start until the stamp is written. | `internal/driver/data_overhaul.go:37-52`, `:54-73`, `:119-122`, `:302-304`; `internal/driver/driver.go:56-90` | Fixed: control flow re-checked | MAJOR (fixed) | verified: 2026-11-08 |
+| 5 | **Fixed in git `d8a4866`.** MySQL: `ALTER TABLE ... MODIFY` ran inside the overhaul transaction, so its implicit commit split the transaction and a failing ALTER led into trap #4. The ALTER now runs after `tx.Commit()` on the `*sql.DB` with its own context. A failing ALTER still leaves the version `< 100`, so the next start re-runs the (now no-op) data steps and retries the ALTER. | `internal/driver/data_overhaul.go:417-439`, `:474-482` | Fixed: control flow re-checked | MAJOR (fixed) | verified: 2026-11-08 |
+| 6 | `Distance` treats a not-found airport as coordinates (0,0): `GetAirportByID` returns `nil` error on `ErrNoRows`. The bogus distance is cached and persisted by `InsertFlightRecord`. It remains cached after the airport is added as a custom airport, because custom-airport CRUD does not clear the caches. `calculateNightTime` uses the same lookup, so night time is also computed against (0,0) for unknown codes. Same issue: `ARCHITECTURE_AIRCRAFT_AIRPORTS.md` §11 #1; for the `/api/distance` endpoint and lower-case codes see `ARCHITECTURE_APPLICATION.md` §11 #15. | `internal/models/helpers.go:45-52`; `internal/models/airports.go:32-35`, `:143-184`; `internal/models/flightrecords.go:91`; `app/helpers.go:73`, `:83` | Confirmed: code path. | MAJOR | verified: 2026-11-08 |
+| 7 | `GET /api/db/filename` returns the raw DSN. On MySQL that includes the password. Canonical entry (auth default, listen address): see `ARCHITECTURE_APPLICATION.md` §11 #4. | `app/handlers_db.go:12-14` | Confirmed | MAJOR | verified: 2026-11-08 |
+| 8 | DB upload does not reset `airportCache`, `distanceCache` or `authCache` (since git `9bb8263` it only runs `CheckDefaultValues` on the new DB, `app/handlers_db.go:60-64`). Stale airports/distances and a stale auth flag/secret from the previous DB stay until restart or a settings save. Auth consequence: `Auth` reads the cached `isAuthEnabled`, so if the previous DB had auth off, an uploaded DB with auth on is served without authentication. `app.timeFieldsAutoFormat` (loaded at startup, refreshed only by the settings handler) also keeps the previous DB's value. Canonical entry: `ARCHITECTURE_APPLICATION.md` §11 #2 (also `ARCHITECTURE_AUTH.md` §11 #8, `ARCHITECTURE_SETTINGS.md` §11 #5). | `app/handlers_db.go:53-58`; `internal/models/airports.go:13`; `internal/models/helpers.go:26`; `internal/models/auth.go:11`, `:28-41`; `app/handlers_auth.go:115-124`; `app/main.go:201`; `app/handlers_settings.go:48` | Confirmed: `authCache.Clear()` is called only in `UpdateSettings` (`internal/models/settings.go:65`) | MAJOR | verified: 2026-11-08 |
+| 9 | `parseTimeToMinutes` maps any value other than an integer or `H:MM` to `0` without logging, so legacy values in other formats are lost silently. | `internal/driver/data_overhaul.go:63-71` | Confirmed | MINOR | verified: 2026-11-08 |
+| 10 | Schema drift after v5. Migrated SQLite DBs keep the `TEXT` declared type on the 11 time columns (only MySQL is altered, and `ensureColumnsExist` never alters existing columns), so values are stored as text. MySQL fresh DBs use `SMALLINT`, migrated ones `INT`. SQL `MIN`/`MAX`/`ORDER BY`/comparisons on time columns would differ between fresh and migrated DBs. No such query exists today. | `internal/driver/data_overhaul.go:478-482`; `internal/driver/db_operations.go:167-173`; `internal/driver/db_structure.go:11`, `:32-45` | Confirmed (drift); impact latent | MINOR | verified: 2026-11-08 |
+| 11 | `logbook_stats_view` was removed from the code in v5 but is never dropped, so upgraded DBs keep a dead view with legacy `HH:MM` parsing logic. | `internal/driver/driver.go:73`; git `8b2fa8d` | Confirmed | MINOR | verified: 2026-11-08 |
+| 12 | The MySQL index check queries `information_schema.statistics` by `table_name` only (no `table_schema`). A same-named table in another schema can hide a missing index. | `internal/driver/db_operations.go:45` | Confirmed | MINOR | verified: 2026-11-08 |
+| 13 | `UpdateFlightRecordsDistance` returns on a `Scan` error without `tx.Rollback()`, which leaks an open transaction. Both distance helpers swallow every error without logging. | `internal/models/helpers.go:72-102`, `:116-125` | Confirmed | MINOR | verified: 2026-11-08 |
+| 14 | `metadataTable.initTable` error is ignored, and `getSchemaVersion` maps any error to `"unknown"`. A transient read error on a v4 DB skips the overhaul and stamps `103`. | `internal/driver/driver.go:44`, `:101-109` | Confirmed | MINOR | verified: 2026-11-08 |
+| 15 | The `distanceCache` key concatenates the two codes without a separator, so mixed-length codes can collide (`ABCD`+`EFG` and `EFGA`+`BCD` both give `EFGABCD`). | `internal/models/helpers.go:34-39` | Confirmed | MINOR | verified: 2026-11-08 |
+| 16 | `person_to_log` rows are never deleted when a flight is deleted (there is no `DELETE ... WHERE log_uuid`). Orphans accumulate and still feed `GetPersonsRoles`. | `app/handlers_flightrecord.go:52-70`; `internal/models/persons.go:147`, `:204` | Confirmed | MINOR | verified: 2026-11-08 |
+| 17 | `tokens.username` is typed `UUID` (MySQL `VARCHAR(36)`) but stores the login name, so MySQL sign-in breaks for logins longer than 36 characters. `HandlerLogin` also has no `return` after `handleError` for `AddToken` (see `ARCHITECTURE_AUTH.md` §11 #3, #15). | `internal/driver/db_structure.go:104`; `app/handlers_auth.go:206`, `:211-213`, `:149-153`; `internal/models/auth.go:55-56` | Confirmed: strict mode rejects the INSERT (login returns 500). Non-strict mode stores the login truncated to 36 chars, so `VerifyToken` (`WHERE username = ?` with the full login from the JWT claim) never matches and every authenticated request returns 401. | MINOR | verified: 2026-11-08 |
+| 18 | There are no pool limits and no SQLite `busy_timeout`/journal mode. Concurrent writers (e.g. the startup distance-update transaction while `CreateDistanceCache` reads) may get `SQLITE_BUSY` ("database is locked"). | `internal/driver/driver.go:23-40`; `app/main.go:204-208` | Suspected: confirm by reproducing concurrent writes on SQLite | MINOR | verified: 2026-11-08 |
+| 19 | `migrateLicensingDates` scans nullable `DateTime` columns into a plain `string`. A NULL date would abort the overhaul and therefore startup. | `internal/driver/data_overhaul.go:375` | Suspected: confirm by finding NULL licence dates in real v4 DBs | MINOR | verified: 2026-11-08 |
+| 20 | `HandlerApiUploadDB` closes the pool and truncates the live SQLite file before anything is validated. A failing `os.Create`/`io.Copy` returns 500 but leaves `app.db.DB` closed, so all later requests fail with `sql: database is closed` until restart. An upload that `OpenDB`/`validateDB` rejects hits `errorLog.Fatalln` with the original DB already overwritten, and every restart then fails the same way. Same issue: `ARCHITECTURE_APPLICATION.md` §11 #1. | `app/handlers_db.go:36-56` | Confirmed: control flow | MAJOR | verified: 2026-11-08 |
+| 21 | **Fixed in git `d8a4866`.** `migrateLicensingDates` overwrote `issued`/`valid_from`/`valid_until` with `""` before formatting the error, so the abort message showed an empty value. It now converts into local variables and the message shows the original value. Same issue: `ARCHITECTURE_CURRENCY_LICENSING.md` §11 #19. | `internal/driver/data_overhaul.go:379-395` | Fixed: control flow re-checked | MINOR (fixed) | verified: 2026-11-08 |
+| 22 | `logbook_view` does not `IFNULL` the nullable text columns (`departure_*`, `arrival_*`, `aircraft_model`, `reg_name`, `sim_type`, `pic_name`, `remarks`), which models scan into Go `string`, so one NULL there makes `GetFlightRecords` fail. Its window ordering `(date, departure_time)` has no unique tie-breaker, so `rn`/`prev_uuid`/`next_uuid` are nondeterministic for same-day records with equal or empty times. Fix idea: `IFNULL(col, '')` and `uuid` as the last `ORDER BY` key. Same issues: `ARCHITECTURE_LOGBOOK.md` §11 #15, #17. | `internal/driver/db_structure.go:172-178`, `:192-193`, `:201-207`, `:219-220`; `internal/models/flightrecords.go:150-159` | Suspected: confirm with NULL text values in legacy DBs / duplicate `(date, departure_time)` rows | MINOR | verified: 2026-11-08 |
+| 23 | `GetAirportDBRecordsCount` discards the `Scan` error and returns `(0, nil)`, so a failing count query triggers the airport download plus `DELETE FROM airports`, and the startup error branch is unreachable. Same issue: `ARCHITECTURE_AIRCRAFT_AIRPORTS.md` §11 #8. | `internal/models/airports.go:50-51`, `:65`; `app/main.go:173-193` | Confirmed: control flow | MINOR | verified: 2026-11-08 |
+| 24 | `migratePreviousExperience` returns nil on any `SELECT` error (`rawSettings` stays empty), so the overhaul commits without converting `previous_experience`. The `err != nil` branch is dead. | `internal/driver/data_overhaul.go:256-265` | Confirmed: control flow | MINOR | verified: 2026-11-08 |
+| 25 | Columns removed from a table definition stay in existing DBs, because reconciliation never drops columns. `custom_fields.size_xs`/`size_md`/`size_lg`/`display_order` were declared `SmallInt NOT NULL` **without** a `DEFAULT` until git `9bb8263` (`git show 4c65b86:internal/driver/db_structure.go`, lines 141-144), and `InsertCustomField` no longer supplies them. On every DB created before schema `103` a new custom field therefore fails: SQLite `NOT NULL constraint failed: custom_fields.size_xs`; MySQL strict mode `Field 'size_xs' doesn't have a default value` (non-strict MySQL stores 0). Fresh DBs are not affected. Fix idea: an explicit migration that drops the four columns (or gives them a default), gated on a version `< 103`. | `internal/driver/db_structure.go:134-142`; `internal/driver/db_operations.go:167-173`; `internal/models/custom_fields.go:48-60` | Confirmed: the old columns were added to an empty table right after `CREATE TABLE` (`internal/driver/db_operations.go:100-106`), so they carry the NOT NULL constraint, and the INSERT column list omits them. Reproduce by adding a custom field on a DB upgraded from 4.x / 5.0.0-alpha1/alpha2. | MAJOR | verified: 2026-11-08 |
 
 ## 12. Rules for Future Development
 
 ### R1 — Add a column to an existing table
 1. Add a `Column` to the table in `internal/driver/db_structure.go`, using a type alias from `:6-14`. An `Index: true` column must use a VARCHAR alias (`UUID`, `SmallText`, `BigText`) or an integer type, never `FullText`/`Blob`: MySQL cannot index TEXT/BLOB without a prefix length, and `createIndex` emits none (`internal/driver/db_operations.go:46`).
 2. Nullability. On a populated table, SQLite rejects `ADD COLUMN ... NOT NULL` without a non-NULL `DEFAULT`, so either give a default or leave the column nullable. Never put a `DEFAULT` on `FullText`/`Blob`, because MySQL `TEXT`/`LONGBLOB` reject it (git `c6e25c2`, `ce4794d`, `cabf7e5`). Instead, keep these columns nullable and wrap them in `IFNULL` in reads.
-3. Bump `schemaVersion` (`internal/driver/db_structure.go:4`) to the next integer, which must be > `101`. Without the bump, existing DBs are never reconciled (`internal/driver/driver.go:56`).
-4. If the logbook column is read by models, add it to **both** SQL texts of `logbook_view` (`internal/driver/db_structure.go:170-198` and `:199-225`) with a NULL-safe default.
+3. Bump `schemaVersion` (`internal/driver/db_structure.go:4`) to the next integer, which must be > `103`. Without the bump, existing DBs are never reconciled (`internal/driver/driver.go:56`).
+4. If the logbook column is read by models, add it to **both** SQL texts of `logbook_view` (`internal/driver/db_structure.go:167-195` and `:196-222`) with a NULL-safe default.
 5. Update the struct in `internal/models/structs.go`, then every `SELECT` column list, `Scan` list, `INSERT` and `UPDATE` in the owning model file. Column order must match exactly.
 6. Logbook columns also need: import (`app/handlers_import.go`), PDF export (`internal/pdfexport`), the UI CSV export and the UI forms/tables.
 
@@ -382,29 +388,35 @@ All three maps are unexported package variables of `internal/models`, so code ou
 
 ### R4 — Change a column type or transform stored data
 1. `validateDB` cannot do it. Write an explicit migration modelled on `internal/driver/data_overhaul.go`, gated in `validateDB` on an **integer** version threshold (`internal/driver/driver.go:47-54`). Set the new `schemaVersion` above the threshold.
-2. Make it **idempotent**: detect already-converted values instead of failing (§11 #4). After the migration commits, record its completion with a marker that is at or above the migration gate but different from `schemaVersion` (or a separate marker row), so the gate no longer fires but reconciliation still runs. Only `updateSchemaVersion` after reconciliation may write `schemaVersion`. `validateDB` reads the version once (`internal/driver/driver.go:45`) and reconciles only when it differs (`:56`), so writing `schemaVersion` early means a failed reconciliation is never retried.
-3. MySQL DDL commits implicitly. Run the DDL as a separate, re-runnable step, or after the data step has been made idempotent (§11 #5). SQLite cannot `ALTER COLUMN`; changing a declared type needs a table rebuild (create new, copy, drop, rename).
+2. Make it **idempotent**: detect already-converted values instead of failing, as `convertDate` and `parseTimeToMinutes` do (`internal/driver/data_overhaul.go:37-73`; §11 #4). After the migration commits, record its completion with a marker that is at or above the migration gate but different from `schemaVersion` (or a separate marker row), so the gate no longer fires but reconciliation still runs. Only `updateSchemaVersion` after reconciliation may write `schemaVersion`. `validateDB` reads the version once (`internal/driver/driver.go:45`) and reconciles only when it differs (`:56`), so writing `schemaVersion` early means a failed reconciliation is never retried.
+3. MySQL DDL commits implicitly. Run the DDL as a separate, re-runnable step after the data transaction has committed, as `migrateLogbookTimeColumns` does (`internal/driver/data_overhaul.go:417-439`, `:474-482`; §11 #5). SQLite cannot `ALTER COLUMN`; changing a declared type needs a table rebuild (create new, copy, drop, rename).
 4. Make sure every column the migration reads exists first (§11 #3). Either reconcile tables first, or check the columns.
-5. Add a CHANGELOG backup warning, as `CHANGELOG.md:9` does.
+5. Add a CHANGELOG backup warning, as `CHANGELOG.md:5` does.
+
+### R4a — Remove or rename a column
+1. Deleting a `Column` from `internal/driver/db_structure.go` does **not** remove it from existing DBs: reconciliation only adds columns (`internal/driver/db_operations.go:167-173`).
+2. If the old column is `NOT NULL` without a `DEFAULT`, every `INSERT` that omits it fails on upgraded DBs (§11 #25). Either keep writing it, or add an explicit migration (R4) that drops it or gives it a default, gated on the previous `schemaVersion`.
+3. Test the change on a DB created by the previous release, not only on a fresh DB.
 
 ### R5 — Add a model query
-- `DBModel` has no engine field (`internal/models/structs.go:12-14`), so model SQL **must run unchanged on SQLite and MySQL**. Use `?` placeholders and `IFNULL`. Never use `||` for concatenation (MySQL treats it as OR by default; compare the two `aircrafts_view` texts, `internal/driver/db_structure.go:246-268` vs `:269-291`), and avoid `PRAGMA` and other engine-only syntax. Put engine-specific SQL in a view.
-- Use single-quoted string literals (`''`) only. Double quotes are identifiers under MySQL `ANSI_QUOTES` and SQLite builds with `DQS=0` (existing offender: `internal/models/licensing.go:114`).
+- `DBModel` has no engine field (`internal/models/structs.go:12-14`), so model SQL **must run unchanged on SQLite and MySQL**. Use `?` placeholders and `IFNULL`. Never use `||` for concatenation (MySQL treats it as OR by default; compare the two `aircrafts_view` texts, `internal/driver/db_structure.go:243-265` vs `:266-288`), and avoid `PRAGMA` and other engine-only syntax. Put engine-specific SQL in a view.
+- Use single-quoted string literals (`''`) only. Double quotes are identifiers under MySQL `ANSI_QUOTES` and SQLite builds with `DQS=0` (existing offenders: `internal/models/licensing.go:114`; `IFNULL(pdf_header,"")` in `internal/models/custom_fields.go:9`, `:37`).
 - Read logbook data from `logbook_view`, not `logbook`, so you get the NULL defaults and the calculated columns. The view does not default every text column (§5.2, §11 #22), so scan any nullable column that it passes through raw into `sql.NullString`, or add an `IFNULL` to the view.
 - Use `ContextWithDefaultTimeout()` with `defer cancel()`. Check `rows.Err()`. Wrap multi-statement writes in a transaction and roll back on every error path.
 
 ### R6 — Add a settings field
-No schema change is needed: `settings2.settings` is JSON. Add the field to `Settings` (`internal/models/structs.go:221-272`) and its default to `CheckDefaultValues` (`internal/models/models_defaults.go:151`). Mirror any UI fallback in `app/ui/src/hooks/useSettings.jsx` (e.g. `:136-137`). Writers must read → modify → `UpdateSettings`, because it overwrites the whole JSON blob (`internal/models/settings.go:54-60`). Follow `ARCHITECTURE_SETTINGS.md`.
+No schema change is needed: `settings2.settings` is JSON. Add the field to `Settings` (`internal/models/structs.go:242-295`) and its default to `CheckDefaultValues` (`internal/models/models_defaults.go:215`). Mirror any UI fallback in `app/ui/src/hooks/useSettings.jsx` (e.g. `:305-306`). Writers must read → modify → `UpdateSettings`, because it overwrites the whole JSON blob (`internal/models/settings.go:54-60`). Follow `ARCHITECTURE_SETTINGS.md`.
 
 ### R7 — Change cache behaviour or the DB-swap path
 Any code that replaces `app.db` or rewrites airports/settings must also clear `distanceCache`, `airportCache` and `authCache` (§5.6, §11 #8).
-- The maps are unexported (`internal/models/helpers.go:26`, `internal/models/airports.go:13`, `internal/models/auth.go:11`), and today they are cleared only as side effects of `UpdateSettings`, `UpdateAirportDB` and `CreateDistanceCache`. Add an exported `DBModel` method in `internal/models` (e.g. `ResetCaches()`, not in code yet) that clears `airportCache` and `authCache`, then runs `go CreateDistanceCache()` (which clears and refills `distanceCache`). Call it after swapping `app.db`, and reload `app.timeFieldsAutoFormat` from `GetSettings()` (`app/main.go:194-199`).
+- The maps are unexported (`internal/models/helpers.go:26`, `internal/models/airports.go:13`, `internal/models/auth.go:11`), and today they are cleared only as side effects of `UpdateSettings`, `UpdateAirportDB` and `CreateDistanceCache`. Add an exported `DBModel` method in `internal/models` (e.g. `ResetCaches()`, not in code yet) that clears `airportCache` and `authCache`, then runs `go CreateDistanceCache()` (which clears and refills `distanceCache`). Call it after swapping `app.db`, and reload `app.timeFieldsAutoFormat` from `GetSettings()` (`app/main.go:196-201`).
 - DB swap (§11 #20): write the upload to a temp file next to the DSN, open and validate it with `driver.OpenDB`, close that pool, and only then close the old pool, rename the temp file over the DSN and reopen it. Never call `errorLog.Fatalln` inside a handler.
 
 ### Cross-check list (every DB change)
 - [ ] Both engines: every new `ColumnType`/`SQLQuery` has `SQLite` **and** `MySQL` entries.
 - [ ] `schemaVersion` bumped (integer, ≥ 100, greater than the current value).
 - [ ] New tables are in the `tables` slice and new views in the `views` slice.
+- [ ] Removed columns: existing DBs keep them; `NOT NULL` columns without a `DEFAULT` are dropped or defaulted by a migration (R4a, §11 #25).
 - [ ] `NOT NULL` columns have a `DEFAULT`, except `FullText`/`Blob`. Nullable columns are `IFNULL`-ed in views, or scanned into `sql.Null*`.
 - [ ] Struct, column lists and `Scan` order are consistent. JSON tags match what the UI reads.
 - [ ] New endpoints are inside the `app.Auth` group (`app/routes.go:26-27`).
@@ -422,13 +434,14 @@ On every start, the DB is compared with Go values in `internal/driver/db_structu
 
 ### Gotchas
 - Editing a table or view without bumping `schemaVersion` has **no effect** on existing databases.
+- Removing a column from `internal/driver/db_structure.go` leaves it in existing databases (§11 #25).
 - Migrated SQLite DBs and fresh SQLite DBs have different declared types on time columns (§11 #10). Do not rely on SQL numeric ordering of those columns.
 - `logbook_view` recomputes window functions over the whole logbook, even for `GetFlightRecordByID` (`internal/models/flightrecords.go:31-40`).
 - `FlightRecordForPerson.TotalTime` is still a `string` (`internal/models/structs.go:131`). The UI tolerates it with `parseFloat` in `app/ui/src/components/UIElements/XDataGrid/XFooter.jsx:166-169`.
 - `[]byte` fields (`track`, `document`) are base64 in JSON.
 - `AllAircrafts`/`LastAircrafts` (`internal/models/structs.go:8-9`) are unused.
 - Driver output goes to stdout only, not to the log file.
-- `GetAirportDBRecordsCount` discards the scan error (`internal/models/airports.go:50-51`), so startup's error branch (`app/main.go:172-175`) is unreachable.
+- `GetAirportDBRecordsCount` discards the scan error (`internal/models/airports.go:50-51`), so startup's error branch (`app/main.go:174-177`) is unreachable.
 
 ### File Quick Reference
 | Need | File:line |
@@ -436,11 +449,11 @@ On every start, the DB is compared with Go values in `internal/driver/db_structu
 | Bump schema | `internal/driver/db_structure.go:4` |
 | Table / view lists | `internal/driver/driver.go:60-64`, `:73` |
 | Version read / stamp | `internal/driver/driver.go:96-126` |
-| Overhaul gate / body | `internal/driver/driver.go:47-54`; `internal/driver/data_overhaul.go:428-474` |
+| Overhaul gate / body | `internal/driver/driver.go:47-54`; `internal/driver/data_overhaul.go:441-487` |
 | DDL templates per engine | `internal/driver/db_operations.go:27-48` |
 | Timeouts | `internal/models/helpers.go:14-24` |
 | Distance + cache | `internal/models/helpers.go:26-54` |
-| DB upload/download | `app/handlers_db.go:12-88`; `app/routes.go:150-154` |
+| DB upload/download | `app/handlers_db.go:12-94`; `app/routes.go:151-155` |
 
 > **AI Usage Instructions**
 > - Always read this file before modifying this system

@@ -1,6 +1,6 @@
 # Import — Architecture
 
-**Last Updated:** 2026-10-14 — initial version generated from code and fact-checked (TASK_AGENT_WORKFLOW_SETUP); 2026-10-14 — Gotcha: preview shares Logbook grid localStorage keys (consistency pass)
+**Last Updated:** 2026-10-14 — initial version generated from code and fact-checked (TASK_AGENT_WORKFLOW_SETUP); 2026-10-14 — Gotcha: preview shares Logbook grid localStorage keys (consistency pass); 2026-11-08 — line refs refreshed; preview column order, custom-field order notes (sync 30 days)
 
 ## Table of Contents
 
@@ -20,9 +20,9 @@
 
 ## 1. Overview
 
-Import is how a pilot loads an existing logbook from a CSV file, for example a web-logbook CSV export, a Leon export, or any custom layout (`README.md:265-270`). The work is split in two. The **browser** parses the CSV with `papaparse` (`app/ui/src/components/Import/OpenCSVButton.jsx:18`), lets the pilot map CSV columns to logbook fields, normalises dates, times and routes, and shows the rows in a preview grid. The **server** runs one streaming endpoint, `POST /api/import/run` (`app/routes.go:127-129`). For each record it skips duplicates, can recalculate night time, inserts the record, and can create and link Persons. Progress comes back as NDJSON (`app/handlers_import.go:99`).
+Import is how a pilot loads an existing logbook from a CSV file, for example a web-logbook CSV export, a Leon export, or any custom layout (`README.md:261-266`). The work is split in two. The **browser** parses the CSV with `papaparse` (`app/ui/src/components/Import/OpenCSVButton.jsx:18`), lets the pilot map CSV columns to logbook fields, normalises dates, times and routes, and shows the rows in a preview grid. The **server** runs one streaming endpoint, `POST /api/import/run` (`app/routes.go:128-130`). For each record it skips duplicates, can recalculate night time, inserts the record, and can create and link Persons. Progress comes back as NDJSON (`app/handlers_import.go:99`).
 
-Backend: `app/handlers_import.go` (handler, duplicate key, name parser) and its test `app/handlers_import_test.go`. The handler has no model file of its own. It calls DBModel methods of other systems: flight records, persons, settings, custom fields, aircraft. UI: route `/import` (`app/ui/src/main.jsx:87-89`), nav entry (`app/ui/src/components/UIElements/Dashboard/DashboardNavbar.jsx:66`), page `app/ui/src/pages/ImportPage.jsx`, and components in `app/ui/src/components/Import/`.
+Backend: `app/handlers_import.go` (handler, duplicate key, name parser) and its test `app/handlers_import_test.go`. The handler has no model file of its own. It calls DBModel methods of other systems: flight records, persons, settings, custom fields, aircraft. UI: route `/import` (`app/ui/src/main.jsx:90`), nav entry (`app/ui/src/components/UIElements/Dashboard/DashboardNavbar.jsx:67`), page `app/ui/src/pages/ImportPage.jsx`, and components in `app/ui/src/components/Import/`.
 
 ## 2. Key Concepts
 
@@ -30,9 +30,9 @@ Backend: `app/handlers_import.go` (handler, duplicate key, name parser) and its 
 |---|---|---|
 | Field mapping ("profile") | Object `{ <field id>: <CSV header> }` plus optional `pic_self_replace` and `custom_fields.<uuid>` keys | `app/ui/src/components/Import/MapFieldsDialog.jsx:28-53`, `:132-149` |
 | Predefined profiles | "Web Logbook" (`default` header names, the same as the logbook CSV export) and "Leon" (`leon` keys) | `MapFieldsDialog.jsx:89-98`, `app/ui/src/components/UIElements/CSVExportButton.jsx:71-96` |
-| Custom profile | A mapping the pilot saved in browser `localStorage` under `custom-import-profile`. It is not stored on the server | `MapFieldsDialog.jsx:79`, `CHANGELOG.md:121` |
+| Custom profile | A mapping the pilot saved in browser `localStorage` under `custom-import-profile`. It is not stored on the server | `MapFieldsDialog.jsx:79`, `CHANGELOG.md:137` |
 | Import row (UI) | A `FlightRecord`-shaped JSON object built by `marshallItem`. Its preview id is `uuid = String(generated_id)` | `app/ui/src/components/Import/helpers.jsx:70-121` |
-| Time values | Integer **minutes**, the same as the logbook columns since v5. Converted in the browser by `autoTimeFieldRecog` (H:MM or decimal hours) | `app/ui/src/components/Import/helpers.jsx:35-68`, `internal/driver/db_structure.go:32-45`, `CHANGELOG.md:11` |
+| Time values | Integer **minutes**, the same as the logbook columns since v5. Converted in the browser by `autoTimeFieldRecog` (H:MM or decimal hours) | `app/ui/src/components/Import/helpers.jsx:35-68`, `internal/driver/db_structure.go:32-45`, `CHANGELOG.md:27` |
 | Dates | ISO `YYYY-MM-DD`. `convertToDate` parses a fixed list of formats strictly; on failure it returns the input unchanged | `app/ui/src/components/Import/helpers.jsx:6-19` |
 | Dep/Arr times | `HHMM` strings. `autoDepArrTimeRecog` turns `H:MM` into `HHMM`, otherwise strips non-digits and left-pads to 4 | `app/ui/src/components/Import/helpers.jsx:21-33` |
 | Duplicate key | `FLIGHT\|date\|dep\|depTime\|arr\|arrTime\|model\|reg` for flights (both places **and** both times needed), `SIM\|date\|type\|time\|remarks` for simulator sessions (type and non-zero time needed). Otherwise `""` = never treated as a duplicate | `flightDuplicateKey` `app/handlers_import.go:14-47` |
@@ -73,7 +73,7 @@ Per-record outcome:
 | `app/handlers_import.go` | `flightDuplicateKey`, `GetFlightRecordDuplicates` (an `application` method, not a DBModel one), request/progress types, `HandlerApiImportRun`, `parseName` |
 | `app/handlers_import_test.go` | `TestParseName`: table-driven test of the three name formats |
 | `app/helpers.go` | Shared helpers used by import: `handleError` (`:53-63`), `calculateNightTime` (`:67-113`), `formatTimeField` (`:115-140`) |
-| `app/routes.go` | Mounts `/api/import/run` inside the `Auth` group (`:26-27`, `:127-129`) |
+| `app/routes.go` | Mounts `/api/import/run` inside the `Auth` group (`:26-27`, `:128-130`) |
 | `app/ui/src/pages/ImportPage.jsx` | Page wrapper → `<Import />` |
 | `app/ui/src/components/Import/Import.jsx` | Wrapper → `<ImportTable />` |
 | `app/ui/src/components/Import/ImportTable.jsx` | Holds `data` state; renders `LogbookTable` with import toolbar actions |
@@ -92,7 +92,7 @@ Per-record outcome:
 
 | Method | Path | Handler | Notes |
 |---|---|---|---|
-| POST | `/api/import/run` | `HandlerApiImportRun` (`app/handlers_import.go:89`) | Behind `app.Auth` (`app/routes.go:27`). Body `ImportData{options, data[]}` (`app/handlers_import.go:73-76`). Response `200 application/x-ndjson`, flushed per chunk (`:98-116`). No `Compress` middleware, so the response is not buffered (`app/routes.go:128`). A decode error before the stream starts → 500 JSON via `handleError` (`app/handlers_import.go:92-96`) |
+| POST | `/api/import/run` | `HandlerApiImportRun` (`app/handlers_import.go:89`) | Behind `app.Auth` (`app/routes.go:27`). Body `ImportData{options, data[]}` (`app/handlers_import.go:73-76`). Response `200 application/x-ndjson`, flushed per chunk (`:98-116`). No `Compress` middleware, so the response is not buffered (`app/routes.go:129`). A decode error before the stream starts → 500 JSON via `handleError` (`app/handlers_import.go:92-96`) |
 
 No other endpoint belongs to this system. The mapping dialog and options dialog read existing endpoints through `useCustomFields` and `useSettings` (§9).
 
@@ -106,7 +106,7 @@ The handler calls DBModel methods owned by other systems. Grouped by owning file
 | `internal/models/flightrecords.go` | `GetFlightRecords` (`:128-165`) | Existing records for the duplicate set | `logbook_view` (`:140`) |
 | `internal/models/flightrecords.go` | `InsertFlightRecord` (`:87-116`) | Insert one record. Recomputes `Distance` (`:91`) | `logbook` |
 | `internal/models/settings.go` | `GetSettings` (`:11-28`) | `SelfPICLabel` | `settings2` (`:17`) |
-| `internal/models/custom_fields.go` | `GetCustomFields` (`:3-28`) | Map custom-field UUID → name (used as the person role) | `custom_fields` |
+| `internal/models/custom_fields.go` | `GetCustomFields` (`:3-29`) | Map custom-field UUID → name (used as the person role). Only `uuid` and `name` are used, so the removal of `size_*`/`display_order` and the new `pdf_header` column (schema `103`) do not affect import | `custom_fields` |
 | `internal/models/persons.go` | `GetPersons` (`:34-37`) | Fill the name caches | `persons` |
 | `internal/models/persons.go` | `AddPerson` (`:69-92`) | Create a person. Rejects an exact (first, middle, last) duplicate (`:73-78`) | `persons` |
 | `internal/models/persons.go` | `AddPersonToLog` (`:108-130`) | Link a person to the new record. Rejects an existing pair (`:112-117`) | `person_to_log` |
@@ -118,11 +118,11 @@ The handler calls DBModel methods owned by other systems. Grouped by owning file
 
 | Item | Detail | Evidence |
 |---|---|---|
-| Route / nav | `/import` → `ImportPage`; sidebar "Import" | `app/ui/src/main.jsx:87-89`, `app/ui/src/components/UIElements/Dashboard/DashboardNavbar.jsx:66` |
-| Preview grid | `LogbookTable` with `title="Import"`, sorting and column menu off. `{...props}` is spread last, so the import `customActions` replace the logbook toolbar (new record, CSV/PDF export, bulk edit) | `ImportTable.jsx:25-32`, `app/ui/src/components/Logbook/LogbookTable.jsx:316`, `:332` |
-| Grid state | `LogbookTable` hard-codes `tableId='logbook'`. The preview therefore shares the pagination, column and filter `localStorage` keys with the Logbook page | `app/ui/src/components/Logbook/LogbookTable.jsx:300`, `app/ui/src/components/UIElements/XDataGrid/XDataGrid.jsx:111-112`, `app/ui/src/components/UIElements/XDataGrid/FilterContext.jsx:7-8` |
+| Route / nav | `/import` → `ImportPage`; sidebar "Import" | `app/ui/src/main.jsx:90`, `app/ui/src/components/UIElements/Dashboard/DashboardNavbar.jsx:67` |
+| Preview grid | `LogbookTable` with `title="Import"`, sorting and column menu off. `{...props}` is spread last, so the import `customActions` replace the logbook toolbar (new record, CSV/PDF export, bulk edit). Column order follows the server-side `logbook_profile.table_columns` setting (`orderedColumns`), and custom fields in user-defined categories get their own columns, the same as on the Logbook page | `ImportTable.jsx:25-32`, `app/ui/src/components/Logbook/LogbookTable.jsx:345`, `:361`, `:144-147`, `:165-174`, `app/ui/src/hooks/useSettings.jsx:290-294` |
+| Grid state | `LogbookTable` hard-codes `tableId='logbook'`. The preview therefore shares the pagination, column and filter `localStorage` keys with the Logbook page | `app/ui/src/components/Logbook/LogbookTable.jsx:329`, `app/ui/src/components/UIElements/XDataGrid/XDataGrid.jsx:111-112`, `app/ui/src/components/UIElements/XDataGrid/FilterContext.jsx:7-8` |
 | Dialogs | Opened through `useDialogs().open(Component, payload)`. The promise resolves with whatever the dialog passes to `onClose` | `app/ui/src/hooks/useDialogs/useDialogs.jsx:60-71`, `:99` |
-| Query hooks used | `useCustomFields` (`['custom-fields']`) in the mapping and options dialogs; `useSettings` (`fieldNameF`) in the options dialog. Import has no query or mutation hook of its own | `MapFieldsDialog.jsx:80`, `ImportOptionsDialog.jsx:76-79`, `app/ui/src/hooks/useCustomFields.jsx:10` |
+| Query hooks used | `useCustomFields` (`['custom-fields']`) in the mapping and options dialogs; `useSettings` (`fieldNameF`) in the options dialog. Import has no query or mutation hook of its own. Both dialogs list custom fields in the order the server returns them; `GetCustomFields` has no `ORDER BY` since `display_order` was dropped | `MapFieldsDialog.jsx:80`, `:139`, `ImportOptionsDialog.jsx:76-79`, `:162`, `app/ui/src/hooks/useCustomFields.jsx:21`, `internal/models/custom_fields.go:7-10` |
 | HTTP | **Not** in `app/ui/src/util/http/`. `ImportProgressDialog` calls `fetch` directly with `getAuthToken()` | `ImportProgressDialog.jsx:54-62`, `app/ui/src/util/auth.jsx:13-16` |
 | Cache refresh | `queryClient.invalidateQueries()` with no key (all queries), only when the dialog closes with success | `RunImportButton.jsx:32-35` |
 
@@ -131,10 +131,10 @@ The handler calls DBModel methods owned by other systems. Grouped by owning file
 | Store | What import writes / reads | Notes |
 |---|---|---|
 | `logbook` table | One INSERT per non-duplicate record: all standard columns + `distance`, `custom_fields` (JSON string), `tags` | `internal/models/flightrecords.go:93-114`. Time columns are `SmallInt NOT NULL DEFAULT 0` (`internal/driver/db_structure.go:32-45`) |
-| `logbook_view` | Read once for duplicate detection | `internal/driver/db_structure.go:168-227` (separate SQLite/MySQL SQL, same columns) |
-| `persons`, `person_to_log` | Created/linked when `create_persons` is on. Role = `PIC`, or the custom field **name** (fallback `Crew`) | `internal/driver/db_structure.go:147-166`, `app/handlers_import.go:309-333` |
+| `logbook_view` | Read once for duplicate detection | `internal/driver/db_structure.go:165-224` (separate SQLite/MySQL SQL, same columns) |
+| `persons`, `person_to_log` | Created/linked when `create_persons` is on. Role = `PIC`, or the custom field **name** (fallback `Crew`) | `internal/driver/db_structure.go:144-163`, `app/handlers_import.go:309-333` |
 | `aircrafts`, `aircraft_categories` | Synchronised with the logbook after the loop (insert missing, delete stale, update types, add category rows) | `internal/models/aircrafts.go:7-85` (single transaction, `:12`, `:83`) |
-| `settings2`, `custom_fields` | Read only | `internal/models/settings.go:17`, `internal/models/custom_fields.go:7-11` |
+| `settings2`, `custom_fields` | Read only | `internal/models/settings.go:17`, `internal/models/custom_fields.go:7-10` |
 | `custom_fields` JSON blob | The UI sends an object. `RunImportButton` stringifies it because the Go field is `string` | `RunImportButton.jsx:17-24`, `internal/models/structs.go:69` |
 | In memory, per request | `duplicates` set, `personCache` (`lower(first\|middle\|last)` → uuid), `lastNameCache` (`lower(last)` → uuid), `customFieldsNames` | `app/handlers_import.go:134`, `:149-167` |
 | In memory, process-wide | `distanceCache`, `airportCache` (`sync.Map`) | `internal/models/helpers.go:26`, `internal/models/airports.go:13` |
@@ -170,19 +170,19 @@ The browser reads the stream with `response.body.getReader()` and splits on `\n`
 
 | Name | Value | Evidence | Kind |
 |---|---|---|---|
-| Endpoint | `POST /api/import/run` | `app/routes.go:127-128`, `ImportProgressDialog.jsx:54` | (hardcoded) |
+| Endpoint | `POST /api/import/run` | `app/routes.go:128-129`, `ImportProgressDialog.jsx:54` | (hardcoded) |
 | API base | `/api`; in Vite dev mode `http://localhost:4000/api` | `app/ui/src/constants/constants.jsx:9-12` | (build mode) |
 | Response content type | `application/x-ndjson`, `Cache-Control: no-cache`, `Connection: keep-alive` | `app/handlers_import.go:99-101` | (hardcoded) |
 | Chunk types | `progress`, `log`, `result` | `app/handlers_import.go:119`, `:123`, `:127` | (hardcoded) |
 | DB statement timeout | 60 s per statement (`DefaultTimeout`) | `internal/models/helpers.go:14` | (hardcoded) |
-| HTTP server timeouts | None set (no Read/Write timeout), so long imports are not cut off | `app/main.go:52-59` | (hardcoded) |
+| HTTP server timeouts | None set (no Read/Write timeout), so long imports are not cut off | `app/main.go:53-60` | (hardcoded) |
 | Request size limit | Not found in code | — | — |
-| Default self label | `"Self"`, replaced by settings `self_pic_label` when non-empty | `app/handlers_import.go:141-145`, `internal/models/structs.go:239` | (configurable, Settings) |
+| Default self label | `"Self"`, replaced by settings `self_pic_label` when non-empty | `app/handlers_import.go:141-145`, `internal/models/structs.go:260` | (configurable, Settings) |
 | PIC role name | `"PIC"` | `app/handlers_import.go:310` | (hardcoded) |
 | Custom-field role fallback | `"Crew"` | `app/handlers_import.go:321-324` | (hardcoded) |
 | Name formats | `fn_mn_ln` (default/empty), `ln_fn_md`, `fn_ln_md` | `app/handlers_import.go:373-421`, `ImportOptionsDialog.jsx:32-72`, `:181` | (configurable per run) |
 | Default options | all `false`, format `""`, `create_person_from {}` | `ImportOptionsDialog.jsx:24-30` | (hardcoded) |
-| Log time format | `formatTimeField` using `app.timeFieldsAutoFormat` (0–3) | `app/helpers.go:115-140`, `app/main.go:199`, `app/handlers_settings.go:48` | (configurable, Settings) |
+| Log time format | `formatTimeField` using `app.timeFieldsAutoFormat` (0–3) | `app/helpers.go:115-140`, `app/main.go:201`, `app/handlers_settings.go:48` | (configurable, Settings) |
 | Night time units | Duration → `int(night.Minutes())` (truncated) | `app/handlers_import.go:202` | (hardcoded) |
 | Accepted date formats | `YYYY-MM-DD`, `YYYY/MM/DD`, `DD/MM/YYYY`, `DD-MM-YYYY`, `DD/MM/YY`, `DD-MM-YY` (strict) | `app/ui/src/components/Import/helpers.jsx:9-16` | (hardcoded) |
 | Time field formats | `H:MM` (minutes < 60) or non-negative decimal hours × 60, rounded; anything else → 0 | `app/ui/src/components/Import/helpers.jsx:35-68` | (hardcoded) |
@@ -226,13 +226,13 @@ The browser reads the stream with `response.body.getReader()` and splits on `\n`
 
 | Doc | What crosses the boundary |
 |---|---|
-| `ARCHITECTURE_APPLICATION.md` | Route registration under `Auth` (`app/routes.go:26-27`, `:127-129`); `handleError`, `calculateNightTime`, `formatTimeField` (`app/helpers.go:53`, `:67`, `:115`) |
+| `ARCHITECTURE_APPLICATION.md` | Route registration under `Auth` (`app/routes.go:26-27`, `:128-130`); `handleError`, `calculateNightTime`, `formatTimeField` (`app/helpers.go:53`, `:67`, `:115`) |
 | `ARCHITECTURE_AUTH.md` | `Auth` middleware (`app/handlers_auth.go:112`); token from `getAuthToken()` injected by hand (`ImportProgressDialog.jsx:58`) |
 | `ARCHITECTURE_LOGBOOK.md` | `FlightRecord` JSON contract (`internal/models/structs.go:25-79`), `InsertFlightRecord`, `GetFlightRecords`, night-time engine (`internal/nighttime/nighttime.go:86`, `:101`), preview grid `LogbookTable`, custom-field JSON blob |
 | `ARCHITECTURE_PERSONS.md` | `create_persons` path `app/handlers_import.go:227-334`: `GetPersons` preload (`:157-167`), `AddPerson` (`:272`), `AddPersonToLog` (`:300`); roles written as free text. The import cache matches names case-insensitively (`:161`, `:244`), while `AddPerson` rejects only an exact `first/middle/last` match (`internal/models/persons.go:73-78`): case-sensitive on SQLite, server collation on MySQL, which the code does not set (see ARCHITECTURE_PERSONS.md §11 #9). The cache holds every person, so a case variant in the CSV links the existing person |
 | `ARCHITECTURE_AIRCRAFT_AIRPORTS.md` | `Distance` (`app/handlers_import.go:190`), `GetAirportByID` via night time, `GenerateAircraftTable` (`:347`) |
 | `ARCHITECTURE_SETTINGS.md` | `self_pic_label` (`app/handlers_import.go:141-146`), `time_fields_auto_format` for log lines, `fieldNameF("pic_name")` label (`ImportOptionsDialog.jsx:79`) |
-| `ARCHITECTURE_PDF_EXPORT.md` | The logbook CSV export headers (`app/ui/src/components/UIElements/CSVExportButton.jsx:71-96`) are the "Web Logbook" mapping defaults (`MapFieldsDialog.jsx:28-53`), so export → import round-trips. Custom fields are not exported |
+| `ARCHITECTURE_PDF_EXPORT.md` | The logbook CSV export headers (`app/ui/src/components/UIElements/CSVExportButton.jsx:71-96`) are the "Web Logbook" mapping defaults (`MapFieldsDialog.jsx:28-53`), so export → import round-trips. Custom fields are not in the CSV export |
 | `ARCHITECTURE_DATABASE.md` | Tables `logbook`, `persons`, `person_to_log`, `aircrafts`; `DefaultTimeout`; no import-specific schema |
 | `ARCHITECTURE_FRONTEND.md` | `useDialogs`, `queryClient` (`app/ui/src/util/http/http.jsx:4`), `XDataGrid` persistence, `API_URL` |
 
@@ -253,13 +253,13 @@ Gaps worth filling first: `flightDuplicateKey` (pure function), `autoTimeFieldRe
 |---|---|---|---|---|---|
 | 1 | The PIC last-name fallback links **any** existing person with the same last name. The comment and commit `f29ec55` ("PIC field has last name only") say it should apply only when the name has a last name alone. The code never checks that first/middle are empty, so "John Smith" is linked to an existing "Jane Smith". `lastNameCache` also keeps only the last person seen per last name. The log line shows the CSV name, which hides the wrong link | `app/handlers_import.go:247-254`, `:164`, `:281`, `:304` | Confirmed: condition is `role == "PIC" && lastName != ""` only | MAJOR | 2026-10-14 |
 | 2 | Partial-success imports do not refresh the UI. Any skipped or failed record → `ok:false` → status `error` → `onClose(false)` → no `invalidateQueries()`. The `['logbook']` query has a 1 h `staleTime` with no refetch on focus, so the Logbook page hides the newly imported records. Re-importing an overlapping CSV always produces skips | `app/handlers_import.go:353-356`, `ImportProgressDialog.jsx:129`, `:204`, `RunImportButton.jsx:33-35`, `app/ui/src/hooks/queries/useLogbookQuery.js:7-9` | Confirmed: code path read end to end | MAJOR | 2026-10-14 |
-| 3 | `duration` custom fields are imported as raw CSV strings (e.g. `"1:30"`). The app stores them as integer minutes, and readers use `parseInt` or the minutes formatter. Only the standard time fields go through `autoTimeFieldRecog` | `OpenCSVButton.jsx:56-66`, `app/ui/src/components/Import/helpers.jsx:71-77`; consumers `app/ui/src/util/helpers.jsx:94-95`, `app/ui/src/components/Logbook/helpers.jsx:121-125`, `app/ui/src/components/FlightRecord/CustomFields.jsx:53-64` | Confirmed | MAJOR | 2026-10-14 |
+| 3 | `duration` custom fields are imported as raw CSV strings (e.g. `"1:30"`). The app stores them as integer minutes, and readers use `parseInt` or the minutes formatter. Only the standard time fields go through `autoTimeFieldRecog` | `OpenCSVButton.jsx:56-66`, `app/ui/src/components/Import/helpers.jsx:71-77`; consumers `app/ui/src/util/helpers.jsx:94-95`, `app/ui/src/components/Logbook/helpers.jsx:121-125`, `app/ui/src/components/FlightRecord/CustomFields.jsx:45-60` | Confirmed | MAJOR | 2026-11-08 |
 | 4 | Night-time recalculation with an **unknown airport** uses 0°N 0°E. `GetAirportByID` returns a zero `Airport` with a `nil` error, so `calculateNightTime` computes against those coordinates without logging anything. The result can overwrite the CSV night time and move day landings to night. The same zero `Airport` also reaches `Distance`, which returns 0 only on `err != nil`: every imported record with an unknown code gets a `distance` measured to 0°N 0°E, which `InsertFlightRecord` stores and `distanceCache` keeps, even when night-time recalculation is off. A record with one blank place looks up `GetAirportByID("")` instead (see ARCHITECTURE_AIRCRAFT_AIRPORTS.md §11 #1, #18) | `internal/models/airports.go:33-35`, `app/helpers.go:73-86`, `app/handlers_import.go:190`, `:199-212`, `internal/models/helpers.go:45-52`, `internal/models/flightrecords.go:91` | Confirmed (code path); the size of the error depends on the route | MAJOR | 2026-10-14 |
 | 5 | Loading a CSV without a mapped (or with a cleared) **Departure Place** throws `TypeError` on `newRow.departure_place.includes` inside the async Papa callback. Nothing is loaded and no message is shown. A simulator-only CSV cannot be loaded unless some column is mapped to departure | `OpenCSVButton.jsx:48`; Continue enabled with any mapping `MapFieldsDialog.jsx:102`; cleared Select yields `null` `app/ui/src/components/UIElements/Select.jsx:34` | Confirmed | MINOR | 2026-10-14 |
 | 6 | The stream can end without a `result` chunk. If `GetFlightRecordDuplicates` fails, `handleError` writes after the 200 was flushed (superfluous `WriteHeader`). The UI gets a line with no `type` and stays in `running`, with Ok disabled and the backdrop guarded, until the page is reloaded | `app/handlers_import.go:103-107`, `:134-137`, `ImportProgressDialog.jsx:133-134`, `:141`, `:205` | Confirmed | MINOR | 2026-10-14 |
 | 7 | "Close" (X) in Map Fields resolves the dialog with the click **event**, which is truthy. Every row then lacks `date`, and `setData([])` wipes rows already in the preview. Escape/backdrop pass `null` and are fine | `MapFieldsDialog.jsx:108`, `app/ui/src/hooks/useDialogs/useDialogs.jsx:99`, `OpenCSVButton.jsx:27`, `:38-40`, `:83` | Confirmed | MINOR | 2026-10-14 |
-| 8 | The preview shares grid state with the Logbook page (`tableId='logbook'`). A filter saved there hides preview rows, but Run Import still sends **all** rows in `data` | `app/ui/src/components/Logbook/LogbookTable.jsx:300`, `ImportTable.jsx:19`, `:25-32`, `app/ui/src/components/UIElements/XDataGrid/FilterContext.jsx:7-8` | Confirmed | MINOR | 2026-10-14 |
-| 9 | There is no server-side validation of record content. A date that `convertToDate` cannot parse is inserted verbatim, which breaks ordering in `logbook_view` (`ORDER BY date`) | `app/ui/src/components/Import/helpers.jsx:18`, `internal/models/flightrecords.go:87-116`, `internal/driver/db_structure.go:175` | Confirmed | MINOR | 2026-10-14 |
+| 8 | The preview shares grid state with the Logbook page (`tableId='logbook'`). A filter saved there hides preview rows, but Run Import still sends **all** rows in `data` | `app/ui/src/components/Logbook/LogbookTable.jsx:329`, `ImportTable.jsx:19`, `:25-32`, `app/ui/src/components/UIElements/XDataGrid/FilterContext.jsx:7-8` | Confirmed | MINOR | 2026-11-08 |
+| 9 | There is no server-side validation of record content. A date that `convertToDate` cannot parse is inserted verbatim, which breaks ordering in `logbook_view` (`ORDER BY date`) | `app/ui/src/components/Import/helpers.jsx:18`, `internal/models/flightrecords.go:87-116`, `internal/driver/db_structure.go:172` | Confirmed | MINOR | 2026-11-08 |
 | 10 | The import is not atomic and cannot be cancelled. Each record is a separate autocommit insert with no transaction. `r.Context()` is not checked, so an aborted client does not stop the run. The only safety net is the UI-only "I have a logbook backup" switch; `ImportOptions.Backup` is never read | `app/handlers_import.go:66`, `:169-344`, `:217` | Confirmed | MINOR | 2026-10-14 |
 | 11 | Night time is truncated (`int(night.Minutes())`) on import but rounded in `HandlerNightTime` | `app/handlers_import.go:202`, `app/handlers_flightrecord.go:46` | Confirmed | MINOR | 2026-10-14 |
 | 12 | A debug `fmt.Printf` left in the night-landing branch writes to stdout for every converted record | `app/handlers_import.go:208` | Confirmed | MINOR | 2026-10-14 |
@@ -267,14 +267,14 @@ Gaps worth filling first: `flightDuplicateKey` (pure function), `autoTimeFieldRe
 | 14 | The help text says flight time fields "must use the HH:MM format", but decimal hours are also accepted. US `MM/DD/YYYY` dates are not recognised: `03/04/2026` parses as 3 April | `HelpButton.jsx:39-42`, `app/ui/src/components/Import/helpers.jsx:9-16`, `:60-67` | Confirmed | MINOR | 2026-10-14 |
 | 15 | Stale comment references `IsFlightRecordExists`, which no longer exists in the repo (removed by `f29ec55`, #535) | `app/handlers_import.go:17` | Confirmed (`grep` finds only this comment) | MINOR | 2026-10-14 |
 | 16 | Distance is computed twice per record: once in the handler, then again in `InsertFlightRecord`, which overwrites it. It is cached, so this is only redundant code | `app/handlers_import.go:190`, `internal/models/flightrecords.go:91` | Confirmed | MINOR | 2026-10-14 |
-| 17 | In dev mode, `StrictMode` runs the start effect twice. The first `fetch` is aborted by the cleanup, but if it was already sent, the server (which ignores cancellation) runs a second import in parallel. The two runs share a stale duplicate snapshot, so the same records could be inserted twice | `app/ui/src/main.jsx:100`, `ImportProgressDialog.jsx:26-36`, `app/handlers_import.go:134` | Suspected: confirm with `npm run dev` by counting `POST /api/import/run` per import in the dev server log | MINOR | 2026-10-14 |
+| 17 | In dev mode, `StrictMode` runs the start effect twice. The first `fetch` is aborted by the cleanup, but if it was already sent, the server (which ignores cancellation) runs a second import in parallel. The two runs share a stale duplicate snapshot, so the same records could be inserted twice | `app/ui/src/main.jsx:102`, `ImportProgressDialog.jsx:26-36`, `app/handlers_import.go:134` | Suspected: confirm with `npm run dev` by counting `POST /api/import/run` per import in the dev server log | MINOR | 2026-11-08 |
 | 18 | Large imports may be slow on SQLite. Each record is an autocommit insert, plus per-person SELECT+INSERT, plus a full `logbook_view` scan at the start | `internal/models/flightrecords.go:107`, `internal/models/persons.go:74-85`, `:113-122` | Suspected: time a 5 000-row import on SQLite vs. a batched transaction | MINOR | 2026-10-14 |
 
 ## 12. Rules for Future Development
 
 ### 12.1 Add a standard logbook field to the import (e.g. a new time column)
 
-1. Schema first (details in `ARCHITECTURE_DATABASE.md` / `ARCHITECTURE_LOGBOOK.md`). Add the column to `logbookTable` with a `ColumnType` that has both SQLite and MySQL types (`internal/driver/db_structure.go:23-53`), add it to both `logbook_view` variants (`:168-227`) and bump `schemaVersion` (`:4`). Add it to the `FlightRecord` struct (`internal/models/structs.go:25-79`), `InsertFlightRecord` (`internal/models/flightrecords.go:93-114`) and the `GetFlightRecords` SELECT/Scan (`:132-156`), which feeds the duplicate set (`app/handlers_import.go:49-63`). Add a grid column in `app/ui/src/components/Logbook/LogbookTable.jsx`; the import preview is that grid (`app/ui/src/components/Import/ImportTable.jsx:25-32`), so without it the field is imported but not shown.
+1. Schema first (details in `ARCHITECTURE_DATABASE.md` / `ARCHITECTURE_LOGBOOK.md`). Add the column to `logbookTable` with a `ColumnType` that has both SQLite and MySQL types (`internal/driver/db_structure.go:23-53`), add it to both `logbook_view` variants (`:165-224`) and bump `schemaVersion` (`:4`). Add it to the `FlightRecord` struct (`internal/models/structs.go:25-79`), `InsertFlightRecord` (`internal/models/flightrecords.go:93-114`) and the `GetFlightRecords` SELECT/Scan (`:132-156`), which feeds the duplicate set (`app/handlers_import.go:49-63`). Add a grid column in `app/ui/src/components/Logbook/LogbookTable.jsx`; the import preview is that grid (`app/ui/src/components/Import/ImportTable.jsx:25-32`), so without it the field is imported but not shown.
 2. `app/ui/src/components/Import/MapFieldsDialog.jsx:28-53`: add `{ id, label, default, leon? }`. Set `default` to the header that the logbook CSV export writes.
 3. `app/ui/src/components/UIElements/CSVExportButton.jsx:71-96`: add the same header so export → import still round-trips.
 4. Time fields: add `newRow.<id> = autoTimeFieldRecog(newRow.<id>)` (minutes) in `app/ui/src/components/Import/OpenCSVButton.jsx:56-66`. Integer counters: `parseInt(item.<id>) || 0` inside `marshallItem` (`app/ui/src/components/Import/helpers.jsx:108-111`), as landings do.
@@ -294,7 +294,7 @@ Gaps worth filling first: `flightDuplicateKey` (pure function), `autoTimeFieldRe
 
 1. Add a new key (like `leon`) to the entries of `fields` (`MapFieldsDialog.jsx:28-53`).
 2. Add a `ProfileButton` with that `fieldKey` (`:89-98`).
-3. Add a bullet to `README.md:265-270`.
+3. Add a bullet to `README.md:261-266`.
 
 ### 12.4 Add a date or time format
 
@@ -324,7 +324,7 @@ Add a new toolbar button in `app/ui/src/components/Import/` and wire it in `Impo
 - [ ] Server caches: import changes no data held in `airportCache` or `distanceCache` today (it only fills them through `GetAirportByID` / `Distance`). An option that writes airports must clear `airportCache` and rebuild `distanceCache`, as `UpdateAirportDB` does (`internal/models/airports.go:95-96`).
 - [ ] Both DB engines: import has no SQL of its own. New SQL goes into model methods with SQLite/MySQL variants, plus a `schemaVersion` bump (`internal/driver/db_structure.go:4`) if the schema changes.
 - [ ] `make build_ui && make test` passes, including `TestParseName`; `npm run test:run` passes for UI helpers.
-- [ ] `CHANGELOG.md` `[Unreleased]` bullet (`- New:` / `- Update:` / `- Fix:`) and the same bullet in the changelog copy in `README.md` (`README.md:64-66`). Update the README "Import" section (`README.md:265-270`) for user-visible features.
+- [ ] `CHANGELOG.md` `[Unreleased]` bullet (`- New:` / `- Update:` / `- Fix:`) and the same bullet in the changelog copy in `README.md` (under `# Changelog`, `README.md:64`; right after a release there is no `[Unreleased]` block). Update the README "Import" section (`README.md:261-266`) for user-visible features.
 
 ## 13. AI Notes
 
@@ -340,8 +340,8 @@ The browser does all the CSV work: parse, map, normalise, convert to `FlightReco
 - Night-time recalculation never lowers night time to 0 (`:199`).
 - When it changes landings, it moves **all** day landings to night (`:207-212`).
 - `ok` is `omitempty`, so a failed `result` arrives without `ok` (`app/handlers_import.go:85`). The UI treats a missing `ok` as failure.
-- `LogbookTable` is reused, so changes to the Logbook grid (columns, `tableId`, toolbar props) also change the import preview (`app/ui/src/components/Logbook/LogbookTable.jsx:298-333`).
-- `ImportTable` passes no `tableId` (`app/ui/src/components/Import/ImportTable.jsx:25-32`), so the preview keeps the hard-coded `tableId='logbook'` (`app/ui/src/components/Logbook/LogbookTable.jsx:300`) and reads and writes the Logbook page's `localStorage` state: `logbook-pagination`, `logbook-columns` (`app/ui/src/components/UIElements/XDataGrid/XDataGrid.jsx:111-112`), `logbook-filter-model` and `logbook-quick-filter-model` (`app/ui/src/components/UIElements/XDataGrid/FilterContext.jsx:7-8`). See §4.4 "Grid state" and §11 #8.
+- `LogbookTable` is reused, so changes to the Logbook grid (columns, `tableId`, toolbar props) also change the import preview (`app/ui/src/components/Logbook/LogbookTable.jsx:327-362`). This includes the column order from the `logbook_profile.table_columns` setting (`:165-174`).
+- `ImportTable` passes no `tableId` (`app/ui/src/components/Import/ImportTable.jsx:25-32`), so the preview keeps the hard-coded `tableId='logbook'` (`app/ui/src/components/Logbook/LogbookTable.jsx:329`) and reads and writes the Logbook page's `localStorage` state: `logbook-pagination`, `logbook-columns` (`app/ui/src/components/UIElements/XDataGrid/XDataGrid.jsx:111-112`), `logbook-filter-model` and `logbook-quick-filter-model` (`app/ui/src/components/UIElements/XDataGrid/FilterContext.jsx:7-8`). See §4.4 "Grid state" and §11 #8.
 - `ImportProgressDialog` is the one network call outside `app/ui/src/util/http/`. Auth or base-URL changes must be repeated there (`ImportProgressDialog.jsx:54-62`).
 - Person roles from custom fields use the field **name** at import time. Renaming the field later does not rename the roles (`app/handlers_import.go:321-325`).
 
@@ -351,7 +351,7 @@ The browser does all the CSV work: parse, map, normalise, convert to `FlightReco
 |---|---|
 | Server loop, options, chunks | `app/handlers_import.go` |
 | Name parsing + test | `app/handlers_import.go:366-424`, `app/handlers_import_test.go` |
-| Route | `app/routes.go:127-129` |
+| Route | `app/routes.go:128-130` |
 | Night time / log time format | `app/helpers.go:67-140` |
 | CSV parse + normalisation | `app/ui/src/components/Import/OpenCSVButton.jsx`, `app/ui/src/components/Import/helpers.jsx` |
 | Field list / profiles | `app/ui/src/components/Import/MapFieldsDialog.jsx` |

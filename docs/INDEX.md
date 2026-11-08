@@ -2,7 +2,7 @@
 
 Master index of the agent-facing documentation for web-logbook. User-facing documentation stays in [`README.md`](../README.md) and [`CHANGELOG.md`](../CHANGELOG.md).
 
-**Last updated:** 2026-10-14 · **Architecture docs:** 12
+**Last updated:** 2026-11-08 · **Architecture docs:** 12
 
 ---
 
@@ -33,16 +33,16 @@ Master index of the agent-facing documentation for web-logbook. User-facing docu
 | System | File | Description |
 |---|---|---|
 | Summaries | [`SUMMARIES.md`](architecture/SUMMARIES.md) | One paragraph per system — routing table for research |
-| Application | [`ARCHITECTURE_APPLICATION.md`](architecture/ARCHITECTURE_APPLICATION.md) | Startup, CLI flags, logging, chi routes and middleware, response helpers, SPA serving, DB backup/restore |
+| Application | [`ARCHITECTURE_APPLICATION.md`](architecture/ARCHITECTURE_APPLICATION.md) | Startup, CLI flags, logging, chi routes and middleware, response helpers, SPA serving and custom CSS/JS, DB backup/restore |
 | Database | [`ARCHITECTURE_DATABASE.md`](architecture/ARCHITECTURE_DATABASE.md) | SQLite/MySQL, declarative schema, `schemaVersion`, `validateDB`, v5 data overhaul, views |
 | Authentication | [`ARCHITECTURE_AUTH.md`](architecture/ARCHITECTURE_AUTH.md) | Optional JWT auth, login throttling, tokens, `authCache`, UI sign-in/401 handling |
-| Settings | [`ARCHITECTURE_SETTINGS.md`](architecture/ARCHITECTURE_SETTINGS.md) | `settings2` JSON blob, defaults, settings UI, time/date display formats |
-| Logbook | [`ARCHITECTURE_LOGBOOK.md`](architecture/ARCHITECTURE_LOGBOOK.md) | Flight records, logbook table, custom fields, night time, tracks |
+| Settings | [`ARCHITECTURE_SETTINGS.md`](architecture/ARCHITECTURE_SETTINGS.md) | `settings2` JSON blob, defaults, settings UI (General, Fields & Layout), logbook layout profile, time/date display formats |
+| Logbook | [`ARCHITECTURE_LOGBOOK.md`](architecture/ARCHITECTURE_LOGBOOK.md) | Flight records, logbook table, custom fields, form layout and field visibility, night time, tracks |
 | Stats & Map | [`ARCHITECTURE_STATS_AND_MAP.md`](architecture/ARCHITECTURE_STATS_AND_MAP.md) | Client-side statistics and OpenLayers map (no stats endpoint) |
 | Persons | [`ARCHITECTURE_PERSONS.md`](architecture/ARCHITECTURE_PERSONS.md) | Crew directory and person ↔ flight links |
 | Aircraft & Airports | [`ARCHITECTURE_AIRCRAFT_AIRPORTS.md`](architecture/ARCHITECTURE_AIRCRAFT_AIRPORTS.md) | Aircraft list generation, airport DB download/custom airports, distance cache |
 | Currency, Licensing & Attachments | [`ARCHITECTURE_CURRENCY_LICENSING.md`](architecture/ARCHITECTURE_CURRENCY_LICENSING.md) | Currency rules, licence records, attachments |
-| PDF & CSV Export | [`ARCHITECTURE_PDF_EXPORT.md`](architecture/ARCHITECTURE_PDF_EXPORT.md) | A4/A5 PDF logbook rendering, export settings, quick CSV export |
+| PDF & CSV Export | [`ARCHITECTURE_PDF_EXPORT.md`](architecture/ARCHITECTURE_PDF_EXPORT.md) | A4/A5 PDF logbook rendering, profile-based column layout incl. custom fields, export settings, quick CSV export |
 | Import | [`ARCHITECTURE_IMPORT.md`](architecture/ARCHITECTURE_IMPORT.md) | CSV import with mapping presets and NDJSON progress |
 | Frontend | [`ARCHITECTURE_FRONTEND.md`](architecture/ARCHITECTURE_FRONTEND.md) | React SPA shell: router, HTTP layer, query hooks, shared UI elements, embed/dev mode |
 
