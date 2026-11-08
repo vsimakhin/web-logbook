@@ -117,7 +117,7 @@ const formatTimeTotals = (totals, timeFieldsFormat) => ({
   distance: totals.distance
 });
 
-export const getStats = (data, airportsMap, timeFieldsFormat) => {
+export const getStats = (data, airportsMap, timeFieldsFormat, getEnroute) => {
   const sets = {
     airports: new Set(),
     routes: new Set(),
@@ -126,30 +126,52 @@ export const getStats = (data, airportsMap, timeFieldsFormat) => {
     countries: new Set(),
   };
 
+  let flights = 0;
+  let simSessions = 0;
+
   const totals = createInitialTotals();
 
   data.forEach((flight) => {
     const { departure, arrival, aircraft } = flight;
+    const enrouteAirports = getEnroute ? getEnroute(flight.custom_fields) : null;
 
     // Update sets
     if (departure.place) sets.airports.add(departure.place);
     if (arrival.place) sets.airports.add(arrival.place);
+    if (enrouteAirports) enrouteAirports.map(enroute => sets.airports.add(enroute));
+
     if (aircraft.reg_name) sets.aircraftRegs.add(aircraft.reg_name);
     if (aircraft.model) sets.aircraftModels.add(aircraft.model);
     if (departure.place && arrival.place) {
-      sets.routes.add(`${departure.place}-${arrival.place}`);
+      const enrouteRoute = enrouteAirports ? `${departure.place}-${enrouteAirports.join('-')}-${arrival.place}` : `${departure.place}-${arrival.place}`;
+      sets.routes.add(enrouteRoute);
+      flights += 1;
+    }
+    if (flight.sim && flight.sim.type) {
+      simSessions += 1;
     }
 
-    if (departure.place && airportsMap) {
-      const airport = airportsMap.get(departure.place);
-      if (airport) {
-        sets.countries.add(airport.country);
+    // Update countries set 
+    if (airportsMap) {
+      if (departure.place) {
+        const airport = airportsMap.get(departure.place);
+        if (airport) {
+          sets.countries.add(airport.country);
+        }
       }
-    }
-    if (arrival.place && airportsMap) {
-      const airport = airportsMap.get(arrival.place);
-      if (airport) {
-        sets.countries.add(airport.country);
+      if (arrival.place) {
+        const airport = airportsMap.get(arrival.place);
+        if (airport) {
+          sets.countries.add(airport.country);
+        }
+      }
+      if (enrouteAirports) {
+        enrouteAirports.forEach(code => {
+          const airport = airportsMap.get(code);
+          if (airport) {
+            sets.countries.add(airport.country);
+          }
+        });
       }
     }
     // Update totals
@@ -161,6 +183,8 @@ export const getStats = (data, airportsMap, timeFieldsFormat) => {
       Object.entries(sets).map(([key, set]) => [key, set.size])
     ),
     totals: formatTimeTotals(totals, timeFieldsFormat),
+    flights,
+    simSessions
   };
 };
 
