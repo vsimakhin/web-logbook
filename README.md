@@ -63,17 +63,7 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
-
-- Update: Reorganized the Settings page into two sections: General and Fields & Layout.
-- New: Flight record fields can now be resized, reordered, or hidden using the new Layout button in the menu.
-- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in Fields & Layout. Layout is saved to the user profile.
-- New: PDF export (A4 & A5) supports custom fields, category grouping, and calculates totals for custom duration and number fields.
-- New: Customizable PDF column layout with page-divider support for two-page A5 exports.
-- Fix: Interrupted database migration should no longer leave the logbook in a broken state.
-- Fix/Update: Fix inaccurate stats calculation (flights, routes, airports) for Map and Dashboard pages. Added Sim sessions to the stats.
-
-## [5.0.0-alpha2] - 11.10.2026
+## [5.0.0-alpha3] - 08.11.2026
 
 :warning: As this is an alpha (non-production) release, back up your database before upgrading
 
@@ -87,6 +77,13 @@ The application will automatically create a local SQLite database on the first s
 - Update: Golang and npm packages/security patches.
 - Update: Add proper map layer attributions and copyright notices.
 - New: Custom styles and scripts - the new `-custom-dir` option adds your own `custom.css` and/or `custom.js` to the UI, no reverse proxy needed.
+- Update: Reorganized the Settings page into two sections: General and Fields & Layout.
+- New: Flight record fields can now be resized, reordered, or hidden using the new Layout button in the menu.
+- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in Fields & Layout. Layout is saved to the user profile.
+- New: PDF export (A4 & A5) supports custom fields, category grouping, and calculates totals for custom duration and number fields.
+- New: Customizable PDF column layout with page-divider support for two-page A5 exports.
+- Fix: Interrupted database migration should no longer leave the logbook in a broken state.
+- Fix/Update: Fix inaccurate stats calculation (flights, routes, airports) for Map and Dashboard pages. Added Sim sessions to the stats.
 
 ## [4.10.0] - 24.09.2026
 
