@@ -3,15 +3,13 @@ import { useMemo } from "react";
 import { useTheme } from '@mui/material/styles';
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import CardHeader from "../UIElements/CardHeader";
 // Custom
 import RestoreDefaultsButton from "./MenuButtons/RestoreDefaultsButton";
 import useSettings from "../../hooks/useSettings";
 import TextField from "../UIElements/TextField";
-import CardContent from "@mui/material/CardContent";
-import Card from "@mui/material/Card";
 import ExportButton from "./MenuButtons/ExportButton";
 import SaveSettingsButton from "./MenuButtons/SaveSettingsButton";
+import CollapsibleCard from "../UIElements/CollapsibleCard";
 
 const size = { xs: 4, sm: 2, md: 4, lg: 2, xl: 2 };
 
@@ -135,66 +133,61 @@ export const PageSettings = ({ format, pdfSettings, handleChange }) => {
   const headers = useMemo(() => getHeadersConfig(fieldName), [fieldName]);
 
   return (
-    <>
-      <Card variant="outlined" sx={{ mb: 1 }}>
-        <CardContent>
-          <CardHeader title={`${format} Page Settings`} action={
-            <>
-              <ExportButton format={format} />
-              <SaveSettingsButton settings={pdfSettings} format={format} />
-              <RestoreDefaultsButton format={format} handleChange={handleChange} />
-            </>
-          } />
-
-          <Grid container spacing={1} columns={16} >
-            {PAGE_SETTINGS_CONFIG.map(({ id, label, tooltip, placeholder, showIf }) => (
-              (!showIf || showIf(format)) && (
-                <TextField
-                  key={id}
-                  gsize={size}
-                  id={id}
+    <CollapsibleCard id={`${format}-settings-general`} title={`${format} Page Settings`}
+      action={
+        <>
+          <ExportButton format={format} />
+          <SaveSettingsButton settings={pdfSettings} format={format} />
+          <RestoreDefaultsButton format={format} handleChange={handleChange} />
+        </>
+      } sx={{ mb: 1 }}>
+      <Grid container spacing={1} columns={16} >
+        {PAGE_SETTINGS_CONFIG.map(({ id, label, tooltip, placeholder, showIf }) => (
+          (!showIf || showIf(format)) && (
+            <TextField
+              key={id}
+              gsize={size}
+              id={id}
+              label={label}
+              handleChange={handleChange}
+              value={pdfSettings[id] ?? ""}
+              tooltip={tooltip}
+              placeholder={placeholder}
+            />
+          )
+        ))}
+      </Grid>
+      <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Standard Columns Header</Typography>
+      <Grid container spacing={1}>
+        {headers.map(({ size, group }, groupIndex) => (
+          <Grid size={size} key={`group-${groupIndex}`}>
+            <Grid container spacing={0}>
+              {group.map(({ id, label, size: fieldSize, col }, fieldIndex) => (
+                <TextField key={id}
+                  id={`headers.${id}`}
                   label={label}
                   handleChange={handleChange}
-                  value={pdfSettings[id] ?? ""}
-                  tooltip={tooltip}
-                  placeholder={placeholder}
+                  value={pdfSettings.headers[id] ?? ""}
+                  gsize={fieldSize}
+                  tooltip={label}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 0,
+                      borderTopLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                      borderBottomLeftRadius: fieldIndex === 0 ? borderRadius : 0,
+                      borderTopRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
+                      borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
+                    }
+                  }}
+                  disabled={col && col.split(',').every(c => parseInt(pdfSettings.columns[c]) === 0)}
                 />
-              )
-            ))}
+              ))}
+            </Grid>
           </Grid>
-          <Typography variant="overline" sx={{ display: 'block', mb: 1, mt: 1 }}>Logbook Standard Columns Header</Typography>
-          <Grid container spacing={1}>
-            {headers.map(({ size, group }, groupIndex) => (
-              <Grid size={size} key={`group-${groupIndex}`}>
-                <Grid container spacing={0}>
-                  {group.map(({ id, label, size: fieldSize, col }, fieldIndex) => (
-                    <TextField key={id}
-                      id={`headers.${id}`}
-                      label={label}
-                      handleChange={handleChange}
-                      value={pdfSettings.headers[id] ?? ""}
-                      gsize={fieldSize}
-                      tooltip={label}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 0,
-                          borderTopLeftRadius: fieldIndex === 0 ? borderRadius : 0,
-                          borderBottomLeftRadius: fieldIndex === 0 ? borderRadius : 0,
-                          borderTopRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
-                          borderBottomRightRadius: fieldIndex === group.length - 1 ? borderRadius : 0,
-                        }
-                      }}
-                      disabled={col && col.split(',').every(c => parseInt(pdfSettings.columns[c]) === 0)}
-                    />
-                  ))}
-                </Grid>
-              </Grid>
-            ))
-            }
-          </Grid >
-        </CardContent>
-      </Card >
-    </>
+        ))
+        }
+      </Grid >
+    </CollapsibleCard>
   );
 }
 

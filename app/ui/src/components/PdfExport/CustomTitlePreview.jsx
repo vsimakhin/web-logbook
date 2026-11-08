@@ -6,11 +6,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import { fetchAttachment } from "../../util/http/attachment";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "../UIElements/CardHeader";
 import AddCustomTitleButton from "./MenuButtons/AddCustomTitleButton";
 import DeleteCustomTitleButton from "./MenuButtons/DeleteCustomTitleButton";
+import CollapsibleCard from "../UIElements/CollapsibleCard";
 
 const decodeBase64 = async (base64String) => {
   const binaryString = atob(base64String);
@@ -78,17 +76,15 @@ export const CustomTitlePreview = ({ format }) => {
   return (
     <>
       {isLoading && <LinearProgress />}
-      <Card variant="outlined" sx={{ mb: 1 }}>
-        <CardContent>
-          <CardHeader title={`${format} Custom title page`} action={
-            <>
-              <AddCustomTitleButton format={format} />
-              <DeleteCustomTitleButton format={format} />
-            </>
-          } />
-          {renderPreview()}
-        </CardContent>
-      </Card >
+      <CollapsibleCard id={`${format}-custom-title`} title={`${format} Custom title page`}
+        action={
+          <>
+            <AddCustomTitleButton format={format} />
+            <DeleteCustomTitleButton format={format} />
+          </>
+        } sx={{ mb: 1 }}>
+        {renderPreview()}
+      </CollapsibleCard>
     </>
   );
 }

@@ -1,17 +1,15 @@
 import { useCallback, useMemo } from 'react';
 // MUI
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 // Custom
-import CardHeader from '../UIElements/CardHeader';
 import useCustomFields from '../../hooks/useCustomFields';
 import useSettings from '../../hooks/useSettings';
 import { AvailableColumnList, SortableColumnList } from '../UIElements/SortableColumnList';
 import SaveSettingsButton from './MenuButtons/SaveSettingsButton';
 import RestoreColumnsButton from './MenuButtons/RestoreColumnsButton';
+import CollapsibleCard from '../UIElements/CollapsibleCard';
 
 const TABLE_COLUMNS_PATH = 'table_profile.table_columns';
 const HIDDEN_COLUMNS_PATH = 'table_profile.table_hidden_columns';
@@ -218,59 +216,55 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
   const columnCount = visibleColumns.filter((c) => c.field !== "PAGE_DIVIDER").length;
 
   return (
-    <Card variant="outlined" sx={{ mb: 1 }}>
-      <CardContent>
-        <CardHeader title={`${format} PDF Export Table Layout`}
-          action={
-            <>
-              <RestoreColumnsButton format={format} handleChange={handleChange} />
-              <SaveSettingsButton settings={settings} format={format} />
-            </>
-          }
-        />
+    <CollapsibleCard id={`${format}-pdf-table-layout`} title={`${format} PDF Export Table Layout`}
+      action={
+        <>
+          <RestoreColumnsButton format={format} handleChange={handleChange} />
+          <SaveSettingsButton settings={settings} format={format} />
+        </>
+      } sx={{ mb: 1 }}>
 
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-          Drag visible columns to reorder them. Use the buttons to add or remove columns, then click Save to apply your changes.
-        </Typography>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+        Drag visible columns to reorder them. Use the buttons to add or remove columns, then click Save to apply your changes.
+      </Typography>
 
-        <Grid container spacing={1}>
-          {/* Available columns */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>Available columns</Typography>
+      <Grid container spacing={1}>
+        {/* Available columns */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>Available columns</Typography>
 
-            <Box sx={{ overflowY: 'auto', border: 1, borderColor: 'divider', borderRadius: 1 }}>
-              <AvailableColumnList columns={availableColumns} onAdd={handleAdd} />
-            </Box>
-          </Grid>
-
-          {/* Visible columns */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-              <Typography variant="subtitle2">Visible columns</Typography>
-              {format === "A4" ? (
-                <Typography variant="caption" color={totalWidth <= 297 ? "text.secondary" : "warning"}>
-                  {visibleColumns.length} columns, {totalWidth.toFixed(1)} mm of 297
-                </Typography>
-              ) : (
-                <Typography variant="caption" color={((leftWidth <= 210) && (rightWidth <= 210)) ? "text.secondary" : "warning"}>
-                  {columnCount} columns: {leftWidth.toFixed(1)}(L) mm/{rightWidth.toFixed(1)}(R) mm of 210
-                </Typography>
-              )}
-            </Box>
-
-            <Box sx={{ overflowY: 'auto', border: 1, borderColor: 'divider', borderRadius: 1 }}>
-              <SortableColumnList columns={visibleColumns} onReorder={handleReorder} onRemove={handleRemove} onWidthChange={handleWidthChange} />
-
-              {visibleColumns.length === 0 && (
-                <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
-                  No visible columns. Add columns from the available list.
-                </Typography>
-              )}
-            </Box>
-          </Grid>
+          <Box sx={{ overflowY: 'auto', border: 1, borderColor: 'divider', borderRadius: 1 }}>
+            <AvailableColumnList columns={availableColumns} onAdd={handleAdd} />
+          </Box>
         </Grid>
-      </CardContent>
-    </Card>
+
+        {/* Visible columns */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+            <Typography variant="subtitle2">Visible columns</Typography>
+            {format === "A4" ? (
+              <Typography variant="caption" color={totalWidth <= 297 ? "text.secondary" : "warning"}>
+                {visibleColumns.length} columns, {totalWidth.toFixed(1)} mm of 297
+              </Typography>
+            ) : (
+              <Typography variant="caption" color={((leftWidth <= 210) && (rightWidth <= 210)) ? "text.secondary" : "warning"}>
+                {columnCount} columns: {leftWidth.toFixed(1)}(L) mm/{rightWidth.toFixed(1)}(R) mm of 210
+              </Typography>
+            )}
+          </Box>
+
+          <Box sx={{ overflowY: 'auto', border: 1, borderColor: 'divider', borderRadius: 1 }}>
+            <SortableColumnList columns={visibleColumns} onReorder={handleReorder} onRemove={handleRemove} onWidthChange={handleWidthChange} />
+
+            {visibleColumns.length === 0 && (
+              <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
+                No visible columns. Add columns from the available list.
+              </Typography>
+            )}
+          </Box>
+        </Grid>
+      </Grid>
+    </CollapsibleCard>
   );
 };
 

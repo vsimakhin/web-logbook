@@ -87,16 +87,9 @@ const router = createBrowserRouter([
               { path: 'a5', element: <PdfExportA5Page /> },
             ]
           },
-          {
-            path: 'import', element: <ImportPage />,
-          },
-          {
-            path: 'settings', children: [
-              { index: true, element: <SettingsGeneralPage /> },
-              { path: 'general', element: <SettingsGeneralPage /> },
-              { path: 'fields-and-layout', element: <SettingsFieldsAndLayoutPage /> },
-            ]
-          },
+          { path: 'import', element: <ImportPage /> },
+          { path: 'settings', element: <SettingsGeneralPage /> },
+          { path: 'fields-and-layout', element: <SettingsFieldsAndLayoutPage /> }
         ]
       },
       { path: '/signin', element: <SignInPage /> },

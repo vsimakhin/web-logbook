@@ -10,7 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CardHeader from './CardHeader';
 import { CODE_BOOLEAN, useLocalStorageState } from '../../hooks/useLocalStorageState';
 
-export default function CollapsibleCard({
+export const CollapsibleCard = ({
   id,
   title,
   subheader,
@@ -18,7 +18,7 @@ export default function CollapsibleCard({
   defaultExpanded = true,
   children,
   ...cardProps
-}) {
+}) => {
   const persist = Boolean(id);
 
   const [storedExpanded, setStoredExpanded] = useLocalStorageState(`card-${id}`, defaultExpanded, { codec: CODE_BOOLEAN });
@@ -67,3 +67,5 @@ export default function CollapsibleCard({
     </Card>
   );
 }
+
+export default CollapsibleCard;
