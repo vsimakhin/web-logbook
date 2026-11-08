@@ -6,6 +6,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 // Custom
 import { fetchAttachment } from "../../util/http/attachment";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
+import AddCustomTitleButton from "./MenuButtons/AddCustomTitleButton";
+import DeleteCustomTitleButton from "./MenuButtons/DeleteCustomTitleButton";
+import CollapsibleCard from "../UIElements/CollapsibleCard";
 
 const decodeBase64 = async (base64String) => {
   const binaryString = atob(base64String);
@@ -24,6 +27,9 @@ export const CustomTitlePreview = ({ format }) => {
     queryKey: ['custom-title', format],
     queryFn: ({ signal }) => fetchAttachment({ id, signal }),
     placeholderData: { document: null },
+    staleTime: 3600000,
+    gcTime: 3600000,
+    refetchOnWindowFocus: false,
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to custom title page' });
 
@@ -65,7 +71,7 @@ export const CustomTitlePreview = ({ format }) => {
       <iframe
         src={previewUrl}
         title="Document Preview"
-        style={{ width: "100%", height: window.innerHeight - 200, border: "none" }}
+        style={{ width: "100%", height: window.innerHeight / 2, border: "none" }}
       />
     );
   };
@@ -73,7 +79,15 @@ export const CustomTitlePreview = ({ format }) => {
   return (
     <>
       {isLoading && <LinearProgress />}
-      {renderPreview()}
+      <CollapsibleCard id={`${format}-custom-title`} title={`${format} Custom title page`}
+        action={
+          <>
+            <AddCustomTitleButton format={format} />
+            <DeleteCustomTitleButton format={format} />
+          </>
+        } sx={{ mb: 1 }}>
+        {renderPreview()}
+      </CollapsibleCard>
     </>
   );
 }

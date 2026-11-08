@@ -5,9 +5,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import GeneralSettings from "./GeneralSettings/GeneralSettings";
 import LogbookSignature from "./Signature/LogbookSignature";
-import StandardFields from "./StandardFields/StandardFields";
 import useSettings from "../../hooks/useSettings";
-import CustomFieldsTable from "./CustomFields/CustomFieldsTable";
 import PreviousExperience from "./PreviousExperience/PreviousExperience";
 
 export const Settings = () => {
@@ -49,13 +47,11 @@ export const Settings = () => {
       <Grid container spacing={1} >
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
           <GeneralSettings settings={settings} handleChange={handleChange} />
-          <LogbookSignature settings={settings} handleChange={handleChange} />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
           <PreviousExperience settings={settings} handleChange={handleChange} />
-          <StandardFields settings={settings} handleChange={handleChange} />
-          <CustomFieldsTable />
+          <LogbookSignature settings={settings} handleChange={handleChange} />
         </Grid>
       </Grid>
     </>

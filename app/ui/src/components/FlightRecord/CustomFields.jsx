@@ -1,7 +1,4 @@
 import { useCallback } from "react";
-// MUI UI elements
-import Grid from "@mui/material/Grid";
-import Divider from '@mui/material/Divider';
 // Custom
 import TextField from "../UIElements/TextField";
 import { TIME_SLOT_PROPS, PLACE_SLOT_PROPS } from "../../constants/constants";
@@ -42,47 +39,43 @@ export const CustomFields = ({ flight, handleChange }) => {
     handleChange("redraw", Math.random());
   }, [handleChange, calculateDistance, flight]);
 
-  return (
-    (customFields && Object.keys(customFields).length > 0) &&
-    <>
-      <Divider sx={{ mt: 1 }} />
-      <Grid container spacing={1} sx={{ mt: 1 }}>
-        {customFields.map((field) => {
-          const props = getFieldProps(field.type);
+  return customFields.map((field) => {
+    const props = getFieldProps(field.type);
 
-          if (field.type === 'duration') {
-            return (
-              <TimeField
-                key={field.uuid}
-                gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}
-                id={field.uuid}
-                label={field.name}
-                tooltip={field.description}
-                value={flight.custom_fields?.[field.uuid] || 0}
-                handleChange={customFieldsChange}
-                fieldFormat={timeFieldsFormat}
-              />
-            );
-          }
+    if (field.type === 'duration') {
+      return (
+        <div key={field.uuid}>
+          <TimeField
+            key={field.uuid}
+            gsize={null}
+            id={field.uuid}
+            label={field.name}
+            tooltip={field.description}
+            value={flight.custom_fields?.[field.uuid] || 0}
+            handleChange={customFieldsChange}
+            fieldFormat={timeFieldsFormat}
+          />
+        </div>
+      );
+    }
 
-          return (
-            <TextField key={field.uuid} gsize={{ xs: field.size_xs, md: field.size_md, lg: field.size_lg }}
-              label={field.name}
-              id={field.uuid}
-              tooltip={field.description}
-              value={flight.custom_fields?.[field.uuid] || ''}
-              handleChange={customFieldsChange}
-              slotProps={props.slotProps}
-              placeholder={props.placeholder}
-              type={props.type}
-              // only for enroute fields we need to recalculate the map data and distance
-              onBlur={field.type === 'enroute' ? enrouteFieldChange : undefined}
-            />
-          );
-        })}
-      </Grid>
-    </>
-  );
+    return (
+      <div key={field.uuid}>
+        <TextField key={field.uuid}
+          label={field.name}
+          id={field.uuid}
+          tooltip={field.description}
+          value={flight.custom_fields?.[field.uuid] || ''}
+          handleChange={customFieldsChange}
+          slotProps={props.slotProps}
+          placeholder={props.placeholder}
+          type={props.type}
+          // only for enroute fields we need to recalculate the map data and distance
+          onBlur={field.type === 'enroute' ? enrouteFieldChange : undefined}
+        />
+      </div>
+    );
+  })
 }
 
 export default CustomFields;

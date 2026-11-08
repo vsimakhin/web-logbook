@@ -33,7 +33,7 @@ export const AuthSettings = ({ settings, handleChange }) => {
       />
       <Grid container spacing={1}>
         <TextField
-          gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+          gsize={{ xs: 12, sm: 4 }}
           id="login"
           label="Login"
           handleChange={handleChange}
@@ -42,7 +42,7 @@ export const AuthSettings = ({ settings, handleChange }) => {
           disabled={!settings.auth_enabled}
         />
         <TextField
-          gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+          gsize={{ xs: 12, sm: 4 }}
           id="password"
           label="Password"
           handleChange={handleChange}
@@ -52,7 +52,7 @@ export const AuthSettings = ({ settings, handleChange }) => {
           type="password"
         />
         <TextField
-          gsize={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
+          gsize={{ xs: 12, sm: 4 }}
           id="secret_key"
           label="Secret Key"
           handleChange={handleChange}

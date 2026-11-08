@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 // MUI UI elements
 import Dialog from '@mui/material/Dialog';
@@ -17,7 +17,8 @@ import Select from '../../UIElements/Select';
 import { createCustomField, updateCustomField } from '../../../util/http/fields';
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { queryClient } from '../../../util/http/http';
-import useSettings from '../../../hooks/useSettings';
+import useCustomFields from '../../../hooks/useCustomFields';
+import { Divider, Typography } from '@mui/material';
 
 const typeOptions = ["text", "number", "time", "duration", "enroute"];
 
@@ -66,7 +67,7 @@ const SaveButton = ({ field, onClose }) => {
 
 export const CustomFieldModal = ({ open, onClose, payload }) => {
   const [field, setField] = useState({ ...payload });
-  const { fieldName } = useSettings();
+  const { customFieldsCategories } = useCustomFields();
 
   useEffect(() => {
     if (payload) {
@@ -75,23 +76,8 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
     }
   }, [payload]);
 
-  const title = useMemo(() => field?.uuid === "new" ? "New Custom Field" : "Edit Custom Field", [field?.uuid]);
-  const isTypeDisabled = useMemo(() => field.uuid !== "new", [field.uuid]);
-
-  const categoryOptions = useMemo(() => [
-    "Custom",
-    fieldName("departure"),
-    fieldName("arrival"),
-    fieldName("aircraft"),
-    fieldName("spt"),
-    fieldName("mcc"),
-    fieldName("total"),
-    fieldName("landings"),
-    fieldName("oct"),
-    fieldName("pft"),
-    fieldName("fstd"),
-    fieldName("remarks")
-  ], [fieldName]);
+  const title = field?.uuid === "new" ? "New Custom Field" : "Edit Custom Field";
+  const isTypeDisabled = field.uuid !== "new";
 
   const handleChange = useCallback((key, value) => {
     setField(prev => {
@@ -108,7 +94,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
   const handleClose = useCallback(() => onClose(), [onClose]);
 
   return (
-    <Dialog fullWidth open={open} onClose={handleClose}>
+    <Dialog maxWidth="xs" fullWidth open={open} onClose={handleClose}>
       <Card variant="outlined" sx={{ m: 2 }}>
         <CardContent>
           <CardHeader title={title}
@@ -120,30 +106,41 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
             }
           />
           <Grid container spacing={1}>
-            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+            <TextField gsize={{ xs: 12 }}
               id="name"
               label="Name"
               tooltip="Custom field name"
               handleChange={handleChange}
               value={field.name}
             />
-            <TextField gsize={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+            <TextField gsize={{ xs: 12 }}
+              id="pdf_header"
+              label="PDF Header"
+              tooltip="Column name for PDF exports"
+              handleChange={handleChange}
+              value={field.pdf_header}
+            />
+            <TextField gsize={{ xs: 12 }}
               id="description"
               label="Description"
               tooltip="Custom field description"
               handleChange={handleChange}
               value={field.description}
             />
-            <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
+            <Select gsize={{ xs: 12 }}
               id="category"
               label="Category"
               tooltip="Custom field category"
               handleChange={handleChange}
+              onBlur={(e) => handleChange("category", e.target.value)}
               value={field.category}
-              options={categoryOptions}
+              options={customFieldsCategories.allCategories}
               freeSolo={true}
             />
-            <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
+            <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+              * To add a new category, type the name in the input field
+            </Typography>
+            <Select gsize={{ xs: 12, sm: 6 }}
               id="type"
               label="Type"
               tooltip="Custom field type"
@@ -152,7 +149,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               options={typeOptions}
               disabled={isTypeDisabled}
             />
-            <Select gsize={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}
+            <Select gsize={{ xs: 12, sm: 6 }}
               id="stats_function"
               label="Stats Function"
               tooltip="Stats function to apply to the custom field"
@@ -160,39 +157,12 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               value={field.stats_function}
               options={statsFunction[field.type] || []}
             />
-            <TextField gsize={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}
-              id="size_xs"
-              label="Size XS"
-              tooltip="Size of the field in XS breakpoint (smartphones)"
-              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
-              handleChange={handleChange}
-              value={field.size_xs}
-            />
-            <TextField gsize={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}
-              id="size_md"
-              label="Size MD"
-              tooltip="Size of the field in MD breakpoint (tablets)"
-              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
-              handleChange={handleChange}
-              value={field.size_md}
-            />
-            <TextField gsize={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}
-              id="size_lg"
-              label="Size LG"
-              tooltip="Size of the field in LG breakpoint (desktops)"
-              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
-              handleChange={handleChange}
-              value={field.size_lg}
-            />
-            <TextField gsize={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}
-              id="display_order"
-              label="Display Order"
-              tooltip="Order of the field in the UI"
-              type="number" slotProps={{ htmlInput: { min: 1, max: 12 } }}
-              handleChange={handleChange}
-              value={field.display_order}
-            />
+
           </Grid>
+          <Divider sx={{ m: 1 }} />
+          <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
+            After adding a new category or custom field, the new columns may appear at the end of the Logbook table. Refresh the page (F5 or Ctrl+F5) to update the column order.
+          </Typography>
         </CardContent>
       </Card >
     </Dialog>

@@ -5,10 +5,11 @@ import { useCallback } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 // MUI Icons
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { useErrorNotification, useSuccessNotification } from '../../hooks/useAppNotifications';
-import { deleteFlightRecord } from '../../util/http/logbook';
-import { queryClient } from '../../util/http/http';
-import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+// Custom
+import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
+import { deleteFlightRecord } from '../../../util/http/logbook';
+import { queryClient } from '../../../util/http/http';
+import { useDialogs } from '../../../hooks/useDialogs/useDialogs';
 
 export const DeleteFlightRecordButton = ({ uuid, handleCloseMenu }) => {
   const dialogs = useDialogs();

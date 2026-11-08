@@ -4,11 +4,14 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+// Custom
+import SaveSettingsButton from "./MenuButtons/SaveSettingsButton";
+import CollapsibleCard from "../UIElements/CollapsibleCard";
 
-export const OtherSettings = ({ pdfSettings, handleChange }) => {
-
+export const OtherSettings = ({ pdfSettings, format, handleChange }) => {
   return (
-    <>
+    <CollapsibleCard id={`${format}-other-settings`} title={`${format} Other Settings`}
+      action={<SaveSettingsButton settings={pdfSettings} format={format} />} sx={{ mb: 1 }}>
       <Grid container spacing={1} >
         <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
           <FormControlLabel sx={{ width: '100%' }}
@@ -61,8 +64,28 @@ export const OtherSettings = ({ pdfSettings, handleChange }) => {
             label="Time fields autoformat" labelPlacement="start"
           />
         </Grid>
+        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+          <FormControlLabel
+            sx={{ m: 0, width: '100%', display: 'flex', justifyContent: 'space-between' }}
+            control={
+              <ToggleButtonGroup
+                size="small"
+                sx={{ ml: 1 }}
+                value={pdfSettings.date_fields_format || "DD/MM/YYYY"}
+                onChange={(_, value) => handleChange('date_fields_format', value)}
+                exclusive
+              >
+                <ToggleButton value={"DD/MM/YYYY"}>DD/MM/YYYY</ToggleButton>
+                <ToggleButton value={"YYYY-MM-DD"}>YYYY-MM-DD</ToggleButton>
+                <ToggleButton value={"MM/DD/YYYY"}>MM/DD/YYYY</ToggleButton>
+              </ToggleButtonGroup>
+            }
+            label="Date fields format"
+            labelPlacement="start"
+          />
+        </Grid>
       </Grid>
-    </>
+    </CollapsibleCard>
   );
 }
 

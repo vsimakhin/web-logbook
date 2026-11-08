@@ -129,6 +129,19 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 		targetExport = &s.ExportA5
 	}
 
+	if format == "A4" {
+		var cleanCols []string
+		for _, col := range updated.TableProfile.TableColumns {
+			if col != "PAGE_DIVIDER" {
+				cleanCols = append(cleanCols, col)
+			}
+		}
+		updated.TableProfile.TableColumns = cleanCols
+		if updated.TableProfile.TableColumnWidths != nil {
+			delete(updated.TableProfile.TableColumnWidths, "PAGE_DIVIDER")
+		}
+	}
+
 	targetExport.LogbookRows = updated.LogbookRows
 	targetExport.Fill = updated.Fill
 	targetExport.LeftMargin = updated.LeftMargin
@@ -138,11 +151,13 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 	targetExport.LeftMarginA = updated.LeftMarginA
 	targetExport.LeftMarginB = updated.LeftMarginB
 	targetExport.Headers = updated.Headers
-	targetExport.Columns = updated.Columns
+	targetExport.PageBreaks = updated.PageBreaks
 	targetExport.ReplaceSPTime = updated.ReplaceSPTime
 	targetExport.IncludeSignature = updated.IncludeSignature
 	targetExport.IsExtended = updated.IsExtended
 	targetExport.TimeFieldsAutoFormat = updated.TimeFieldsAutoFormat
+	targetExport.TableProfile = updated.TableProfile
+	targetExport.DateFieldsFormat = updated.DateFieldsFormat
 
 	err = app.db.UpdateSettings(s)
 	if err != nil {
@@ -156,4 +171,28 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 func (app *application) HandlerApiSettingsFieldsDefaults(w http.ResponseWriter, r *http.Request) {
 	defaults := app.db.GetStandardFieldsHeaders()
 	app.writeJSON(w, http.StatusOK, defaults)
+}
+
+func (app *application) HandlerApiSettingsProfile(w http.ResponseWriter, r *http.Request) {
+	oldsettings, err := app.db.GetSettings()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var settings models.Settings
+	err = json.NewDecoder(r.Body).Decode(&settings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	oldsettings.LogbookProfile = settings.LogbookProfile
+	err = app.db.UpdateSettings(oldsettings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeOkResponse(w, "Profile settings updated")
 }

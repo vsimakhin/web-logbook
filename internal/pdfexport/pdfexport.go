@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"codeberg.org/go-pdf/fpdf"
 	"codeberg.org/go-pdf/fpdf/contrib/gofpdi"
@@ -98,9 +99,6 @@ type PDFExporter struct {
 
 	Export models.ExportPDF
 
-	headers Headers
-	columns ColumnWidths
-
 	pageBreaks []string
 
 	totalPage     models.FlightRecord
@@ -113,6 +111,21 @@ type PDFExporter struct {
 	pageCounter     int
 	signatureBlockX float64
 	signatureBlockY float64
+
+	CustomFields []models.CustomField
+
+	layout    []pdfColumn
+	rowCustom map[string]string
+
+	// custom field totals: keyed by CustomField UUID
+	customTotalPage     map[string]int
+	customTotalPrevious map[string]int
+	customTotalTime     map[string]int
+
+	// which footer row is currently being printed ("TOTAL THIS PAGE" / etc.)
+	// set by printA4Total / printA5Total before iterating columns, so that
+	// custom-field total-funcs can pick the right accumulator.
+	currentFooterRow string
 }
 
 // NewPDFExporter creates a new PDFExporter object
@@ -133,6 +146,10 @@ func NewPDFExporter(format, ownerName, licenseNumber, address,
 
 		totalPrevious: models.CalculateTotals(EmptyTotals(), previousExperience),
 		totalTime:     models.CalculateTotals(EmptyTotals(), previousExperience),
+
+		customTotalPage:     map[string]int{},
+		customTotalPrevious: map[string]int{},
+		customTotalTime:     map[string]int{},
 	}
 
 	err := pdfExporter.init()
@@ -156,118 +173,7 @@ func (p *PDFExporter) init() error {
 		p.SignatureImage = ""
 	}
 
-	p.initHeaders()
-	p.initColumns()
-
 	return nil
-}
-
-// initHeaders initializes headers for the logbook
-func (p *PDFExporter) initHeaders() {
-	h := p.Export.Headers
-
-	p.headers = Headers{
-		header1: []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"},
-
-		header2: []string{
-			h.Date, h.Departure, h.Arrival, h.Aircraft, h.SPT, h.MCC, h.Total,
-			h.PICName, h.Landings, h.OCT, h.PFT, h.FSTD, h.Remarks,
-		},
-		header3: []string{
-			"", h.DepPlace, h.DepTime, h.ArrPlace, h.ArrTime, h.Model, h.Reg,
-			h.SE, h.ME, "", "", "", h.LandDay, h.LandNight, h.Night, h.IFR,
-			h.PIC, h.COP, h.Dual, h.Instr, h.SimType, h.SimTime, "",
-		},
-	}
-
-	for i := range p.headers.header2 {
-		p.headers.header2[i] = strings.ReplaceAll(p.headers.header2[i], "\\n", "\n")
-	}
-	for i := range p.headers.header3 {
-		p.headers.header3[i] = strings.ReplaceAll(p.headers.header3[i], "\\n", "\n")
-	}
-}
-
-// initColumns initializes columns for the logbook
-func (p *PDFExporter) initColumns() {
-	c := p.Export.Columns
-
-	p.columns = ColumnWidths{
-		w1: []float64{
-			c.Col1,
-			c.Col2 + c.Col3,
-			c.Col4 + c.Col5,
-			c.Col6 + c.Col7,
-			c.Col8 + c.Col9 + c.Col10,
-			c.Col11,
-			c.Col12,
-			c.Col13 + c.Col14,
-			c.Col15 + c.Col16,
-			c.Col17 + c.Col18 + c.Col19 + c.Col20,
-			c.Col21 + c.Col22,
-			c.Col23,
-		},
-		w2: []float64{
-			c.Col1,                   //date
-			c.Col2 + c.Col3,          //departure
-			c.Col4 + c.Col5,          //arrival
-			c.Col6 + c.Col7,          //aircraft
-			c.Col8 + c.Col9, c.Col10, //single, mcc
-			c.Col11,                               //total time
-			c.Col12,                               //pic name
-			c.Col13 + c.Col14,                     //landings
-			c.Col15 + c.Col16,                     //operational condition time
-			c.Col17 + c.Col18 + c.Col19 + c.Col20, //pilot function time
-			c.Col21 + c.Col22,                     //fstd session
-			c.Col23,                               //remarks
-		},
-		w3: []float64{
-			c.Col1,         //date
-			c.Col2, c.Col3, //departue - place, time
-			c.Col4, c.Col5, //arrival - place, time
-			c.Col6, c.Col7, //aircraft - type, reg
-			c.Col8, c.Col9, c.Col10, //se, me, mcc
-			c.Col11,          //total time
-			c.Col12,          //pic name
-			c.Col13, c.Col14, //landings - day, night
-			c.Col15, c.Col16, //night, ifr
-			c.Col17, c.Col18, c.Col19, c.Col20, //pic, cop, dual, instr
-			c.Col21, c.Col22, //fstd - type, time
-			c.Col23, //remarks
-		},
-		w4: []float64{
-			c.Col1 + c.Col2, //date + departure place
-			c.Col3 + c.Col4 + c.Col5 + c.Col6 + c.Col7, //departure time...aircraft reg
-			c.Col8,           //se
-			c.Col9,           //me
-			c.Col10,          //mcc
-			c.Col11,          //total
-			c.Col12,          //pic name
-			c.Col13, c.Col14, //landings
-			c.Col15,          //night
-			c.Col16,          //ifr
-			c.Col17,          //pic
-			c.Col18,          //cop
-			c.Col19,          //dual
-			c.Col20,          //instr
-			c.Col21, c.Col22, //fstd type and time
-			c.Col23, //remarks
-		},
-	}
-
-	// extended format add Date column to the FSTD session by reducing Remarks
-	if p.Export.IsExtended {
-		p.columns.w1[10] += c.Col1
-		p.columns.w1[11] -= c.Col1
-
-		p.columns.w2[11] += c.Col1
-		p.columns.w2[12] -= c.Col1
-
-		p.columns.w3[22] -= c.Col1
-
-		p.columns.w4[15] += c.Col1
-		p.columns.w4[17] -= c.Col1
-	}
 }
 
 // initPDF initializes the PDF object
@@ -576,11 +482,10 @@ func (p *PDFExporter) printBodyRemarksCell(w float64, value string, signature st
 }
 
 // printFooterLeftBlock prints left block in the footer of the logbook
-func (p *PDFExporter) printFooterLeftBlock(totalName string) {
-	if p.columns.w4[0] <= 0 {
+func (p *PDFExporter) printFooterLeftBlock(totalName string, w float64) {
+	if w <= 0 {
 		return
 	}
-
 	var border string
 	switch totalName {
 	case FooterThisPage:
@@ -590,12 +495,11 @@ func (p *PDFExporter) printFooterLeftBlock(totalName string) {
 	case FooterTotalTime:
 		border = "LBR"
 	}
-
-	p.pdf.CellFormat(p.columns.w4[0], p.Export.FooterRow, "", border, 0, "", true, 0, "")
+	p.pdf.CellFormat(w, p.Export.FooterRow, "", border, 0, "", true, 0, "")
 }
 
 // printFooterSignatureBlock prints signature block in the footer of the logbook
-func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
+func (p *PDFExporter) printFooterSignatureBlock(totalName string, w float64) {
 	p.pdf.SetFont(fontRegular, "", SignatureFontSize)
 
 	switch totalName {
@@ -604,12 +508,12 @@ func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
 			// let's save the coordinates
 			p.signatureBlockX, p.signatureBlockY = p.pdf.GetXY()
 			// and put empty filled box
-			p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, "", "LTR", 0, "C", true, 0, "")
+			p.pdf.CellFormat(w, p.Export.FooterRow, "", "LTR", 0, "C", true, 0, "")
 		} else {
-			p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, p.Signature, "LTR", 0, "C", true, 0, "")
+			p.pdf.CellFormat(w, p.Export.FooterRow, p.Signature, "LTR", 0, "C", true, 0, "")
 		}
 	case FooterPreviousPage:
-		p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, "", "LR", 0, "", true, 0, "")
+		p.pdf.CellFormat(w, p.Export.FooterRow, "", "LR", 0, "", true, 0, "")
 
 		if p.Export.IsExtended {
 			// in case it's extended format, the remarks field can be too short to
@@ -617,27 +521,27 @@ func (p *PDFExporter) printFooterSignatureBlock(totalName string) {
 			// there will be MultiCell function which support new line automatically
 			x, y := p.pdf.GetXY()
 			rowH := p.Export.FooterRow
-			if len(p.Signature) > int(p.columns.w4[17]*0.8) {
+			if len(p.Signature) > int(w*0.8) {
 				// looks like the signature text is really too long,
 				// so let's fit multiline cell into one normal footerRowHeight
 				rowH = p.Export.FooterRow / 2
 			}
 			p.pdf.SetXY(p.signatureBlockX, p.signatureBlockY)
-			p.pdf.MultiCell(p.columns.w4[17], rowH, strings.TrimRight(p.Signature, "\r\n"), "LTR", "C", true)
+			p.pdf.MultiCell(w, rowH, strings.TrimRight(p.Signature, "\r\n"), "LTR", "C", true)
 			p.pdf.SetXY(x, y)
 			// empty tiny cell to set the footerRowHeight back
 			p.pdf.CellFormat(0.01, p.Export.FooterRow, "", "", 0, "", true, 0, "")
 		}
 	default:
-		p.pdf.CellFormat(p.columns.w4[17], p.Export.FooterRow, p.OwnerName, "LBR", 0, "C", true, 0, "")
-		p.printSignature()
+		p.pdf.CellFormat(w, p.Export.FooterRow, p.OwnerName, "LBR", 0, "C", true, 0, "")
+		p.printSignature(w)
 	}
 }
 
 // printSignature prints signature in the footer of the logbook
-func (p *PDFExporter) printSignature() {
+func (p *PDFExporter) printSignature(w float64) {
 	if p.SignatureImage != "" {
-		p.pdf.Image("signature", p.pdf.GetX()-p.columns.w4[17], p.pdf.GetY()-p.Export.FooterRow*2, p.columns.w4[17],
+		p.pdf.Image("signature", p.pdf.GetX()-w, p.pdf.GetY()-p.Export.FooterRow*2, w,
 			p.Export.FooterRow*3, false, "", 0, "")
 	}
 }
@@ -668,4 +572,87 @@ func formatLandings(landing int) string {
 		return ""
 	}
 	return fmt.Sprintf("%d", landing)
+}
+
+func formatDate(date string, format string) string {
+	parsedDate, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return date
+	}
+
+	if format == "" {
+		format = "DD/MM/YYYY"
+	}
+
+	layouts := map[string]string{
+		"DD/MM/YYYY": "02/01/2006",
+		"YYYY-MM-DD": "2006-01-02",
+		"MM/DD/YYYY": "01/02/2006",
+	}
+
+	layout, ok := layouts[format]
+	if !ok {
+		layout = layouts["DD/MM/YYYY"]
+	}
+
+	return parsedDate.Format(layout)
+}
+
+// numberGroupWidths returns the widths of the cells in the numbering row.
+// It mostly follows headerGroups, but "single pilot time" and "multi pilot time"
+// share one number (column 5 in the EASA layout).
+func (p *PDFExporter) numberGroupWidths(groups []headerGroup) []float64 {
+	h := headerMap(p.Export.Headers)
+
+	isPilotTime := func(g headerGroup) bool {
+		if g.grouped {
+			return g.label == h["spt"]
+		}
+		return len(g.cols) > 0 && g.cols[0].Field == "mcc"
+	}
+
+	var widths []float64
+	for i, g := range groups {
+		if i > 0 && isPilotTime(g) && isPilotTime(groups[i-1]) {
+			widths[len(widths)-1] += g.width
+			continue
+		}
+		widths = append(widths, g.width)
+	}
+	return widths
+}
+
+// footerLeftBlockCols returns how many leading columns form the empty grey block
+// in the footer (Date + Departure place in the EASA layout). `lead` is the number
+// of leading columns without totals; at least one of them is kept for the label.
+func footerLeftBlockCols(lead int) int {
+	n := 2
+	if lead-1 < n {
+		n = lead - 1
+	}
+	if n < 0 {
+		n = 0
+	}
+	return n
+}
+
+func (p *PDFExporter) printFooterColumns(totalName string, cols []pdfColumn, total models.FlightRecord) {
+	for i := 0; i < len(cols); i++ {
+		c := cols[i]
+
+		switch {
+		case c.Field == "remarks":
+			p.printFooterSignatureBlock(totalName, c.Width)
+
+		case c.Field == "sim_date" && i+1 < len(cols) && cols[i+1].Field == "sim_type":
+			p.printFooterCell(c.Width+cols[i+1].Width, "")
+			i++ // sim_type is already included in the merged cell
+
+		case c.total != nil:
+			p.printFooterCell(c.Width, c.total(p, &total))
+
+		default:
+			p.printFooterCell(c.Width, "")
+		}
+	}
 }
