@@ -35,6 +35,14 @@ type licensingUpdate struct {
 }
 
 func convertDate(value string) (string, error) {
+	if value == "" {
+		return "", nil
+	}
+
+	if _, err := time.Parse(dateFormat, value); err == nil {
+		return value, nil // already migrated
+	}
+
 	t, err := time.Parse(oldDateFormat, value)
 	if err != nil {
 		return "", err
@@ -368,21 +376,23 @@ func migrateLicensingDates(ctx context.Context, tx *sql.Tx) error {
 			return err
 		}
 
-		if update.issued != "" {
-			if update.issued, err = convertDate(update.issued); err != nil {
-				return fmt.Errorf("invalid licensing issued date %q for %s: %w", update.issued, update.uuid, err)
-			}
+		issued, err := convertDate(update.issued)
+		if err != nil {
+			return fmt.Errorf("invalid licensing issued date %q for %s: %w", update.issued, update.uuid, err)
 		}
-		if update.valid_from != "" {
-			if update.valid_from, err = convertDate(update.valid_from); err != nil {
-				return fmt.Errorf("invalid licensing valid_from date %q for %s: %w", update.valid_from, update.uuid, err)
-			}
+		update.issued = issued
+
+		valid_from, err := convertDate(update.valid_from)
+		if err != nil {
+			return fmt.Errorf("invalid licensing valid_from date %q for %s: %w", update.valid_from, update.uuid, err)
 		}
-		if update.valid_until != "" {
-			if update.valid_until, err = convertDate(update.valid_until); err != nil {
-				return fmt.Errorf("invalid licensing valid_until date %q for %s: %w", update.valid_until, update.uuid, err)
-			}
+		update.valid_from = valid_from
+
+		valid_until, err := convertDate(update.valid_until)
+		if err != nil {
+			return fmt.Errorf("invalid licensing valid_until date %q for %s: %w", update.valid_until, update.uuid, err)
 		}
+		update.valid_until = valid_until
 
 		updates = append(updates, update)
 	}
@@ -397,17 +407,20 @@ func migrateLicensingDates(ctx context.Context, tx *sql.Tx) error {
 			update.issued, update.valid_from, update.valid_until, update.uuid)
 
 		if err != nil {
-			return fmt.Errorf("updating licesing %s: %w", update.uuid, err)
+			return fmt.Errorf("updating licensing %s: %w", update.uuid, err)
 		}
 	}
 
 	return nil
 }
 
-func migrateLogbookTimeColumns(ctx context.Context, tx *sql.Tx) error {
+func migrateLogbookTimeColumns(db *sql.DB) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second) // own ctx
+	defer cancel()
+
 	fmt.Println("Updating MySQL time column types...")
 
-	_, err := tx.ExecContext(ctx, `
+	_, err := db.ExecContext(ctx, `
         ALTER TABLE logbook
         MODIFY se_time INT NOT NULL DEFAULT 0,
         MODIFY me_time INT NOT NULL DEFAULT 0,
@@ -458,14 +471,14 @@ func dataOverhaulMigration(db *sql.DB, engine string) error {
 		return err
 	}
 
-	if engine == MySQL {
-		if err := migrateLogbookTimeColumns(ctx, tx); err != nil {
-			return err
-		}
-	}
-
 	if err := tx.Commit(); err != nil {
 		return err
+	}
+
+	if engine == MySQL {
+		if err := migrateLogbookTimeColumns(db); err != nil {
+			return err
+		}
 	}
 
 	fmt.Println("Data overhaul completed.")

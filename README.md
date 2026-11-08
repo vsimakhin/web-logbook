@@ -70,6 +70,7 @@ The application will automatically create a local SQLite database on the first s
 - New: Logbook table columns can now be reordered via drag-and-drop and added or removed in Fields & Layout. Layout is saved to the user profile.
 - New: PDF export (A4 & A5) supports custom fields, category grouping, and calculates totals for custom duration and number fields.
 - New: Customizable PDF column layout with page-divider support for two-page A5 exports.
+- Fix: Interrupted database migration should no longer leave the logbook in a broken state.
 
 ## [5.0.0-alpha2] - 11.10.2026
 
