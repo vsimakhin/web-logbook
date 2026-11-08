@@ -9,12 +9,16 @@ import CardHeader from "../../UIElements/CardHeader";
 import Tile from "../../UIElements/Tile";
 import { getStats, getValue } from "../../../util/helpers";
 import useSettings from '../../../hooks/useSettings';
+import useCustomFields from "../../../hooks/useCustomFields";
 
 const size = { xs: 6, sm: 3, md: 3, lg: 2, xl: 2 };
 
 export const DashboardTiles = ({ data, dashboardOptions, airportsMap }) => {
   const { fieldNameF, settings } = useSettings();
-  const stats = useMemo(() => getStats(data, airportsMap, settings.time_fields_auto_format), [data, airportsMap, settings.time_fields_auto_format]);
+  const { getEnroute } = useCustomFields();
+  const stats = useMemo(() => getStats(data, airportsMap, settings.time_fields_auto_format, getEnroute),
+    [data, airportsMap, settings.time_fields_auto_format, getEnroute]
+  );
 
   const tiles = useMemo(() => [
     { key: "total_time", title: fieldNameF("total"), path: "totals.time.total_time" },
@@ -32,8 +36,6 @@ export const DashboardTiles = ({ data, dashboardOptions, airportsMap }) => {
     { key: "landings", title: `${fieldNameF("landings")} (${fieldNameF("land_day")}/${fieldNameF("land_night")})`, path: "totals.landings", format: (val) => `${val.day}/${val.night}` },
   ], [fieldNameF]);
 
-  const totalFlight = useMemo(() => data ? data.filter(f => f.uuid !== "previous-experience-artificial-uuid").length : 0, [data]);
-
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent>
@@ -47,7 +49,8 @@ export const DashboardTiles = ({ data, dashboardOptions, airportsMap }) => {
         </Grid>
         <Divider orientation="horizontal" sx={{ m: 1 }} />
         <Grid container spacing={1}>
-          <Tile title="Total Flights" value={totalFlight} size={size} />
+          <Tile title="Total Flights" value={stats.flights} size={size} />
+          <Tile title="Sim sessions" value={stats.simSessions} size={size} />
           <Tile title="Airports" value={stats.airports} size={size} />
           <Tile title="Routes" value={stats.routes} size={size} />
           <Tile title="Countries" value={stats.countries} size={size} />

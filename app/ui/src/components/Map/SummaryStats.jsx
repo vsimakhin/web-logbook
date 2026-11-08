@@ -3,17 +3,19 @@ import Grid from "@mui/material/Grid";
 import Tile from "../UIElements/Tile";
 import { getStats } from "../../util/helpers";
 import useSettings from "../../hooks/useSettings";
+import useCustomFields from "../../hooks/useCustomFields";
 
 const size = { xs: 6, sm: 4, md: 12, lg: 6, xl: 6 };
 
 export const SummaryStats = ({ data, airportsMap }) => {
   const { timeFieldsFormat } = useSettings();
-  const stats = getStats(data, airportsMap, timeFieldsFormat);
+  const { getEnroute } = useCustomFields();
+  const stats = getStats(data, airportsMap, timeFieldsFormat, getEnroute);
 
   return (
     <Grid container spacing={1}>
       <Tile title="Total Time" value={stats.totals.time.total_time} size={size} />
-      <Tile title="Total Flights" value={data.length} size={size} />
+      <Tile title="Total Flights" value={stats.flights} size={size} />
       <Tile title="Airports" value={stats.airports} size={size} />
       <Tile title="Routes" value={stats.routes} size={size} />
       <Tile title="Countries" value={stats.countries} size={size} />

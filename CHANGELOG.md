@@ -8,6 +8,7 @@
 - New: PDF export (A4 & A5) supports custom fields, category grouping, and calculates totals for custom duration and number fields.
 - New: Customizable PDF column layout with page-divider support for two-page A5 exports.
 - Fix: Interrupted database migration should no longer leave the logbook in a broken state.
+- Fix/Update: Fix inaccurate stats calculation (flights, routes, airports) for Map and Dashboard pages. Added Sim sessions to the stats.
 
 ## [5.0.0-alpha2] - 04.11.2026
 

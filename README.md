@@ -71,6 +71,7 @@ The application will automatically create a local SQLite database on the first s
 - New: PDF export (A4 & A5) supports custom fields, category grouping, and calculates totals for custom duration and number fields.
 - New: Customizable PDF column layout with page-divider support for two-page A5 exports.
 - Fix: Interrupted database migration should no longer leave the logbook in a broken state.
+- Fix/Update: Fix inaccurate stats calculation (flights, routes, airports) for Map and Dashboard pages. Added Sim sessions to the stats.
 
 ## [5.0.0-alpha2] - 11.10.2026
 
@@ -436,6 +437,7 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/Samueld59" title="Samueld59"><img src="https://github.com/Samueld59.png" width="40" height="40" alt="Samueld59" /></a>
   <a href="https://github.com/benbox69" title="benbox69"><img src="https://github.com/benbox69.png" width="40" height="40" alt="benbox69" /></a>
   <a href="https://github.com/Cyclic407" title="Cyclic407"><img src="https://github.com/Cyclic407.png" width="40" height="40" alt="Cyclic407" /></a>
+  <a href="https://github.com/Thomas-DPRX" title="Thomas-DPRX"><img src="https://github.com/Thomas-DPRX.png" width="40" height="40" alt="Thomas-DPRX" /></a>
 </p>
 
 --
