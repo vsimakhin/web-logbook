@@ -151,7 +151,7 @@ func (app *application) HandlerApiSettingsExportUpdate(w http.ResponseWriter, r 
 	targetExport.LeftMarginA = updated.LeftMarginA
 	targetExport.LeftMarginB = updated.LeftMarginB
 	targetExport.Headers = updated.Headers
-	targetExport.Columns = updated.Columns
+	targetExport.PageBreaks = updated.PageBreaks
 	targetExport.ReplaceSPTime = updated.ReplaceSPTime
 	targetExport.IncludeSignature = updated.IncludeSignature
 	targetExport.IsExtended = updated.IsExtended

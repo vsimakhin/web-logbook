@@ -99,9 +99,6 @@ type PDFExporter struct {
 
 	Export models.ExportPDF
 
-	headers Headers
-	columns ColumnWidths
-
 	pageBreaks []string
 
 	totalPage     models.FlightRecord
@@ -176,118 +173,7 @@ func (p *PDFExporter) init() error {
 		p.SignatureImage = ""
 	}
 
-	p.initHeaders()
-	p.initColumns()
-
 	return nil
-}
-
-// initHeaders initializes headers for the logbook
-func (p *PDFExporter) initHeaders() {
-	h := p.Export.Headers
-
-	p.headers = Headers{
-		header1: []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"},
-
-		header2: []string{
-			h.Date, h.Departure, h.Arrival, h.Aircraft, h.SPT, h.MCC, h.Total,
-			h.PICName, h.Landings, h.OCT, h.PFT, h.FSTD, h.Remarks,
-		},
-		header3: []string{
-			"", h.DepPlace, h.DepTime, h.ArrPlace, h.ArrTime, h.Model, h.Reg,
-			h.SE, h.ME, "", "", "", h.LandDay, h.LandNight, h.Night, h.IFR,
-			h.PIC, h.COP, h.Dual, h.Instr, h.SimType, h.SimTime, "",
-		},
-	}
-
-	for i := range p.headers.header2 {
-		p.headers.header2[i] = strings.ReplaceAll(p.headers.header2[i], "\\n", "\n")
-	}
-	for i := range p.headers.header3 {
-		p.headers.header3[i] = strings.ReplaceAll(p.headers.header3[i], "\\n", "\n")
-	}
-}
-
-// initColumns initializes columns for the logbook
-func (p *PDFExporter) initColumns() {
-	c := p.Export.Columns
-
-	p.columns = ColumnWidths{
-		w1: []float64{
-			c.Col1,
-			c.Col2 + c.Col3,
-			c.Col4 + c.Col5,
-			c.Col6 + c.Col7,
-			c.Col8 + c.Col9 + c.Col10,
-			c.Col11,
-			c.Col12,
-			c.Col13 + c.Col14,
-			c.Col15 + c.Col16,
-			c.Col17 + c.Col18 + c.Col19 + c.Col20,
-			c.Col21 + c.Col22,
-			c.Col23,
-		},
-		w2: []float64{
-			c.Col1,                   //date
-			c.Col2 + c.Col3,          //departure
-			c.Col4 + c.Col5,          //arrival
-			c.Col6 + c.Col7,          //aircraft
-			c.Col8 + c.Col9, c.Col10, //single, mcc
-			c.Col11,                               //total time
-			c.Col12,                               //pic name
-			c.Col13 + c.Col14,                     //landings
-			c.Col15 + c.Col16,                     //operational condition time
-			c.Col17 + c.Col18 + c.Col19 + c.Col20, //pilot function time
-			c.Col21 + c.Col22,                     //fstd session
-			c.Col23,                               //remarks
-		},
-		w3: []float64{
-			c.Col1,         //date
-			c.Col2, c.Col3, //departue - place, time
-			c.Col4, c.Col5, //arrival - place, time
-			c.Col6, c.Col7, //aircraft - type, reg
-			c.Col8, c.Col9, c.Col10, //se, me, mcc
-			c.Col11,          //total time
-			c.Col12,          //pic name
-			c.Col13, c.Col14, //landings - day, night
-			c.Col15, c.Col16, //night, ifr
-			c.Col17, c.Col18, c.Col19, c.Col20, //pic, cop, dual, instr
-			c.Col21, c.Col22, //fstd - type, time
-			c.Col23, //remarks
-		},
-		w4: []float64{
-			c.Col1 + c.Col2, //date + departure place
-			c.Col3 + c.Col4 + c.Col5 + c.Col6 + c.Col7, //departure time...aircraft reg
-			c.Col8,           //se
-			c.Col9,           //me
-			c.Col10,          //mcc
-			c.Col11,          //total
-			c.Col12,          //pic name
-			c.Col13, c.Col14, //landings
-			c.Col15,          //night
-			c.Col16,          //ifr
-			c.Col17,          //pic
-			c.Col18,          //cop
-			c.Col19,          //dual
-			c.Col20,          //instr
-			c.Col21, c.Col22, //fstd type and time
-			c.Col23, //remarks
-		},
-	}
-
-	// extended format add Date column to the FSTD session by reducing Remarks
-	if p.Export.IsExtended {
-		p.columns.w1[10] += c.Col1
-		p.columns.w1[11] -= c.Col1
-
-		p.columns.w2[11] += c.Col1
-		p.columns.w2[12] -= c.Col1
-
-		p.columns.w3[22] -= c.Col1
-
-		p.columns.w4[15] += c.Col1
-		p.columns.w4[17] -= c.Col1
-	}
 }
 
 // initPDF initializes the PDF object

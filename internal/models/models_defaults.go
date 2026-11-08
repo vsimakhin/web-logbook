@@ -258,28 +258,62 @@ func (m *DBModel) CheckDefaultValues() error {
 	if len(s.ExportA4.TableProfile.TableColumns) == 0 {
 		s.ExportA4.TableProfile.TableColumns = pdfA4TableColumns
 		s.ExportA4.TableProfile.TableHiddenColumns = []string{}
-		s.ExportA4.TableProfile.TableColumnWidths = pdfA4TableColumnWidth
+		s.ExportA4.TableProfile.TableColumnWidths = map[string]float64{ // copy column widths from old format
+			"date":       s.ExportA4.Columns.Col1,
+			"dep_place":  s.ExportA4.Columns.Col2,
+			"dep_time":   s.ExportA4.Columns.Col3,
+			"arr_place":  s.ExportA4.Columns.Col4,
+			"arr_time":   s.ExportA4.Columns.Col5,
+			"model":      s.ExportA4.Columns.Col6,
+			"reg":        s.ExportA4.Columns.Col7,
+			"se":         s.ExportA4.Columns.Col8,
+			"me":         s.ExportA4.Columns.Col9,
+			"mcc":        s.ExportA4.Columns.Col10,
+			"total":      s.ExportA4.Columns.Col11,
+			"pic_name":   s.ExportA4.Columns.Col12,
+			"land_day":   s.ExportA4.Columns.Col13,
+			"land_night": s.ExportA4.Columns.Col14,
+			"night":      s.ExportA4.Columns.Col15,
+			"ifr":        s.ExportA4.Columns.Col16,
+			"pic":        s.ExportA4.Columns.Col17,
+			"cop":        s.ExportA4.Columns.Col18,
+			"dual":       s.ExportA4.Columns.Col19,
+			"instr":      s.ExportA4.Columns.Col20,
+			"sim_type":   s.ExportA4.Columns.Col21,
+			"sim_time":   s.ExportA4.Columns.Col22,
+			"remarks":    s.ExportA4.Columns.Col23,
+		}
 		applyDefaults = true
-	} else {
-		var cleanA4Cols []string
-		for _, col := range s.ExportA4.TableProfile.TableColumns {
-			if col != "PAGE_DIVIDER" {
-				cleanA4Cols = append(cleanA4Cols, col)
-			}
-		}
-		if len(cleanA4Cols) != len(s.ExportA4.TableProfile.TableColumns) {
-			s.ExportA4.TableProfile.TableColumns = cleanA4Cols
-			if s.ExportA4.TableProfile.TableColumnWidths != nil {
-				delete(s.ExportA4.TableProfile.TableColumnWidths, "PAGE_DIVIDER")
-			}
-			applyDefaults = true
-		}
 	}
 
 	if len(s.ExportA5.TableProfile.TableColumns) == 0 {
 		s.ExportA5.TableProfile.TableColumns = pdfA5TableColumns
 		s.ExportA5.TableProfile.TableHiddenColumns = []string{}
-		s.ExportA5.TableProfile.TableColumnWidths = pdfA5TableColumnWidth
+		s.ExportA5.TableProfile.TableColumnWidths = map[string]float64{ // copy column widths from old format
+			"date":       s.ExportA5.Columns.Col1,
+			"dep_place":  s.ExportA5.Columns.Col2,
+			"dep_time":   s.ExportA5.Columns.Col3,
+			"arr_place":  s.ExportA5.Columns.Col4,
+			"arr_time":   s.ExportA5.Columns.Col5,
+			"model":      s.ExportA5.Columns.Col6,
+			"reg":        s.ExportA5.Columns.Col7,
+			"se":         s.ExportA5.Columns.Col8,
+			"me":         s.ExportA5.Columns.Col9,
+			"mcc":        s.ExportA5.Columns.Col10,
+			"total":      s.ExportA5.Columns.Col11,
+			"pic_name":   s.ExportA5.Columns.Col12,
+			"land_day":   s.ExportA5.Columns.Col13,
+			"land_night": s.ExportA5.Columns.Col14,
+			"night":      s.ExportA5.Columns.Col15,
+			"ifr":        s.ExportA5.Columns.Col16,
+			"pic":        s.ExportA5.Columns.Col17,
+			"cop":        s.ExportA5.Columns.Col18,
+			"dual":       s.ExportA5.Columns.Col19,
+			"instr":      s.ExportA5.Columns.Col20,
+			"sim_type":   s.ExportA5.Columns.Col21,
+			"sim_time":   s.ExportA5.Columns.Col22,
+			"remarks":    s.ExportA5.Columns.Col23,
+		}
 		applyDefaults = true
 	}
 
