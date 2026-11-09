@@ -37,7 +37,7 @@ export const Attachment = ({ attachment }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
-        {attachment.document_name.endsWith(".kml") && (
+        {(attachment.document_name.endsWith(".kml") || attachment.document_name.endsWith(".gpx")) && (
           <ConvertAttachmentToTrackButton attachment={attachment} handleClose={handleCloseMenu} />
         )}
         <DownloadAttachmentButton attachment={attachment} handleClose={handleCloseMenu} />

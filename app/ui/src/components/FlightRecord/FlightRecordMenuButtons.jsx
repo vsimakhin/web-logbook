@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from '@mui/material/Menu';
 import Tooltip from '@mui/material/Tooltip'
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
-import Divider from '@mui/material/Divider';
+import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import HelpButton from "./MenuButtons/HelpButton";
 import NewFlightRecordButton from "./MenuButtons/NewFlightRecordButton";
@@ -23,6 +23,10 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, editingLayout, s
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = useCallback((event) => setAnchorEl(event.currentTarget), []);
   const handleCloseMenu = useCallback(() => setAnchorEl(null), []);
+
+  const [layoutAnchorEl, setLayoutAnchorEl] = useState(null);
+  const handleLayoutMenuClick = useCallback((event) => setLayoutAnchorEl(event.currentTarget), []);
+  const handleCloseLayoutMenu = useCallback(() => setLayoutAnchorEl(null), []);
 
   const moreActions = useMemo(() => {
     if (editingLayout) return null;
@@ -46,13 +50,33 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, editingLayout, s
           {flight.uuid !== "new" && <CopyFlightRecordButton flight={flight} handleCloseMenu={handleCloseMenu} />}
           {flight.track && <ResetTrackButton uuid={flight.uuid} handleChange={handleChange} handleCloseMenu={handleCloseMenu} />}
           {flight.uuid !== "new" && <DeleteFlightRecordButton uuid={flight.uuid} handleCloseMenu={handleCloseMenu} />}
-          <Divider />
-          <ShowHideFieldsButton handleCloseMenu={handleCloseMenu} />
-          <EditLayoutButton handleCloseMenu={handleCloseMenu} setEditingLayout={setEditingLayout} />
         </Menu>
       </>
     )
-  }, [handleClick, anchorEl, handleCloseMenu, handleChange, flight, setEditingLayout, editingLayout]);
+  }, [handleClick, anchorEl, handleCloseMenu, handleChange, flight, editingLayout]);
+
+  const layoutMenu = useMemo(() => {
+    if (editingLayout) return null;
+
+    return (
+      <>
+        <Tooltip title="Fields Layout">
+          <IconButton onClick={handleLayoutMenuClick} size="small"><SettingsIcon /></IconButton>
+        </Tooltip>
+
+        <Menu
+          anchorEl={layoutAnchorEl}
+          open={Boolean(layoutAnchorEl)}
+          onClose={handleCloseLayoutMenu}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          transformOrigin={{ vertical: "top", horizontal: "left" }}
+        >
+          <ShowHideFieldsButton handleCloseMenu={handleCloseLayoutMenu} />
+          <EditLayoutButton handleCloseMenu={handleCloseLayoutMenu} setEditingLayout={setEditingLayout} />
+        </Menu>
+      </>
+    )
+  }, [handleLayoutMenuClick, layoutAnchorEl, handleCloseLayoutMenu, setEditingLayout, editingLayout]);
 
   const standardMenuButtons = useMemo(() => {
     if (editingLayout) return null;
@@ -81,6 +105,7 @@ export const FlightRecordMenuButtons = ({ flight, handleChange, editingLayout, s
       {manageProfileLayoutButtons}
       {standardMenuButtons}
       {moreActions}
+      {layoutMenu}
     </>
   );
 };
