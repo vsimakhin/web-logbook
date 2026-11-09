@@ -82,7 +82,7 @@ export const AttachmentsTable = ({ attachments, setSelectedAttachment }) => {
       width: 80,
       type: "number",
     }
-  ], []);
+  ], [dateFieldsFormat]);
 
   const customActions = useMemo(() => (<DownloadAllAttachmentsButton filteredRows={filteredRows} />), [filteredRows]);
 

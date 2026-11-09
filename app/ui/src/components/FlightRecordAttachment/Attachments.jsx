@@ -10,9 +10,11 @@ import { fetchFlightRecordAttachments } from "../../util/http/attachment";
 import Attachment from "./Attachment";
 import AddAttachmentButton from "./AddAttachmentButton";
 import AddTrackButton from "./AddTrackButton";
+import HelpButton from "./HelpButton";
 
 const ActionButtons = ({ id }) => (
   <>
+    <HelpButton />
     <AddTrackButton id={id} />
     <AddAttachmentButton id={id} />
   </>
