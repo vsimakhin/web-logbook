@@ -66,6 +66,7 @@ The application will automatically create a local SQLite database on the first s
 ## [Unreleased]
 
 - Update: Moved Fields and Layout items to a separate menu on the Flight Record page. Updated the help manual for the Flight Record and Attachments forms.
+- Fix: DB Schema version check.
 
 ## [5.0.0-alpha3] - 08.11.2026
 
