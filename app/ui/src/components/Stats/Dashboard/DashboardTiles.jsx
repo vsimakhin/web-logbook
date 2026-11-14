@@ -50,7 +50,7 @@ export const DashboardTiles = ({ data, dashboardOptions, airportsMap }) => {
         <Divider orientation="horizontal" sx={{ m: 1 }} />
         <Grid container spacing={1}>
           <Tile title="Total Flights" value={stats.flights} size={size} />
-          <Tile title="Sim sessions" value={stats.simSessions} size={size} />
+          <Tile title="Sim Sessions" value={stats.simSessions} size={size} />
           <Tile title="Airports" value={stats.airports} size={size} />
           <Tile title="Routes" value={stats.routes} size={size} />
           <Tile title="Countries" value={stats.countries} size={size} />
