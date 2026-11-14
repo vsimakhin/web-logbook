@@ -13,6 +13,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/vsimakhin/web-logbook/internal/models"
 	_ "modernc.org/sqlite"
+
+	version "github.com/hashicorp/go-version"
 )
 
 const (
@@ -93,27 +95,55 @@ func validateDB(db *sql.DB, engine string) error {
 	return nil
 }
 
-func getSchemaVersion(db *sql.DB) (version string) {
+func getSchemaVersion(db *sql.DB) (highestVersion string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	query := "SELECT version FROM metadata ORDER BY created_at DESC LIMIT 1"
-	err := db.QueryRowContext(ctx, query).Scan(&version)
+	rows, err := db.QueryContext(ctx, "SELECT version FROM metadata")
 	if err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println("No rows found in 'metadata'")
+		fmt.Println(err)
+		return "unknown"
+	}
+	defer rows.Close()
+
+	var highest *version.Version
+
+	for rows.Next() {
+		var raw string
+
+		if err := rows.Scan(&raw); err != nil {
+			fmt.Println(err)
 			return "unknown"
 		}
+
+		current, err := version.NewVersion(raw)
+		if err != nil {
+			fmt.Printf("Invalid schema version %q: %v\n", raw, err)
+			continue
+		}
+
+		if highest == nil || current.GreaterThan(highest) {
+			highest = current
+		}
+	}
+
+	if err := rows.Err(); err != nil {
 		fmt.Println(err)
 		return "unknown"
 	}
 
-	if version != schemaVersion {
-		fmt.Printf("Schema version (%s) mismatch\n", version)
-		return version
+	if highest == nil {
+		fmt.Println("No valid versions found in 'metadata'")
+		return "unknown"
 	}
 
-	return version
+	highestVersion = highest.Original()
+
+	if highestVersion != schemaVersion {
+		fmt.Printf("Schema version (%s) mismatch\n", highestVersion)
+	}
+
+	return highestVersion
 }
 
 func updateSchemaVersion(db *sql.DB) error {

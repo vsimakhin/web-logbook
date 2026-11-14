@@ -9,6 +9,7 @@ require (
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
+	github.com/hashicorp/go-version v1.9.0
 	github.com/mstephenholl/go-solar v1.0.1
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/crypto v0.58.0

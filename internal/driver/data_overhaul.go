@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -253,20 +254,21 @@ func migrateFlightRecords(ctx context.Context, tx *sql.Tx, durationFields map[st
 func migratePreviousExperience(ctx context.Context, tx *sql.Tx) error {
 	fmt.Println("Updating previous experience...")
 
-	var rawSettings string
-
+	var rawSettings sql.NullString
 	err := tx.QueryRowContext(ctx, "SELECT settings FROM settings2 WHERE id = 0").Scan(&rawSettings)
-	if err == sql.ErrNoRows || rawSettings == "" {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil
 	}
-
 	if err != nil {
 		return err
+	}
+	if !rawSettings.Valid || rawSettings.String == "" {
+		return nil
 	}
 
 	var settings map[string]any
 
-	if err := json.Unmarshal([]byte(rawSettings), &settings); err != nil {
+	if err := json.Unmarshal([]byte(rawSettings.String), &settings); err != nil {
 		return fmt.Errorf("invalid settings JSON: %w", err)
 	}
 
@@ -299,8 +301,13 @@ func migratePreviousExperience(ctx context.Context, tx *sql.Tx) error {
 			continue
 		}
 
-		if stringValue, ok := value.(string); ok {
-			previousExperience[field] = parseTimeToMinutes(stringValue)
+		switch v := value.(type) {
+		case string:
+			previousExperience[field] = parseTimeToMinutes(v)
+		case float64:
+			previousExperience[field] = int(v) // already numeric, keep it
+		default: // nil or unexpected type
+			previousExperience[field] = 0
 		}
 	}
 
