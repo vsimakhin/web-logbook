@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [5.0.0-beta1] - 14.11.2026
 
 - Update: Moved Fields and Layout items to a separate menu on the Flight Record page. Updated the help manual for the Flight Record and Attachments forms.
 - Fix: DB Schema version check.
