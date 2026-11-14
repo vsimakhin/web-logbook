@@ -67,6 +67,7 @@ The application will automatically create a local SQLite database on the first s
 
 - Update: Moved Fields and Layout items to a separate menu on the Flight Record page. Updated the help manual for the Flight Record and Attachments forms.
 - Fix: DB Schema version check.
+- Fix: Logbook table columns add/remove/reorder sometimes placed the columns at the end of table until page refresh F5/Ctrl+F5.
 
 ## [5.0.0-alpha3] - 08.11.2026
 

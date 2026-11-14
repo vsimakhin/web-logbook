@@ -164,13 +164,10 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
 
   const orderedColumns = useMemo(() => {
     const order = logbookProfile.tableColumns;
-    if (!order || order.length === 0) return columns;
-    const fieldIndexMap = new Map(order.map((f, i) => [f, i]));
-    return [...columns].sort((a, b) => {
-      const ia = fieldIndexMap.has(a.field) ? fieldIndexMap.get(a.field) : Infinity;
-      const ib = fieldIndexMap.has(b.field) ? fieldIndexMap.get(b.field) : Infinity;
-      return ia - ib;
-    });
+    if (!order?.length) return columns;
+
+    const byField = new Map(columns.map(c => [c.field, c]));
+    return order.map(f => byField.get(f)).filter(Boolean);
   }, [columns, logbookProfile.tableColumns]);
 
   const columnGroupingModel = useMemo(() => {
