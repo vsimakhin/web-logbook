@@ -118,8 +118,9 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
     if (!apiRef.current) return;
 
     const save = () => {
-      const state = apiRef.current.exportState();
-      setColumnsState(state.columns);
+      // eslint-disable-next-line no-unused-vars
+      const { orderedFields, ...rest } = apiRef.current.exportState().columns;
+      setColumnsState(rest);
     };
 
     const unsubscribes = [
@@ -222,18 +223,31 @@ const XDataGridContent = ({ apiRef, tableId, rows, columns, ...props }) => {
   }
 
   const mergedColumnsState = useMemo(() => {
+    // eslint-disable-next-line no-unused-vars
+    const { orderedFields, ...stored } = columnsState || {};
+
     if (!props.customColumnVisibilityModel) {
       return columnsState;
     }
 
     return {
-      ...columnsState,
+      ...stored,
       columnVisibilityModel: {
         ...props.customColumnVisibilityModel,
-        ...(columnsState?.columnVisibilityModel || {}),
+        ...(stored.columnVisibilityModel || {}),
       },
     };
   }, [columnsState, props.customColumnVisibilityModel]);
+
+  const columnsOrderKey = useMemo(() => columns.map(c => c.field).join('|'), [columns]);
+
+  useEffect(() => {
+    const api = apiRef.current;
+    if (!api?.setColumnIndex) return;
+
+    columns.forEach((col, index) => api.setColumnIndex(col.field, index));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnsOrderKey, apiRef]);
 
   return (
     <Box sx={{ borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
