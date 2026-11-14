@@ -61,5 +61,11 @@ func (app *application) HandlerApiAircraftUpdate(w http.ResponseWriter, r *http.
 		return
 	}
 
+	err = app.db.GenerateAircraftTable()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
 	app.writeOkResponse(w, "Aircraft have been updated")
 }

@@ -69,6 +69,7 @@ The application will automatically create a local SQLite database on the first s
 - Fix: DB Schema version check.
 - Fix: Logbook table columns add/remove/reorder sometimes placed the columns at the end of table until page refresh F5/Ctrl+F5.
 - Fix: Show/Hide fields in the logbook entry for "Simulator" didn't change the visibility of the Simulator Type and Simulator Time fields.
+- Fix: An aircraft type is missing in Aircrafts after airplane type changed.
 
 ## [5.0.0-alpha3] - 08.11.2026
 
