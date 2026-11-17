@@ -5,6 +5,8 @@ import (
 	"embed"
 	"encoding/base64"
 	"fmt"
+	"image"
+	"image/png"
 	"io"
 	"strings"
 	"time"
@@ -223,6 +225,61 @@ func (p *PDFExporter) loadFonts() error {
 	return nil
 }
 
+// trimPNG decodes a PNG from src, crops away fully-transparent border pixels
+// (the empty canvas area around a hand-drawn signature), and re-encodes it.
+// If the image is completely transparent or any step fails the original bytes
+// are returned unchanged.
+func trimPNG(src []byte) []byte {
+	img, err := png.Decode(bytes.NewReader(src))
+	if err != nil {
+		return src
+	}
+
+	bounds := img.Bounds()
+	minX, minY := bounds.Max.X, bounds.Max.Y
+	maxX, maxY := bounds.Min.X, bounds.Min.Y
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			_, _, _, a := img.At(x, y).RGBA()
+			if a > 0 {
+				if x < minX {
+					minX = x
+				}
+				if x > maxX {
+					maxX = x
+				}
+				if y < minY {
+					minY = y
+				}
+				if y > maxY {
+					maxY = y
+				}
+			}
+		}
+	}
+
+	// fully transparent — return as-is
+	if minX > maxX || minY > maxY {
+		return src
+	}
+
+	type subImager interface {
+		SubImage(r image.Rectangle) image.Image
+	}
+	si, ok := img.(subImager)
+	if !ok {
+		return src
+	}
+	cropped := si.SubImage(image.Rect(minX-30, minY-30, maxX+31, maxY+31).Intersect(bounds))
+
+	var buf bytes.Buffer
+	if err := png.Encode(&buf, cropped); err != nil {
+		return src
+	}
+	return buf.Bytes()
+}
+
 // loadSignature register PNG image with signature in a pdf file
 func (p *PDFExporter) loadSignature() error {
 	if p.SignatureImage != "" {
@@ -233,7 +290,7 @@ func (p *PDFExporter) loadSignature() error {
 			return err
 		}
 
-		r := bytes.NewReader(unbased)
+		r := bytes.NewReader(trimPNG(unbased))
 		p.pdf.RegisterImageReader("signature", "png", r)
 	}
 
@@ -476,7 +533,7 @@ func (p *PDFExporter) printBodyRemarksCell(w float64, value string, signature st
 			return
 		}
 
-		r := bytes.NewReader(unbased)
+		r := bytes.NewReader(trimPNG(unbased))
 		im := p.pdf.RegisterImageReader(uuid, "png", r)
 		// need to scale image so it will be with to the p.Export.BodyRow height
 		// and placed at the end of the cell

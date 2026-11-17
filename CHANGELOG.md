@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Fix: signature image in PDF export footer now preserves aspect ratio instead of stretching to cell width
+- Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
+- Fix: Update the Remarks text scaling.
 
 ## [5.0.0-beta1] - 14.11.2026
 
