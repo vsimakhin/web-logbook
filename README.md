@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: signature image in PDF export footer now preserves aspect ratio instead of stretching to cell width
+
 ## [5.0.0-beta1] - 14.11.2026
 
 - Update: Moved Fields and Layout items to a separate menu on the Flight Record page. Updated the help manual for the Flight Record and Attachments forms.

@@ -442,22 +442,27 @@ func (p *PDFExporter) printBodyRemarksCell(w float64, value string, signature st
 		return
 	}
 
-	wFactored := int(w * 0.9)
-	vL := len(value)
-	longCut := int(1.75 * float64(wFactored))
+	// Use the actual rendered string width at each candidate font size to decide
+	// how to fit the remark into the cell, independent of the column width setting.
+	cellW := w * 0.95 // leave a small margin
 
-	if vL > longCut {
-		// too long remark, cut it and set font 5
-		p.pdf.SetFont(fontRegular, "", BodyFontSize-3)
-		value = value[:longCut-3] + "..."
-
-	} else if vL > wFactored*3/2 {
-		// slightly long remark
-		p.pdf.SetFont(fontRegular, "", BodyFontSize-3)
-
-	} else if vL > wFactored {
-		// long remark
+	strW := p.pdf.GetStringWidth(value)
+	if strW > cellW {
+		// Try smaller font (BodyFontSize-2) first
 		p.pdf.SetFont(fontRegular, "", BodyFontSize-2)
+		strW = p.pdf.GetStringWidth(value)
+	}
+	if strW > cellW {
+		// Still too wide — use smallest font and truncate if necessary
+		p.pdf.SetFont(fontRegular, "", BodyFontSize-3)
+		strW = p.pdf.GetStringWidth(value)
+		if strW > cellW {
+			// Drop characters until it fits
+			for len(value) > 3 && p.pdf.GetStringWidth(value+"...") > cellW {
+				value = value[:len(value)-1]
+			}
+			value = value + "..."
+		}
 	}
 
 	p.pdf.CellFormat(w, p.Export.BodyRow, value, "1", 0, "L", fill, 0, "")
@@ -540,10 +545,32 @@ func (p *PDFExporter) printFooterSignatureBlock(totalName string, w float64) {
 
 // printSignature prints signature in the footer of the logbook
 func (p *PDFExporter) printSignature(w float64) {
-	if p.SignatureImage != "" {
-		p.pdf.Image("signature", p.pdf.GetX()-w, p.pdf.GetY()-p.Export.FooterRow*2, w,
-			p.Export.FooterRow*3, false, "", 0, "")
+	if p.SignatureImage == "" {
+		return
 	}
+
+	im := p.pdf.GetImageInfo("signature")
+	if im == nil {
+		return
+	}
+
+	maxH := p.Export.FooterRow * 3
+	maxW := w
+
+	// scale to fit height, then clamp to width to preserve aspect ratio
+	scale := maxH / im.Height()
+	imgW := im.Width() * scale
+	imgH := maxH
+	if imgW > maxW {
+		scale = maxW / im.Width()
+		imgW = maxW
+		imgH = im.Height() * scale
+	}
+
+	x := p.pdf.GetX() - w
+	topOfBlock := p.pdf.GetY() - p.Export.FooterRow*2
+	y := topOfBlock + (maxH-imgH)/2 // center vertically within the 3-row block
+	p.pdf.Image("signature", x, y, imgW, imgH, false, "", 0, "")
 }
 
 // printPageNumber prints page number in the footer of the logbook
