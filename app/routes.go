@@ -154,9 +154,6 @@ func (app *application) routes() *chi.Mux {
 			r.Get("/download-db", app.HandlerApiDownloadDB)
 		})
 
-		// logout
-		r.Post("/logout", app.HandlerLogout)
-
 		// aux
 		r.Get("/version", app.HandlerVersion)
 		r.Get("/auth-enabled", app.HandlerAuthEnabled)
