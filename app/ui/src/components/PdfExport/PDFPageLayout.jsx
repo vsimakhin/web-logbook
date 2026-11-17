@@ -39,6 +39,12 @@ const matchCategoryKey = (cat, logbookFieldName) => {
   return '';
 };
 
+const isTakeoffCategory = (cat) => {
+  if (!cat) return false;
+  const clean = cat.trim().toLowerCase().replace(/[- ]/g, '');
+  return clean === 'takeoff' || clean === 'takeoffs';
+};
+
 export const PDFPageLayout = ({ settings, handleChange, format }) => {
   const { customFields, isCustomFieldsLoading } = useCustomFields();
   const { fieldName: logbookFieldName } = useSettings();
@@ -61,10 +67,21 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
         }));
     };
 
+    const getTakeoffCustomColumns = () => {
+      if (isCustomFieldsLoading || !customFields) return [];
+      return customFields
+        .filter((field) => isTakeoffCategory(field.category))
+        .map((field) => ({
+          field: `custom_fields.${field.uuid}`,
+          label: field.pdf_header || field.name,
+          category: field.category,
+        }));
+    };
+
     const getOtherCustomColumns = () => {
       if (isCustomFieldsLoading || !customFields) return [];
       return customFields
-        .filter((field) => !matchCategoryKey(field.category, logbookFieldName))
+        .filter((field) => !matchCategoryKey(field.category, logbookFieldName) && !isTakeoffCategory(field.category))
         .map((field) => ({
           field: `custom_fields.${field.uuid}`,
           label: field.pdf_header || field.name,
@@ -91,6 +108,7 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
       { field: 'total', category: '', label: pdfHeader("total") },
       ...getCustomColumns('total'),
       { field: 'pic_name', category: '', label: pdfHeader("pic_name") },
+      ...getTakeoffCustomColumns(),
       { field: 'land_day', category: pdfHeader("landings"), label: pdfHeader("land_day") },
       { field: 'land_night', category: pdfHeader("landings"), label: pdfHeader("land_night") },
       ...getCustomColumns('landings'),

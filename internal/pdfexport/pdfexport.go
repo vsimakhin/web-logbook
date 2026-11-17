@@ -684,7 +684,8 @@ func formatDate(date string, format string) string {
 
 // numberGroupWidths returns the widths of the cells in the numbering row.
 // It mostly follows headerGroups, but "single pilot time" and "multi pilot time"
-// share one number (column 5 in the EASA layout).
+// share one number (column 5 in the EASA layout), and "takeoff" and "landings"
+// share one number (column 8 in the EASA layout).
 func (p *PDFExporter) numberGroupWidths(groups []headerGroup) []float64 {
 	h := headerMap(p.Export.Headers)
 
@@ -695,9 +696,37 @@ func (p *PDFExporter) numberGroupWidths(groups []headerGroup) []float64 {
 		return len(g.cols) > 0 && g.cols[0].Field == "mcc"
 	}
 
+	isLandings := func(g headerGroup) bool {
+		if g.grouped {
+			clean := strings.ToLower(strings.TrimSpace(g.label))
+			cleanH := strings.ToLower(strings.TrimSpace(h["landings"]))
+			if clean == cleanH || clean == "landings" || clean == "landing" {
+				return true
+			}
+		}
+		for _, c := range g.cols {
+			if c.Field == "land_day" || c.Field == "land_night" {
+				return true
+			}
+		}
+		return false
+	}
+
+	isTakeoff := func(g headerGroup) bool {
+		return isTakeoffCategory(g.label)
+	}
+
+	isLandingOrTakeoff := func(g headerGroup) bool {
+		return isLandings(g) || isTakeoff(g)
+	}
+
 	var widths []float64
 	for i, g := range groups {
 		if i > 0 && isPilotTime(g) && isPilotTime(groups[i-1]) {
+			widths[len(widths)-1] += g.width
+			continue
+		}
+		if i > 0 && isLandingOrTakeoff(g) && isLandingOrTakeoff(groups[i-1]) {
 			widths[len(widths)-1] += g.width
 			continue
 		}

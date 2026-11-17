@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update: In A4 and A5 PDF export, custom fields with Take off group are grouped under the same column number as landings when placed together.
 - Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
 - Fix: Update the Remarks text scaling.
 

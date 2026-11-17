@@ -168,6 +168,14 @@ func matchStandardCategory(cat string, headers map[string]string) string {
 	return cat
 }
 
+// isTakeoffCategory returns true if the category matches Takeoff variants (case-insensitive, ignoring hyphens/spaces).
+func isTakeoffCategory(cat string) bool {
+	clean := strings.ToLower(strings.TrimSpace(cat))
+	clean = strings.ReplaceAll(clean, "-", "")
+	clean = strings.ReplaceAll(clean, " ", "")
+	return clean == "takeoff" || clean == "takeoffs"
+}
+
 func groupCustomFieldsByCategory(cols []pdfColumn) []pdfColumn {
 	if len(cols) == 0 {
 		return cols
@@ -227,6 +235,7 @@ func groupCustomFieldsByCategory(cols []pdfColumn) []pdfColumn {
 	for _, m := range moves {
 		res = append(res, m.col)
 	}
+
 	return res
 }
 
