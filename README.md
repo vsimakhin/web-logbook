@@ -63,6 +63,12 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Update: In A4 and A5 PDF export, custom fields with Take off group are grouped under the same column number as landings when placed together.
+- Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
+- Fix: Update the Remarks text scaling.
+
 ## [5.0.0-beta1] - 14.11.2026
 
 - Update: Moved Fields and Layout items to a separate menu on the Flight Record page. Updated the help manual for the Flight Record and Attachments forms.
