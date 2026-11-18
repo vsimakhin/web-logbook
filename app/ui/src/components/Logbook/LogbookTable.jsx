@@ -160,7 +160,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
         ...(isBulkEdit ? { renderCell: (params) => <TagCell params={params} callBackFunction={handleRowUpdate} /> } : {}),
       }),
     ].map(col => ({ ...col, sortable: col.field === 'date' || col.field === 'record_number' }));
-  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, timeFieldsFormat, dateFieldsFormat, isBulkEdit, handleRowUpdate, customFieldsColumnsProps, customFieldsCategories]);
+  }, [isSettingsLoading, isCustomFieldsLoading, fieldName, timeFieldsFormat, dateFieldsFormat, isBulkEdit, handleRowUpdate, customFieldsColumnsProps, customFieldsCategories, props.isImportTable]);
 
   const orderedColumns = useMemo(() => {
     const order = logbookProfile.tableColumns;
