@@ -8,6 +8,47 @@ import (
 
 // this file contains the A5 format specific functions
 
+// closeSpread pads and closes page A, prints page B for the spread, and rolls the totals over
+func (p *PDFExporter) closeSpread(spread []models.FlightRecord) {
+	// finish page A
+	for p.rowCounter < p.Export.LogbookRows {
+		p.rowCounter++
+		p.loadRowCustomFields(EmptyTotals())
+		p.printA5LogbookBodyA(EmptyTotals(), p.isFillLine())
+	}
+	p.printA5LogbookFooterA()
+	p.printPageNumber()
+
+	// page B
+	p.pdf.AddPage()
+	p.printA5LogbookHeaderB()
+	p.rowCounter = 0
+
+	for _, r := range spread {
+		p.logBookRowB(r)
+	}
+	for p.rowCounter < p.Export.LogbookRows {
+		p.rowCounter++
+		p.loadRowCustomFields(EmptyTotals())
+		p.printA5LogbookBodyB(EmptyTotals(), p.isFillLine())
+	}
+	p.printA5LogbookFooterB()
+
+	// roll totals forward
+	p.totalPrevious = p.totalTime
+	p.totalPage = EmptyTotals()
+	for uuid, v := range p.customTotalTime {
+		p.customTotalPrevious[uuid] = v
+	}
+	for uuid := range p.customTotalPage {
+		p.customTotalPage[uuid] = 0
+	}
+
+	p.checkPageBreaks()
+	p.pageCounter++
+	p.rowCounter = 0
+}
+
 // ExportA5 creates A5 pdf with logbook in EASA format
 func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer) error {
 	err := p.initPDF()
@@ -21,76 +62,42 @@ func (p *PDFExporter) ExportA5(flightRecords []models.FlightRecord, w io.Writer)
 
 	p.titlePage()
 
-	p.pdf.AddPage()
-	p.printA5LogbookHeaderA()
+	var spread []models.FlightRecord // records of the current A+B spread
 
 	for i := len(flightRecords) - 1; i >= 0; i-- {
-		pageSplit := p.logBookRowA(flightRecords[i])
+		record := flightRecords[i]
 
-		if pageSplit {
-			// page A closed
-			p.printA5LogbookFooterA()
-			p.printPageNumber()
+		if record.Time.MCC != 0 {
+			record.Time.ME = 0
+		}
 
-			// let's print page B
+		// forced page break: close the current spread, the record starts a new one
+		if record.NewPDFPage && len(spread) > 0 {
+			p.closeSpread(spread)
+			spread = spread[:0]
+		}
+
+		// first record of a spread: start page A
+		if len(spread) == 0 {
 			p.pdf.AddPage()
-			p.printA5LogbookHeaderB()
+			p.printA5LogbookHeaderA()
+		}
 
-			for y := i + p.Export.LogbookRows - 1; y >= i; y-- {
-				p.logBookRowB(flightRecords[y])
-			}
+		p.logBookRowA(record)
+		spread = append(spread, record)
 
-			// end of page B
-			p.printA5LogbookFooterB()
-
-			// roll custom totals forward
-			p.totalPrevious = p.totalTime
-			p.totalPage = EmptyTotals()
-			for uuid, v := range p.customTotalTime {
-				p.customTotalPrevious[uuid] = v
-			}
-			for uuid := range p.customTotalPage {
-				p.customTotalPage[uuid] = 0
-			}
-
-			// check for the page breaks to separate logbooks
-			p.checkPageBreaks()
-			p.pageCounter += 1
-
-			if i != 0 {
-				p.pdf.AddPage()
-				p.printA5LogbookHeaderA()
-			}
+		if len(spread) >= p.Export.LogbookRows {
+			p.closeSpread(spread)
+			spread = spread[:0]
 		}
 	}
 
-	// check the last pages for the proper format
-	if p.rowCounter != 0 {
-		for i := p.rowCounter + 1; i <= p.Export.LogbookRows; i++ {
-			p.rowCounter += 1
-			p.printA5LogbookBodyA(EmptyTotals(), p.isFillLine())
-		}
-		p.printA5LogbookFooterA()
-		p.printPageNumber()
-
-		// page B
-		p.pdf.AddPage()
-		p.printA5LogbookHeaderB()
-		p.rowCounter = 0
-
-		for i := len(flightRecords)%p.Export.LogbookRows - 1; i >= 0; i-- {
-			p.logBookRowB(flightRecords[i])
-		}
-		for i := len(flightRecords) % p.Export.LogbookRows; i < p.Export.LogbookRows; i++ {
-			p.rowCounter++
-			p.printA5LogbookBodyB(EmptyTotals(), p.isFillLine())
-		}
-		p.printA5LogbookFooterB()
+	// last, partially filled spread
+	if len(spread) > 0 {
+		p.closeSpread(spread)
 	}
 
-	err = p.pdf.Output(w)
-
-	return err
+	return p.pdf.Output(w)
 }
 
 // printA5LogbookHeaderA prints the logbook header for the left page
@@ -220,12 +227,8 @@ func (p *PDFExporter) printA5TotalRow(totalName string, cols []pdfColumn, leftMa
 }
 
 // logBookRowA prints a logbook record row for the left page and returns true when the page is full.
-func (p *PDFExporter) logBookRowA(record models.FlightRecord) bool {
+func (p *PDFExporter) logBookRowA(record models.FlightRecord) {
 	p.rowCounter += 1
-
-	if record.Time.MCC != 0 {
-		record.Time.ME = 0
-	}
 
 	p.totalPage = models.CalculateTotals(p.totalPage, record)
 	p.totalTime = models.CalculateTotals(p.totalTime, record)
@@ -234,28 +237,13 @@ func (p *PDFExporter) logBookRowA(record models.FlightRecord) bool {
 	p.accumulateCustomTotals()
 
 	p.printA5LogbookBodyA(record, p.isFillLine())
-
-	if p.rowCounter >= p.Export.LogbookRows {
-		p.rowCounter = 0
-		return true
-	}
-
-	return false
 }
 
 // logBookRowB prints a logbook record row for the right page.
 func (p *PDFExporter) logBookRowB(record models.FlightRecord) {
 	p.rowCounter += 1
-
-	// custom fields were already loaded and accumulated in logBookRowA for this record;
-	// reload without accumulating so the body funcs can read p.rowCustom.
 	p.loadRowCustomFields(record)
-
 	p.printA5LogbookBodyB(record, p.isFillLine())
-
-	if p.rowCounter >= p.Export.LogbookRows {
-		p.rowCounter = 0
-	}
 }
 
 // printA5LogbookBodyA prints the logbook body row for the left page
