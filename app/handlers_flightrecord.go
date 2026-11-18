@@ -208,3 +208,26 @@ func (app *application) HandlerApiFlightRecordSignatureUpdate(w http.ResponseWri
 
 	app.writeOkResponse(w, "Signature updated")
 }
+
+func (app *application) HandlerApiMarkNewPDFPage(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+
+	var mark bool
+	err := json.NewDecoder(r.Body).Decode(&mark)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	err = app.db.MarkNewPDFPage(uuid, mark)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	if mark {
+		app.writeOkResponse(w, "Flight record marked")
+	} else {
+		app.writeOkResponse(w, "Flight record unmarked")
+	}
+}

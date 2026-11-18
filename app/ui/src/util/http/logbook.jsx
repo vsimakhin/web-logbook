@@ -182,3 +182,13 @@ export const updateFlightRecordSignature = async ({ id, signature }) => {
   };
   return await handleFetch(url, options, 'Cannot update flight record signature');
 }
+
+export const markNewPDFPage = async ({ id, mark }) => {
+  const url = `${API_URL}/logbook/${id}/new-pdf-page`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(mark),
+  };
+  return await handleFetch(url, options, 'Cannot update flight record new PDF page mark');
+}

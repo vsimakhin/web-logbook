@@ -48,6 +48,9 @@ func (app *application) routes() *chi.Mux {
 				r.Post("/{uuid}", app.HandlerApiTrackLogNew)
 				r.Delete("/{uuid}", app.HandlerApiTrackLogReset)
 			})
+
+			// mark/unmark as a new pdf page
+			r.Put("/{uuid}/new-pdf-page", app.HandlerApiMarkNewPDFPage)
 		})
 
 		// licensing
