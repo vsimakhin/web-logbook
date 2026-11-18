@@ -128,7 +128,7 @@ func nightSegment(start Place, end Place, maxDistance float64, speedPerMinute fl
 		mid := midpoint(start, end)
 		// calculate time at the mid point
 		flightTime := distance / 2 / speedPerMinute
-		mid.Time = start.Time.Add(time.Duration(flightTime) * time.Minute)
+		mid.Time = start.Time.Add(time.Duration(flightTime * float64(time.Minute)))
 
 		return nightSegment(start, mid, maxDistance, speedPerMinute) + nightSegment(mid, end, maxDistance, speedPerMinute)
 	}
