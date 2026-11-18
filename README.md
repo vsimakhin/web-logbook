@@ -63,19 +63,18 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [Unreleased]
+## [5.0.0-beta2] - 18.11.2026
 
-- Update: In A4 and A5 PDF export, custom fields with Take off group are grouped under the same column number as landings when placed together.
-- Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
-- Fix: Update the Remarks text scaling.
-
-## [5.0.0-beta1] - 14.11.2026
+:warning: As this is a beta (non-production) release, back up your database before upgrading
 
 - Update: Moved Fields and Layout items to a separate menu on the Flight Record page. Updated the help manual for the Flight Record and Attachments forms.
 - Fix: DB Schema version check.
 - Fix: Logbook table columns add/remove/reorder sometimes placed the columns at the end of table until page refresh F5/Ctrl+F5.
 - Fix: Show/Hide fields in the logbook entry for "Simulator" didn't change the visibility of the Simulator Type and Simulator Time fields.
 - Fix: An aircraft type is missing in Aircrafts after airplane type changed.
+- Update: In A4 and A5 PDF export, custom fields with Take off group are grouped under the same column number as landings when placed together.
+- Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
+- Fix: Update the Remarks text scaling.
 
 ## [5.0.0-alpha3] - 08.11.2026
 

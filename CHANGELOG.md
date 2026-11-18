@@ -1,6 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [5.0.0-beta2] - 18.11.2026
+
+:warning: As this is a beta (non-production) release, back up your database before upgrading
 
 - Update: In A4 and A5 PDF export, custom fields with Take off group are grouped under the same column number as landings when placed together.
 - Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
