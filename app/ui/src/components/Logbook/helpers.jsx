@@ -42,25 +42,25 @@ export const createDateColumn = ({ field, headerName, fieldFormat = "DD/MM/YYYY"
   type: 'date',
   valueGetter: (value) => (value ? dayjs(value, 'YYYY-MM-DD').toDate() : null),
   valueFormatter: (value) => (value ? dayjs(value).format(fieldFormat) : ''),
-  renderCell: (params) => (
-    isBulkEdit ? (
-      <DateCell params={params} callBackFunction={handleRowUpdate} />
-    ) : (
-      isImportTable ? (
-        <Typography variant="body2">
-          {params.formattedValue}
+  renderCell: (params) => {
+    if (isBulkEdit) {
+      return <DateCell params={params} callBackFunction={handleRowUpdate} />;
+    }
+
+    if (isImportTable) {
+      return <Typography variant="body2">{params.formattedValue}</Typography>;
+    }
+
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+        <Typography variant="body2" sx={{ color: 'primary.main' }}>
+          <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            {params.formattedValue}
+          </Link>
         </Typography>
-      ) : (
-        <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-          <Typography variant="body2" sx={{ color: "primary.main" }}>
-            <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
-              {params.formattedValue}
-            </Link>
-          </Typography>
-        </Box>
-      )
-    )
-  ),
+      </Box>
+    );
+  },
   ...props,
 })
 
