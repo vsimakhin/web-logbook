@@ -63,6 +63,10 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
+## [Unreleased]
+
+- Fix: Import table records no longer display a link to the flight record in the date column.
+
 ## [5.0.0-beta2] - 18.11.2026
 
 :warning: As this is a beta (non-production) release, back up your database before upgrading

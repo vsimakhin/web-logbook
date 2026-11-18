@@ -29,6 +29,7 @@ export const ImportTable = () => {
         icon={<FileUploadOutlinedIcon />}
         disableColumnSorting
         disableColumnMenu
+        isImportTable={true}
       />
     </>
   );

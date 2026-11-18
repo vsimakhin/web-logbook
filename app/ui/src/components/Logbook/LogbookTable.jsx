@@ -56,7 +56,7 @@ export const LogbookTable = ({ data, isLoading, ...props }) => {
       // record number
       createColumn({ field: "record_number", headerName: "#", width: 30, type: 'number', align: 'center', valueFormatter: (value) => value.toString() }),
       // date
-      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat, isBulkEdit, handleRowUpdate }),
+      createDateColumn({ field: "date", headerName: fieldName("date"), width: 90, fieldFormat: dateFieldsFormat, isBulkEdit, handleRowUpdate, isImportTable: props.isImportTable }),
       // departure
       createColumn({
         field: "departure_place", headerName: fieldName("dep_place"), width: 60,

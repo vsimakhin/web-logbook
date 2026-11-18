@@ -34,7 +34,7 @@ export const updateNested = (object, keys, value) => {
   };
 };
 
-export const createDateColumn = ({ field, headerName, fieldFormat = "DD/MM/YYYY", isBulkEdit, handleRowUpdate, ...props }) => ({
+export const createDateColumn = ({ field, headerName, fieldFormat = "DD/MM/YYYY", isBulkEdit, handleRowUpdate, isImportTable, ...props }) => ({
   field: field,
   headerName: headerName,
   headerAlign: 'center',
@@ -46,13 +46,19 @@ export const createDateColumn = ({ field, headerName, fieldFormat = "DD/MM/YYYY"
     isBulkEdit ? (
       <DateCell params={params} callBackFunction={handleRowUpdate} />
     ) : (
-      <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-        <Typography variant="body2" sx={{ color: "primary.main" }}>
-          <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
-            {params.formattedValue}
-          </Link>
+      isImportTable ? (
+        <Typography variant="body2">
+          {params.formattedValue}
         </Typography>
-      </Box>
+      ) : (
+        <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+          <Typography variant="body2" sx={{ color: "primary.main" }}>
+            <Link to={`/logbook/${params.row.uuid}`} style={{ textDecoration: 'none', color: "inherit" }}>
+              {params.formattedValue}
+            </Link>
+          </Typography>
+        </Box>
+      )
     )
   ),
   ...props,
