@@ -9,6 +9,39 @@ import (
 
 // this file contains the A4 format specific functions
 
+// padA4Page fills the rest of the current page with empty rows
+func (p *PDFExporter) padA4Page() {
+	for p.rowCounter < p.Export.LogbookRows {
+		p.rowCounter += 1
+		p.printA4LogbookBody(EmptyTotals())
+	}
+}
+
+// closePage prints the footer, rolls the totals over and starts a new page
+func (p *PDFExporter) closeA4Page() {
+	p.printA4LogbookFooter()
+	p.printPageNumber()
+
+	p.totalPrevious = p.totalTime
+	p.totalPage = EmptyTotals()
+
+	// carry custom field running totals forward as "previous", then reset page accumulators
+	for uuid, v := range p.customTotalTime {
+		p.customTotalPrevious[uuid] = v
+	}
+	for uuid := range p.customTotalPage {
+		p.customTotalPage[uuid] = 0
+	}
+
+	// check for the page breakes to separate logbooks
+	p.checkPageBreaks()
+
+	p.rowCounter = 0
+	p.pageCounter += 1
+
+	p.printA4LogbookHeader()
+}
+
 // exportA4 creates A4 pdf with logbook in EASA format
 func (p *PDFExporter) ExportA4(flightRecords []models.FlightRecord, w io.Writer) error {
 	err := p.initPDF()
@@ -24,14 +57,19 @@ func (p *PDFExporter) ExportA4(flightRecords []models.FlightRecord, w io.Writer)
 	p.printA4LogbookHeader()
 
 	for i := len(flightRecords) - 1; i >= 0; i-- {
-		p.logBookRow(flightRecords[i])
+		record := flightRecords[i]
+
+		// forced page break: skip if we are already at the top of a fresh page
+		if record.NewPDFPage && p.rowCounter > 0 {
+			p.padA4Page()
+			p.closeA4Page()
+		}
+
+		p.logBookRow(record)
 	}
 
 	// check the last page for the proper format
-	for i := p.rowCounter + 1; i <= p.Export.LogbookRows; i++ {
-		p.rowCounter += 1
-		p.printA4LogbookBody(EmptyTotals())
-	}
+	p.padA4Page()
 
 	p.printA4LogbookFooter()
 	p.printPageNumber()
@@ -99,27 +137,7 @@ func (p *PDFExporter) logBookRow(record models.FlightRecord) {
 	p.printA4LogbookBody(record)
 
 	if p.rowCounter >= p.Export.LogbookRows {
-		p.printA4LogbookFooter()
-		p.printPageNumber()
-
-		p.totalPrevious = p.totalTime
-		p.totalPage = EmptyTotals()
-
-		// carry custom field running totals forward as "previous", then reset page accumulators
-		for uuid, v := range p.customTotalTime {
-			p.customTotalPrevious[uuid] = v
-		}
-		for uuid := range p.customTotalPage {
-			p.customTotalPage[uuid] = 0
-		}
-
-		// check for the page breakes to separate logbooks
-		p.checkPageBreaks()
-
-		p.rowCounter = 0
-		p.pageCounter += 1
-
-		p.printA4LogbookHeader()
+		p.closeA4Page()
 	}
 }
 

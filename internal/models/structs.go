@@ -69,6 +69,7 @@ type FlightRecord struct {
 	CustomFields string  `json:"custom_fields"`
 	Tags         string  `json:"tags"`
 	Signature    string  `json:"signature"`
+	NewPDFPage   bool    `json:"new_pdf_page"`
 
 	// calculated
 	RecordNumber     int    `json:"record_number"`

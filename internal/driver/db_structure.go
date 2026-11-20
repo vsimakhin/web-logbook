@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "103"
+	schemaVersion = "104"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -12,6 +12,7 @@ var (
 	Int       = ColumnType{SQLite: "INTEGER", MySQL: "INT"}
 	Real      = ColumnType{SQLite: "REAL", MySQL: "FLOAT"}
 	Blob      = ColumnType{SQLite: "BLOB", MySQL: "LONGBLOB"}
+	Bool      = ColumnType{SQLite: "BOOLEAN", MySQL: "BOOLEAN"}
 )
 
 var metadataTable = NewTable("metadata", "id", ColumnType{SQLite: "INTEGER", MySQL: "INT UNSIGNED AUTO_INCREMENT"},
@@ -50,6 +51,7 @@ var logbookTable = NewTable("logbook", "uuid", UUID,
 		{Name: "custom_fields", Type: FullText},
 		{Name: "tags", Type: BigText, Properties: "NOT NULL DEFAULT ''"},
 		{Name: "signature", Type: FullText},
+		{Name: "new_pdf_page", Type: Bool, Properties: "NOT NULL DEFAULT FALSE"},
 	})
 
 var airportsTable = NewTable("airports", "icao", SmallText,
@@ -181,7 +183,8 @@ var logbookView = NewView("logbook_view",
 					IFNULL(custom_fields, '{}') as custom_fields,
 					CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
 					IFNULL(ac.cnt, 0) AS attachments_count,
-					IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
+					IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature,
+					IFNULL(new_pdf_page, 0) AS new_pdf_page
 				FROM logbook
 				LEFT JOIN (
 					SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id
@@ -208,7 +211,8 @@ var logbookView = NewView("logbook_view",
 					IFNULL(distance, 0) distance, track, IFNULL(custom_fields, '{}') as custom_fields,
 					CASE WHEN track IS NULL THEN 0 ELSE 1 END AS has_track,
 					IFNULL(ac.cnt, 0) AS attachments_count,
-					IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature
+					IFNULL(tags, '') AS tags, IFNULL(signature, '') AS signature,
+					IFNULL(new_pdf_page, FALSE) AS new_pdf_page
 				FROM logbook
 				LEFT JOIN (
 					SELECT record_id, COUNT(*) AS cnt FROM attachments GROUP BY record_id

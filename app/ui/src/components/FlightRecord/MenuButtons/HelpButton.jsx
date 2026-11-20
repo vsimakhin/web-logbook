@@ -4,6 +4,7 @@ import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined';
 import DrawOutlinedIcon from '@mui/icons-material/DrawOutlined';
 import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOutlined';
+import WebAssetOutlinedIcon from '@mui/icons-material/WebAssetOutlined';
 // Custom
 import HelpButtonDrawer from "../../UIElements/HelpButtonDrawer";
 
@@ -41,6 +42,11 @@ const HELP_CONTENT = [
     title: 'Reset track log',
     icon: RouteOutlinedIcon,
     description: `Reset the flight track and recalculate the distance as a great circle between departure and arrival`
+  },
+  {
+    title: 'Mark/Unmark New PDF Page',
+    icon: WebAssetOutlinedIcon,
+    description: `Mark or unmark the flight record as a new PDF page. The flight record will start on a new page in the PDF export if marked.`
   }
 ];
 
