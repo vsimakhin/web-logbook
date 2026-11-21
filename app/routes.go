@@ -91,6 +91,7 @@ func (app *application) routes() *chi.Mux {
 			r.Put("/export/{format}", app.HandlerApiSettingsExportUpdate)
 			r.Get("/standard-fields", app.HandlerApiSettingsFieldsDefaults)
 			r.Put("/profile", app.HandlerApiSettingsProfile)
+			r.Put("/user-profile", app.HandlerApiUpdateUserProfile)
 		})
 
 		// airports

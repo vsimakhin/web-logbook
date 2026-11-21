@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 // MUI
 import Grid from "@mui/material/Grid";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -8,24 +7,16 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import TextField from "../../UIElements/TextField";
 
 export const OtherSettings = ({ settings, handleChange }) => {
-  const getDefaultPagination = useCallback(() => {
-    // Return default pagination if the setting is empty or undefined
-    return settings.logbook_pagination && settings.logbook_pagination.trim() !== ''
+  // Return default pagination if the setting is empty or undefined
+  const getDefaultPagination = () => (
+    settings.logbook_pagination && settings.logbook_pagination.trim() !== ''
       ? settings.logbook_pagination
-      : "5, 10, 15, 20, 25, 30, 50, 100";
-  }, [settings.logbook_pagination]);
+      : "5, 10, 15, 20, 25, 30, 50, 100"
+  );
 
-  const onFormatChange = useCallback((_, value) => {
-    handleChange('time_fields_auto_format', parseInt(value));
-  }, [handleChange]);
-
-  const onDateFormatChange = useCallback((_, value) => {
-    handleChange('date_fields_format', value);
-  }, [handleChange]);
-
-  const onTotalsViewChange = useCallback((_, value) => {
-    handleChange('logbook_totals_view', parseInt(value));
-  }, [handleChange]);
+  const onFormatChange = (_, value) => { handleChange('time_fields_auto_format', parseInt(value)) };
+  const onDateFormatChange = (_, value) => { handleChange('date_fields_format', value) };
+  const onTotalsViewChange = (_, value) => { handleChange('logbook_totals_view', parseInt(value)) };
 
   return (
     <Grid container spacing={1} sx={{ mt: 2 }}>

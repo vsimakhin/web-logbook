@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 // MUI UI elements
 import IconButton from "@mui/material/IconButton";
 import Menu from '@mui/material/Menu';
@@ -10,8 +10,8 @@ import DBDownloadButton from './DBDownloadButton';
 
 export const DBActionsMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const handleClick = useCallback((event) => setAnchorEl(event.currentTarget), []);
-  const handleCloseMenu = useCallback(() => setAnchorEl(null), []);
+  const handleClick = (event) => setAnchorEl(event.currentTarget);
+  const handleCloseMenu = () => setAnchorEl(null);
 
   return (
     <>

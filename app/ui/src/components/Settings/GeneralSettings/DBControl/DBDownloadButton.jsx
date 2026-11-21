@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 // MUI UI
 import MenuItem from '@mui/material/MenuItem';
@@ -33,12 +33,12 @@ export const DBDownloadButton = ({ handleCloseMenu }) => {
   useErrorNotification({ isError: isDownloadError, error: downloadError, fallbackMessage: 'Failed to download database' });
   useSuccessNotification({ isSuccess: isDownloadSuccess, message: 'Database downloaded' });
 
-  const handleDownload = useCallback(async () => {
+  const handleDownload = async () => {
     setIsDownloading(true);
     await downloadDB();
     setIsDownloading(false);
     handleCloseMenu();
-  }, [downloadDB, handleCloseMenu, setIsDownloading]);
+  };
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} onClick={handleDownload} disabled={isDownloading}>

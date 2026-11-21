@@ -25,6 +25,19 @@ export const updateSettings = async ({ settings }) => {
   return await handleFetch(url, options, 'Cannot update settings');
 }
 
+export const updateUserProfile = async ({ settings }) => {
+  const url = `${API_URL}/settings/user-profile`;
+  settings.licenses_expiration.warning_period = parseInt(settings.licenses_expiration.warning_period) || 90;
+  settings.previous_experience.landings_day = parseInt(settings.previous_experience.landings_day) || 0;
+  settings.previous_experience.landings_night = parseInt(settings.previous_experience.landings_night) || 0;
+  const options = {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(settings),
+  };
+  return await handleFetch(url, options, 'Cannot update user profile');
+}
+
 export const updateSignature = async ({ settings }) => {
   const url = `${API_URL}/settings/signature`;
   const options = {
