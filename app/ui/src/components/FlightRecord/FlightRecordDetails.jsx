@@ -49,41 +49,24 @@ const TIME_FIELDS = [
   "time.ifr_time", "time.pic_time", "time.co_pilot_time", "time.dual_time", "time.instructor_time"
 ];
 
-const getUniqueCustomFieldValues = (flights = [], uuid) => {
-  const values = [];
-
-  flights.forEach((f) => {
-    if (!f) return;
-    let cf = f.custom_fields;
-
-    if (typeof cf === 'string') {
-      try {
-        cf = JSON.parse(cf);
-      } catch {
-        cf = null;
-      }
-    }
-
-    if (Array.isArray(cf)) {
-      cf.forEach((item) => {
-        const itemVal = item?.value;
-        if (item && (item.uuid === uuid || item.id === uuid) && itemVal) {
-          values.push(String(itemVal).trim());
+const getUniqueCustomFieldValues = (flights = [], uuid) => [
+  ...new Set(
+    flights
+      .map((f) => {
+        let cf = f?.custom_fields;
+        if (typeof cf === 'string') {
+          try {
+            cf = JSON.parse(cf);
+          } catch {
+            return '';
+          }
         }
-      });
-      return;
-    }
-
-    if (cf && typeof cf === 'object') {
-      const val = cf[uuid] ?? cf[`custom_fields.${uuid}`];
-      if (val !== undefined && val !== null && val !== '') {
-        values.push(String(val).trim());
-      }
-    }
-  });
-
-  return [...new Set(values.filter(Boolean))].sort();
-};
+        const val = cf?.[uuid] ?? cf?.[`custom_fields.${uuid}`];
+        return typeof val === 'string' ? val.trim() : (val != null ? String(val).trim() : '');
+      })
+      .filter(Boolean)
+  ),
+].sort();
 
 const CustomFieldAutocomplete = ({ field, value, handleChange }) => {
   const { data: logbookData = [] } = useLogbookQuery();
