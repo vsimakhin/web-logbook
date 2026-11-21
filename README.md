@@ -69,6 +69,7 @@ The application will automatically create a local SQLite database on the first s
 - Fix: Inaccurate night time calculation on flights crossing or close to twilight (timing error of up to several minutes on long flights).
 - New: Added the "New PDF Page" option to flight records, allowing you to force a page break before a specific record during PDF export.
 - New: Added 'autocomplete' type for custom fields with auto-suggesting unique values from previous flights.
+- Fix: Custom fields layout on the Flight Record page is now properly preserved after page refresh.
 
 ## [5.0.0-beta2] - 18.11.2026
 
