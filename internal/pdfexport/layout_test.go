@@ -437,3 +437,59 @@ func TestExportA5WithTakeoffSmoke(t *testing.T) {
 		t.Errorf("Export output does not have PDF header")
 	}
 }
+
+func TestCustomFieldPDFCategoryOverride(t *testing.T) {
+	cf1 := "cf-uuid-1"
+	cf2 := "cf-uuid-2"
+	cf3 := "cf-uuid-3"
+
+	exp, err := NewPDFExporter(PDFA4, "Pilot", "LIC-123", "Address", "Sig", "", models.ExportPDF{
+		LogbookRows: 10,
+		TableProfile: models.Profile{
+			TableColumns: []string{"date", "custom_fields." + cf1, "custom_fields." + cf2, "custom_fields." + cf3},
+		},
+	}, models.FlightRecord{})
+	if err != nil {
+		t.Fatalf("NewPDFExporter failed: %v", err)
+	}
+
+	exp.CustomFields = []models.CustomField{
+		{
+			UUID:        cf1,
+			Name:        "Water Takeoffs",
+			Category:    "Water Operations",
+			PDFCategory: "WATER OPS",
+			Type:        "number",
+		},
+		{
+			UUID:        cf2,
+			Name:        "Water Landings",
+			Category:    "Water Operations",
+			PDFCategory: "WATER OPS",
+			Type:        "number",
+		},
+		{
+			UUID:        cf3,
+			Name:        "Instruction",
+			Category:    "Custom",
+			PDFCategory: "",
+			Type:        "duration",
+		},
+	}
+
+	exp.buildLayout()
+	colMap := make(map[string]pdfColumn)
+	for _, c := range exp.layout {
+		colMap[c.Field] = c
+	}
+
+	if colMap["custom_fields."+cf1].Category != "WATER OPS" {
+		t.Errorf("cf1 Category = %q, want %q", colMap["custom_fields."+cf1].Category, "WATER OPS")
+	}
+	if colMap["custom_fields."+cf2].Category != "WATER OPS" {
+		t.Errorf("cf2 Category = %q, want %q", colMap["custom_fields."+cf2].Category, "WATER OPS")
+	}
+	if colMap["custom_fields."+cf3].Category != "Custom" {
+		t.Errorf("cf3 Category = %q, want %q", colMap["custom_fields."+cf3].Category, "Custom")
+	}
+}

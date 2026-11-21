@@ -6,7 +6,7 @@ func (m *DBModel) GetCustomFields() (fields []CustomField, err error) {
 
 	query := `
 		SELECT
-			uuid, name, description, category, type, stats_function, IFNULL(pdf_header,"") as pdf_header
+			uuid, name, description, category, type, stats_function, IFNULL(pdf_header,'') as pdf_header, IFNULL(pdf_category,'') as pdf_category
 		FROM custom_fields`
 	rows, err := m.DB.QueryContext(ctx, query)
 
@@ -17,7 +17,7 @@ func (m *DBModel) GetCustomFields() (fields []CustomField, err error) {
 
 	for rows.Next() {
 		var f CustomField
-		if err = rows.Scan(&f.UUID, &f.Name, &f.Description, &f.Category, &f.Type, &f.StatsFunction, &f.PDFHeader); err != nil {
+		if err = rows.Scan(&f.UUID, &f.Name, &f.Description, &f.Category, &f.Type, &f.StatsFunction, &f.PDFHeader, &f.PDFCategory); err != nil {
 			return fields, err
 		}
 		fields = append(fields, f)
@@ -34,12 +34,12 @@ func (m *DBModel) GetCustomField(uuid string) (f CustomField, err error) {
 
 	query := `
 		SELECT
-			uuid, name, description, category, type, stats_function, IFNULL(pdf_header,"") as pdf_header
+			uuid, name, description, category, type, stats_function, IFNULL(pdf_header,'') as pdf_header, IFNULL(pdf_category,'') as pdf_category
 		FROM custom_fields
 		WHERE uuid = ?`
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 
-	if err = row.Scan(&f.UUID, &f.Name, &f.Description, &f.Category, &f.Type, &f.StatsFunction, &f.PDFHeader); err != nil {
+	if err = row.Scan(&f.UUID, &f.Name, &f.Description, &f.Category, &f.Type, &f.StatsFunction, &f.PDFHeader, &f.PDFCategory); err != nil {
 		return f, err
 	}
 	return f, nil
@@ -51,10 +51,10 @@ func (m *DBModel) InsertCustomField(f CustomField) error {
 
 	query := `
 		INSERT INTO custom_fields
-			(uuid, name, description, category, type, stats_function, pdf_header)
-		VALUES (?, ?, ?, ?, ?, ?, ?)`
+			(uuid, name, description, category, type, stats_function, pdf_header, pdf_category)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := m.DB.ExecContext(ctx, query,
-		f.UUID, f.Name, f.Description, f.Category, f.Type, f.StatsFunction, f.PDFHeader)
+		f.UUID, f.Name, f.Description, f.Category, f.Type, f.StatsFunction, f.PDFHeader, f.PDFCategory)
 
 	return err
 }
@@ -65,10 +65,10 @@ func (m *DBModel) UpdateCustomField(f CustomField) error {
 
 	query := `
 		UPDATE custom_fields
-			SET name = ?, description = ?, category = ?, type = ?, stats_function = ?, pdf_header = ?
+			SET name = ?, description = ?, category = ?, type = ?, stats_function = ?, pdf_header = ?, pdf_category = ?
 		WHERE uuid = ?`
 	_, err := m.DB.ExecContext(ctx, query,
-		f.Name, f.Description, f.Category, f.Type, f.StatsFunction, f.PDFHeader,
+		f.Name, f.Description, f.Category, f.Type, f.StatsFunction, f.PDFHeader, f.PDFCategory,
 		f.UUID)
 
 	return err

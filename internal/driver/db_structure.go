@@ -1,7 +1,7 @@
 package driver
 
 var (
-	schemaVersion = "104"
+	schemaVersion = "105"
 
 	UUID      = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(36)"}
 	DateTime  = ColumnType{SQLite: "TEXT", MySQL: "VARCHAR(32)"}
@@ -141,6 +141,7 @@ var customFieldsTable = NewTable("custom_fields", "uuid", UUID,
 		{Name: "type", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "stats_function", Type: SmallText, Properties: "NOT NULL"},
 		{Name: "pdf_header", Type: SmallText, Properties: "NOT NULL DEFAULT ''"},
+		{Name: "pdf_category", Type: SmallText, Properties: "NOT NULL DEFAULT ''"},
 	})
 
 var personsTable = NewTable("persons", "uuid", UUID,

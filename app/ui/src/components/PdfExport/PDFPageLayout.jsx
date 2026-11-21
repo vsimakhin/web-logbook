@@ -59,33 +59,36 @@ export const PDFPageLayout = ({ settings, handleChange, format }) => {
     const getCustomColumns = (categoryKey) => {
       if (isCustomFieldsLoading || !customFields) return [];
       return customFields
-        .filter((field) => matchCategoryKey(field.category, logbookFieldName) === categoryKey)
+        .filter((field) => matchCategoryKey(field.pdf_category || field.category, logbookFieldName) === categoryKey)
         .map((field) => ({
           field: `custom_fields.${field.uuid}`,
           label: field.pdf_header || field.name,
-          category: pdfHeader(categoryKey) || field.category,
+          category: pdfHeader(categoryKey) || field.pdf_category || field.category,
         }));
     };
 
     const getTakeoffCustomColumns = () => {
       if (isCustomFieldsLoading || !customFields) return [];
       return customFields
-        .filter((field) => isTakeoffCategory(field.category))
+        .filter((field) => isTakeoffCategory(field.pdf_category || field.category))
         .map((field) => ({
           field: `custom_fields.${field.uuid}`,
           label: field.pdf_header || field.name,
-          category: field.category,
+          category: field.pdf_category || field.category,
         }));
     };
 
     const getOtherCustomColumns = () => {
       if (isCustomFieldsLoading || !customFields) return [];
       return customFields
-        .filter((field) => !matchCategoryKey(field.category, logbookFieldName) && !isTakeoffCategory(field.category))
+        .filter((field) => {
+          const cat = field.pdf_category || field.category;
+          return !matchCategoryKey(cat, logbookFieldName) && !isTakeoffCategory(cat);
+        })
         .map((field) => ({
           field: `custom_fields.${field.uuid}`,
           label: field.pdf_header || field.name,
-          category: field.category || 'Custom',
+          category: field.pdf_category || field.category || 'Custom',
         }));
     };
 

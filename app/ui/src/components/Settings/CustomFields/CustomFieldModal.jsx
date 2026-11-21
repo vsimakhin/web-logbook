@@ -7,6 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
+import Typography from '@mui/material/Typography';
 // MUI Icons
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -18,7 +19,6 @@ import { createCustomField, updateCustomField } from '../../../util/http/fields'
 import { useErrorNotification, useSuccessNotification } from '../../../hooks/useAppNotifications';
 import { queryClient } from '../../../util/http/http';
 import useCustomFields from '../../../hooks/useCustomFields';
-import { Divider, Typography } from '@mui/material';
 
 const typeOptions = ["text", "autocomplete", "number", "time", "duration", "enroute"];
 const TEXT_AUTOCOMPLETE_OPTIONS = ["text", "autocomplete"];
@@ -99,7 +99,6 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
   }, []);
 
   const handleClose = useCallback(() => onClose(), [onClose]);
-
   return (
     <Dialog maxWidth="xs" fullWidth open={open} onClose={handleClose}>
       <Card variant="outlined" sx={{ m: 2 }}>
@@ -144,9 +143,17 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               options={customFieldsCategories.allCategories}
               freeSolo={true}
             />
-            <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+            <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0 }}>
               * To add a new category, type the name in the input field
             </Typography>
+            <TextField gsize={{ xs: 12 }}
+              id="pdf_category"
+              label="PDF Category"
+              tooltip="Category header for PDF exports (optional). Disabled if the category is a default category."
+              handleChange={handleChange}
+              value={field.pdf_category}
+              disabled={customFieldsCategories.defaultCategories.includes(field.category)}
+            />
             <Select gsize={{ xs: 12, sm: 6 }}
               id="type"
               label="Type"
@@ -166,10 +173,6 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
             />
 
           </Grid>
-          <Divider sx={{ m: 1 }} />
-          <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-            After adding a new category or custom field, the new columns may appear at the end of the Logbook table. Refresh the page (F5 or Ctrl+F5) to update the column order.
-          </Typography>
         </CardContent>
       </Card >
     </Dialog>

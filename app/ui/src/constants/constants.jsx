@@ -103,6 +103,7 @@ export const CUSTOM_FIELD_INITIAL_STATE = {
   type: "text",
   stats_function: "none",
   pdf_header: "",
+  pdf_category: "",
 };
 
 export const FIELDS_VISIBILITY_KEY = "flight-record-visibility-key";

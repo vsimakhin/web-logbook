@@ -34,6 +34,7 @@ export const CustomFieldsTable = () => {
     { field: "pdf_header", headerName: "PDF Header", headerAlign: "center", flex: 1 },
     { field: "description", headerName: "Description", headerAlign: "center", flex: 1 },
     { field: "category", headerName: "Category", headerAlign: "center", width: 150 },
+    { field: "pdf_category", headerName: "PDF Category", headerAlign: "center", width: 150 },
     { field: "type", headerName: "Type", headerAlign: "center", width: 100 },
     { field: "stats_function", headerName: "Stats Function", headerAlign: "center", width: 120 },
   ], []);
