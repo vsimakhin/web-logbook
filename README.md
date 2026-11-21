@@ -68,6 +68,7 @@ The application will automatically create a local SQLite database on the first s
 - Fix: Import table records no longer display a link to the flight record in the date column.
 - Fix: Inaccurate night time calculation on flights crossing or close to twilight (timing error of up to several minutes on long flights).
 - New: Added the "New PDF Page" option to flight records, allowing you to force a page break before a specific record during PDF export.
+- New: Added 'autocomplete' type for custom fields with auto-suggesting unique values from previous flights.
 
 ## [5.0.0-beta2] - 18.11.2026
 
@@ -455,6 +456,7 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/Cyclic407" title="Cyclic407"><img src="https://github.com/Cyclic407.png" width="40" height="40" alt="Cyclic407" /></a>
   <a href="https://github.com/Thomas-DPRX" title="Thomas-DPRX"><img src="https://github.com/Thomas-DPRX.png" width="40" height="40" alt="Thomas-DPRX" /></a>
   <a href="https://github.com/dmoeyers" title="dmoeyers"><img src="https://github.com/dmoeyers.png" width="40" height="40" alt="dmoeyers" /></a>
+  <a href="https://github.com/BabyDino" title="BabyDino"><img src="https://github.com/BabyDino.png" width="40" height="40" alt="BabyDino" /></a>
 </p>
 
 --

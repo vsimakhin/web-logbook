@@ -5,6 +5,7 @@
 - Fix: Import table records no longer display a link to the flight record in the date column.
 - Fix: Inaccurate night time calculation on flights crossing or close to twilight (timing error of up to several minutes on long flights).
 - New: Added the "New PDF Page" option to flight records, allowing you to force a page break before a specific record during PDF export.
+- New: Added 'autocomplete' type for custom fields with auto-suggesting unique values from previous flights.
 
 ## [5.0.0-beta2] - 18.11.2026
 

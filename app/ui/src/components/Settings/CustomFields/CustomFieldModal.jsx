@@ -20,10 +20,12 @@ import { queryClient } from '../../../util/http/http';
 import useCustomFields from '../../../hooks/useCustomFields';
 import { Divider, Typography } from '@mui/material';
 
-const typeOptions = ["text", "number", "time", "duration", "enroute"];
+const typeOptions = ["text", "autocomplete", "number", "time", "duration", "enroute"];
+const TEXT_AUTOCOMPLETE_OPTIONS = ["text", "autocomplete"];
 
 const statsFunction = {
   text: ["none", "count"],
+  autocomplete: ["none", "count"],
   number: ["none", "sum", "average", "count"],
   time: ["none", "count"],
   duration: ["none", "sum", "average", "count"],
@@ -77,14 +79,19 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
   }, [payload]);
 
   const title = field?.uuid === "new" ? "New Custom Field" : "Edit Custom Field";
-  const isTypeDisabled = field.uuid !== "new";
+  const isNew = field?.uuid === "new";
+  const isTextOrAutocomplete = payload?.type === "text" || payload?.type === "autocomplete";
+  const isTypeDisabled = !isNew && !isTextOrAutocomplete;
+  const availableTypeOptions = !isNew && isTextOrAutocomplete ? TEXT_AUTOCOMPLETE_OPTIONS : typeOptions;
 
   const handleChange = useCallback((key, value) => {
     setField(prev => {
       const newField = { ...prev, [key]: value };
 
       if (key === "type") {
-        newField.stats_function = statsFunction[value]?.[0] || "";
+        if (!statsFunction[value]?.includes(prev.stats_function)) {
+          newField.stats_function = statsFunction[value]?.[0] || "";
+        }
       }
 
       return newField;
@@ -146,7 +153,7 @@ export const CustomFieldModal = ({ open, onClose, payload }) => {
               tooltip="Custom field type"
               handleChange={handleChange}
               value={field.type}
-              options={typeOptions}
+              options={availableTypeOptions}
               disabled={isTypeDisabled}
             />
             <Select gsize={{ xs: 12, sm: 6 }}

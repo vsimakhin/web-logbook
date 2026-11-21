@@ -95,7 +95,7 @@ const updateCustomFieldTotals = (totals, flight, customFields) => {
         numValue = parseInt(value) || 0;
       } else if (field.type === 'number') {
         numValue = parseFloat(value);
-      } else if (field.type === 'text' || field.type === 'time') {
+      } else if (field.type === 'text' || field.type === 'time' || field.type === 'autocomplete') {
         numValue = 1; // For count functionality
       }
 

@@ -17,7 +17,8 @@ import { PLACE_SLOT_PROPS, TIME_SLOT_PROPS } from '../../constants/constants';
 import { getValue } from '../../util/helpers';
 import FlightTags from '../UIElements/FlightTags';
 import { PICNameField } from './PICNameField';
-import { useModelsCategoriesQuery } from '../../hooks/queries';
+import Select from '../UIElements/Select';
+import { useLogbookQuery, useModelsCategoriesQuery } from '../../hooks/queries';
 import FlightRecordLayout from './FlightRecordLayout';
 import LandingField from '../UIElements/LandingField';
 import useCustomFields from '../../hooks/useCustomFields';
@@ -47,6 +48,47 @@ const TIME_FIELDS = [
   "time.total_time", "time.se_time", "time.me_time", "time.mcc_time", "time.night_time",
   "time.ifr_time", "time.pic_time", "time.co_pilot_time", "time.dual_time", "time.instructor_time"
 ];
+
+const getUniqueCustomFieldValues = (flights = [], uuid) => [
+  ...new Set(
+    flights
+      .map((f) => {
+        let cf = f?.custom_fields;
+        if (typeof cf === 'string') {
+          try {
+            cf = JSON.parse(cf);
+          } catch {
+            return '';
+          }
+        }
+        const val = cf?.[uuid] ?? cf?.[`custom_fields.${uuid}`];
+        return typeof val === 'string' ? val.trim() : (val != null ? String(val).trim() : '');
+      })
+      .filter(Boolean)
+  ),
+].sort();
+
+const CustomFieldAutocomplete = ({ field, value, handleChange }) => {
+  const { data: logbookData = [] } = useLogbookQuery();
+
+  const options = useMemo(
+    () => getUniqueCustomFieldValues(logbookData, field.uuid),
+    [logbookData, field.uuid]
+  );
+
+  return (
+    <Select
+      id={`custom_fields.${field.uuid}`}
+      label={field.name}
+      tooltip={field.description}
+      value={value || ''}
+      handleChange={handleChange}
+      onBlur={(e) => handleChange(`custom_fields.${field.uuid}`, e.target.value)}
+      options={options}
+      freeSolo={true}
+    />
+  );
+};
 
 export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
   const { customFields, calculateDistance } = useCustomFields();
@@ -207,6 +249,18 @@ export const FlightRecordDetails = ({ flight, handleChange, setFlight }) => {
                       value={flight.custom_fields?.[field.uuid] || 0}
                       handleChange={handleChange}
                       fieldFormat={timeFieldsFormat}
+                    />
+                  </div>
+                );
+              }
+
+              if (field.type === 'autocomplete') {
+                return (
+                  <div key={field.uuid}>
+                    <CustomFieldAutocomplete
+                      field={field}
+                      value={flight.custom_fields?.[field.uuid]}
+                      handleChange={handleChange}
                     />
                   </div>
                 );
