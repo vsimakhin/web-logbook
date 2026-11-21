@@ -8,6 +8,7 @@
 - New: Added 'autocomplete' type for custom fields with auto-suggesting unique values from previous flights.
 - Fix: Custom fields layout on the Flight Record page is now properly preserved after page refresh.
 - New: Added optional 'PDF Category' for custom fields to customize category headers in PDF exports.
+- New: Added download and upload of user profiles on the Settings page, to share flight record page and logbook table layouts, custom fields, and PDF export settings.
 
 ## [5.0.0-beta2] - 18.11.2026
 
