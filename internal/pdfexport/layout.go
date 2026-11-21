@@ -311,7 +311,11 @@ func (p *PDFExporter) buildLayout() {
 			if c.Label == "" {
 				c.Label = cf.Name
 			}
-			c.Category = matchStandardCategory(cf.Category, headers)
+			cat := cf.PDFCategory
+			if cat == "" {
+				cat = cf.Category
+			}
+			c.Category = matchStandardCategory(cat, headers)
 			c.align = "C"
 
 			switch cfType {

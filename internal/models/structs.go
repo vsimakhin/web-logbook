@@ -372,4 +372,5 @@ type CustomField struct {
 	Type          string `json:"type"`
 	StatsFunction string `json:"stats_function"`
 	PDFHeader     string `json:"pdf_header"`
+	PDFCategory   string `json:"pdf_category"`
 }
