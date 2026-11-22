@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	version = "5.0.0-beta2"
+	version = "5.0.0-beta3"
 
 	infoLogPrefix    = "INFO\t"
 	errorLogPrefix   = "ERROR\t"
