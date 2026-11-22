@@ -69,6 +69,16 @@ func (app *application) HandlerApiAirportList(w http.ResponseWriter, r *http.Req
 	app.writeJSON(w, http.StatusOK, airports)
 }
 
+func (app *application) HandlerApiVisitedAirportList(w http.ResponseWriter, r *http.Request) {
+	airports, err := app.db.GetVisitedAirports()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, airports)
+}
+
 func (app *application) downloadAirportDB(source string) ([]models.Airport, error) {
 	if source == "" {
 		source = "https://github.com/vsimakhin/Airports/raw/master/airports.json"

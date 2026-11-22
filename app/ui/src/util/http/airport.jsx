@@ -42,6 +42,16 @@ export const fetchAirports = async ({ signal }) => {
   return await handleFetch(url, options, 'Cannot fetch airports');
 }
 
+export const fetchVisitedAirports = async ({ signal }) => {
+  const url = `${API_URL}/airport/visited-list`;
+  const options = {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+    signal: signal,
+  };
+  return await handleFetch(url, options, 'Cannot fetch airports');
+}
+
 export const updateAirportsDB = async () => {
   const url = `${API_URL}/airport/update-db`;
   const options = {

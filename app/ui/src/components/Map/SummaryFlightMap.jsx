@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 // MUI
 import Grid from "@mui/material/Grid";
@@ -12,11 +12,12 @@ import FlightMap from "../FlightMap/FlightMap";
 import { useErrorNotification } from "../../hooks/useAppNotifications";
 import { fetchLogbookMapData } from "../../util/http/logbook";
 import SummaryStats from "./SummaryStats";
-import { fetchAirports } from "../../util/http/airport";
+import { fetchVisitedAirports } from "../../util/http/airport";
+import { queryClient } from "../../util/http/http";
 
 export const SummaryFlightMap = () => {
   const [mapData, setMapData] = useState([]);
-  const [airportsMap, setAirportsMap] = useState(new Map());
+  // const [airportsMap, setAirportsMap] = useState(new Map());
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['logbook', 'map'],
@@ -26,32 +27,35 @@ export const SummaryFlightMap = () => {
   });
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to load logbook' });
 
-  const { data: airports } = useQuery({
-    queryKey: ['airports'],
-    queryFn: ({ signal }) => fetchAirports({ signal }),
+  const { data: airports, isLoading: airportsLoading } = useQuery({
+    queryKey: ['airports', 'visited'],
+    queryFn: async ({ signal }) => {
+      const list = await fetchVisitedAirports({ signal });
+      // Seed the single-airport cache so getAirportData never refetches these
+      list.forEach(a => {
+        queryClient.setQueryData(['airports', a.icao], a);
+        if (a.iata) queryClient.setQueryData(['airports', a.iata], a);
+      });
+      return list;
+    },
     staleTime: 3600000,
     gcTime: 3600000,
   });
 
-  useEffect(() => {
-    if (airports) {
-      const map = new Map();
-      airports.forEach(a => {
-        map.set(a.icao, a);
-        if (a.iata) {
-          map.set(a.iata, a);
-        }
-      });
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setAirportsMap(map);
-    }
+  const airportsMap = useMemo(() => {
+    const map = new Map();
+    airports?.forEach(a => {
+      map.set(a.icao, a);
+      if (a.iata) map.set(a.iata, a);
+    });
+    return map;
   }, [airports]);
 
   const callbackFunction = useCallback((filteredData) => { setMapData(filteredData) }, [setMapData]);
 
   return (
     <>
-      {isLoading && <LinearProgress />}
+      {(isLoading || airportsLoading) && <LinearProgress />}
       <Grid container spacing={1} >
         <Grid size={{ xs: 12, sm: 12, md: 3, lg: 3, xl: 3 }}>
           <Card variant="outlined" sx={{ mb: 1 }}>

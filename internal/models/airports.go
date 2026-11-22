@@ -117,6 +117,9 @@ func (m *DBModel) fetchAirports(query string) (airports []Airport, err error) {
 		}
 		airports = append(airports, airport)
 	}
+	if err = rows.Err(); err != nil {
+		return airports, err
+	}
 
 	return airports, nil
 }
@@ -124,6 +127,24 @@ func (m *DBModel) fetchAirports(query string) (airports []Airport, err error) {
 // GetAllAirports returns all airports
 func (m *DBModel) GetAllAirports() (airports []Airport, err error) {
 	query := "SELECT icao, iata, name, city, country, elevation, lat, lon FROM airports_view"
+	return m.fetchAirports(query)
+}
+
+// GetAllAirports returns all airports
+func (m *DBModel) GetVisitedAirports() (airports []Airport, err error) {
+	query := `WITH visited AS (
+		SELECT departure_place AS place FROM logbook WHERE departure_place <> ''
+		UNION
+		SELECT arrival_place FROM logbook WHERE arrival_place <> ''
+	)
+	SELECT a.icao, a.iata, a.name, a.city, a.country, a.elevation, a.lat, a.lon
+	FROM airports_view a
+	JOIN visited v ON v.place = a.icao
+	UNION
+	SELECT a.icao, a.iata, a.name, a.city, a.country, a.elevation, a.lat, a.lon
+	FROM airports_view a
+	JOIN visited v ON v.place = a.iata
+	`
 	return m.fetchAirports(query)
 }
 

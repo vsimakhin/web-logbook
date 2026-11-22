@@ -99,6 +99,7 @@ func (app *application) routes() *chi.Mux {
 			r.With(middleware.Compress(5)).Get("/standard-list", app.HandlerApiStandardAirportList)
 			r.With(middleware.Compress(5)).Get("/custom-list", app.HandlerApiCustomAirportList)
 			r.With(middleware.Compress(5)).Get("/list", app.HandlerApiAirportList)
+			r.With(middleware.Compress(5)).Get("/visited-list", app.HandlerApiVisitedAirportList)
 			r.Post("/custom", app.HandlerApiAirportCustomNew)
 			r.Put("/custom", app.HandlerApiAirportCustomUpdate)
 			r.Delete("/custom", app.HandlerApiAirportCustomDelete)
