@@ -73,7 +73,7 @@ export const SummaryFlightMap = () => {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9 }}>
-          <FlightMap data={mapData} airportsMap={airportsMap} />
+          {!airportsLoading && <FlightMap data={mapData} airportsMap={airportsMap} />}
         </Grid>
       </Grid>
     </>

@@ -25,21 +25,11 @@ import MapOptionsButton from './MapOptionsButton';
 import { CODEC_JSON, useLocalStorageState } from '../../hooks/useLocalStorageState';
 
 const getAirportData = async (id, airportsMap) => {
-  if (airportsMap) {
-    const airport = airportsMap.get(id);
-    if (airport) {
-      return airport;
-    }
-  }
+  const cached = airportsMap?.get(id);
+  if (cached) return cached;
 
   try {
-    // Check cache first
-    const cachedData = queryClient.getQueryData(["airports", id]);
-    if (cachedData) {
-      return cachedData;
-    }
-
-    const response = await queryClient.fetchQuery({
+    const response = await queryClient.query({
       queryKey: ["airports", id],
       queryFn: ({ signal }) => fetchAirport({ signal, id }),
       staleTime: 86400000, // 24 hours
