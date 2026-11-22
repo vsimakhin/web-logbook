@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 // MUI UI
 import MenuItem from '@mui/material/MenuItem';
@@ -33,7 +33,7 @@ export const DBUploadButton = ({ handleCloseMenu }) => {
   useErrorNotification({ isError, error, fallbackMessage: 'Failed to upload databse' });
   useSuccessNotification({ isSuccess, message: 'Database uploaded' });
 
-  const onFileChange = useCallback(async (event) => {
+  const onFileChange = async (event) => {
     const file = event.target.files[0]
     if (file) {
       const confirmed = await dialogs.confirm('Are you sure you want to upload a new database file? All data will be replaced!', {
@@ -50,7 +50,7 @@ export const DBUploadButton = ({ handleCloseMenu }) => {
       }
     }
     handleCloseMenu();
-  }, [uploadDB, dialogs, handleCloseMenu]);
+  };
 
   return (
     <MenuItem sx={{ p: 0, pr: 1 }} component="label" disabled={isPending}>

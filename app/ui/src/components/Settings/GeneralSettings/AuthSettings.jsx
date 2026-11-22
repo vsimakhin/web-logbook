@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 // MUI UI elements
 import Grid from "@mui/material/Grid";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -8,7 +7,7 @@ import TextField from "../../UIElements/TextField";
 
 export const AuthSettings = ({ settings, handleChange }) => {
 
-  const onAuthToggle = useCallback((enabled) => {
+  const onAuthToggle = (enabled) => {
     handleChange("auth_enabled", enabled);
 
     if (enabled) {
@@ -18,7 +17,7 @@ export const AuthSettings = ({ settings, handleChange }) => {
       const base64Key = btoa(String.fromCharCode.apply(null, array));
       handleChange("secret_key", base64Key);
     }
-  }, [handleChange]);
+  };
 
   return (
     <>

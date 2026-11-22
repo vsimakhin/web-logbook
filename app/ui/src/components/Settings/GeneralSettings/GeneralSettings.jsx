@@ -11,11 +11,13 @@ import AuthSettings from "./AuthSettings";
 import LicensesExpiration from "./LicensesExpiration";
 import DBActionsMenu from "./DBControl/DBActionsMenu";
 import HelpButton from "./HelpButton";
+import ProfileActionsMenu from "./ProfileControl/ProfileActionsMenu";
 
 const ActionButtons = ({ settings }) => (
   <>
     <HelpButton />
     <DBActionsMenu />
+    <ProfileActionsMenu settings={settings} />
     <SaveSettingsButton settings={settings} />
   </>
 );

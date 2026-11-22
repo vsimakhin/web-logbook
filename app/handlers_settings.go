@@ -196,3 +196,41 @@ func (app *application) HandlerApiSettingsProfile(w http.ResponseWriter, r *http
 
 	app.writeOkResponse(w, "Profile settings updated")
 }
+
+func (app *application) HandlerApiUpdateUserProfile(w http.ResponseWriter, r *http.Request) {
+	settings, err := app.db.GetSettings()
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	var profile models.Settings
+	err = json.NewDecoder(r.Body).Decode(&profile)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	settings.SignatureText = profile.SignatureText
+	settings.ExportA4 = profile.ExportA4
+	settings.ExportA5 = profile.ExportA5
+	settings.LogbookPagination = profile.LogbookPagination
+	settings.LogbookTotalsView = profile.LogbookTotalsView
+	settings.TimeFieldsAutoFormat = profile.TimeFieldsAutoFormat
+	settings.DateFieldsFormat = profile.DateFieldsFormat
+	settings.EnableCustomNames = profile.EnableCustomNames
+	settings.StandardFieldsHeaders = profile.StandardFieldsHeaders
+	settings.LicensesExpiration = profile.LicensesExpiration
+	settings.LogbookProfile = profile.LogbookProfile
+	settings.SelfPICLabel = profile.SelfPICLabel
+
+	err = app.db.UpdateSettings(settings)
+	if err != nil {
+		app.handleError(w, err)
+		return
+	}
+
+	app.timeFieldsAutoFormat = settings.TimeFieldsAutoFormat
+
+	app.writeOkResponse(w, "Profile updated")
+}
