@@ -24,6 +24,9 @@ func (m *DBModel) GetLicenses() (licenses []License, err error) {
 		}
 		licenses = append(licenses, lic)
 	}
+	if err = rows.Err(); err != nil {
+		return licenses, err
+	}
 
 	return licenses, nil
 }

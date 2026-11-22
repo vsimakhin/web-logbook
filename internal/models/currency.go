@@ -22,6 +22,9 @@ func (m *DBModel) GetCurrencies() (currencies []Currency, err error) {
 		}
 		currencies = append(currencies, c)
 	}
+	if err = rows.Err(); err != nil {
+		return currencies, err
+	}
 
 	return currencies, nil
 }

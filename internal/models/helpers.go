@@ -95,6 +95,10 @@ func (m *DBModel) UpdateFlightRecordsDistance() {
 			return
 		}
 	}
+	if err = rows.Err(); err != nil {
+		tx.Rollback()
+		return
+	}
 
 	// commit transaction
 	if err = tx.Commit(); err != nil {
@@ -125,5 +129,8 @@ func (m *DBModel) CreateDistanceCache() {
 		}
 
 		m.Distance(dep, arr)
+	}
+	if err = rows.Err(); err != nil {
+		return
 	}
 }

@@ -70,6 +70,9 @@ func (m *DBModel) VerifyToken(token string, username string) error {
 			return nil
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return errors.New("no valid token found")
+	}
 
 	return errors.New("no valid token found")
 }

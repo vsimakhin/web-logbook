@@ -27,6 +27,9 @@ func (m *DBModel) GetFlightRecordAttachments(recordID string) (attachments []Att
 		}
 		attachments = append(attachments, att)
 	}
+	if err = rows.Err(); err != nil {
+		return attachments, err
+	}
 
 	return attachments, nil
 }
@@ -55,6 +58,9 @@ func (m *DBModel) GetAttachments() (attachments []Attachment, err error) {
 			return attachments, err
 		}
 		attachments = append(attachments, att)
+	}
+	if err = rows.Err(); err != nil {
+		return attachments, err
 	}
 
 	return attachments, nil
