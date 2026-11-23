@@ -63,52 +63,45 @@ The application will automatically create a local SQLite database on the first s
 
 # Changelog
 
-## [5.0.0-beta3] - 22.11.2026
+## [5.0.0]
 
-:warning: As this is a beta (non-production) release, back up your database before upgrading
+:warning: This is a major release with a database migration (time and date fields are converted to a new internal format). Back up your database before upgrading.
 
-- Fix: Import table records no longer display a link to the flight record in the date column.
-- Fix: Inaccurate night time calculation on flights crossing or close to twilight (timing error of up to several minutes on long flights).
-- New: Added the "New PDF Page" option to flight records, allowing you to force a page break before a specific record during PDF export.
-- New: Added 'autocomplete' type for custom fields with auto-suggesting unique values from previous flights.
-- Fix: Custom fields layout on the Flight Record page is now properly preserved after page refresh.
-- New: Added optional 'PDF Category' for custom fields to customize category headers in PDF exports.
-- New: Added download and upload of user profiles on the Settings page, to share flight record page and logbook table layouts, custom fields, and PDF export settings.
+#### Flight records and logbook
 
-## [5.0.0-beta2] - 18.11.2026
+- New: Edit multiple flight records directly in the logbook table.
+- New: Configurable time formats: H:MM, HH:MM, and FAA decimal.
+- New: Configurable date formats: DD/MM/YYYY, YYYY-MM-DD, and MM/DD/YYYY.
+- New: Flight record fields can be resized, reordered, or hidden via the new Layout button. Fields and Layout items now live in a separate menu on the Flight Record page.
+- New: Logbook table columns can be reordered by drag-and-drop and added or removed in Fields & Layout.
+- New: Custom field type 'autocomplete', which suggests unique values from previous flights.
+- Update: Aircraft and aircraft category tables now show total times.
+- Fix: Inaccurate night time calculation on flights crossing or close to twilight (error of up to several minutes on long flights).
 
-:warning: As this is a beta (non-production) release, back up your database before upgrading
+#### PDF export
 
-- Update: Moved Fields and Layout items to a separate menu on the Flight Record page. Updated the help manual for the Flight Record and Attachments forms.
-- Fix: DB Schema version check.
-- Fix: Logbook table columns add/remove/reorder sometimes placed the columns at the end of table until page refresh F5/Ctrl+F5.
-- Fix: Show/Hide fields in the logbook entry for "Simulator" didn't change the visibility of the Simulator Type and Simulator Time fields.
-- Fix: An aircraft type is missing in Aircrafts after airplane type changed.
-- Update: In A4 and A5 PDF export, custom fields with Take off group are grouped under the same column number as landings when placed together.
+- New: A4 and A5 PDF export supports custom fields, category grouping, and totals for custom duration and number fields.
+- New: Customizable PDF column layout, with page-divider support for two-page A5 exports.
+- New: 'PDF Header' and 'PDF Category' for custom fields to customize column headers in the PDF export.
+- New: "New PDF Page" option on flight records to force a page break before a specific record.
 - Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
-- Fix: Update the Remarks text scaling.
 
-## [5.0.0-alpha3] - 08.11.2026
+#### Maps and statistics
 
-:warning: As this is an alpha (non-production) release, back up your database before upgrading
+- Update: Sim sessions are included in the stats.
+- Update: Added proper map layer attributions and copyright notices.
+- Fix: Inaccurate stats calculation (flights, routes, airports) on the Map and Dashboard pages.
 
-- Update: Converted time fields from the legacy HH:MM string format to integer minutes, improving consistency and simplifying time calculations.
-- Update: Migrated date fields from the legacy DD/MM/YYYY format to ISO YYYY-MM-DD, separating internal storage from the displayed date format.
-- Update: Optimized HTTP requests to reduce redundant requests and improve data-fetching efficiency.
-- New: Edit multiple flight records directly in the logbook table, with options to save or cancel changes.
-- New: Configurable time formats - choose between H:MM, HH:MM, and FAA decimal time formats.
-- New: Configurable date formats - Choose between DD/MM/YYYY, YYYY-MM-DD, and MM/DD/YYYY.
-- Update: Added total times to the tables for aircrafts and aircraft categories.
-- Update: Golang and npm packages/security patches.
-- Update: Add proper map layer attributions and copyright notices.
-- New: Custom styles and scripts - the new `-custom-dir` option adds your own `custom.css` and/or `custom.js` to the UI, no reverse proxy needed.
-- Update: Reorganized the Settings page into two sections: General and Fields & Layout.
-- New: Flight record fields can now be resized, reordered, or hidden using the new Layout button in the menu.
-- New: Logbook table columns can now be reordered via drag-and-drop and added or removed in Fields & Layout. Layout is saved to the user profile.
-- New: PDF export (A4 & A5) supports custom fields, category grouping, and calculates totals for custom duration and number fields.
-- New: Customizable PDF column layout with page-divider support for two-page A5 exports.
-- Fix: Interrupted database migration should no longer leave the logbook in a broken state.
-- Fix/Update: Fix inaccurate stats calculation (flights, routes, airports) for Map and Dashboard pages. Added Sim sessions to the stats.
+#### Other
+
+- New: The -custom-dir option adds your own custom.css and/or custom.js to the UI, with no reverse proxy needed.
+- New: Download and upload of user profiles on the Settings page, to share flight record and logbook table layouts, custom fields, and PDF export settings.
+- Update: The Settings page is reorganized into two sections: General and Fields & Layout.
+- Update: Optimized HTTP requests to reduce redundant calls.
+- Update: Time fields are stored as integer minutes and dates as ISO YYYY-MM-DD, separate from the displayed format.
+- Update: Golang and npm packages and security patches.
+- Fix: An interrupted database migration no longer leaves the logbook in a broken state.
+- Fix: An aircraft type went missing in Aircrafts after the airplane type was changed.
 
 ## [4.10.0] - 24.09.2026
 
