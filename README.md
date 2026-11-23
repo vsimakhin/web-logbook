@@ -5,21 +5,23 @@
 
 # Web-logbook
 
-Web-logbook is a simple, free and open-source EASA-style logbook application written in Go and React.
+Web-logbook is a simple, free and open-source pilot logbook application written in Go and React.
 
-It lets you record and manage flight records, track licenses and certifications, visualize flights on a map, attach documents, and export a fully formatted EASA-style PDF logbook you can print, sign, and use as a regular paper logbook.
+It follows the EASA/UK CAA logbook layout out of the box, and with custom fields and configurable time and date formats (including FAA decimal time) it can also be set up for FAA-style logbook.
+
+It lets you record and manage flight records, track licenses and certifications, visualize flights on a map, attach documents, and export a fully formatted PDF logbook (A4 and A5) you can print, sign, and use as a regular paper logbook.
 
 The application is a single binary and stores data locally using SQLite by default.
 
-![EASA Logbook](./readme-assets/logbook.png)
+![EASA/UK CAA Logbook](./readme-assets/logbook.png)
 
-Why this project? Web-logbook was created to provide a simple, self-hosted logbook that follows EASA-style formatting while keeping full control of your data. Web-logbook runs locally and does not require a subscription or external services. Built by pilots for pilots.
+Why this project? Web-logbook was created to provide a simple, self-hosted logbook while keeping full control of your data. It runs locally and does not require a subscription or external services. Built by pilots for pilots.
 
 ---
 
 ## Quick Start
 
-- Download the latest release and run the binary
+- Download the latest [release](https://github.com/vsimakhin/web-logbook/releases) and run the binary
 - Then open your browser and type `http://localhost:4000`
 - Voilà! You have your logbook ready to use!
 
@@ -48,8 +50,8 @@ The application will automatically create a local SQLite database on the first s
 
 # Features
 
-- EASA-style flight logbook
-- Export logbook to PDF (A4 and A5 formats)
+- EASA/UK CAA style flight logbook, adaptable FAA format
+- Export logbook to PDF (A4 and A5 formats), with custom fields and column layout
 - Flight map with route visualization
 - Automatic night-time calculation
 - Aircraft, airports, and persons management
@@ -57,6 +59,11 @@ The application will automatically create a local SQLite database on the first s
 - CSV import and export
 - Attachments for flight records
 - Custom user-defined fields
+- Customizable layout for flight record fields and logbook table columns
+- Edit multiple flight records directly in the logbook table
+- Configurable time (H:MM, HH:MM, FAA decimal) and date formats
+- Shareable user profiles (layouts, custom fields, PDF settings)
+- Custom CSS and JS support
 - Dashboard statistics and currency tracking
 
 ---
@@ -94,7 +101,7 @@ The application will automatically create a local SQLite database on the first s
 
 #### Other
 
-- New: The -custom-dir option adds your own custom.css and/or custom.js to the UI, with no reverse proxy needed.
+- New: The -custom-dir option adds your own custom.css and/or custom.js to the UI (see example [here](https://github.com/benbox69/web-logbook-horizon))
 - New: Download and upload of user profiles on the Settings page, to share flight record and logbook table layouts, custom fields, and PDF export settings.
 - Update: The Settings page is reorganized into two sections: General and Fields & Layout.
 - Update: Optimized HTTP requests to reduce redundant calls.
@@ -123,15 +130,21 @@ You can clone the repo and compile the binaries yourself, or just download the l
 1. Download the latest release from https://github.com/vsimakhin/web-logbook/releases
 2. Extract the archive to a directory of your choice
 3. Start the application
-  * Windows:
-    * Double-click on the `web-logbook.exe`.
-  * Linux/macOS:
-    * Open a terminal and navigate to the directory
-    * Run `./web-logbook` or double-click on the `web-logbook` file.
+   * Windows:
+     * Double-click on the `web-logbook.exe`.
+   * Linux/macOS:
+     * Open a terminal and navigate to the directory
+     * Run `./web-logbook` or double-click on the `web-logbook` file.
 4. Open your browser, type http://localhost:4000 and the application is ready to use
 5. To close the application, press `Ctrl+C` in the terminal window or just close it
 
 **Note**: Windows and macOS may display a security warning because the binary is not digitally signed. You can safely allow it to run.
+
+### Upgrading
+
+To upgrade, stop the application, replace the binary with the new version, and start it again. The database is migrated automatically on the first start.
+
+:warning: **Upgrading from v4 to v5 migrates your data** (time and date fields are converted to a new internal format). Before upgrading, back up your database: copy the `web-logbook.sql` file for SQLite, or make a dump for MySQL. If you used a custom `-dsn`, back up that file instead.
 
 ## Docker & Kubernetes
 
@@ -170,7 +183,7 @@ $ ./web-logbook -h
 
 ---
 
-# Supported Operating Systems
+# Supported Operating Systems and Requirements
 
 Since the application is written in Go, it can run on any operating system after compiling the source code.
 
@@ -178,38 +191,50 @@ Prebuilt [binaries](https://github.com/vsimakhin/web-logbook/releases/latest) ar
 
 You can access the application using any modern browser with JavaScript enabled.
 
+## Database
+
+No external database or other dependencies are needed. SQLite is built into the application and is used by default, and the database file is created automatically on the first start.
+
+MySQL is optional, for those who prefer to store the data on a separate server. See [MySQL database](#mysql-database) for the setup.
+
 ---
 
 # Interface
 
 ## Logbook
+
 - Flight records table with filter for all fields and global search through all data
-- Customizable columns
+- Customizable columns: add, remove, and reorder them by drag-and-drop, with the layout saved to your user profile
+- Edit multiple flight records directly in the table, with save or cancel
+- Configurable time (H:MM, HH:MM, FAA decimal) and date (DD/MM/YYYY, YYYY-MM-DD, MM/DD/YYYY) formats
 - Quick export to CSV
 - Export to PDF (A4, A5) formats
 - Automatic totals and subtotals calculation
 
-![EASA Logbook](./readme-assets/logbook.png)
+![EASA/UK CAA Logbook](./readme-assets/logbook.png)
 
 - Dark mode and mobile friendly
 
-![EASA Logbook dark mode](./readme-assets/dark-mode.png)
-![EASA Logbook mobile](./readme-assets/mobile-friendly.png)
-
+![EASA/UK CAA Logbook dark mode](./readme-assets/dark-mode.png)
+![EASA/UK CAA Logbook mobile](./readme-assets/mobile-friendly.png)
 
 ## Flight Records
+
 - Flight record details
+- Resizable, reorderable, and hideable fields, with the layout saved to your user profile
 - Attachments
 - Automatic night-time calculation
-- Custom/user defined fields
+- Custom/user defined fields, including an autocomplete type that suggests values from your previous flights
+- "New PDF Page" option to force a page break before a specific record in the PDF export
 - Flight map
-- KML and GPX track attachments support for SkyDemon and FlightRadar24 (check this tool [fr24-kml-splitter](https://github.com/morremeyer/fr24-kml-splitter) for flightradar24 tracks)
+- KML and GPX track attachments support for SkyDemon and FlightRadar24
 - Persons tracking
 - Instructor/Examiner signature
 
 ![Flight record](./readme-assets/flight-record.png)
 
 ## Licensing & Certification
+
 - Licenses and certificates
 - Document attachments and preview
 - Expiration tracking
@@ -217,34 +242,45 @@ You can access the application using any modern browser with JavaScript enabled.
 ![Licensing & Certification](./readme-assets/licensing-record.png)
 
 ## Map
+
 - Flight map
 - Date filters
 - Routes and airports filters
 - Aircraft filters
-- Basic statistics
+- Basic statistics (flights, routes, airports)
+- Map options:
+  - Route lines and track lines: show or hide them, and change their color and line style
+  - Airport codes: show or hide them
+  - Airport icon: choose between a plane, a pin, and a heart pin
+  - Map base: Standard, Satellite, or Terrain
 
 ![Map of the flights](./readme-assets/map-example.png)
 
 ## Aircrafts
+
 - Aircraft list
 - Types
 - Custom categories
+- Total flight times for each aircraft and aircraft category
 
 ![Aircraft](./readme-assets/aircrafts.png)
 
 ## Airports
+
 - Airport database
-- Custom airports
+- Custom airports, with separate Code and Name fields
 - Filters
 
 ![Airports](./readme-assets/airports.png)
 
 ## Persons
+
 - Persons list for the recorded flight records
 - Flight list for each person
 - Custom user defined roles (Captain, First officer, Crew etc)
 
 ## Stats
+
 - Dashboard statistics
 - Statistics by year, type, and category
 - Custom field support
@@ -253,16 +289,21 @@ You can access the application using any modern browser with JavaScript enabled.
 ![Stats](./readme-assets/stats-by-category.png)
 
 ## Currency
+
 - Tracking currency and flight experience
 - Different time frames: days, calendar months, calendar years, since date and all time
 
 ![Currency](./readme-assets/currency.png)
 
 ## Export
-- Export to EASA PDF format (A4 and A5)
+
+- Export to EASA/UK CAA PDF format (A4 and A5), adaptable to FAA
 - PDF export formats with custom title pages (for example, include your CV automatically)
 - Adjustable settings for each export format
-- Instructor/Examiner signatures also included in the PDF export
+- Custom fields in the PDF, with category grouping, custom headers and totals for duration and number fields
+- Customizable PDF column layout, with page-divider support for two-page A5 exports
+- "New PDF Page" option to force a page break before a specific record
+- Instructor/Examiner signatures also included in the PDF export, with the signature image keeping its aspect ratio
 
 ![Export](./readme-assets/export.png)
 
@@ -277,6 +318,7 @@ So in real life the logbook could look like
 ![Pilot logbook](./readme-assets/logbook_irl.jpg)
 
 ## Import
+
 - CSV support
 - Predefined formats
   - WebLogbook
@@ -284,14 +326,25 @@ So in real life the logbook could look like
 - Custom formats
 
 ## Settings
+
 - Owner name, license and address, signature for the PDF exports
 - Signature pad to automatically include signatures to the PDF exports
 - Enable/Disable authentication (in case you need to expose the app to the public internet)
-- Some interface settings
-- Custom names for the standard flight record fields
-- Custom fields for the Flight record
+- Time (H:MM, HH:MM, FAA decimal) and date (DD/MM/YYYY, YYYY-MM-DD, MM/DD/YYYY) formats
+- Previous flight experience
+- Download and upload user profiles to share layouts, custom fields, and PDF export settings
+- Download and upload databases for backup and restore
+
 
 ![Settings](./readme-assets/settings.png)
+
+## Fields & Layout
+
+- Custom names for the standard flight record fields
+- Custom fields for the Flight record, with optional PDF Header and PDF Category for the PDF export
+- Layout of flight record fields and logbook table columns
+
+![Fields and Layout](./readme-assets/fields-and-layout.png)
 
 ---
 
@@ -310,11 +363,11 @@ If you enable the `No ICAO codes filter` option, the app will ignore ICAO airpor
 
 ## HTTPS enable
 
-You can generate your own certificate and key and store it in the different directories in your operating system. For that use `--key` and `--cert` parameters to specify the exact location and run the app with `--enable-https` flag.
+You can generate your own certificate and key and store it in the different directories in your operating system. For that use `-key` and `-cert` parameters to specify the exact location and run the app with `-enable-https` flag.
 
 ## Custom CSS and JS
 
-To change the look of the app or add small tweaks you can load your own stylesheet and/or script without rebuilding the app or setting up a reverse proxy. Create a directory with a `custom.css` and/or a `custom.js` file and pass it with the `-custom-dir` option:
+To change the look of the app or add small tweaks (see example [here](https://github.com/benbox69/web-logbook-horizon)) you can load your own stylesheet and/or script without rebuilding the app or setting up a reverse proxy. Create a directory with a `custom.css` and/or a `custom.js` file and pass it with the `-custom-dir` option:
 
 ```sh
 ./web-logbook -custom-dir /path/to/custom
@@ -331,6 +384,8 @@ To change the look of the app or add small tweaks you can load your own styleshe
 - The files are served without authentication (`/custom.css`, `/custom.js`), as they also have to be loaded on the login page. Do not put anything private in them.
 - `custom.js` runs with full access to the page, so use only your own scripts.
 - The app is built with MUI, which generates its own class names and injects its styles at runtime, so you may need more specific selectors or `!important` to override them.
+
+![Custom View](./readme-assets/custom-logbook-dark.png)
 
 For Docker, put the files into the mounted `/data` volume, for example `/data/custom`, and add the option to the command, see the [Docker readme](./docker/README.md#custom-css-and-js).
 
@@ -450,14 +505,13 @@ Thanks for bug reports, testing, improvements, and features suggestions:
   <a href="https://github.com/mattswainston" title="mattswainston"><img src="https://github.com/mattswainston.png" width="40" height="40" alt="mattswainston" /></a>
   <a href="https://github.com/jnko266" title="jnko266"><img src="https://github.com/jnko266.png" width="40" height="40" alt="jnko266" /></a>
   <a href="https://github.com/Samueld59" title="Samueld59"><img src="https://github.com/Samueld59.png" width="40" height="40" alt="Samueld59" /></a>
-  <a href="https://github.com/benbox69" title="benbox69"><img src="https://github.com/benbox69.png" width="40" height="40" alt="benbox69" /></a>
   <a href="https://github.com/Cyclic407" title="Cyclic407"><img src="https://github.com/Cyclic407.png" width="40" height="40" alt="Cyclic407" /></a>
   <a href="https://github.com/Thomas-DPRX" title="Thomas-DPRX"><img src="https://github.com/Thomas-DPRX.png" width="40" height="40" alt="Thomas-DPRX" /></a>
   <a href="https://github.com/dmoeyers" title="dmoeyers"><img src="https://github.com/dmoeyers.png" width="40" height="40" alt="dmoeyers" /></a>
   <a href="https://github.com/BabyDino" title="BabyDino"><img src="https://github.com/BabyDino.png" width="40" height="40" alt="BabyDino" /></a>
 </p>
 
---
+---
 
 # Tech stack
 

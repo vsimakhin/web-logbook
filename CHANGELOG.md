@@ -31,7 +31,7 @@
 
 #### Other
 
-- New: The -custom-dir option adds your own custom.css and/or custom.js to the UI, with no reverse proxy needed.
+- New: The -custom-dir option adds your own custom.css and/or custom.js to the UI (see example [here](https://github.com/benbox69/web-logbook-horizon))
 - New: Download and upload of user profiles on the Settings page, to share flight record and logbook table layouts, custom fields, and PDF export settings.
 - Update: The Settings page is reorganized into two sections: General and Fields & Layout.
 - Update: Optimized HTTP requests to reduce redundant calls.
