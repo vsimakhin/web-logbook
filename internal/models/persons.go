@@ -26,6 +26,9 @@ func (m *DBModel) fetchPersons(query string, params ...any) (persons []Person, e
 		}
 		persons = append(persons, person)
 	}
+	if err = rows.Err(); err != nil {
+		return persons, err
+	}
 
 	return persons, nil
 }
@@ -60,6 +63,9 @@ func (m *DBModel) GetPersonsForLog(logUuid string) (persons []PersonForLog, err 
 			return persons, err
 		}
 		persons = append(persons, person)
+	}
+	if err = rows.Err(); err != nil {
+		return persons, err
 	}
 
 	return persons, nil
@@ -174,6 +180,9 @@ func (m *DBModel) GetFlightRecordsForPerson(personUuid string) (records []Flight
 		}
 		records = append(records, record)
 	}
+	if err = rows.Err(); err != nil {
+		return records, err
+	}
 
 	return records, nil
 }
@@ -214,6 +223,9 @@ func (m *DBModel) GetPersonsRoles() (roles []string, err error) {
 			return roles, err
 		}
 		roles = append(roles, role)
+	}
+	if err = rows.Err(); err != nil {
+		return roles, err
 	}
 
 	return roles, nil

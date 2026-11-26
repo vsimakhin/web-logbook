@@ -1,5 +1,45 @@
 # Changelog
 
+## [5.0.0]
+
+:warning: This is a major release with a database migration (time and date fields are converted to a new internal format). Back up your database before upgrading.
+
+#### Flight records and logbook
+
+- New: Edit multiple flight records directly in the logbook table.
+- New: Configurable time formats: H:MM, HH:MM, and FAA decimal.
+- New: Configurable date formats: DD/MM/YYYY, YYYY-MM-DD, and MM/DD/YYYY.
+- New: Flight record fields can be resized, reordered, or hidden via the new Layout button. Fields and Layout items now live in a separate menu on the Flight Record page.
+- New: Logbook table columns can be reordered by drag-and-drop and added or removed in Fields & Layout.
+- New: Custom field type 'autocomplete', which suggests unique values from previous flights.
+- Update: Aircraft and aircraft category tables now show total times.
+- Fix: Inaccurate night time calculation on flights crossing or close to twilight (error of up to several minutes on long flights).
+
+#### PDF export
+
+- New: A4 and A5 PDF export supports custom fields, category grouping, and totals for custom duration and number fields.
+- New: Customizable PDF column layout, with page-divider support for two-page A5 exports.
+- New: 'PDF Header' and 'PDF Category' for custom fields to customize column headers in the PDF export.
+- New: "New PDF Page" option on flight records to force a page break before a specific record.
+- Fix: Signature image in PDF export footer now preserves aspect ratio instead of stretching to cell.
+
+#### Maps and statistics
+
+- Update: Sim sessions are included in the stats.
+- Update: Added proper map layer attributions and copyright notices.
+- Fix: Inaccurate stats calculation (flights, routes, airports) on the Map and Dashboard pages.
+
+#### Other
+
+- New: The -custom-dir option adds your own custom.css and/or custom.js to the UI (see example [here](https://github.com/benbox69/web-logbook-horizon))
+- New: Download and upload of user profiles on the Settings page, to share flight record and logbook table layouts, custom fields, and PDF export settings.
+- Update: The Settings page is reorganized into two sections: General and Fields & Layout.
+- Update: Optimized HTTP requests to reduce redundant calls.
+- Update: Time fields are stored as integer minutes and dates as ISO YYYY-MM-DD, separate from the displayed format.
+- Update: Golang and npm packages and security patches.
+- Fix: An interrupted database migration no longer leaves the logbook in a broken state.
+- Fix: An aircraft type went missing in Aircrafts after the airplane type was changed.
+
 ## [5.0.0-beta3] - 22.11.2026
 
 :warning: As this is a beta (non-production) release, back up your database before upgrading
