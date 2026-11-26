@@ -83,13 +83,19 @@ export const SignIn = () => {
               fullWidth
               id="login"
               label="Login"
-              name="login"
-              autoComplete="login"
-              autoFocus
+              name="username"
+              autoComplete="username"
               variant="standard"
               value={login}
               onChange={(e) => setLogin(e.target.value)}
               disabled={loading}
+              slotProps={{
+                htmlInput: {
+                  autoCapitalize: 'none',
+                  autoCorrect: 'off',
+                  spellCheck: false,
+                },
+              }}
             />
             <TextField
               margin="normal"
